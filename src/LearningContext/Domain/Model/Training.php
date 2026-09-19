@@ -17,7 +17,7 @@ final class Training
     public function __construct(
         public readonly int $id,
         public readonly string $uuid,
-        public TrainingType $type,
+        public readonly TrainingType $type,
         public string $title,
         public string $slug,
         public string $summary,
@@ -33,7 +33,11 @@ final class Training
         public array $categoryIds = [],
         /** @var list<int> */
         public array $tagIds = [],
+        public ?LiveTrainingDetails $liveDetails = null,
     ) {
+        if ($this->liveDetails !== null && $this->type !== TrainingType::LIVE) {
+            throw new InvalidTrainingDetailsException('Les détails LIVE sont réservés aux formations de type LIVE.');
+        }
     }
 
     public function update(
@@ -69,6 +73,14 @@ final class Training
         $this->tagIds = array_values(array_unique($tagIds));
     }
 
+    public function replaceLiveDetails(?LiveTrainingDetails $details): void
+    {
+        if ($details !== null && $this->type !== TrainingType::LIVE) {
+            throw new InvalidTrainingDetailsException('Les détails LIVE sont réservés aux formations de type LIVE.');
+        }
+        $this->liveDetails = $details;
+    }
+
     public function publish(int $moduleCount = 0, int $emptyModuleCount = 0, int $unreadyLessonCount = 0): void
     {
         if ($this->status !== TrainingStatus::DRAFT) {
@@ -80,6 +92,12 @@ final class Training
         }
         if ($this->type === TrainingType::COURSE && $unreadyLessonCount > 0) {
             throw new InvalidTrainingDetailsException('Chaque leçon doit contenir un contenu, une vidéo YouTube valide ou au moins une ressource avant la publication.');
+        }
+        if ($this->type === TrainingType::LIVE) {
+            if ($this->liveDetails === null) {
+                throw new InvalidTrainingDetailsException('Une formation LIVE doit définir sa session avant sa publication.');
+            }
+            $this->liveDetails->assertValid();
         }
         $this->status = TrainingStatus::PUBLISHED;
         $this->publishedAt ??= new DateTimeImmutable();

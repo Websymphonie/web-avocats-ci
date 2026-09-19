@@ -80,6 +80,10 @@
 - Learning taxonomies live under `Formations > Catégories` and `Formations > Tags`, never under Content. Training
   forms use the existing autocomplete/multi-select foundation with chips, keyboard removal and restored selections.
   Category and tag filters remain combinable with the existing Training filters.
+- Learning LIVE reuses the Training register with a distinct Cours/Live creation choice and a `Lives` filtered shortcut.
+  Its form exposes Session Live dates, mode, conditional location/join fields and HTTPS validation feedback; the detail
+  view shows Session Live and Inscriptions instead of the COURSE programme. The member join action remains protected
+  by publication and active Enrollment checks.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED`
   documents. Backoffice uses `/admin/content/documents/{id}/download`.
 

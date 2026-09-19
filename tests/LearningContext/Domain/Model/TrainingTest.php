@@ -9,8 +9,10 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Exception\InvalidTrainingDetailsException;
 use Websymphonie\LearningContext\Domain\Model\Training;
+use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
 
 final class TrainingTest extends TestCase
 {
@@ -76,6 +78,24 @@ final class TrainingTest extends TestCase
         $this->expectException(InvalidTrainingDetailsException::class);
 
         $this->training()->publish(1, 0, 1);
+    }
+
+    public function testLiveCanBePublishedWithoutCourseModulesWhenDetailsAreValid(): void
+    {
+        $training = new Training(1, 'uuid', TrainingType::LIVE, 'Live de test', 'live-de-test', 'Résumé', '<p>Description</p>', TrainingVisibility::PUBLIC, TrainingAccessType::FREE, liveDetails: new LiveTrainingDetails(0, '', 1, new \DateTimeImmutable('+1 day 10:00'), new \DateTimeImmutable('+1 day 11:00'), LiveDeliveryMode::ONLINE, joinUrl: 'https://meet.example.test/live'));
+
+        $training->publish();
+
+        self::assertSame(TrainingStatus::PUBLISHED, $training->status);
+        self::assertNotNull($training->publishedAt);
+    }
+
+    public function testLiveCannotBePublishedWithoutDetails(): void
+    {
+        $training = new Training(1, 'uuid', TrainingType::LIVE, 'Live de test', 'live-de-test', 'Résumé', '<p>Description</p>', TrainingVisibility::PUBLIC, TrainingAccessType::FREE);
+
+        $this->expectException(InvalidTrainingDetailsException::class);
+        $training->publish();
     }
 
     private function training(): Training

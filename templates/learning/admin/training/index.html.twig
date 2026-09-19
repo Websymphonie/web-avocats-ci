@@ -8,11 +8,11 @@
         <section class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm font-medium text-muted-foreground">Formations</p>
-                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Formations</h1>
-                <p class="mt-2 text-sm text-muted-foreground">Gérez les formations de type cours avant l’ouverture des modules pédagogiques.</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">{{ isLiveListing ? 'Lives' : 'Formations' }}</h1>
+                <p class="mt-2 text-sm text-muted-foreground">{{ isLiveListing ? 'Gérez les sessions Live et leurs accès inscrits.' : 'Gérez les formations et leurs parcours pédagogiques.' }}</p>
             </div>
             {% if is_granted('LEARNING_TRAINING_MANAGE') %}
-                <a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90" href="{{ path('learning_admin_training_new') }}"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouvelle formation</a>
+                <details class="group relative"><summary class="inline-flex h-10 cursor-pointer list-none items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouvelle formation <twig:ux:icon name="lucide:chevron-down" class="size-4"/></summary><div class="absolute right-0 z-20 mt-2 min-w-48 rounded-xl border border-border bg-popover p-1.5 text-popover-foreground shadow-lg"><a class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" href="{{ path('learning_admin_training_new') }}"><twig:ux:icon name="lucide:book-open" class="size-4"/>Cours</a><a class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" href="{{ path('learning_admin_training_new_live') }}"><twig:ux:icon name="lucide:video" class="size-4"/>Live</a></div></details>
             {% endif %}
         </section>
 
@@ -22,8 +22,8 @@
                 <twig:ux:icon name="lucide:chevron-down" class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/>
             </summary>
             <div class="border-t border-border px-6 py-5">
-                {{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_repeat(5,minmax(0,160px))_auto]', novalidate: true}}) }}
-                {% for field in [filterForm.search, filterForm.status, filterForm.visibility, filterForm.accessType, filterForm.categoryId, filterForm.tagId] %}
+                {{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_repeat(6,minmax(0,160px))_auto]', novalidate: true}}) }}
+                {% for field in [filterForm.search, filterForm.status, filterForm.visibility, filterForm.accessType, filterForm.type, filterForm.categoryId, filterForm.tagId] %}
                     <div class="space-y-2">{{ form_label(field, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(field, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
                 {% endfor %}
                 <div class="flex items-end gap-2">
@@ -71,7 +71,7 @@
                                     <td class="px-5 py-4"><label class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" value="{{ item.id }}" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="row" aria-label="Sélectionner la formation : {{ item.title }}"></label></td>
                                     <td class="px-5 py-4">{% if item.coverMediaId and mediaUrls[item.coverMediaId]|default(null) %}<img src="{{ mediaUrls[item.coverMediaId] }}" alt="" class="size-12 rounded-lg object-cover">{% else %}<span class="flex size-12 items-center justify-center rounded-lg bg-muted text-muted-foreground"><twig:ux:icon name="lucide:graduation-cap" class="size-5"/></span>{% endif %}</td>
                                     <td class="px-5 py-4"><p class="truncate font-medium">{{ item.title }}</p><p class="mt-1 truncate text-xs text-muted-foreground">/{{ item.slug }}</p></td>
-                                    <td class="px-5 py-4">{{ item.type.label }}</td>
+                                    <td class="px-5 py-4"><div>{{ item.type.label }}</div>{% if item.liveDetails %}<div class="mt-1 text-xs text-muted-foreground">{{ item.liveDetails.startsAt|date('d/m/Y H:i') }}</div>{% endif %}</td>
                                     <td class="px-5 py-4">{{ item.visibility.label }}</td>
                                     <td class="px-5 py-4"><twig:Badge variant="outline">{{ item.accessType.label }}</twig:Badge></td>
                                     <td class="px-5 py-4"><twig:Badge variant="{{ item.status.value == 'PUBLISHED' ? 'success' : (item.status.value == 'ARCHIVED' ? 'warning' : 'secondary') }}">{{ item.status.label }}</twig:Badge></td>

@@ -9,7 +9,10 @@ use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerIn
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
 use Websymphonie\LearningContext\Application\Service\TrainingClassificationValidator;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
 use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsException;
+use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\MediaContext\Domain\Exception\MediaInUseException;
@@ -46,6 +49,23 @@ final readonly class UpdateTrainingHandler implements CommandHandler
         );
         $training->replaceClassification($categoryIds, $tagIds);
 
+        if ($training->type === TrainingType::LIVE) {
+            $details = $training->liveDetails ?? new LiveTrainingDetails(
+                id: 0,
+                uuid: '',
+                trainingId: $training->id,
+                startsAt: $command->startsAt ?? throw new InvalidLiveTrainingDetailsException('La date de début est requise pour un LIVE.'),
+                endsAt: $command->endsAt ?? throw new InvalidLiveTrainingDetailsException('La date de fin est requise pour un LIVE.'),
+                deliveryMode: $command->deliveryMode,
+                location: self::clean($command->location),
+                joinUrl: self::clean($command->joinUrl),
+            );
+            if ($training->liveDetails !== null) {
+                $details->update($command->startsAt ?? throw new InvalidLiveTrainingDetailsException('La date de début est requise pour un LIVE.'), $command->endsAt ?? throw new InvalidLiveTrainingDetailsException('La date de fin est requise pour un LIVE.'), $command->deliveryMode, self::clean($command->location), self::clean($command->joinUrl));
+            }
+            $training->replaceLiveDetails($details);
+        }
+
         $oldCoverId = $training->coverMediaId;
         $media = null;
         try {
@@ -74,5 +94,11 @@ final readonly class UpdateTrainingHandler implements CommandHandler
             $this->mediaUpload->delete($this->mediaRepository->getById($mediaId));
         } catch (MediaInUseException) {
         }
+    }
+
+    private static function clean(?string $value): ?string
+    {
+        $value = $value !== null ? trim($value) : null;
+        return $value === '' ? null : $value;
     }
 }

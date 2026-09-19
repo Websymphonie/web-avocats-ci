@@ -12,6 +12,7 @@ use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingListQuery;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFilterType;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -23,16 +24,20 @@ final class GetTrainingListController extends AbstractController
     public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls) {}
 
     #[Route('', name: 'list', methods: ['GET'])]
+    #[Route('/lives', name: 'lives', defaults: ['trainingType' => 'LIVE'], methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        $query = new GetTrainingListQuery(page: max(1, $request->query->getInt('page', 1)));
-        $form = $this->createForm(TrainingFilterType::class, $query, ['method' => 'GET', 'action' => $this->generateUrl('learning_admin_training_list')]);
+        $routeType = $request->attributes->get('trainingType');
+        $query = new GetTrainingListQuery(type: $routeType === 'LIVE' ? TrainingType::LIVE : null, page: max(1, $request->query->getInt('page', 1)));
+        $action = $routeType === 'LIVE' ? 'learning_admin_training_lives' : 'learning_admin_training_list';
+        $form = $this->createForm(TrainingFilterType::class, $query, ['method' => 'GET', 'action' => $this->generateUrl($action)]);
         $form->handleRequest($request);
         $result = $this->handleQuery(new GetTrainingListQuery(
             search: $query->search ?: null,
             status: $query->status instanceof TrainingStatus ? $query->status : null,
             visibility: $query->visibility instanceof TrainingVisibility ? $query->visibility : null,
             accessType: $query->accessType instanceof TrainingAccessType ? $query->accessType : null,
+            type: $query->type instanceof TrainingType ? $query->type : null,
             categoryId: $query->categoryId,
             tagId: $query->tagId,
             page: $query->page,
@@ -45,6 +50,7 @@ final class GetTrainingListController extends AbstractController
             'trainings' => $result,
             'filterForm' => $form->createView(),
             'mediaUrls' => $this->mediaUrls->resolveMany($mediaIds),
+            'isLiveListing' => $routeType === 'LIVE',
         ]);
     }
 }

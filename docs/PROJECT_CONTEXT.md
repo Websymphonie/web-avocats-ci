@@ -176,9 +176,10 @@ Ces domaines cibles ne signifient pas que tous les Bounded Contexts doivent
 ## 10. Évolutions futures
 
 L’ordre de progression recommandé est : documentation et shell Web, Content,
-Learning `COURSE`, inscription et services membres, Payment, Learning `LIVE`
-avec YouTube, progression/quiz/certificats, puis Contribution après découverte
-métier. L’API et Flutter viennent après stabilisation des contrats métier.
+Learning `COURSE`, inscription et services membres, Learning `LIVE`, Payment,
+progression/quiz/certificats, puis Contribution après découverte métier. Le
+branchement YouTube et les interfaces publiques restent à traiter. L’API et
+Flutter viennent après stabilisation des contrats métier.
 
 Les exigences détaillées et leur statut sont suivis dans
 [`docs/PRODUCT_REQUIREMENTS.md`](PRODUCT_REQUIREMENTS.md), et l’ordre des

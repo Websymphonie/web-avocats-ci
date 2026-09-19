@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Infrastructure\Persistence\Factory;
 
 use Websymphonie\LearningContext\Domain\Model\Training;
+use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 
 final class TrainingFactory
 {
-    public function fromEntity(TrainingEntity $entity): Training
+    public function fromEntity(TrainingEntity $entity, ?LiveTrainingDetails $liveDetails = null): Training
     {
         return new Training(
             id: $entity->getId() ?? 0,
@@ -28,6 +29,7 @@ final class TrainingFactory
             coverMediaId: $entity->getCoverMediaId(),
             categoryIds: array_map(static fn ($category): int => $category->getId() ?? 0, $entity->getCategories()->toArray()),
             tagIds: array_map(static fn ($tag): int => $tag->getId() ?? 0, $entity->getTags()->toArray()),
+            liveDetails: $liveDetails,
         );
     }
 

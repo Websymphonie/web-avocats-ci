@@ -145,6 +145,17 @@ compact searchable multi-selects for categories and tags. Category and tag
 registers reuse the existing table, ActionDropdown, BulkSelection and
 AlertDialog patterns; used taxonomies remain visible and cannot be deleted.
 
+### Learning LIVE Backoffice
+
+LIVE reste dans le registre `Formations` avec une création distincte depuis le
+bouton Nouvelle formation et un raccourci filtré `Lives`. Le formulaire commun
+réutilise la couverture, la visibilité, l’accès et les taxonomies, puis affiche
+une section Session Live avec dates, mode, lieu et lien HTTPS. Le mode pilote
+les champs visibles via Stimulus, tandis que la validation serveur reste
+autoritaire. Le détail LIVE remplace le programme COURSE par Session Live et
+Inscriptions ; le lien de connexion n’est jamais présenté sans contrôle
+d’accès membre.
+
 The COURSE Programme builder is a nested, inline editor on the training detail
 and edit screens. Modules and lessons use compact ellipsis action menus,
 explicit AlertDialog confirmation for destructive actions, and visible

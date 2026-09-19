@@ -29,11 +29,19 @@ final class LearningMenu implements SidebarModuleInterface
                 children: [
                     MenuFactory::item(
                         label: 'Formations',
-                        routes: [RouteEnum::LEARNING_TRAINING_INDEX->value, 'learning_admin_training_new', 'learning_admin_training_show', 'learning_admin_training_edit'],
+                        routes: [RouteEnum::LEARNING_TRAINING_INDEX->value, 'learning_admin_training_lives', 'learning_admin_training_new', 'learning_admin_training_new_live', 'learning_admin_training_show', 'learning_admin_training_edit'],
                         roles: [],
                         link: RouteEnum::LEARNING_TRAINING_INDEX->value,
                         permission: 'LEARNING_TRAINING_VIEW',
                         order: 1,
+                    ),
+                    MenuFactory::item(
+                        label: 'Lives',
+                        routes: ['learning_admin_training_lives'],
+                        roles: [],
+                        link: 'learning_admin_training_lives',
+                        permission: 'LEARNING_TRAINING_VIEW',
+                        order: 2,
                     ),
                     MenuFactory::item(
                         label: 'Catégories',
@@ -41,7 +49,7 @@ final class LearningMenu implements SidebarModuleInterface
                         roles: [],
                         link: 'learning_admin_category_list',
                         permission: 'LEARNING_CATEGORY_VIEW',
-                        order: 2,
+                        order: 3,
                     ),
                     MenuFactory::item(
                         label: 'Tags',
@@ -49,7 +57,7 @@ final class LearningMenu implements SidebarModuleInterface
                         roles: [],
                         link: 'learning_admin_tag_list',
                         permission: 'LEARNING_TAG_VIEW',
-                        order: 3,
+                        order: 4,
                     ),
                 ],
                 groupOrder: 3,

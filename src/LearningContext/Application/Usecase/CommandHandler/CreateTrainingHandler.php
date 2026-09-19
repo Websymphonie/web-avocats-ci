@@ -11,6 +11,8 @@ use Websymphonie\LearningContext\Application\Service\TrainingClassificationValid
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsException;
 use Websymphonie\LearningContext\Domain\Model\Training;
+use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
+use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
@@ -36,19 +38,33 @@ final readonly class CreateTrainingHandler implements CommandHandler
         $media = null;
         try {
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'training/covers') : null;
+            $liveDetails = null;
+            if ($command->type === TrainingType::LIVE) {
+                $liveDetails = new LiveTrainingDetails(
+                    id: 0,
+                    uuid: '',
+                    trainingId: 0,
+                    startsAt: $command->startsAt ?? throw new InvalidLiveTrainingDetailsException('La date de début est requise pour un LIVE.'),
+                    endsAt: $command->endsAt ?? throw new InvalidLiveTrainingDetailsException('La date de fin est requise pour un LIVE.'),
+                    deliveryMode: $command->deliveryMode,
+                    location: self::clean($command->location),
+                    joinUrl: self::clean($command->joinUrl),
+                );
+            }
             $training = new Training(
                 id: 0,
                 uuid: '',
-                type: TrainingType::COURSE,
                 title: trim($command->title),
                 slug: $slug,
                 summary: trim($command->summary),
                 description: $this->sanitizer->sanitize($command->description),
                 visibility: $command->visibility,
                 accessType: $command->accessType,
+                type: $command->type,
                 coverMediaId: $media?->id,
                 categoryIds: $categoryIds,
                 tagIds: $tagIds,
+                liveDetails: $liveDetails,
             );
 
             return $this->repository->save($training);
@@ -58,5 +74,11 @@ final readonly class CreateTrainingHandler implements CommandHandler
             }
             throw $exception;
         }
+    }
+
+    private static function clean(?string $value): ?string
+    {
+        $value = $value !== null ? trim($value) : null;
+        return $value === '' ? null : $value;
     }
 }

@@ -48,6 +48,18 @@ final class TrainingAccessPolicyTest extends TestCase
         self::assertFalse((new TrainingAccessPolicy($trainings, $enrollments, $users))->canAccess(10, 2));
     }
 
+    public function testPublishedLiveWithActiveEnrollmentIsAccessibleLikeACourse(): void
+    {
+        $trainings = $this->createMock(TrainingRepositoryInterface::class);
+        $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
+        $users = $this->createMock(UserDirectoryInterface::class);
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $trainings->method('getById')->willReturn(new Training(10, 't', TrainingType::LIVE, 'Live', 'live', 'Résumé', 'Description', TrainingVisibility::PUBLIC, TrainingAccessType::FREE, TrainingStatus::PUBLISHED));
+        $enrollments->method('findByTrainingAndUser')->willReturn(new Enrollment(1, 'e', 10, 2, EnrollmentStatus::ACTIVE, EnrollmentSource::SELF_SERVICE));
+
+        self::assertTrue((new TrainingAccessPolicy($trainings, $enrollments, $users))->canAccess(10, 2));
+    }
+
     private function training(TrainingStatus $status): Training
     {
         return new Training(10, 't', TrainingType::COURSE, 'Course', 'course', 'Summary', 'Description', TrainingVisibility::PUBLIC, TrainingAccessType::FREE, $status);

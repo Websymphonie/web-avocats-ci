@@ -16,6 +16,7 @@ use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingListQuery;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 
 /** @extends AbstractType<GetTrainingListQuery> */
 final class TrainingFilterType extends AbstractType
@@ -27,7 +28,8 @@ final class TrainingFilterType extends AbstractType
             ->add('search', TextType::class, ['label' => 'Rechercher', 'required' => false, 'attr' => ['placeholder' => 'Rechercher par titre']])
             ->add('status', EnumType::class, ['label' => 'Statut', 'class' => TrainingStatus::class, 'choice_label' => static fn (TrainingStatus $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les statuts'])
             ->add('visibility', EnumType::class, ['label' => 'Visibilité', 'class' => TrainingVisibility::class, 'choice_label' => static fn (TrainingVisibility $value): string => $value->label(), 'required' => false, 'placeholder' => 'Toutes les visibilités'])
-            ->add('accessType', EnumType::class, ['label' => 'Accès', 'class' => TrainingAccessType::class, 'choice_label' => static fn (TrainingAccessType $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les accès']);
+            ->add('accessType', EnumType::class, ['label' => 'Accès', 'class' => TrainingAccessType::class, 'choice_label' => static fn (TrainingAccessType $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les accès'])
+            ->add('type', EnumType::class, ['label' => 'Type', 'class' => TrainingType::class, 'choice_label' => static fn (TrainingType $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les types']);
         $builder->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'placeholder' => 'Toutes les catégories', 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]])
             ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'placeholder' => 'Tous les tags', 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]]);
     }

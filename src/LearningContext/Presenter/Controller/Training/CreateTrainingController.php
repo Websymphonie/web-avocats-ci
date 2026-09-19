@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\LearningContext\Application\Usecase\Command\CreateTrainingCommand;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -18,9 +19,11 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 final class CreateTrainingController extends AbstractController
 {
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request): Response
+    #[Route('/new/live', name: 'new_live', methods: ['GET', 'POST'], defaults: ['type' => 'LIVE'])]
+    public function __invoke(Request $request, string $type = 'COURSE'): Response
     {
-        $command = new CreateTrainingCommand();
+        $trainingType = TrainingType::tryFrom(strtoupper($type)) ?? TrainingType::COURSE;
+        $command = new CreateTrainingCommand(type: $trainingType);
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -33,6 +36,6 @@ final class CreateTrainingController extends AbstractController
             }
         }
 
-        return $this->render('learning/admin/training/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('learning/admin/training/create.html.twig', ['form' => $form->createView(), 'trainingType' => $trainingType]);
     }
 }

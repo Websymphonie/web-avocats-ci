@@ -388,8 +388,8 @@ permission ; aucune permission Media générique n’est ajoutée. Les permissio
 `LEARNING_ENROLLMENT_VIEW` et `LEARNING_ENROLLMENT_MANAGE` sont accordées par
 défaut à `ROLE_ADMIN` et `ROLE_SUPER_ADMIN`, mais pas à `ROLE_AVOCAT` ni
 `ROLE_USER`. L’auto-inscription membre et la policy de lecture ne dépendent
-pas de ces permissions Backoffice. Paiements, LIVE et progression restent hors
-périmètre.
+pas de ces permissions Backoffice. LIVE réutilise ces permissions Learning ;
+les paiements et la progression restent hors périmètre.
 
 ### Taxonomies Learning — LRN-004A
 

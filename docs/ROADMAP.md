@@ -86,11 +86,11 @@ DOC-001.
 
 ### PHASE 5 — Learning LIVE et YouTube
 
-**Statut : `PLANNED`**
+**Statut : `IMPLEMENTED`**
 
-Le `LIVE` sera introduit comme un `Training` autonome avec `LiveDetails`,
-programmation, synchronisation et contrôle d’accès serveur. YouTube restera un
-fournisseur et non une autorité métier.
+Le `LIVE` est un `Training` autonome avec `LiveTrainingDetails`, programmation
+et contrôle d’accès serveur. Le `joinUrl` HTTPS est administré dans Avocat CI ;
+aucune API de fournisseur externe n’est appelée.
 
 ### PHASE 6 — Progression, quiz et certificats
 
@@ -140,7 +140,7 @@ LRN-002  Structure COURSE                          DONE — modules/leçons Back
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
 LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
 LRN-004A Catégories et tags des formations           DONE — taxonomies Learning, associations et filtres Backoffice
-LRN-005  LIVE                                        PLANNED — TrainingType LIVE prévu, métier non implémenté
+LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre au lien HTTPS
 ```
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.

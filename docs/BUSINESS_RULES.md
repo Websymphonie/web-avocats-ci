@@ -160,6 +160,29 @@ Les modules et leçons ont un ordre persistant `1..N`, normalisé après chaque
 création, suppression ou réordonnancement. Un module supprimé avec confirmation
 supprime ses leçons ; les médias, contenus et progressions ne sont pas encore
 concernés. Une COURSE publiée reste éditable structurellement sans versioning.
+
+### LRN-005 — Training LIVE
+
+`LIVE` reste un type autonome de `Training`, distinct de `ContentContext\Event`
+et sans module ni leçon. Ses informations sont portées par un unique
+`LiveTrainingDetails` : début, fin, mode, lieu optionnel et lien de connexion
+optionnel. Les dates doivent respecter `startsAt < endsAt`.
+
+Les modes `ONLINE`, `IN_PERSON` et `HYBRID` exigent respectivement un lien
+HTTPS, un lieu, ou les deux. Le serveur valide l’URL ; aucun fournisseur
+externe n’est appelé et Learning ne prétend pas empêcher le partage d’un lien
+externe par un membre autorisé.
+
+La publication d’un LIVE exige des détails valides, mais pas de modules ni de
+leçons. COURSE conserve ses règles de readiness existantes. Le type est choisi
+à la création et reste immuable. COURSE et LIVE réutilisent visibilité, accès,
+catégories, tags, Enrollment et `TrainingAccessPolicy`.
+
+Le lien de connexion n’est jamais affiché directement à partir d’une donnée
+cliente. `GET /espace/learning/trainings/{uuid}/join` vérifie l’utilisateur,
+le Training publié et l’Enrollment actif avant de rediriger vers le lien HTTPS
+administré. Les sessions `IN_PERSON`, les brouillons, archivés et inscriptions
+révoquées ne donnent pas accès à un lien.
 Le déplacement inter-module est explicitement différé ; le builder fournit le
 réordonnancement intra-module et les contrôles clavier Monter/Descendre.
 

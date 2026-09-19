@@ -383,6 +383,28 @@ filtres, tandis que le listing Training peut combiner une catégorie et un tag
 avec ses filtres existants. Aucun menu ou stockage de médiathèque partagé n’est
 introduit par cette tranche.
 
+## 12.5 LearningContext — Training LIVE LRN-005
+
+`TrainingType::LIVE` réutilise l’aggregate `Training`; aucun `LiveTraining`
+parallèle n’est introduit. Les champs spécifiques résident dans
+`LiveTrainingDetails`, persisté séparément dans `live_training_details` avec
+une contrainte d’unicité sur `training_id`. Le domaine Learning porte la
+validation des dates et du mode de diffusion (`ONLINE`, `IN_PERSON`, `HYBRID`),
+dont les exigences de lieu et de lien HTTPS.
+
+La commande de publication appelle les règles existantes de `Training` : les
+COURSE conservent leur readiness modules/leçons et les LIVE vérifient leurs
+détails de session. Le listing et le formulaire Backoffice restent unifiés,
+avec une création explicite Cours/Live et un raccourci `/admin/learning/lives`.
+Les routes de structure COURSE utilisent `CourseStructureGuard` et refusent
+les LIVE.
+
+L’accès au lien externe passe par la query applicative
+`GetAccessibleLiveJoinDetailsQuery` et `TrainingAccessPolicy`, puis par
+`GET /espace/learning/trainings/{uuid}/join`. Le client ne fournit jamais la
+destination de redirection. Les APIs Zoom, Teams, Google Meet et YouTube,
+l’attendance, le calendrier et le replay restent hors scope.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

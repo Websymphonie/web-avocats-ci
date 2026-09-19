@@ -66,7 +66,7 @@ d’un `MemberContext`.
 | ADM-001 | conserver l’entrée `/admin` et le dashboard existant | `IMPLEMENTED` |
 | ADM-002 | réserver l’accès du dashboard aux rôles administratifs autorisés | `IMPLEMENTED` |
 | ADM-003 | gérer les contenus éditoriaux dans leur contexte propriétaire | `IMPLEMENTED` — News |
-| ADM-004 | gérer les formations et Lives dans `LearningContext` | `IMPLEMENTED` — Training COURSE Backoffice; LIVE hors périmètre |
+| ADM-004 | gérer les formations et Lives dans `LearningContext` | `IMPLEMENTED` — Training COURSE et LIVE Backoffice |
 | ADM-005 | gérer les cotisations dans `ContributionContext` après découverte | `DISCOVERY` |
 | ADM-006 | gérer les utilisateurs et permissions via `IdentityContext` | `IMPLEMENTED` |
 | ADM-007 | consulter les logs et capacités de notification existantes | `IMPLEMENTED` |
@@ -94,11 +94,11 @@ propriétaire.
 | ID | Exigence | Statut |
 |---|---|---|
 | LRN-001 | introduire `Training` comme concept central | `IMPLEMENTED` — fondation + COURSE Backoffice |
-| LRN-002 | distinguer les types `COURSE` et `LIVE` | `IMPLEMENTED` — enum et frontière; LIVE non administré |
+| LRN-002 | distinguer les types `COURSE` et `LIVE` | `IMPLEMENTED` — enum, frontière et type LIVE administrable |
 | LRN-003 | administrer une `COURSE`, ses modules, leçons et contenu pédagogique | `IMPLEMENTED` — éditeur riche, YouTube externe et ressources privées Backoffice |
 | LRN-004 | gérer `Enrollment` et l’accès pédagogique | `IMPLEMENTED` — inscription gratuite, attribution/révocation admin et policy serveur |
 | LRN-004A | classer les formations par catégories et tags Learning | `IMPLEMENTED` — taxonomies Backoffice et filtres Training |
-| LRN-005 | gérer les détails d’un `LIVE` autonome | `PLANNED` |
+| LRN-005 | gérer les détails d’un `LIVE` autonome | `IMPLEMENTED` — Backoffice, publication et accès membre au lien HTTPS |
 | LRN-006 | suivre la progression | `PLANNED` |
 | LRN-007 | gérer quiz et certificats | `PLANNED` |
 | LRN-008 | intégrer YouTube comme fournisseur, sans lui déléguer l’autorisation | `PLANNED` |

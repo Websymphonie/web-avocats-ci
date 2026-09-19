@@ -108,8 +108,8 @@ commence en `DRAFT`; publier et archiver sont des transitions explicites.
 
 La publication exige un titre, un résumé et une description non vides. Le slug
 peut évoluer en brouillon et devient stable après publication. La structure
-COURSE est détaillée dans LRN-002 ci-dessous ; les inscriptions, paiements,
-lecture pédagogique, LIVE et surfaces Frontoffice/API restent hors périmètre.
+COURSE est détaillée dans LRN-002 ci-dessous ; les inscriptions, paiements et
+surfaces Frontoffice/API restent hors périmètre de la tranche LRN-001.
 La tranche LRN-004 ajoute désormais l’inscription et l’accès protégé au
 contenu pédagogique.
 
@@ -138,10 +138,24 @@ Les concepts cibles sont :
 - `LearningProgress` : progression pédagogique ;
 - `Quiz` : évaluation éventuelle ;
 - `Certificate` : certificat émis selon une politique validée ;
-- `LiveDetails` : horaires, fournisseur et identifiants externes d’un `LIVE`.
+- `LiveTrainingDetails` : horaires, mode, lieu et lien HTTPS d’un `LIVE`.
 
 `Module` est donc rattaché au parcours d’une `COURSE`, tandis que `LIVE` porte
 ses propres détails de session.
+
+### LRN-005 — Training LIVE livré
+
+`TrainingType::LIVE` est administrable sans créer d’aggregate `LiveTraining`.
+Un `Training` LIVE possède au plus un `LiveTrainingDetails`, stocké dans la
+table `live_training_details` avec une unicité sur `training_id`. Les détails
+valident les dates, le mode `ONLINE`/`IN_PERSON`/`HYBRID`, le lieu requis selon
+le mode et les liens de connexion HTTPS.
+
+La publication est type-aware : une COURSE applique sa readiness modules/leçons,
+tandis qu’un LIVE exige seulement ses détails valides. Les deux types
+réutilisent `TrainingVisibility`, `TrainingAccessType`, `TrainingCategory`,
+`TrainingTag`, `Enrollment` et `TrainingAccessPolicy`. Le join membre résout
+le Training par UUID et n’expose le lien qu’après contrôle d’accès serveur.
 
 ### LRN-002 — Structure COURSE : modules et leçons
 

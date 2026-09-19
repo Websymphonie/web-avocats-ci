@@ -1,4 +1,5 @@
-{{ form_start(form, {attr: {class: 'space-y-6', novalidate: true, enctype: 'multipart/form-data'}}) }}
+{% set isLive = form.vars.value.type.value|default('COURSE') == 'LIVE' %}
+{{ form_start(form, {attr: {class: 'space-y-6', novalidate: true, enctype: 'multipart/form-data', 'data-controller': isLive ? 'live-training-form' : null}}) }}
 <div class="space-y-2">
     {{ form_label(form.title, null, {label_attr: {class: 'text-sm font-medium'}}) }}
     {{ form_widget(form.title, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
@@ -32,6 +33,21 @@
     </div>
 </div>
 <section class="space-y-4 rounded-xl border border-border bg-muted/20 p-4"><div><h2 class="text-sm font-semibold">Classification</h2><p class="mt-1 text-xs text-muted-foreground">Les catégories et tags servent à organiser les formations, pas à contrôler les accès.</p></div><div class="grid gap-5 md:grid-cols-2"><div class="space-y-2">{{ form_label(form.categoryIds, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.categoryIds, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}{{ form_errors(form.categoryIds) }}</div><div class="space-y-2">{{ form_label(form.tagIds, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.tagIds, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}{{ form_errors(form.tagIds) }}</div></div></section>
+{% if isLive %}
+<fieldset class="space-y-4 rounded-xl border border-border bg-muted/20 p-4" data-live-training-form-target="session">
+    <legend class="px-1 text-sm font-semibold">Session Live</legend>
+    <p class="text-xs text-muted-foreground">Le lien de connexion sera accessible uniquement aux membres inscrits lorsque la formation sera publiée.</p>
+    <div class="grid gap-5 md:grid-cols-3">
+        <div class="space-y-2">{{ form_label(form.startsAt, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.startsAt, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(form.startsAt) }}</div>
+        <div class="space-y-2">{{ form_label(form.endsAt, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.endsAt, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(form.endsAt) }}</div>
+        <div class="space-y-2">{{ form_label(form.deliveryMode, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.deliveryMode, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm', 'data-live-training-form-target': 'mode', 'data-action': 'change->live-training-form#modeChanged'}}) }}{{ form_errors(form.deliveryMode) }}</div>
+    </div>
+    <div class="grid gap-5 md:grid-cols-2">
+        <div class="space-y-2" data-live-training-form-target="physical">{{ form_label(form.location, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.location, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(form.location) }}</div>
+        <div class="space-y-2" data-live-training-form-target="online">{{ form_label(form.joinUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.joinUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(form.joinUrl) }}</div>
+    </div>
+</fieldset>
+{% endif %}
 <div class="space-y-3" data-controller="cover-upload">
     {{ form_label(form.cover, null, {label_attr: {class: 'text-sm font-medium'}}) }}
     <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem]">

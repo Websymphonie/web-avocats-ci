@@ -7,15 +7,19 @@ namespace Websymphonie\LearningContext\Presenter\Form\Training;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Url;
 use Websymphonie\LearningContext\Application\Usecase\Command\CreateTrainingCommand;
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
+use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
 use Websymphonie\LearningContext\Domain\Repository\TrainingCategoryRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Repository\TrainingTagRepositoryInterface;
@@ -81,6 +85,15 @@ final class TrainingFormType extends AbstractType
                 ],
             ]);
 
+        if (($options['data'] instanceof CreateTrainingCommand || $options['data'] instanceof UpdateTrainingCommand) && $options['data']->type === TrainingType::LIVE) {
+            $builder
+                ->add('startsAt', DateTimeType::class, ['label' => 'Date/heure de début', 'required' => true, 'input' => 'datetime_immutable', 'widget' => 'single_text', 'html5' => true])
+                ->add('endsAt', DateTimeType::class, ['label' => 'Date/heure de fin', 'required' => true, 'input' => 'datetime_immutable', 'widget' => 'single_text', 'html5' => true])
+                ->add('deliveryMode', ChoiceType::class, ['label' => 'Mode', 'choices' => self::deliveryModeChoices(), 'choice_translation_domain' => false, 'choice_label' => static fn (LiveDeliveryMode $value): string => $value->label()])
+                ->add('location', TextType::class, ['label' => 'Lieu', 'required' => false, 'attr' => ['placeholder' => 'Adresse ou localisation']])
+                ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], message: 'Utilisez une URL HTTPS valide.')]]);
+        }
+
         if ($options['data'] instanceof UpdateTrainingCommand) {
             $builder->add('removeCover', CheckboxType::class, [
                 'label' => 'Retirer la couverture actuelle',
@@ -105,4 +118,10 @@ final class TrainingFormType extends AbstractType
      * @return array<string, int>
      */
     private static function tagChoices(array $items): array { return self::choices($items); }
+
+    /** @return array<string, LiveDeliveryMode> */
+    private static function deliveryModeChoices(): array
+    {
+        return ['En ligne' => LiveDeliveryMode::ONLINE, 'Présentiel' => LiveDeliveryMode::IN_PERSON, 'Hybride' => LiveDeliveryMode::HYBRID];
+    }
 }

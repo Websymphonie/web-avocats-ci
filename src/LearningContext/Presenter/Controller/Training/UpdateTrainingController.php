@@ -11,6 +11,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQuery;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
@@ -33,8 +35,14 @@ final class UpdateTrainingController extends AbstractController
             description: $training->description,
             visibility: $training->visibility,
             accessType: $training->accessType,
+            type: $training->type,
             categoryIds: $training->categoryIds,
             tagIds: $training->tagIds,
+            startsAt: $training->liveDetails?->startsAt,
+            endsAt: $training->liveDetails?->endsAt,
+            deliveryMode: $training->liveDetails !== null ? $training->liveDetails->deliveryMode : LiveDeliveryMode::ONLINE,
+            location: $training->liveDetails?->location,
+            joinUrl: $training->liveDetails?->joinUrl,
         );
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);
@@ -54,7 +62,7 @@ final class UpdateTrainingController extends AbstractController
             'training' => $training,
             'form' => $form->createView(),
             'coverUrl' => $mediaUrls[$training->coverMediaId] ?? null,
-            'structure' => $this->handleQuery(new GetCourseStructureQuery($training->id)),
+            'structure' => $training->type === TrainingType::COURSE ? $this->handleQuery(new GetCourseStructureQuery($training->id)) : null,
         ]);
     }
 }

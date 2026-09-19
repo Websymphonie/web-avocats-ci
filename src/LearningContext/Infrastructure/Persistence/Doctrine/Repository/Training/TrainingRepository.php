@@ -15,6 +15,7 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
 use Websymphonie\LearningContext\Domain\Exception\TrainingNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\TrainingListResult;
+use Websymphonie\LearningContext\Domain\Repository\LiveTrainingDetailsRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingCategory\TrainingCategoryEntity;
@@ -31,6 +32,7 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         ManagerRegistry $registry,
         private readonly ManagersInterface $manager,
         private readonly TrainingFactory $factory,
+        private readonly LiveTrainingDetailsRepositoryInterface $liveDetailsRepository,
     ) {
         parent::__construct($registry, TrainingEntity::class);
     }
@@ -48,7 +50,12 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             DbLogListener::enable();
         }
 
-        return $this->factory->fromEntity($entity);
+        if ($training->type === TrainingType::LIVE && $training->liveDetails !== null) {
+            $training->liveDetails->attachToTraining($entity->getId() ?? 0);
+            $training->liveDetails = $this->liveDetailsRepository->save($training->liveDetails);
+        }
+
+        return $this->factory->fromEntity($entity, $training->liveDetails);
     }
 
     public function getById(int $id): Training
@@ -58,14 +65,14 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             throw TrainingNotFoundException::withId($id);
         }
 
-        return $this->factory->fromEntity($entity);
+        return $this->withLiveDetails($entity);
     }
 
     public function getByUuid(string $uuid): Training
     {
         $entity = $this->createQueryBuilder('training')->andWhere('training.uuid = :uuid')->setParameter('uuid', Uuid::fromString($uuid), UuidType::NAME)->getQuery()->getOneOrNullResult();
         if (!$entity instanceof TrainingEntity) { throw TrainingNotFoundException::withUuid($uuid); }
-        return $this->factory->fromEntity($entity);
+        return $this->withLiveDetails($entity);
     }
 
     public function delete(Training $training): void
@@ -73,6 +80,10 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         $entity = $this->find($training->id);
         if (!$entity instanceof TrainingEntity) {
             throw TrainingNotFoundException::withId($training->id);
+        }
+
+        if ($training->type === TrainingType::LIVE) {
+            $this->liveDetailsRepository->deleteByTrainingId($training->id);
         }
 
         DbLogListener::disable();
@@ -114,7 +125,7 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         }
 
         return array_map(
-            fn (TrainingEntity $entity): Training => $this->factory->fromEntity($entity),
+            fn (TrainingEntity $entity): Training => $this->withLiveDetails($entity),
             $this->createQueryBuilder('training')
                 ->andWhere('training.id IN (:ids)')
                 ->setParameter('ids', $ids)
@@ -161,6 +172,15 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             ->getQuery()
             ->getResult();
 
-        return new TrainingListResult(array_map(fn (TrainingEntity $entity): Training => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
+        return new TrainingListResult(array_map(fn (TrainingEntity $entity): Training => $this->withLiveDetails($entity), $entities), $total, $page, $limit);
+    }
+
+    private function withLiveDetails(TrainingEntity $entity): Training
+    {
+        $model = $this->factory->fromEntity($entity);
+        if ($model->type === TrainingType::LIVE) {
+            $model->replaceLiveDetails($this->liveDetailsRepository->findByTrainingId($model->id));
+        }
+        return $model;
     }
 }

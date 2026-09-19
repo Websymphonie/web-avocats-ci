@@ -47,6 +47,10 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
             PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
             PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE => 'Contenu · Catégories d’événements',
+            PermissionEnum::CONTENT_VIDEO_VIEW,
+            PermissionEnum::CONTENT_VIDEO_MANAGE,
+            PermissionEnum::CONTENT_VIDEO_PUBLISH,
+            PermissionEnum::CONTENT_VIDEO_DELETE => 'Contenu · Vidéos éditoriales',
         };
     }
 

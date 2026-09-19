@@ -348,3 +348,10 @@ dont le rapport détaillé des encaissements. Par défaut, elle est accordée à
 `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`, `ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`.
 Les actions et liens vers les paiements restent soumis à `PAYMENT_VIEW` ; une
 configuration persistée, y compris `[]`, demeure entièrement prioritaire.
+
+### Vidéos éditoriales — CNT-003
+
+Les permissions `CONTENT_VIDEO_VIEW`, `CONTENT_VIDEO_MANAGE`,
+`CONTENT_VIDEO_PUBLISH` et `CONTENT_VIDEO_DELETE` sont accordées par défaut à
+`ROLE_ADMIN` uniquement. Elles ne sont pas accordées par défaut à
+`ROLE_AVOCAT` ni `ROLE_USER`.

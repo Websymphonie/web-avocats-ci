@@ -14,7 +14,8 @@ final class ContentMenu implements SidebarModuleInterface
             MenuFactory::item('Catégories d’actualités', [RouteEnum::CONTENT_NEWS_CATEGORY_INDEX->value, 'content_admin_news_category_new', 'content_admin_news_category_edit'], [], 'lucide:folders', RouteEnum::CONTENT_NEWS_CATEGORY_INDEX->value, self::GROUP, permission: 'CONTENT_NEWS_CATEGORY_VIEW', groupOrder: 2, order: 2),
             MenuFactory::item('Événements', [RouteEnum::CONTENT_EVENT_INDEX->value, 'content_admin_event_new', 'content_admin_event_show', 'content_admin_event_edit'], [], 'lucide:calendar-days', RouteEnum::CONTENT_EVENT_INDEX->value, self::GROUP, permission: 'CONTENT_EVENT_VIEW', groupOrder: 2, order: 3),
             MenuFactory::item('Catégories d’événements', [RouteEnum::CONTENT_EVENT_CATEGORY_INDEX->value, 'content_admin_event_category_new', 'content_admin_event_category_edit'], [], 'lucide:folders', RouteEnum::CONTENT_EVENT_CATEGORY_INDEX->value, self::GROUP, permission: 'CONTENT_EVENT_CATEGORY_VIEW', groupOrder: 2, order: 4),
-            MenuFactory::item('Tags', [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'], [], 'lucide:tags', RouteEnum::CONTENT_TAG_INDEX->value, self::GROUP, permission: 'CONTENT_TAG_VIEW', groupOrder: 2, order: 5),
+            MenuFactory::item('Vidéos', [RouteEnum::CONTENT_VIDEO_INDEX->value, 'content_admin_video_new', 'content_admin_video_show', 'content_admin_video_edit'], [], 'lucide:clapperboard', RouteEnum::CONTENT_VIDEO_INDEX->value, self::GROUP, permission: 'CONTENT_VIDEO_VIEW', groupOrder: 2, order: 5),
+            MenuFactory::item('Tags', [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'], [], 'lucide:tags', RouteEnum::CONTENT_TAG_INDEX->value, self::GROUP, permission: 'CONTENT_TAG_VIEW', groupOrder: 2, order: 6),
         ];
     }
 }

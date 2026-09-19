@@ -27,7 +27,7 @@
 - Publish and archive are explicit POST transitions protected by CSRF and permissions.
 - The form never exposes status; lifecycle transitions are action-based.
 - Empty, filtered and paginated states preserve the same table/card structure.
-- The Content group exposes Actualités, Catégories d’actualités, Événements, Catégories d’événements and Tags; videos and galleries remain out of scope.
+- The Content group exposes Actualités, Catégories d’actualités, Événements, Catégories d’événements, Vidéos and Tags; public video surfaces and galleries remain out of scope.
 - Category and tag associations are edited from the News form with multi-selects; deleting an item used by News is refused by the backend.
 - The rich text editor synchronizes its semantic HTML into the Symfony form field; the backend sanitizes the same field on create and update and sanitizes again before Backoffice rendering.
 - Link input accepts only `http`, `https`, `mailto`, `tel`, relative and fragment URLs. Rendered links receive safe `rel` attributes; scripts, embeds, styles, event handlers and unsupported tags are removed.
@@ -35,6 +35,7 @@
 - Multi-select dropdowns, search inputs, selected options and focus states consume the existing semantic tokens; validation errors remain rendered by Symfony Forms below the field.
 - Event lifecycle actions are state-aware: publish is available for drafts, cancel for published events, and archive for published or cancelled events. Event status is never a free form field.
 - Event practical fields follow the selected format visually, but date ordering, safe URL protocols and publication invariants are always checked server-side.
+- Editorial videos reuse the same listing, action menu, bulk selection and confirmation patterns. The Backoffice preview uses a validated YouTube no-cookie embed only; arbitrary external URLs remain links.
 
 ## Accessibility and responsive behavior
 

@@ -291,3 +291,11 @@ le thème par défaut de la librairie ne doit rester visible.
 
 La fondation n’ajoute pas de création inline, de drag/drop ou de nouvelle
 librairie frontend.
+
+## Vidéos éditoriales
+
+Le Backoffice des vidéos réutilise les patterns de liste responsive, menu
+d’actions, sélection multiple et `AlertDialog`. Le formulaire utilise Tiptap,
+les tags génériques et un fournisseur explicite. L’aperçu n’affiche un iframe
+que pour un identifiant YouTube extrait d’une URL validée ; une URL externe
+reste un lien sortant contrôlé.

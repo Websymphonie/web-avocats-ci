@@ -40,6 +40,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
             PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
             PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE,
+            PermissionEnum::CONTENT_VIDEO_VIEW,
+            PermissionEnum::CONTENT_VIDEO_MANAGE,
+            PermissionEnum::CONTENT_VIDEO_PUBLISH,
+            PermissionEnum::CONTENT_VIDEO_DELETE,
         ], $permissions);
     }
 
@@ -70,6 +74,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
             PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
             PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE,
+            PermissionEnum::CONTENT_VIDEO_VIEW,
+            PermissionEnum::CONTENT_VIDEO_MANAGE,
+            PermissionEnum::CONTENT_VIDEO_PUBLISH,
+            PermissionEnum::CONTENT_VIDEO_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -136,6 +144,10 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'event category view' => [PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW, [UserRolesEnum::ADMIN]];
         yield 'event category manage' => [PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'event category delete' => [PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'video view' => [PermissionEnum::CONTENT_VIDEO_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'video manage' => [PermissionEnum::CONTENT_VIDEO_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'video publish' => [PermissionEnum::CONTENT_VIDEO_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'video delete' => [PermissionEnum::CONTENT_VIDEO_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

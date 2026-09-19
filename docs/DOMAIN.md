@@ -215,6 +215,17 @@ Les éléments suivants restent volontairement ouverts :
 - détails de certification, quiz et replay ;
 - contrat API mobile.
 
+## CNT-003 — EditorialVideo livré
+
+`EditorialVideo` est le modèle de référence des vidéos éditoriales administrées
+sous `/admin/content/videos`. Il est distinct de `Training` et porte un titre,
+un slug, un résumé, une description Tiptap nettoyée, un fournisseur (`YOUTUBE`
+ou `EXTERNAL_URL`), une URL externe, un statut `DRAFT`, `PUBLISHED` ou
+`ARCHIVED`, ses dates et les tags génériques `Tag`. La publication et
+l’archivage sont des transitions explicites ; une vidéo YouTube n’est intégrée
+qu’à partir d’un identifiant extrait d’une URL validée. Aucun upload, appel API
+YouTube, live ou écran Frontoffice n’est livré.
+
 ## 12. Références
 
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;

@@ -1,4 +1,4 @@
 <twig:ActionDropdown>
     {% if is_granted('CONTENT_TAG_MANAGE') %}<a href="{{ path('content_admin_tag_edit', {id: tag.id}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>{% endif %}
-    {% if is_granted('CONTENT_TAG_DELETE') %}{{ component('DeleteFormComponent', {id: tag.id, instanceId: instanceId, urlPath: path('content_admin_tag_delete', {id: tag.id}), csrfTokenId: 'delete', buttonLabel: 'Supprimer', description: 'Le tag « ' ~ tag.name ~ ' » sera supprimé s’il n’est utilisé par aucune actualité.'}) }}{% endif %}
+    {% if is_granted('CONTENT_TAG_DELETE') %}{{ component('DeleteFormComponent', {id: tag.id, instanceId: instanceId, urlPath: path('content_admin_tag_delete', {id: tag.id}), csrfTokenId: 'delete', buttonLabel: 'Supprimer', description: 'Le tag « ' ~ tag.name ~ ' » sera supprimé s’il n’est utilisé par aucun contenu.'}) }}{% endif %}
 </twig:ActionDropdown>

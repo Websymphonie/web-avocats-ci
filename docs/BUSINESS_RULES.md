@@ -188,6 +188,19 @@ Les décisions suivantes restent explicitement ouvertes :
   contexte ;
 - une décision non validée doit rester visible comme question ouverte.
 
+## CNT-003 — Vidéos éditoriales
+
+- une nouvelle vidéo commence en `DRAFT` et son statut n’est pas éditable dans
+  le formulaire ;
+- seules les références `http` et `https` sont acceptées ; YouTube exige une
+  URL `watch`, `youtu.be` ou `embed` reconnue ;
+- seule une vidéo brouillon peut être publiée, ce qui fixe `publishedAt` ;
+  seule une vidéo publiée peut être archivée ;
+- le slug peut évoluer en brouillon et reste stable après publication ;
+- un tag utilisé par une vidéo éditoriale ne peut pas être supprimé ;
+- les iframes arbitraires, uploads, synchronisation API YouTube, vidéos Live et
+  surfaces Learning ou Frontoffice restent hors scope.
+
 ## 10. Références
 
 - [`docs/PERMISSIONS.md`](PERMISSIONS.md) ;

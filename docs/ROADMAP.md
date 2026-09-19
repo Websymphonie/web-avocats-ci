@@ -51,6 +51,7 @@ Tickets immédiats :
 CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
+CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
 ```
 
 La phase couvrira ensuite les vidéos éditoriales, galeries, documents,
@@ -122,6 +123,7 @@ DOC-001  Documentation produit                     IN PROGRESS
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
+CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice uniquement
 LRN-001  Training COURSE                           PLANNED
 ```
 

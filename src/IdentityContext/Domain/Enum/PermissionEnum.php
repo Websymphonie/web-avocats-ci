@@ -32,6 +32,10 @@ enum PermissionEnum: string
     case CONTENT_EVENT_CATEGORY_VIEW = 'CONTENT_EVENT_CATEGORY_VIEW';
     case CONTENT_EVENT_CATEGORY_MANAGE = 'CONTENT_EVENT_CATEGORY_MANAGE';
     case CONTENT_EVENT_CATEGORY_DELETE = 'CONTENT_EVENT_CATEGORY_DELETE';
+    case CONTENT_VIDEO_VIEW = 'CONTENT_VIDEO_VIEW';
+    case CONTENT_VIDEO_MANAGE = 'CONTENT_VIDEO_MANAGE';
+    case CONTENT_VIDEO_PUBLISH = 'CONTENT_VIDEO_PUBLISH';
+    case CONTENT_VIDEO_DELETE = 'CONTENT_VIDEO_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -61,6 +65,10 @@ enum PermissionEnum: string
             self::CONTENT_EVENT_CATEGORY_VIEW,
             self::CONTENT_EVENT_CATEGORY_MANAGE,
             self::CONTENT_EVENT_CATEGORY_DELETE,
+            self::CONTENT_VIDEO_VIEW,
+            self::CONTENT_VIDEO_MANAGE,
+            self::CONTENT_VIDEO_PUBLISH,
+            self::CONTENT_VIDEO_DELETE,
         ];
     }
 
@@ -92,6 +100,10 @@ enum PermissionEnum: string
             self::CONTENT_EVENT_CATEGORY_VIEW => 'Catégories d’événements : lecture',
             self::CONTENT_EVENT_CATEGORY_MANAGE => 'Catégories d’événements : création et édition',
             self::CONTENT_EVENT_CATEGORY_DELETE => 'Catégories d’événements : suppression',
+            self::CONTENT_VIDEO_VIEW => 'Vidéos éditoriales : lecture',
+            self::CONTENT_VIDEO_MANAGE => 'Vidéos éditoriales : création et édition',
+            self::CONTENT_VIDEO_PUBLISH => 'Vidéos éditoriales : publication et archivage',
+            self::CONTENT_VIDEO_DELETE => 'Vidéos éditoriales : suppression',
         };
     }
 
@@ -123,6 +135,10 @@ enum PermissionEnum: string
             self::CONTENT_EVENT_CATEGORY_VIEW => ColorEnum::INFO,
             self::CONTENT_EVENT_CATEGORY_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_EVENT_CATEGORY_DELETE => ColorEnum::DANGER,
+            self::CONTENT_VIDEO_VIEW => ColorEnum::INFO,
+            self::CONTENT_VIDEO_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_VIDEO_PUBLISH => ColorEnum::WARNING,
+            self::CONTENT_VIDEO_DELETE => ColorEnum::DANGER,
         };
     }
 }

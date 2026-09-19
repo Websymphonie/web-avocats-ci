@@ -12,6 +12,7 @@ use Websymphonie\ContentContext\Domain\Model\TagListResult;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Factory\TagFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
@@ -71,8 +72,9 @@ final class TagRepository extends ServiceEntityRepository implements TagReposito
         $entityManager = $this->getEntityManager();
         $newsCount = (int) $entityManager->createQueryBuilder()->select('COUNT(news.id)')->from(NewsEntity::class, 'news')->join('news.tags', 'news_tag')->where('news_tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
         $eventCount = (int) $entityManager->createQueryBuilder()->select('COUNT(event.id)')->from(EventEntity::class, 'event')->join('event.tags', 'event_tag')->where('event_tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
+        $videoCount = (int) $entityManager->createQueryBuilder()->select('COUNT(video.id)')->from(EditorialVideoEntity::class, 'video')->join('video.tags', 'video_tag')->where('video_tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
 
-        return $newsCount + $eventCount;
+        return $newsCount + $eventCount + $videoCount;
     }
 
     public function delete(Tag $tag): void

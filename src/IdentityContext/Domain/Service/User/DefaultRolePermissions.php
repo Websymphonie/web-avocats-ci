@@ -74,6 +74,10 @@ final class DefaultRolePermissions
             PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_VIDEO_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_VIDEO_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_VIDEO_PUBLISH->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_VIDEO_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

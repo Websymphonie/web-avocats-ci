@@ -8,4 +8,4 @@ exceptions:
     news_category_in_use: "Cette catégorie est utilisée par une ou plusieurs actualités et ne peut pas être supprimée."
     tag_not_found: "Ce tag est introuvable."
     tag_slug_exists: "Le slug de ce tag est déjà utilisé."
-    tag_in_use: "Ce tag est utilisé par une ou plusieurs actualités et ne peut pas être supprimé."
+    tag_in_use: "Ce tag est utilisé par un ou plusieurs contenus et ne peut pas être supprimé."

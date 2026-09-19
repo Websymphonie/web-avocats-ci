@@ -14,6 +14,6 @@ final readonly class GetTrainingListHandler implements QueryHandler
     public function __construct(private TrainingRepositoryInterface $repository) {}
     public function __invoke(GetTrainingListQuery $query): TrainingListResult
     {
-        return $this->repository->list($query->search, $query->status, $query->visibility, $query->accessType, $query->type, max(1, $query->page), $query->limit);
+        return $this->repository->list($query->search, $query->status, $query->visibility, $query->accessType, $query->type, $query->categoryId, $query->tagId, max(1, $query->page), $query->limit);
     }
 }

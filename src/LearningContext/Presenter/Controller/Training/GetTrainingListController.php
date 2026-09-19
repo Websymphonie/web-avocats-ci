@@ -33,6 +33,8 @@ final class GetTrainingListController extends AbstractController
             status: $query->status instanceof TrainingStatus ? $query->status : null,
             visibility: $query->visibility instanceof TrainingVisibility ? $query->visibility : null,
             accessType: $query->accessType instanceof TrainingAccessType ? $query->accessType : null,
+            categoryId: $query->categoryId,
+            tagId: $query->tagId,
             page: $query->page,
             limit: 20,
         ));

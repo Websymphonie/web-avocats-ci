@@ -147,6 +147,15 @@ possible pour toute formation publiée. Une formation `DRAFT` ou `ARCHIVED` ne
 peut pas activer une nouvelle inscription. Une formation avec des inscriptions
 ne peut pas être supprimée.
 
+### LRN-004A — Classification Learning
+
+Les catégories et tags de formation sont facultatifs, plats et indépendants
+des taxonomies éditoriales Content. Ils peuvent être associés à tout `Training`,
+quel que soit son type futur (`COURSE` ou `LIVE`). Ils n’influencent jamais
+`Enrollment`, `TrainingAccessPolicy` ou les permissions. La suppression d’une
+taxonomie utilisée est refusée ; une suppression bulk conserve les éléments
+utilisés sans provoquer d’erreur serveur.
+
 Les modules et leçons ont un ordre persistant `1..N`, normalisé après chaque
 création, suppression ou réordonnancement. Un module supprimé avec confirmation
 supprime ses leçons ; les médias, contenus et progressions ne sont pas encore

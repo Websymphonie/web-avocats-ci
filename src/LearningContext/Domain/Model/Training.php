@@ -29,6 +29,10 @@ final class Training
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
         public ?int $coverMediaId = null,
+        /** @var list<int> */
+        public array $categoryIds = [],
+        /** @var list<int> */
+        public array $tagIds = [],
     ) {
     }
 
@@ -53,6 +57,16 @@ final class Training
     public function setCoverMedia(?int $mediaId): void
     {
         $this->coverMediaId = $mediaId;
+    }
+
+    /**
+     * @param list<int> $categoryIds
+     * @param list<int> $tagIds
+     */
+    public function replaceClassification(array $categoryIds, array $tagIds): void
+    {
+        $this->categoryIds = array_values(array_unique($categoryIds));
+        $this->tagIds = array_values(array_unique($tagIds));
     }
 
     public function publish(int $moduleCount = 0, int $emptyModuleCount = 0, int $unreadyLessonCount = 0): void

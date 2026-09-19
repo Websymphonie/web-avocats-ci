@@ -26,10 +26,16 @@ final class TrainingFactory
             createdAt: $entity->getCreatedAt(),
             updatedAt: $entity->getUpdatedAt(),
             coverMediaId: $entity->getCoverMediaId(),
+            categoryIds: array_map(static fn ($category): int => $category->getId() ?? 0, $entity->getCategories()->toArray()),
+            tagIds: array_map(static fn ($tag): int => $tag->getId() ?? 0, $entity->getTags()->toArray()),
         );
     }
 
-    public function toEntity(Training $model, ?TrainingEntity $entity = null): TrainingEntity
+    /**
+     * @param list<object> $categoryEntities
+     * @param list<object> $tagEntities
+     */
+    public function toEntity(Training $model, ?TrainingEntity $entity = null, array $categoryEntities = [], array $tagEntities = []): TrainingEntity
     {
         $entity ??= new TrainingEntity();
 
@@ -43,6 +49,8 @@ final class TrainingFactory
             ->setAccessType($model->accessType)
             ->setStatus($model->status)
             ->setPublishedAt($model->publishedAt)
-            ->setCoverMediaId($model->coverMediaId);
+            ->setCoverMediaId($model->coverMediaId)
+            ->replaceCategories($categoryEntities)
+            ->replaceTags($tagEntities);
     }
 }

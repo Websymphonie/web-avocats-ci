@@ -17,5 +17,9 @@ final class CreateTrainingCommand
         public TrainingVisibility $visibility = TrainingVisibility::PUBLIC,
         public TrainingAccessType $accessType = TrainingAccessType::FREE,
         public ?UploadedFile $cover = null,
+        /** @var list<int> */
+        public array $categoryIds = [],
+        /** @var list<int> */
+        public array $tagIds = [],
     ) {}
 }

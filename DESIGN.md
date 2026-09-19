@@ -140,6 +140,11 @@ confirmation and reactivation. There is no enrollment bulk delete action.
 Member enrollment is available only for published free trainings and protected
 resource downloads always pass through the server access policy.
 
+Training classification is presented as a separate Backoffice group with
+compact searchable multi-selects for categories and tags. Category and tag
+registers reuse the existing table, ActionDropdown, BulkSelection and
+AlertDialog patterns; used taxonomies remain visible and cannot be deleted.
+
 The COURSE Programme builder is a nested, inline editor on the training detail
 and edit screens. Modules and lessons use compact ellipsis action menus,
 explicit AlertDialog confirmation for destructive actions, and visible

@@ -7,6 +7,7 @@ namespace Websymphonie\LearningContext\Application\Usecase\CommandHandler;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\LearningContext\Application\Usecase\Command\CreateTrainingCommand;
+use Websymphonie\LearningContext\Application\Service\TrainingClassificationValidator;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsException;
 use Websymphonie\LearningContext\Domain\Model\Training;
@@ -21,6 +22,7 @@ final readonly class CreateTrainingHandler implements CommandHandler
         private RichTextSanitizerInterface $sanitizer,
         private SluggerInterface $slugger,
         private MediaUploadServiceInterface $mediaUpload,
+        private TrainingClassificationValidator $classification,
     ) {}
 
     public function __invoke(CreateTrainingCommand $command): Training
@@ -30,6 +32,7 @@ final readonly class CreateTrainingHandler implements CommandHandler
             throw TrainingSlugAlreadyExistsException::withSlug($slug ?: $command->title);
         }
 
+        [$categoryIds, $tagIds] = $this->classification->validate($command->categoryIds, $command->tagIds);
         $media = null;
         try {
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'training/covers') : null;
@@ -44,6 +47,8 @@ final readonly class CreateTrainingHandler implements CommandHandler
                 visibility: $command->visibility,
                 accessType: $command->accessType,
                 coverMediaId: $media?->id,
+                categoryIds: $categoryIds,
+                tagIds: $tagIds,
             );
 
             return $this->repository->save($training);

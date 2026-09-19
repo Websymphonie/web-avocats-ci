@@ -93,6 +93,12 @@ final class DefaultRolePermissions
             PermissionEnum::LEARNING_TRAINING_DELETE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_ENROLLMENT_VIEW->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_ENROLLMENT_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_CATEGORY_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_CATEGORY_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_CATEGORY_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_TAG_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_TAG_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_TAG_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

@@ -51,6 +51,12 @@ enum PermissionEnum: string
     case LEARNING_TRAINING_DELETE = 'LEARNING_TRAINING_DELETE';
     case LEARNING_ENROLLMENT_VIEW = 'LEARNING_ENROLLMENT_VIEW';
     case LEARNING_ENROLLMENT_MANAGE = 'LEARNING_ENROLLMENT_MANAGE';
+    case LEARNING_CATEGORY_VIEW = 'LEARNING_CATEGORY_VIEW';
+    case LEARNING_CATEGORY_MANAGE = 'LEARNING_CATEGORY_MANAGE';
+    case LEARNING_CATEGORY_DELETE = 'LEARNING_CATEGORY_DELETE';
+    case LEARNING_TAG_VIEW = 'LEARNING_TAG_VIEW';
+    case LEARNING_TAG_MANAGE = 'LEARNING_TAG_MANAGE';
+    case LEARNING_TAG_DELETE = 'LEARNING_TAG_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -99,6 +105,12 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_DELETE,
             self::LEARNING_ENROLLMENT_VIEW,
             self::LEARNING_ENROLLMENT_MANAGE,
+            self::LEARNING_CATEGORY_VIEW,
+            self::LEARNING_CATEGORY_MANAGE,
+            self::LEARNING_CATEGORY_DELETE,
+            self::LEARNING_TAG_VIEW,
+            self::LEARNING_TAG_MANAGE,
+            self::LEARNING_TAG_DELETE,
         ];
     }
 
@@ -149,6 +161,12 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_DELETE => 'Formations : suppression',
             self::LEARNING_ENROLLMENT_VIEW => 'Inscriptions : lecture',
             self::LEARNING_ENROLLMENT_MANAGE => 'Inscriptions : attribution et révocation',
+            self::LEARNING_CATEGORY_VIEW => 'Catégories de formations : lecture',
+            self::LEARNING_CATEGORY_MANAGE => 'Catégories de formations : création et édition',
+            self::LEARNING_CATEGORY_DELETE => 'Catégories de formations : suppression',
+            self::LEARNING_TAG_VIEW => 'Tags de formations : lecture',
+            self::LEARNING_TAG_MANAGE => 'Tags de formations : création et édition',
+            self::LEARNING_TAG_DELETE => 'Tags de formations : suppression',
         };
     }
 
@@ -199,6 +217,12 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_DELETE => ColorEnum::DANGER,
             self::LEARNING_ENROLLMENT_VIEW => ColorEnum::INFO,
             self::LEARNING_ENROLLMENT_MANAGE => ColorEnum::WARNING,
+            self::LEARNING_CATEGORY_VIEW => ColorEnum::INFO,
+            self::LEARNING_CATEGORY_MANAGE => ColorEnum::SUCCESS,
+            self::LEARNING_CATEGORY_DELETE => ColorEnum::DANGER,
+            self::LEARNING_TAG_VIEW => ColorEnum::INFO,
+            self::LEARNING_TAG_MANAGE => ColorEnum::SUCCESS,
+            self::LEARNING_TAG_DELETE => ColorEnum::DANGER,
         };
     }
 }

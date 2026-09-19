@@ -19,5 +19,9 @@ final class UpdateTrainingCommand
         public TrainingAccessType $accessType = TrainingAccessType::FREE,
         public ?UploadedFile $cover = null,
         public bool $removeCover = false,
+        /** @var list<int> */
+        public array $categoryIds = [],
+        /** @var list<int> */
+        public array $tagIds = [],
     ) {}
 }

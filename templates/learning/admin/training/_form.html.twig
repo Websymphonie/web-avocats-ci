@@ -31,6 +31,7 @@
         <p class="text-xs text-muted-foreground">Le paiement et les règles d’accès seront raccordés ultérieurement.</p>
     </div>
 </div>
+<section class="space-y-4 rounded-xl border border-border bg-muted/20 p-4"><div><h2 class="text-sm font-semibold">Classification</h2><p class="mt-1 text-xs text-muted-foreground">Les catégories et tags servent à organiser les formations, pas à contrôler les accès.</p></div><div class="grid gap-5 md:grid-cols-2"><div class="space-y-2">{{ form_label(form.categoryIds, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.categoryIds, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}{{ form_errors(form.categoryIds) }}</div><div class="space-y-2">{{ form_label(form.tagIds, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.tagIds, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}{{ form_errors(form.tagIds) }}</div></div></section>
 <div class="space-y-3" data-controller="cover-upload">
     {{ form_label(form.cover, null, {label_attr: {class: 'text-sm font-medium'}}) }}
     <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem]">

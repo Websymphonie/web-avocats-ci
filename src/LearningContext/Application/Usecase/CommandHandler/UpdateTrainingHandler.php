@@ -7,6 +7,7 @@ namespace Websymphonie\LearningContext\Application\Usecase\CommandHandler;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
+use Websymphonie\LearningContext\Application\Service\TrainingClassificationValidator;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsException;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
@@ -23,11 +24,13 @@ final readonly class UpdateTrainingHandler implements CommandHandler
         private SluggerInterface $slugger,
         private MediaUploadServiceInterface $mediaUpload,
         private MediaRepositoryInterface $mediaRepository,
+        private TrainingClassificationValidator $classification,
     ) {}
 
     public function __invoke(UpdateTrainingCommand $command): void
     {
         $training = $this->repository->getById($command->id);
+        [$categoryIds, $tagIds] = $this->classification->validate($command->categoryIds, $command->tagIds);
         $slug = strtolower($this->slugger->slug($command->title)->toString());
         if ($training->status === TrainingStatus::DRAFT && ($slug === '' || $this->repository->slugExists($slug, $training->id))) {
             throw TrainingSlugAlreadyExistsException::withSlug($slug ?: $command->title);
@@ -41,6 +44,7 @@ final readonly class UpdateTrainingHandler implements CommandHandler
             visibility: $command->visibility,
             accessType: $command->accessType,
         );
+        $training->replaceClassification($categoryIds, $tagIds);
 
         $oldCoverId = $training->coverMediaId;
         $media = null;

@@ -22,8 +22,8 @@
                 <twig:ux:icon name="lucide:chevron-down" class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/>
             </summary>
             <div class="border-t border-border px-6 py-5">
-                {{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,180px)_minmax(0,180px)_minmax(0,180px)_auto]', novalidate: true}}) }}
-                {% for field in [filterForm.search, filterForm.status, filterForm.visibility, filterForm.accessType] %}
+                {{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_repeat(5,minmax(0,160px))_auto]', novalidate: true}}) }}
+                {% for field in [filterForm.search, filterForm.status, filterForm.visibility, filterForm.accessType, filterForm.categoryId, filterForm.tagId] %}
                     <div class="space-y-2">{{ form_label(field, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(field, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
                 {% endfor %}
                 <div class="flex items-end gap-2">

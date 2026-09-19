@@ -198,6 +198,19 @@ indisponibles sans flux métier ultérieur. Les téléchargements membre résolv
 la ressource jusqu’à sa formation avant d’appliquer cette policy, ce qui
 empêche l’IDOR.
 
+### LRN-004A — Catégories et tags des formations
+
+`TrainingCategory` et `TrainingTag` sont deux taxonomies propres à
+`LearningContext`. Elles restent plates, facultatives et servent uniquement à
+la classification, à la découverte future et au filtrage du Backoffice. Elles
+ne sont ni des permissions ni un mécanisme d’autorisation et ne réutilisent
+pas `ContentContext\Tag`.
+
+Les associations sont ManyToMany au niveau persistence entre `Training` et
+chaque taxonomie. Les slugs sont uniques dans leur propre type et sont
+regénérés lors d’un renommage tant qu’aucune URL publique Learning n’existe.
+Une catégorie ou un tag utilisé par une formation ne peut pas être supprimé.
+
 ## 6. Visibilité et accès Learning
 
 La visibilité et l’accès sont indépendants :

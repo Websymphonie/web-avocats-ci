@@ -33,6 +33,8 @@ final class UpdateTrainingController extends AbstractController
             description: $training->description,
             visibility: $training->visibility,
             accessType: $training->accessType,
+            categoryIds: $training->categoryIds,
+            tagIds: $training->tagIds,
         );
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);

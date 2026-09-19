@@ -390,3 +390,12 @@ défaut à `ROLE_ADMIN` et `ROLE_SUPER_ADMIN`, mais pas à `ROLE_AVOCAT` ni
 `ROLE_USER`. L’auto-inscription membre et la policy de lecture ne dépendent
 pas de ces permissions Backoffice. Paiements, LIVE et progression restent hors
 périmètre.
+
+### Taxonomies Learning — LRN-004A
+
+`LEARNING_CATEGORY_VIEW`, `LEARNING_CATEGORY_MANAGE` et
+`LEARNING_CATEGORY_DELETE`, ainsi que `LEARNING_TAG_VIEW`,
+`LEARNING_TAG_MANAGE` et `LEARNING_TAG_DELETE`, sont accordées par défaut à
+`ROLE_ADMIN` et `ROLE_SUPER_ADMIN`. Elles ne sont pas accordées par défaut à
+`ROLE_AVOCAT` ni `ROLE_USER`. Ces permissions ne contrôlent jamais l’accès aux
+formations.

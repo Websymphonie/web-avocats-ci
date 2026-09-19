@@ -32,6 +32,8 @@ interface TrainingRepositoryInterface
         ?TrainingVisibility $visibility,
         ?TrainingAccessType $accessType,
         ?TrainingType $type,
+        ?int $categoryId,
+        ?int $tagId,
         int $page,
         int $limit,
     ): TrainingListResult;

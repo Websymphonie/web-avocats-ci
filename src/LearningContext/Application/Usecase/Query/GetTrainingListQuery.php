@@ -17,6 +17,8 @@ final class GetTrainingListQuery
         public ?TrainingVisibility $visibility = null,
         public ?TrainingAccessType $accessType = null,
         public ?TrainingType $type = null,
+        public ?int $categoryId = null,
+        public ?int $tagId = null,
         public int $page = 1,
         public int $limit = 20,
     ) {}

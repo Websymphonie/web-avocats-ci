@@ -17,6 +17,8 @@ use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\TrainingListResult;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingCategory\TrainingCategoryEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingTag\TrainingTagEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Factory\TrainingFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
 use Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface;
@@ -36,7 +38,9 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
     public function save(Training $training): Training
     {
         $entity = $training->id > 0 ? $this->find($training->id) : null;
-        $entity = $this->factory->toEntity($training, $entity);
+        $categoryEntities = array_map(fn (int $id): TrainingCategoryEntity => $this->getEntityManager()->getReference(TrainingCategoryEntity::class, $id), $training->categoryIds);
+        $tagEntities = array_map(fn (int $id): TrainingTagEntity => $this->getEntityManager()->getReference(TrainingTagEntity::class, $id), $training->tagIds);
+        $entity = $this->factory->toEntity($training, $entity, $categoryEntities, $tagEntities);
         DbLogListener::disable();
         try {
             $this->manager->execute($entity, $training->id > 0 ? DbActionEnum::EDIT : DbActionEnum::NEW);
@@ -125,6 +129,8 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         ?TrainingVisibility $visibility,
         ?TrainingAccessType $accessType,
         ?TrainingType $type,
+        ?int $categoryId,
+        ?int $tagId,
         int $page,
         int $limit,
     ): TrainingListResult {
@@ -144,6 +150,8 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         if ($type !== null) {
             $qb->andWhere('training.type = :type')->setParameter('type', $type);
         }
+        if ($categoryId !== null) { $qb->join('training.categories', 'category')->andWhere('category.id = :categoryId')->setParameter('categoryId', $categoryId); }
+        if ($tagId !== null) { $qb->join('training.tags', 'tag')->andWhere('tag.id = :tagId')->setParameter('tagId', $tagId); }
 
         $total = (int) (clone $qb)->select('COUNT(training.id)')->getQuery()->getSingleScalarResult();
         $entities = $qb->orderBy('training.updatedAt', 'DESC')

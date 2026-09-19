@@ -363,6 +363,26 @@ et de téléchargements protégés par
 ressource → leçon → module → formation précède l’autorisation. Une formation
 ayant des inscriptions ne peut pas être supprimée.
 
+## 12.4 LearningContext — catégories et tags LRN-004A
+
+`TrainingCategory` et `TrainingTag` appartiennent exclusivement à
+`LearningContext`. Ce sont deux taxonomies plates, facultatives et distinctes
+du `ContentContext\Tag` : elles ne participent ni à l’autorisation ni à la
+politique d’accès aux formations.
+
+Les associations `Training` ↔ catégories/tags sont persistées par deux tables
+ManyToMany dédiées. Le domaine ne dépend que d’identifiants scalaires ; les
+entités Doctrine et les tables de jointure restent dans l’infrastructure
+Learning. Les commandes de création et de mise à jour valident explicitement
+chaque identifiant demandé et refusent les associations inconnues.
+
+Les catégories et tags utilisés ne sont pas supprimables. Une suppression en
+lot ignore les éléments encore utilisés et retourne le résultat de l’opération
+sans provoquer d’erreur serveur. Les listes Backoffice exposent leurs propres
+filtres, tandis que le listing Training peut combiner une catégorie et un tag
+avec ses filtres existants. Aucun menu ou stockage de médiathèque partagé n’est
+introduit par cette tranche.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

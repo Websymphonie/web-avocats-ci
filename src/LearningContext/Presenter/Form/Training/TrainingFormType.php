@@ -17,10 +17,13 @@ use Websymphonie\LearningContext\Application\Usecase\Command\CreateTrainingComma
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Repository\TrainingCategoryRepositoryInterface;
+use Websymphonie\LearningContext\Domain\Repository\TrainingTagRepositoryInterface;
 
 /** @extends AbstractType<CreateTrainingCommand|UpdateTrainingCommand> */
 final class TrainingFormType extends AbstractType
 {
+    public function __construct(private readonly TrainingCategoryRepositoryInterface $categories, private readonly TrainingTagRepositoryInterface $tags) {}
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -62,6 +65,8 @@ final class TrainingFormType extends AbstractType
                 'choice_attr' => static fn (?TrainingAccessType $value): array => ['title' => $value?->description() ?? ''],
                 'required' => true,
             ])
+            ->add('categoryIds', ChoiceType::class, ['label' => 'Catégories', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]])
+            ->add('tagIds', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]])
             ->add('cover', FileType::class, [
                 'label' => 'Image de couverture',
                 'required' => false,
@@ -89,4 +94,15 @@ final class TrainingFormType extends AbstractType
     {
         $resolver->setDefaults(['translation_domain' => false]);
     }
+
+    /**
+     * @param list<object> $items
+     * @return array<string, int>
+     */
+    private static function choices(array $items): array { $choices = []; foreach ($items as $item) { $choices[$item->name] = $item->id; } return $choices; }
+    /**
+     * @param list<object> $items
+     * @return array<string, int>
+     */
+    private static function tagChoices(array $items): array { return self::choices($items); }
 }

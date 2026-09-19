@@ -77,6 +77,9 @@
   reactivation. There is no enrollment bulk delete action. Member enrollment is
   a CSRF-protected POST for published `FREE` trainings; resource downloads
   always pass through the server access policy.
+- Learning taxonomies live under `Formations > Catégories` and `Formations > Tags`, never under Content. Training
+  forms use the existing autocomplete/multi-select foundation with chips, keyboard removal and restored selections.
+  Category and tag filters remain combinable with the existing Training filters.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED`
   documents. Backoffice uses `/admin/content/documents/{id}/download`.
 

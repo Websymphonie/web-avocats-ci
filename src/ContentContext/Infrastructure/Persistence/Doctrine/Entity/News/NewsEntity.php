@@ -41,6 +41,10 @@ class NewsEntity
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $publishedAt = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $coverMediaId = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $photoGalleryId = null;
 
     /** @var Collection<int, NewsCategoryEntity> */
     #[ORM\ManyToMany(targetEntity: NewsCategoryEntity::class)]
@@ -70,6 +74,10 @@ class NewsEntity
     public function setStatus(NewsStatus $status): self { $this->status = $status; return $this; }
     public function getPublishedAt(): ?DateTimeImmutable { return $this->publishedAt; }
     public function setPublishedAt(?DateTimeImmutable $publishedAt): self { $this->publishedAt = $publishedAt; return $this; }
+    public function getCoverMediaId(): ?int { return $this->coverMediaId; }
+    public function setCoverMediaId(?int $value): self { $this->coverMediaId = $value; return $this; }
+    public function getPhotoGalleryId(): ?int { return $this->photoGalleryId; }
+    public function setPhotoGalleryId(?int $value): self { $this->photoGalleryId = $value; return $this; }
     /** @return Collection<int, NewsCategoryEntity> */
     public function getCategories(): Collection { return $this->categories; }
     /** @param iterable<NewsCategoryEntity> $categories */

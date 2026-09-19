@@ -35,6 +35,8 @@ final class Event
         public ?DateTimeImmutable $updatedAt = null,
         public array $categories = [],
         public array $tags = [],
+        public ?int $coverMediaId = null,
+        public ?int $photoGalleryId = null,
     ) {
         self::assertDetails($format, $startsAt, $endsAt, $venueName, $address, $onlineUrl);
     }
@@ -71,6 +73,10 @@ final class Event
 
     /** @param list<Tag> $tags */
     public function replaceTags(array $tags): void { $this->tags = $tags; }
+
+    public function setCoverMedia(?int $mediaId): void { $this->coverMediaId = $mediaId; }
+
+    public function setPhotoGallery(?int $galleryId): void { $this->photoGalleryId = $galleryId; }
 
     public function publish(): void
     {

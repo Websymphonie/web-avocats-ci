@@ -29,6 +29,6 @@ final class CreateNewsController extends AbstractController
             return $this->redirectToRoute('content_admin_news_list');
         }
 
-        return $this->render('content/admin/news/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('content/admin/news/create.html.twig', ['form' => $form->createView(), 'coverUrl' => null, 'photoGallery' => null]);
     }
 }

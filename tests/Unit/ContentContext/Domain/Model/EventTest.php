@@ -52,6 +52,15 @@ final class EventTest extends TestCase
         $event->cancel();
     }
 
+    public function testCoverAndGalleryAreOptionalScalarReferences(): void
+    {
+        $event = $this->event();
+        $event->setCoverMedia(12);
+        $event->setPhotoGallery(7);
+        self::assertSame(12, $event->coverMediaId);
+        self::assertSame(7, $event->photoGalleryId);
+    }
+
     private function event(?DateTimeImmutable $startsAt = null, ?DateTimeImmutable $endsAt = null): Event
     {
         return new Event(0, '', 'Titre', 'titre', null, '<p>Description</p>', EventFormat::IN_PERSON, $startsAt ?? new DateTimeImmutable('2026-09-20 10:00'), $endsAt ?? new DateTimeImmutable('2026-09-20 12:00'), 'Maison de l’Avocat', 'Abidjan, Côte d’Ivoire', null);

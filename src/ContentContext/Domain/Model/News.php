@@ -25,6 +25,8 @@ final class News
         public array $categories = [],
         /** @var list<Tag> */
         public array $tags = [],
+        public ?int $coverMediaId = null,
+        public ?int $photoGalleryId = null,
     ) {
     }
 
@@ -50,6 +52,10 @@ final class News
     {
         $this->tags = $tags;
     }
+
+    public function setCoverMedia(?int $mediaId): void { $this->coverMediaId = $mediaId; }
+
+    public function setPhotoGallery(?int $galleryId): void { $this->photoGalleryId = $galleryId; }
 
     public function publish(): void
     {

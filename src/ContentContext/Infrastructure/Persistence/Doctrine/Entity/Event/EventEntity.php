@@ -38,6 +38,8 @@ class EventEntity
     #[ORM\Column(length: 2048, nullable: true)] private ?string $onlineUrl = null;
     #[ORM\Column(enumType: EventStatus::class)] private EventStatus $status = EventStatus::DRAFT;
     #[ORM\Column(type: 'datetime_immutable', nullable: true)] private ?DateTimeImmutable $publishedAt = null;
+    #[ORM\Column(type: 'integer', nullable: true)] private ?int $coverMediaId = null;
+    #[ORM\Column(type: 'integer', nullable: true)] private ?int $photoGalleryId = null;
 
     /** @var Collection<int, EventCategoryEntity> */
     #[ORM\ManyToMany(targetEntity: EventCategoryEntity::class)]
@@ -80,6 +82,10 @@ class EventEntity
     public function setStatus(EventStatus $value): self { $this->status = $value; return $this; }
     public function getPublishedAt(): ?DateTimeImmutable { return $this->publishedAt; }
     public function setPublishedAt(?DateTimeImmutable $value): self { $this->publishedAt = $value; return $this; }
+    public function getCoverMediaId(): ?int { return $this->coverMediaId; }
+    public function setCoverMediaId(?int $value): self { $this->coverMediaId = $value; return $this; }
+    public function getPhotoGalleryId(): ?int { return $this->photoGalleryId; }
+    public function setPhotoGalleryId(?int $value): self { $this->photoGalleryId = $value; return $this; }
     /** @return Collection<int, EventCategoryEntity> */
     public function getCategories(): Collection { return $this->categories; }
     /** @param iterable<EventCategoryEntity> $items */

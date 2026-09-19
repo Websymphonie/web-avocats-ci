@@ -16,7 +16,8 @@ final class ContentMenu implements SidebarModuleInterface
             MenuFactory::item('Catégories d’événements', [RouteEnum::CONTENT_EVENT_CATEGORY_INDEX->value, 'content_admin_event_category_new', 'content_admin_event_category_edit'], [], 'lucide:folders', RouteEnum::CONTENT_EVENT_CATEGORY_INDEX->value, self::GROUP, permission: 'CONTENT_EVENT_CATEGORY_VIEW', groupOrder: 2, order: 4),
             MenuFactory::item('Vidéos', [RouteEnum::CONTENT_VIDEO_INDEX->value, 'content_admin_video_new', 'content_admin_video_show', 'content_admin_video_edit'], [], 'lucide:clapperboard', RouteEnum::CONTENT_VIDEO_INDEX->value, self::GROUP, permission: 'CONTENT_VIDEO_VIEW', groupOrder: 2, order: 5),
             MenuFactory::item('Galeries photos', [RouteEnum::CONTENT_GALLERY_INDEX->value, 'content_admin_gallery_new', 'content_admin_gallery_show', 'content_admin_gallery_edit'], [], 'lucide:images', RouteEnum::CONTENT_GALLERY_INDEX->value, self::GROUP, permission: 'CONTENT_GALLERY_VIEW', groupOrder: 2, order: 6),
-            MenuFactory::item('Tags', [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'], [], 'lucide:tags', RouteEnum::CONTENT_TAG_INDEX->value, self::GROUP, permission: 'CONTENT_TAG_VIEW', groupOrder: 2, order: 7),
+            MenuFactory::item('Documents', [RouteEnum::CONTENT_DOCUMENT_INDEX->value, 'content_admin_document_new', 'content_admin_document_show', 'content_admin_document_edit'], [], 'lucide:file-text', RouteEnum::CONTENT_DOCUMENT_INDEX->value, self::GROUP, permission: 'CONTENT_DOCUMENT_VIEW', groupOrder: 2, order: 7),
+            MenuFactory::item('Tags', [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'], [], 'lucide:tags', RouteEnum::CONTENT_TAG_INDEX->value, self::GROUP, permission: 'CONTENT_TAG_VIEW', groupOrder: 2, order: 8),
         ];
     }
 }

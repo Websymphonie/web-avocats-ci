@@ -7,10 +7,16 @@ parameters:
   app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
   app.sender_name: '%env(MAILER_SENDER_NAME)%'
   upload_dir: '/uploads'
-  media.gallery.directory: '%kernel.project_dir%/public/uploads/galleries'
-  media.gallery.prefix: 'uploads/galleries'
+  app.storage.default_dir: '/shared/storage'
+  app.storage_dir: '%env(default:app.storage.default_dir:APP_STORAGE_DIR)%'
+  app.storage.public_dir: '%app.storage_dir%/public'
+  app.storage.private_dir: '%app.storage_dir%/private'
+  app.storage.gallery_dir: '%app.storage.public_dir%/galleries'
+  app.storage.document_dir: '%app.storage.private_dir%/documents'
   media.gallery.max_size: 5242880
+  media.document.max_size: 20971520
   app.logo_default: '/assets/logo.png'
+  app.favicon: '/assets/favicon.ico'
   app.avatar_default: '/assets/avatar.png'
   account_activation_ttl: '%env(ACCOUNT_ACTIVATION_TTL)%'
   password_reset_ttl: '%env(PASSWORD_RESET_TTL)%'
@@ -26,9 +32,9 @@ services:
       string $uploadDir: '%upload_dir%'
       string $activationTtl: '%account_activation_ttl%'
       string $resetTtl: '%password_reset_ttl%'
-      string $galleryMediaDirectory: '%media.gallery.directory%'
-      string $galleryMediaPrefix: '%media.gallery.prefix%'
+      string $appStorageDir: '%app.storage_dir%'
       int $galleryMediaMaxSize: '%media.gallery.max_size%'
+      int $documentMaxSize: '%media.document.max_size%'
 
   _instanceof:
     Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:
@@ -67,7 +73,7 @@ services:
       $modules: !tagged_iterator app.sidebar_module
 
   Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig:
-    factory: ['Websymphonie\ContentContext\Infrastructure\Service\RichText\SymfonyRichTextSanitizer', 'config']
+    factory: [ 'Websymphonie\ContentContext\Infrastructure\Service\RichText\SymfonyRichTextSanitizer', 'config' ]
 
   Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface:
     class: Symfony\Component\HtmlSanitizer\HtmlSanitizer
@@ -88,6 +94,15 @@ services:
 
   Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\MediaPublicUrlResolver
+
+  Websymphonie\MediaContext\Application\Service\StoredFileStorageInterface:
+    alias: Websymphonie\MediaContext\Infrastructure\Service\PrivateDocumentStorage
+
+  Websymphonie\MediaContext\Application\Service\StoredFileUploadServiceInterface:
+    alias: Websymphonie\MediaContext\Infrastructure\Service\LocalStoredFileUploadService
+
+  Websymphonie\MediaContext\Application\Service\StoredFileUsageCheckerInterface:
+    alias: Websymphonie\ContentContext\Application\Service\DocumentStoredFileUsageChecker
 
   Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler:
     class: Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler

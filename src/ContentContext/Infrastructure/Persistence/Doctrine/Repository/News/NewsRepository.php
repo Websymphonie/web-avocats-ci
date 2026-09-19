@@ -99,6 +99,9 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
         );
     }
 
+    public function countMediaUsage(int $mediaId): int { return (int) $this->createQueryBuilder('news')->select('COUNT(news.id)')->where('news.coverMediaId = :mediaId')->setParameter('mediaId', $mediaId)->getQuery()->getSingleScalarResult(); }
+    public function countPhotoGalleryUsage(int $galleryId): int { return (int) $this->createQueryBuilder('news')->select('COUNT(news.id)')->where('news.photoGalleryId = :galleryId')->setParameter('galleryId', $galleryId)->getQuery()->getSingleScalarResult(); }
+
     public function list(?string $search, ?NewsStatus $status, int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult
     {
         $qb = $this->createQueryBuilder('news');

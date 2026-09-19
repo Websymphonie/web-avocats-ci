@@ -40,6 +40,11 @@ enum PermissionEnum: string
     case CONTENT_GALLERY_MANAGE = 'CONTENT_GALLERY_MANAGE';
     case CONTENT_GALLERY_PUBLISH = 'CONTENT_GALLERY_PUBLISH';
     case CONTENT_GALLERY_DELETE = 'CONTENT_GALLERY_DELETE';
+    case CONTENT_DOCUMENT_VIEW = 'CONTENT_DOCUMENT_VIEW';
+    case CONTENT_DOCUMENT_MANAGE = 'CONTENT_DOCUMENT_MANAGE';
+    case CONTENT_DOCUMENT_PUBLISH = 'CONTENT_DOCUMENT_PUBLISH';
+    case CONTENT_DOCUMENT_DELETE = 'CONTENT_DOCUMENT_DELETE';
+    case CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD = 'CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -77,6 +82,11 @@ enum PermissionEnum: string
             self::CONTENT_GALLERY_MANAGE,
             self::CONTENT_GALLERY_PUBLISH,
             self::CONTENT_GALLERY_DELETE,
+            self::CONTENT_DOCUMENT_VIEW,
+            self::CONTENT_DOCUMENT_MANAGE,
+            self::CONTENT_DOCUMENT_PUBLISH,
+            self::CONTENT_DOCUMENT_DELETE,
+            self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
         ];
     }
 
@@ -116,6 +126,11 @@ enum PermissionEnum: string
             self::CONTENT_GALLERY_MANAGE => 'Galeries photos : création et édition',
             self::CONTENT_GALLERY_PUBLISH => 'Galeries photos : publication et archivage',
             self::CONTENT_GALLERY_DELETE => 'Galeries photos : suppression',
+            self::CONTENT_DOCUMENT_VIEW => 'Documents : lecture',
+            self::CONTENT_DOCUMENT_MANAGE => 'Documents : création et édition',
+            self::CONTENT_DOCUMENT_PUBLISH => 'Documents : publication et archivage',
+            self::CONTENT_DOCUMENT_DELETE => 'Documents : suppression',
+            self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => 'Documents : téléchargement restreint',
         };
     }
 
@@ -155,6 +170,11 @@ enum PermissionEnum: string
             self::CONTENT_GALLERY_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_GALLERY_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_GALLERY_DELETE => ColorEnum::DANGER,
+            self::CONTENT_DOCUMENT_VIEW => ColorEnum::INFO,
+            self::CONTENT_DOCUMENT_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_DOCUMENT_PUBLISH => ColorEnum::WARNING,
+            self::CONTENT_DOCUMENT_DELETE => ColorEnum::DANGER,
+            self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => ColorEnum::WARNING,
         };
     }
 }

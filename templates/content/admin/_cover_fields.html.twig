@@ -1,0 +1,33 @@
+<section class="space-y-4 rounded-xl border border-border bg-muted/20 p-4" aria-labelledby="media-section-title">
+    <div>
+        <h2 id="media-section-title" class="text-sm font-semibold">Médias</h2>
+        <p class="mt-1 text-xs text-muted-foreground">Image publique JPEG, PNG ou WebP · 5 Mio maximum.</p>
+    </div>
+    <div class="grid gap-5 md:grid-cols-2">
+        <div class="space-y-3" data-controller="cover-upload">
+            <div class="flex items-center justify-between gap-3">
+                {{ form_label(form.cover, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                <button type="button" class="inline-flex h-9 items-center gap-2 rounded-lg border border-input bg-background px-3 text-sm font-medium hover:bg-muted" data-action="cover-upload#choose">
+                    <twig:ux:icon name="lucide:image-plus" class="size-4"/>{{ coverUrl|default(null) ? 'Remplacer' : 'Choisir une image' }}
+                </button>
+            </div>
+            <div class="rounded-xl border border-border bg-background p-3" data-cover-upload-target="preview" aria-live="polite">
+                {% if coverUrl|default(null) %}<img src="{{ coverUrl }}" alt="Image de couverture actuelle" class="h-36 w-full rounded-lg object-cover"><p class="mt-2 text-xs text-muted-foreground">Image actuelle</p>{% else %}<p class="py-10 text-center text-sm text-muted-foreground">Aucune couverture sélectionnée.</p>{% endif %}
+            </div>
+            {{ form_widget(form.cover, {attr: {class: 'sr-only', 'data-cover-upload-target': 'input', 'data-action': 'change->cover-upload#changed'}}) }}
+            {% if form.removeCover is defined %}<label class="flex items-center gap-2 text-sm text-muted-foreground">{{ form_widget(form.removeCover, {attr: {'data-cover-upload-target': 'remove', class: 'size-4 rounded border-input accent-primary'}}) }}Retirer la couverture actuelle</label>{% endif %}
+            <button type="button" class="text-sm font-medium text-destructive hover:underline" data-action="cover-upload#remove">Retirer</button>
+            {{ form_errors(form.cover) }}
+        </div>
+        <div class="space-y-3">
+            {{ form_label(form.photoGalleryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.photoGalleryId, {attr: {class: 'form-multi-select min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}
+            {{ form_errors(form.photoGalleryId) }}
+            {% if photoGallery|default(null) %}
+                <div class="rounded-lg border border-border bg-background p-3 text-sm">
+                    <div class="flex items-start justify-between gap-3"><div><p class="font-medium">{{ photoGallery.title }}</p><p class="mt-1 text-xs text-muted-foreground">{{ photoGallery.items|length }} photo(s) · {{ photoGallery.status.value }}</p></div><a class="text-primary hover:underline" href="{{ path('content_admin_gallery_edit', {id: photoGallery.id}) }}">Gérer la galerie</a></div>
+                </div>
+            {% else %}<a class="inline-flex text-sm font-medium text-primary hover:underline" href="{{ path('content_admin_gallery_new') }}" target="_blank" rel="noopener">Créer une galerie</a>{% endif %}
+        </div>
+    </div>
+</section>

@@ -7,6 +7,8 @@ namespace Websymphonie\ContentContext\Presenter\Form\Event;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -15,16 +17,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Websymphonie\ContentContext\Application\Usecase\Command\Event\CreateEventCommand;
-use Websymphonie\ContentContext\Application\Usecase\Command\Event\UpdateEventCommand;
 use Websymphonie\ContentContext\Domain\Enum\EventFormat;
 use Websymphonie\ContentContext\Domain\Repository\EventCategoryRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\PhotoGalleryRepositoryInterface;
+use Websymphonie\ContentContext\Application\Usecase\Command\Event\UpdateEventCommand;
 
 /** @extends AbstractType<CreateEventCommand|UpdateEventCommand> */
 final class EventFormType extends AbstractType
 {
-    public function __construct(private readonly EventCategoryRepositoryInterface $categoryRepository, private readonly TagRepositoryInterface $tagRepository) {}
+    public function __construct(private readonly EventCategoryRepositoryInterface $categoryRepository, private readonly TagRepositoryInterface $tagRepository, private readonly PhotoGalleryRepositoryInterface $galleryRepository) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -38,7 +42,12 @@ final class EventFormType extends AbstractType
             ->add('address', TextareaType::class, ['label' => 'Adresse', 'required' => false, 'attr' => ['rows' => 2, 'placeholder' => 'Adresse complète']])
             ->add('onlineUrl', TextType::class, ['label' => 'URL de participation', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['http', 'https'], message: 'Utilisez une URL http ou https valide.')]])
             ->add('categories', ChoiceType::class, ['label' => 'Catégories', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->categoryRepository->list(null, 1, 200)->items), 'placeholder' => 'Sélectionner une ou plusieurs catégories', 'autocomplete' => true, 'tom_select_options' => self::multiSelectOptions()])
-            ->add('tags', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Sélectionner un ou plusieurs tags', 'autocomplete' => true, 'tom_select_options' => self::multiSelectOptions()]);
+            ->add('tags', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Sélectionner un ou plusieurs tags', 'autocomplete' => true, 'tom_select_options' => self::multiSelectOptions()])
+            ->add('cover', FileType::class, ['label' => 'Image de couverture', 'required' => false, 'mapped' => true, 'attr' => ['accept' => 'image/jpeg,image/png,image/webp'], 'constraints' => [new File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Seules les images JPEG, PNG et WebP sont acceptées.')]])
+            ->add('photoGalleryId', ChoiceType::class, ['label' => 'Galerie photo', 'required' => false, 'placeholder' => 'Aucune galerie', 'choices' => self::galleryChoices($this->galleryRepository->list(null, null, null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]]);
+        if ($options['data'] instanceof UpdateEventCommand) {
+            $builder->add('removeCover', CheckboxType::class, ['label' => 'Retirer la couverture actuelle', 'required' => false]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -69,4 +78,9 @@ final class EventFormType extends AbstractType
     private static function choices(array $items): array { $choices = []; foreach ($items as $item) { $choices[$item->name . ' · ' . $item->slug] = $item->id; } return $choices; }
     /** @return array{plugins: array{remove_button: array{title: string}}, create: bool, copyClassesToDropdown: bool} */
     private static function multiSelectOptions(): array { return ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]; }
+    /**
+     * @param list<object> $galleries
+     * @return array<string, int>
+     */
+    private static function galleryChoices(array $galleries): array { $choices = []; foreach ($galleries as $gallery) { $choices[$gallery->title . ' · ' . count($gallery->items) . ' photo(s) · ' . $gallery->status->value] = $gallery->id; } return $choices; }
 }

@@ -15,9 +15,9 @@ use Websymphonie\MediaContext\Domain\Model\Media;
 final readonly class LocalPublicImageStorage implements MediaStorageInterface
 {
     /** @param array<string, string> $extensions */
-    public function __construct(private string $galleryMediaDirectory, private string $galleryMediaPrefix, private int $galleryMediaMaxSize, private Filesystem $filesystem, private array $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp']) {}
+    public function __construct(private string $appStorageDir, private int $galleryMediaMaxSize, private Filesystem $filesystem, private array $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp']) {}
 
-    public function store(UploadedFile $file): StoredMediaFile
+    public function store(UploadedFile $file, string $storagePrefix = 'galleries'): StoredMediaFile
     {
         if (!$file->isValid()) { throw new InvalidMediaUploadException('Le téléversement de l’image a échoué.'); }
         $size = $file->getSize();
@@ -26,17 +26,31 @@ final readonly class LocalPublicImageStorage implements MediaStorageInterface
         if (!isset($this->extensions[$mimeType])) { throw new InvalidMediaUploadException('Seules les images JPEG, PNG et WebP sont acceptées.'); }
         $imageInfo = @getimagesize($file->getPathname());
         if (!is_array($imageInfo) || (int) $imageInfo[0] < 1 || (int) $imageInfo[1] < 1) { throw new InvalidMediaUploadException('Le fichier envoyé n’est pas une image décodable.'); }
+        if (!preg_match('/^(?:galleries|content\/covers)$/', $storagePrefix)) {
+            throw new InvalidMediaUploadException('Le préfixe de stockage de l’image est invalide.');
+        }
         $storageName = bin2hex(random_bytes(24)) . '.' . $this->extensions[$mimeType];
-        $this->filesystem->mkdir($this->galleryMediaDirectory, 0755);
-        try { $file->move($this->galleryMediaDirectory, $storageName); } catch (\Throwable $exception) { throw new InvalidMediaUploadException('Impossible de stocker cette image.', previous: $exception); }
-        return new StoredMediaFile((string) $file->getClientOriginalName(), $storageName, $mimeType, (int) $size, (int) $imageInfo[0], (int) $imageInfo[1], trim($this->galleryMediaPrefix, '/') . '/' . $storageName);
+        $directory = $this->publicDirectory($storagePrefix);
+        $this->filesystem->mkdir($directory, 0755);
+        try { $file->move($directory, $storageName); } catch (\Throwable $exception) { throw new InvalidMediaUploadException('Impossible de stocker cette image.', previous: $exception); }
+        return new StoredMediaFile((string) $file->getClientOriginalName(), $storageName, $mimeType, (int) $size, (int) $imageInfo[0], (int) $imageInfo[1], $storagePrefix . '/' . $storageName);
     }
 
     public function delete(Media $media): void
     {
-        $expectedPath = trim($this->galleryMediaPrefix, '/') . '/' . $media->storageName;
-        if (!hash_equals($expectedPath, $media->storagePath)) { throw new InvalidMediaUploadException('Le chemin de stockage du média est invalide.'); }
-        $path = rtrim($this->galleryMediaDirectory, '/') . '/' . $media->storageName;
+        if (!preg_match('/^[a-f0-9]{48}\.(jpg|png|webp)$/', $media->storageName)) {
+            throw new InvalidMediaUploadException('Le nom de stockage du média est invalide.');
+        }
+        $galleryPath = 'galleries/' . $media->storageName;
+        $coverPath = 'content/covers/' . $media->storageName;
+        if (!in_array($media->storagePath, [$galleryPath, $coverPath], true)) { throw new InvalidMediaUploadException('Le chemin de stockage du média est invalide.'); }
+        $storagePrefix = $media->storagePath === $galleryPath ? 'galleries' : 'content/covers';
+        $path = $this->publicDirectory($storagePrefix) . '/' . $media->storageName;
         if ($this->filesystem->exists($path)) { $this->filesystem->remove($path); }
+    }
+
+    private function publicDirectory(string $storagePrefix): string
+    {
+        return rtrim($this->appStorageDir, '/') . '/public/' . $storagePrefix;
     }
 }

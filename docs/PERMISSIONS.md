@@ -363,3 +363,12 @@ Les permissions `CONTENT_VIDEO_VIEW`, `CONTENT_VIDEO_MANAGE`,
 `ROLE_SUPER_ADMIN` (via son comportement global). Elles ne sont pas accordées
 par défaut à `ROLE_AVOCAT` ni `ROLE_USER`. Les configurations persistées de la
 matrice de rôles restent prioritaires.
+
+### Documents — CNT-005
+
+Les permissions `CONTENT_DOCUMENT_VIEW`, `CONTENT_DOCUMENT_MANAGE`,
+`CONTENT_DOCUMENT_PUBLISH`, `CONTENT_DOCUMENT_DELETE` et
+`CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD` sont accordées par défaut à
+`ROLE_ADMIN` et `ROLE_SUPER_ADMIN`. `ROLE_AVOCAT` et `ROLE_USER` ne les
+reçoivent pas par défaut. Le téléchargement `PUBLIC` ne dépend pas de ces
+permissions ; les autres niveaux restent contrôlés côté serveur.

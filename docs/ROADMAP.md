@@ -125,6 +125,8 @@ CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
 CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice uniquement
 CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice uniquement
+CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
+CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 LRN-001  Training COURSE                           PLANNED
 ```
 

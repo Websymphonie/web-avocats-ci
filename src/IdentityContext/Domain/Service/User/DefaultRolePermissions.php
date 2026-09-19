@@ -82,6 +82,11 @@ final class DefaultRolePermissions
             PermissionEnum::CONTENT_GALLERY_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_GALLERY_PUBLISH->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_GALLERY_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_DOCUMENT_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_DOCUMENT_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_DOCUMENT_PUBLISH->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_DOCUMENT_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

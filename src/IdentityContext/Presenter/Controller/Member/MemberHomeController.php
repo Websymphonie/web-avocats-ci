@@ -12,6 +12,8 @@ final class MemberHomeController extends AbstractController
     #[Route(path: '/espace', name: 'app_member', methods: ['GET'])]
     public function __invoke(): Response
     {
-        return $this->render('member/home/index.html.twig');
+        return $this->render('member/home/index.html.twig', [
+            'title' => 'Espace Avocat',
+        ]);
     }
 }

@@ -35,9 +35,12 @@
 - Multi-select dropdowns, search inputs, selected options and focus states consume the existing semantic tokens; validation errors remain rendered by Symfony Forms below the field.
 - Event lifecycle actions are state-aware: publish is available for drafts, cancel for published events, and archive for published or cancelled events. Event status is never a free form field.
 - Event practical fields follow the selected format visually, but date ordering, safe URL protocols and publication invariants are always checked server-side.
+- News and Event forms expose a shared Media section with direct image upload, preview, replacement/removal and optional single-gallery selection; gallery management remains a link to the dedicated Gallery screen.
 - Editorial videos reuse the same listing, action menu, bulk selection and confirmation patterns. The Backoffice preview uses a validated YouTube no-cookie embed only; arbitrary external URLs remain links.
 - Galeries photos reuse `ActionDropdown`, `BulkSelection`, `AlertDialog` and the shared feedback service. The listing exposes Couverture, Titre, Images, Statut, Publication and one ellipsis action menu.
 - The Gallery editor accepts multiple JPEG/PNG/WebP images, previews selected files, keeps alt text distinct from optional captions, and exposes both drag/drop plus Monter/Descendre fallback controls. A gallery cannot publish until its cover and all alt texts are valid.
+- Documents reuse the Content register, ActionDropdown, BulkSelection and AlertDialog. Creation accepts one PDF/DOCX/XLSX/PPTX file, displays name/type/size before submission and does not expose a document preview. Status transitions remain explicit; access level is a separate field.
+- External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED` documents. Backoffice uses `/admin/content/documents/{id}/download`.
 
 ## Accessibility and responsive behavior
 

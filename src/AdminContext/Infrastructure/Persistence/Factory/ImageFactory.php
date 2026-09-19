@@ -29,9 +29,13 @@ final class ImageFactory
         if ($image === null) {
             return null;
         }
+        $defaultFile = $imageHelper->getDefaultImagePath();
+        if ($image->getName() === 'app_favicon') {
+            $defaultFile = $imageHelper->getDefaultImagePath(param: 'app.favicon');
+        }
         $url = $image->getFilename() !== null ? $imageHelper->vichImageResolver(
             entity: $image,
-        ) : $imageHelper->getDefaultImagePath();
+        ) : $defaultFile;
         return new ImageModel(
             id: $image->getId(),
             name: $image->getName(),

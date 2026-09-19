@@ -20,5 +20,7 @@ interface EventRepositoryInterface
      * @return list<Event>
      */
     public function findByIds(array $ids): array;
+    public function countMediaUsage(int $mediaId): int;
+    public function countPhotoGalleryUsage(int $galleryId): int;
     public function list(?string $search, ?EventStatus $status, ?EventFormat $format, ?int $categoryId, ?int $tagId, int $page, int $limit): EventListResult;
 }

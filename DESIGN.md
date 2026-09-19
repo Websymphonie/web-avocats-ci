@@ -121,6 +121,14 @@ cover marker, and explicit remove actions. Drag and drop is enhanced with
 keyboard-reachable Monter/Descendre controls. Dropzones, cards and validation
 states use semantic tokens so light and dark themes stay equivalent.
 
+### Document publications
+
+Document screens use the same editorial register and action menu as galleries.
+The upload control is a single-file dropzone with a visible filename, detected
+type and size summary; the server remains authoritative for acceptance. Access
+levels are shown separately from lifecycle status. No document preview or
+public viewer is introduced: download is an explicit, permission-aware action.
+
 ## Do’s and Don’ts
 
 - **Do:** keep status, publication date and modification date visible in the register.

@@ -5,9 +5,9 @@ namespace Websymphonie\SharedContext\Domain;
 
 final class Application
 {
-    public string $appName = "Plateforme des avocats de Côte d'Ivoire";
+    public string $appName = "Maison de l’Avocat";
 
-    public string $emailName = "Plateforme des avocats de Côte d'Ivoire";
+    public string $emailName = "Maison de l’Avocat";
 
-    public string $emailAddress = 'info@avocat-ci.com';
+    public string $emailAddress = 'info@ordredesavocats.ci';
 }

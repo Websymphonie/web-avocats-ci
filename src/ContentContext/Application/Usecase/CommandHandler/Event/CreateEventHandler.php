@@ -13,19 +13,29 @@ use Websymphonie\ContentContext\Domain\Model\Event;
 use Websymphonie\ContentContext\Domain\Repository\EventCategoryRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\EventRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\PhotoGalleryRepositoryInterface;
+use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class CreateEventHandler implements CommandHandler
 {
-    public function __construct(private EventRepositoryInterface $repository, private EventCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private RichTextSanitizerInterface $sanitizer, private SluggerInterface $slugger) {}
+    public function __construct(private EventRepositoryInterface $repository, private EventCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private PhotoGalleryRepositoryInterface $galleryRepository, private RichTextSanitizerInterface $sanitizer, private SluggerInterface $slugger, private MediaUploadServiceInterface $mediaUpload) {}
     public function __invoke(CreateEventCommand $command): Event
     {
         $slug = strtolower($this->slugger->slug($command->title)->toString());
         if ($slug === '' || $this->repository->slugExists($slug)) { throw EventSlugAlreadyExistsException::withSlug($slug ?: $command->title); }
-        $event = new Event(0, '', trim($command->title), $slug, $command->excerpt ?: null, $this->sanitizer->sanitize($command->description), $command->format, $command->startsAt ?? throw new InvalidEventDetailsException('La date de début est requise.'), $command->endsAt, self::clean($command->venueName), self::clean($command->address), self::clean($command->onlineUrl));
-        $event->replaceCategories($this->categoryRepository->findByIds($command->categories));
-        $event->replaceTags($this->tagRepository->findByIds($command->tags));
-        return $this->repository->save($event);
+        $galleryId = $command->photoGalleryId !== null ? $this->galleryRepository->getById($command->photoGalleryId)->id : null;
+        $media = null;
+        try {
+            $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'content/covers') : null;
+            $event = new Event(0, '', trim($command->title), $slug, $command->excerpt ?: null, $this->sanitizer->sanitize($command->description), $command->format, $command->startsAt ?? throw new InvalidEventDetailsException('La date de début est requise.'), $command->endsAt, self::clean($command->venueName), self::clean($command->address), self::clean($command->onlineUrl), coverMediaId: $media?->id, photoGalleryId: $galleryId);
+            $event->replaceCategories($this->categoryRepository->findByIds($command->categories));
+            $event->replaceTags($this->tagRepository->findByIds($command->tags));
+            return $this->repository->save($event);
+        } catch (\Throwable $exception) {
+            if ($media !== null) { try { $this->mediaUpload->delete($media); } catch (\Throwable) {} }
+            throw $exception;
+        }
     }
     private static function clean(?string $value): ?string { $value = $value !== null ? trim($value) : null; return $value === '' ? null : $value; }
 }

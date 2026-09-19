@@ -231,6 +231,22 @@ autre consommateur métier : `PhotoGalleryItem` conserve uniquement son
 automatiquement les médias; leur suppression physique est explicite et refusée
 tant qu’un consommateur les référence.
 
+Le stockage persistant est centralisé par `APP_STORAGE_DIR`, dont la valeur
+canonique est `/shared/storage` : les images publiques résident sous
+`public/galleries` et les documents privés sous `private/documents`, sans
+chemin absolu ni relation de consommateur enregistrée en base. `var/` reste
+réservé au runtime Symfony et aux caches.
+
+## CNT-004A — Couvertures et galeries liées
+
+`News` et `Event` peuvent chacun référencer au plus une couverture `Media` et
+au plus une `PhotoGallery` via des identifiants scalaires. La couverture est
+une image publique uploadée directement depuis le formulaire Backoffice et
+stockée sous `public/content/covers`; aucune entité Doctrine `Media` n’est
+référencée par `ContentContext`. Une galerie reste un agrégat Content
+indépendant et sa suppression est refusée tant qu’une actualité ou un
+événement la référence.
+
 ## CNT-003 — EditorialVideo livré
 
 `EditorialVideo` est le modèle de référence des vidéos éditoriales administrées
@@ -247,3 +263,15 @@ YouTube, live ou écran Frontoffice n’est livré.
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;
 - [`docs/PERMISSIONS.md`](PERMISSIONS.md) ;
 - [`docs/specifications_techniques_plateforme_avocats_ci_v3.md`](specifications_techniques_plateforme_avocats_ci_v3.md).
+
+## CNT-005 — Publications documentaires sécurisées
+
+`DocumentPublication` appartient à `ContentContext` et porte le titre, le slug,
+la description, les tags, le statut éditorial et le niveau d’accès. Le statut
+(`DRAFT`, `PUBLISHED`, `ARCHIVED`) est séparé de `DocumentAccessLevel`
+(`PUBLIC`, `MEMBER`, `RESTRICTED`, `PRIVATE`). `StoredFile` appartient à
+`MediaContext`, ne connaît aucun consommateur métier et stocke les documents
+hors de `public/` avec une clé relative (`documents/<nom>`) et une empreinte
+SHA-256. Cette
+capacité limitée aux PDF, DOCX, XLSX et PPTX n’est ni une médiathèque, ni un
+DAM, ni le stockage Learning privé.

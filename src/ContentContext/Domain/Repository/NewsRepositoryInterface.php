@@ -20,6 +20,8 @@ interface NewsRepositoryInterface
      * @return list<News>
      */
     public function findByIds(array $ids): array;
+    public function countMediaUsage(int $mediaId): int;
+    public function countPhotoGalleryUsage(int $galleryId): int;
 
     public function list(?string $search, ?NewsStatus $status, int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult;
 }

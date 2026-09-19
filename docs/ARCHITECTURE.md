@@ -285,9 +285,49 @@ reuse       justify new context
 `MediaContext` est introduit uniquement pour stocker les images publiques de
 galeries. Il porte les métadonnées techniques (`originalName`, nom sûr généré,
 MIME réel, taille, dimensions et chemin local), la validation serveur et le
-stockage. Son contrat de stockage est local aujourd’hui, sous
-`public/uploads/galleries`; il n’introduit ni S3, ni médiathèque, ni relation
-Doctrine vers `ContentContext`.
+stockage. Sa racine persistante unique est configurée par `APP_STORAGE_DIR`
+(valeur canonique `/shared/storage`) et ses adaptateurs dérivent
+`/shared/storage/public/galleries` pour les galeries et
+`/shared/storage/public/content/covers` pour les couvertures News/Event;
+l’exposition HTTP publique passe par
+`/uploads/galleries` via un lien symbolique ou un alias serveur. Les clés
+persistées en base restent relatives (`galleries/<nom>`). Il n’introduit ni
+S3, ni médiathèque, ni relation Doctrine vers `ContentContext`.
 
 Les variantes sont rendues par LiipImagine à partir de l’original maîtrisé. Les
 fichiers privés, documents et médias Learning restent hors de cette capacité.
+
+## 13. Documents privés — CNT-005
+
+`ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas
+l’entité Doctrine `StoredFile`. `MediaContext` valide le MIME réel avec
+`finfo`, la taille configurable (20 Mio par défaut), l’extension cohérente et
+la lisibilité, puis génère une clé relative aléatoire et un checksum SHA-256
+sous une racine hors webroot. Les documents sont dérivés sous
+`/shared/storage/private/documents`, avec des clés relatives
+(`documents/<nom>`). La suppression physique est explicite et refusée si une
+publication la référence. `DocumentDownloadPolicy` autorise uniquement les
+publications `PUBLISHED` : `PUBLIC` est anonyme, `MEMBER` requiert un compte,
+`RESTRICTED` requiert en plus la permission dédiée et `PRIVATE` reste
+Backoffice.
+
+### Provisionnement du stockage persistant
+
+Chaque environnement doit définir `APP_STORAGE_DIR` et fournir une racine
+persistante avec les droits d’écriture du processus PHP. Le provisionnement
+initial est idempotent :
+
+```bash
+mkdir -p "$APP_STORAGE_DIR/public/galleries" "$APP_STORAGE_DIR/private/documents"
+```
+
+Les galeries sont exposées sous `/uploads/galleries` par un lien symbolique ou
+un alias serveur vers `$APP_STORAGE_DIR/public/galleries`. Le dépôt conserve
+encore `public/uploads` pour les anciens uploads Vich/Admin : il ne faut donc
+pas remplacer ce répertoire par un lien global sans migration explicite. Les
+documents privés ne doivent avoir aucun alias HTTP direct.
+
+`var/` reste réservé aux caches, logs et fichiers runtime. Il ne doit contenir
+aucun document métier ni image persistante. Les sauvegardes doivent inclure
+`$APP_STORAGE_DIR` avec la base de données, et toute restauration doit
+reconstituer les deux sous-répertoires avant de rendre l’application active.

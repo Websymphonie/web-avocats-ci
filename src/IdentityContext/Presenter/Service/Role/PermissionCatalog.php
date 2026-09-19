@@ -55,6 +55,11 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_GALLERY_MANAGE,
             PermissionEnum::CONTENT_GALLERY_PUBLISH,
             PermissionEnum::CONTENT_GALLERY_DELETE => 'Contenu · Galeries photos',
+            PermissionEnum::CONTENT_DOCUMENT_VIEW,
+            PermissionEnum::CONTENT_DOCUMENT_MANAGE,
+            PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
+            PermissionEnum::CONTENT_DOCUMENT_DELETE,
+            PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => 'Contenu · Documents',
         };
     }
 

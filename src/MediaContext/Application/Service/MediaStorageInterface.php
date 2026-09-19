@@ -9,7 +9,7 @@ use Websymphonie\MediaContext\Domain\Model\Media;
 
 interface MediaStorageInterface
 {
-    public function store(UploadedFile $file): StoredMediaFile;
+    public function store(UploadedFile $file, string $storagePrefix = 'galleries'): StoredMediaFile;
 
     public function delete(Media $media): void;
 }

@@ -19,7 +19,10 @@ final readonly class MediaPublicUrlResolver implements MediaPublicUrlResolverInt
     {
         $urls = [];
         foreach (array_unique($mediaIds) as $id) {
-            try { $urls[(int) $id] = '/' . ltrim($this->repository->getById((int) $id)->storagePath, '/'); } catch (MediaNotFoundException) {}
+            try {
+                $storagePath = ltrim($this->repository->getById((int) $id)->storagePath, '/');
+                $urls[(int) $id] = str_starts_with($storagePath, 'uploads/') ? '/' . $storagePath : '/uploads/' . $storagePath;
+            } catch (MediaNotFoundException) {}
         }
         return $urls;
     }

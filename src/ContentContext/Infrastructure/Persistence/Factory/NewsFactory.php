@@ -30,6 +30,8 @@ final class NewsFactory
             updatedAt: $entity->getUpdatedAt(),
             categories: array_map(fn ($category): NewsCategory => $this->categoryFactory->fromEntity($category), $entity->getCategories()->toArray()),
             tags: array_map(fn ($tag): Tag => $this->tagFactory->fromEntity($tag), $entity->getTags()->toArray()),
+            coverMediaId: $entity->getCoverMediaId(),
+            photoGalleryId: $entity->getPhotoGalleryId(),
         );
     }
 
@@ -46,6 +48,8 @@ final class NewsFactory
             ->setBody($model->body)
             ->setStatus($model->status)
             ->setPublishedAt($model->publishedAt)
+            ->setCoverMediaId($model->coverMediaId)
+            ->setPhotoGalleryId($model->photoGalleryId)
             ->replaceCategories($categoryEntities)
             ->replaceTags($tagEntities);
 

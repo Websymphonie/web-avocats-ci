@@ -48,6 +48,11 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_GALLERY_MANAGE,
             PermissionEnum::CONTENT_GALLERY_PUBLISH,
             PermissionEnum::CONTENT_GALLERY_DELETE,
+            PermissionEnum::CONTENT_DOCUMENT_VIEW,
+            PermissionEnum::CONTENT_DOCUMENT_MANAGE,
+            PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
+            PermissionEnum::CONTENT_DOCUMENT_DELETE,
+            PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
         ], $permissions);
     }
 
@@ -86,6 +91,11 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_GALLERY_MANAGE,
             PermissionEnum::CONTENT_GALLERY_PUBLISH,
             PermissionEnum::CONTENT_GALLERY_DELETE,
+            PermissionEnum::CONTENT_DOCUMENT_VIEW,
+            PermissionEnum::CONTENT_DOCUMENT_MANAGE,
+            PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
+            PermissionEnum::CONTENT_DOCUMENT_DELETE,
+            PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -160,6 +170,11 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'gallery manage' => [PermissionEnum::CONTENT_GALLERY_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'gallery publish' => [PermissionEnum::CONTENT_GALLERY_PUBLISH, [UserRolesEnum::ADMIN]];
         yield 'gallery delete' => [PermissionEnum::CONTENT_GALLERY_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'document view' => [PermissionEnum::CONTENT_DOCUMENT_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'document manage' => [PermissionEnum::CONTENT_DOCUMENT_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'document publish' => [PermissionEnum::CONTENT_DOCUMENT_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'document delete' => [PermissionEnum::CONTENT_DOCUMENT_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'restricted document download' => [PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

@@ -43,4 +43,17 @@ final class NewsTest extends TestCase
         $news->update('Nouveau titre', 'nouveau-titre', null, 'Nouveau contenu');
         self::assertSame('titre-stable', $news->slug);
     }
+
+    public function testCoverAndGalleryAreOptionalScalarReferences(): void
+    {
+        $news = new News(1, 'uuid', 'Titre', 'titre', null, 'Contenu');
+        $news->setCoverMedia(12);
+        $news->setPhotoGallery(7);
+        self::assertSame(12, $news->coverMediaId);
+        self::assertSame(7, $news->photoGalleryId);
+        $news->setCoverMedia(null);
+        $news->setPhotoGallery(null);
+        self::assertNull($news->coverMediaId);
+        self::assertNull($news->photoGalleryId);
+    }
 }

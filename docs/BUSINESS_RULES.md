@@ -217,6 +217,33 @@ Les décisions suivantes restent explicitement ouvertes :
   physique est explicite et refusé quand un item les référence ;
 - un tag utilisé par une galerie ne peut pas être supprimé.
 
+## CNT-004A — Couvertures et galeries liées
+
+- une actualité et un événement peuvent avoir zéro ou une couverture image et
+  zéro ou une galerie photo ;
+- les couvertures utilisent la validation Media image publique existante et
+  sont stockées sous `public/content/covers` avec une clé relative ;
+- remplacer ou retirer une couverture retire uniquement la référence Content ;
+  le fichier physique est supprimé seulement si le Media n’est plus utilisé
+  par une actualité, un événement ou une galerie ;
+- une galerie associée reste sélectionnable quel que soit son statut lors de
+  l’enregistrement du contenu ; son exposition publique future restera limitée
+  aux galeries publiées ;
+- une galerie référencée par News ou Event ne peut pas être supprimée et la
+  suppression du contenu ne supprime jamais automatiquement la galerie.
+
+## CNT-005 — Documents / Publications sécurisés
+
+- une publication commence en `DRAFT` et son statut n’est pas éditable dans le formulaire ;
+- seules `publish()` et `archive()` modifient le statut ; la première publication renseigne `publishedAt` ;
+- une publication doit posséder un `StoredFile`, un titre et un niveau d’accès valide pour être publiée ;
+- le slug évolue en brouillon et reste stable après publication ;
+- `PUBLIC`, `MEMBER`, `RESTRICTED` et `PRIVATE` sont indépendants du statut ;
+- un téléchargement externe exige `PUBLISHED` et un document `PRIVATE` n’est jamais téléchargeable hors Backoffice ;
+- les fichiers sont validés par MIME réel, taille, extension cohérente et lisibilité ; exécutables, macros, archives, HTML/JS et formats non prévus sont refusés ;
+- les documents sont stockés hors `public/` avec une clé aléatoire et une empreinte SHA-256 ;
+- un fichier encore référencé ne peut pas être supprimé physiquement ; les tags génériques sont réutilisés.
+
 - [`docs/PERMISSIONS.md`](PERMISSIONS.md) ;
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;
 - [`docs/specifications_techniques_plateforme_avocats_ci_v3.md`](specifications_techniques_plateforme_avocats_ci_v3.md).

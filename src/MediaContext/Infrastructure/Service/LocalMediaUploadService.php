@@ -16,9 +16,9 @@ final readonly class LocalMediaUploadService implements MediaUploadServiceInterf
 {
     public function __construct(private MediaStorageInterface $storage, private MediaRepositoryInterface $repository, private MediaUsageCheckerInterface $usageChecker) {}
 
-    public function upload(UploadedFile $file): Media
+    public function upload(UploadedFile $file, string $storagePrefix = 'galleries'): Media
     {
-        $stored = $this->storage->store($file);
+        $stored = $this->storage->store($file, $storagePrefix);
         try {
             return $this->repository->save(new Media(0, '', $stored->originalName, $stored->storageName, $stored->mimeType, $stored->size, $stored->width, $stored->height, $stored->storagePath));
         } catch (\Throwable $exception) {

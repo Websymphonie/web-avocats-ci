@@ -35,6 +35,9 @@ interface UserModelRepositoryInterface
      */
     public function findByIds(array $ids): array;
 
+    /** @return list<User> */
+    public function searchActive(string $term, int $limit = 100): array;
+
     public function create(User $entity): User;
 
     public function update(User $entity): User;

@@ -384,5 +384,9 @@ configurations persistées de la matrice de rôles restent prioritaires.
 La verticale livrée concerne l’administration Backoffice des formations
 `COURSE`, de leur structure modules/leçons, de leur contenu pédagogique et des
 transitions prévues. Les ressources de leçon restent couvertes par la même
-permission ; aucune permission Media générique n’est ajoutée. Les inscriptions,
-paiements, LIVE et accès pédagogique ne sont pas couverts par ces permissions.
+permission ; aucune permission Media générique n’est ajoutée. Les permissions
+`LEARNING_ENROLLMENT_VIEW` et `LEARNING_ENROLLMENT_MANAGE` sont accordées par
+défaut à `ROLE_ADMIN` et `ROLE_SUPER_ADMIN`, mais pas à `ROLE_AVOCAT` ni
+`ROLE_USER`. L’auto-inscription membre et la policy de lecture ne dépendent
+pas de ces permissions Backoffice. Paiements, LIVE et progression restent hors
+périmètre.

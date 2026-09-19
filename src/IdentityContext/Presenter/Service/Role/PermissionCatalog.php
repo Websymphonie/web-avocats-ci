@@ -64,6 +64,8 @@ final class PermissionCatalog
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
             PermissionEnum::LEARNING_TRAINING_DELETE => 'Formations · Formations',
+            PermissionEnum::LEARNING_ENROLLMENT_VIEW,
+            PermissionEnum::LEARNING_ENROLLMENT_MANAGE => 'Formations · Inscriptions',
         };
     }
 

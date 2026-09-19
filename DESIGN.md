@@ -134,8 +134,11 @@ public viewer is introduced: download is an explicit, permission-aware action.
 Training administration reuses the Content register primitives while keeping a
 separate `Formations` navigation group. The listing makes lifecycle status,
 visibility and access type distinct; the form uses the shared rich-text editor
-and the public image cover control. Future modules, enrollment and learning
-consumption must not be implied by this Backoffice foundation.
+and the public image cover control. Enrollment management uses a dedicated
+screen with search, source/status/date columns, explicit grant, revoke
+confirmation and reactivation. There is no enrollment bulk delete action.
+Member enrollment is available only for published free trainings and protected
+resource downloads always pass through the server access policy.
 
 The COURSE Programme builder is a nested, inline editor on the training detail
 and edit screens. Modules and lessons use compact ellipsis action menus,

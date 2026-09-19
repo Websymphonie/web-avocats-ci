@@ -54,6 +54,13 @@ learning:
   type: attribute
   prefix: '/admin/learning'
 
+learning_member:
+  resource:
+    path: ../src/LearningContext/Presenter/Controller/Member/
+    namespace: Websymphonie\LearningContext\Presenter\Controller\Member
+  type: attribute
+  prefix: '/'
+
 shared:
   resource:
     path: ../src/SharedContext/Presenter/Controller/

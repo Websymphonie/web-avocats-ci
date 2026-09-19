@@ -345,6 +345,24 @@ suppression est DB-first puis best-effort sur le fichier physique, et le
 nettoyage est refusé lorsqu’un `StoredFile` est encore utilisé par un document
 ou une ressource Learning.
 
+## 12.3 LearningContext — inscriptions LRN-004
+
+`Enrollment` est une persistence Learning indépendante : `trainingId` et
+`userId` sont des identifiants scalaires, sans relation Doctrine vers Identity.
+`UserDirectoryInterface` fournit uniquement un read model utilisateur pour le
+Backoffice. `TrainingAccessPolicy` centralise les contrôles utilisateur actif,
+formation publiée et inscription active. Les commandes d’auto-inscription,
+d’attribution admin et de révocation sont idempotentes et ne suppriment jamais
+physiquement une inscription.
+
+Le Backoffice expose `/admin/learning/trainings/{trainingId}/enrollments` avec
+recherche, attribution, révocation et réactivation. Le membre dispose de
+`POST /espace/learning/trainings/{uuid}/enroll` pour les formations gratuites
+et de téléchargements protégés par
+`/espace/learning/resources/{resourceUuid}/download`. La résolution complète
+ressource → leçon → module → formation précède l’autorisation. Une formation
+ayant des inscriptions ne peut pas être supprimée.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

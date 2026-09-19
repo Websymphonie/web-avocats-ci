@@ -69,6 +69,9 @@ services:
   Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider:
     class: Websymphonie\IdentityContext\Infrastructure\Security\User\SymfonyCurrentUserProvider
 
+  Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface:
+    alias: Websymphonie\IdentityContext\Infrastructure\Service\User\DoctrineUserDirectory
+
   Websymphonie\SharedContext\Application\Service\Sidebar\Service\SidebarMenuService:
     arguments:
       $modules: !tagged_iterator app.sidebar_module

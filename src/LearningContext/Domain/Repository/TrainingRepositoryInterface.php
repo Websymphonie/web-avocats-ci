@@ -15,6 +15,7 @@ interface TrainingRepositoryInterface
 {
     public function save(Training $training): Training;
     public function getById(int $id): Training;
+    public function getByUuid(string $uuid): Training;
     public function delete(Training $training): void;
     public function slugExists(string $slug, ?int $exceptId = null): bool;
     public function countMediaUsage(int $mediaId): int;

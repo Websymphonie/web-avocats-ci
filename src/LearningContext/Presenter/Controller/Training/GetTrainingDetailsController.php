@@ -10,6 +10,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQuery;
+use Websymphonie\LearningContext\Domain\Repository\EnrollmentRepositoryInterface;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -20,6 +21,7 @@ final class GetTrainingDetailsController extends AbstractController
     public function __construct(
         private readonly RichTextSanitizerInterface $sanitizer,
         private readonly MediaPublicUrlResolverInterface $mediaUrls,
+        private readonly EnrollmentRepositoryInterface $enrollments,
     ) {}
 
     #[Route('/{id}', name: 'show', requirements: ['id' => '\\d+'], methods: ['GET'])]
@@ -33,6 +35,7 @@ final class GetTrainingDetailsController extends AbstractController
             'coverUrl' => $mediaUrls[$training->coverMediaId] ?? null,
             'safeDescription' => $this->sanitizer->sanitize($training->description),
             'structure' => $this->handleQuery(new GetCourseStructureQuery($training->id)),
+            'activeEnrollmentCount' => $this->enrollments->countActiveByTraining($training->id),
         ]);
     }
 }

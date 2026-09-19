@@ -57,6 +57,8 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
             PermissionEnum::LEARNING_TRAINING_DELETE,
+            PermissionEnum::LEARNING_ENROLLMENT_VIEW,
+            PermissionEnum::LEARNING_ENROLLMENT_MANAGE,
         ], $permissions);
     }
 
@@ -104,6 +106,8 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
             PermissionEnum::LEARNING_TRAINING_DELETE,
+            PermissionEnum::LEARNING_ENROLLMENT_VIEW,
+            PermissionEnum::LEARNING_ENROLLMENT_MANAGE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,

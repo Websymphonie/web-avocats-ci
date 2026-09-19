@@ -6,6 +6,8 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repos
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -52,6 +54,13 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             throw TrainingNotFoundException::withId($id);
         }
 
+        return $this->factory->fromEntity($entity);
+    }
+
+    public function getByUuid(string $uuid): Training
+    {
+        $entity = $this->createQueryBuilder('training')->andWhere('training.uuid = :uuid')->setParameter('uuid', Uuid::fromString($uuid), UuidType::NAME)->getQuery()->getOneOrNullResult();
+        if (!$entity instanceof TrainingEntity) { throw TrainingNotFoundException::withUuid($uuid); }
         return $this->factory->fromEntity($entity);
     }
 

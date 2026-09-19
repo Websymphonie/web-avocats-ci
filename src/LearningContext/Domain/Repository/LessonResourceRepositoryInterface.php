@@ -10,6 +10,7 @@ interface LessonResourceRepositoryInterface
 {
     public function save(LessonResource $resource): LessonResource;
     public function getById(int $id): LessonResource;
+    public function getByUuid(string $uuid): LessonResource;
     public function getByIdForLesson(int $id, int $lessonId): LessonResource;
     public function delete(LessonResource $resource): void;
 

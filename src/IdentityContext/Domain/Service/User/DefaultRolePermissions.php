@@ -91,6 +91,8 @@ final class DefaultRolePermissions
             PermissionEnum::LEARNING_TRAINING_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_TRAINING_PUBLISH->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_TRAINING_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_ENROLLMENT_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::LEARNING_ENROLLMENT_MANAGE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

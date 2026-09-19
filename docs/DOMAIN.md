@@ -110,6 +110,8 @@ La publication exige un titre, un résumé et une description non vides. Le slug
 peut évoluer en brouillon et devient stable après publication. La structure
 COURSE est détaillée dans LRN-002 ci-dessous ; les inscriptions, paiements,
 lecture pédagogique, LIVE et surfaces Frontoffice/API restent hors périmètre.
+La tranche LRN-004 ajoute désormais l’inscription et l’accès protégé au
+contenu pédagogique.
 
 Les couvertures utilisent la capacité image publique minimale de
 `MediaContext`, sous la clé `training/covers`, sans relation Doctrine entre les
@@ -181,6 +183,21 @@ une vidéo YouTube valide ou au moins une ressource. Une `COURSE` publiée reste
 un téléchargement sécurisé réservé au Backoffice ; leur suppression détache
 la ressource puis nettoie le fichier uniquement s’il n’est plus référencé.
 
+### LRN-004 — Enrollment et contrôle d’accès
+
+`Enrollment` conserve uniquement `trainingId` et `userId` scalaires, avec une
+contrainte d’unicité par couple. Les statuts sont `ACTIVE` et `REVOKED`, et la
+source est `SELF_SERVICE` ou `ADMIN_GRANT`. Une révocation conserve la ligne et
+une réactivation réutilise la même inscription.
+
+La `TrainingAccessPolicy` est la source de vérité : le contenu exige un
+utilisateur actif, une formation `PUBLISHED` et une inscription `ACTIVE`.
+`PUBLIC` décrit la visibilité de la fiche et ne donne aucun accès anonyme ;
+`FREE` autorise l’auto-inscription, tandis que `PAID` et `RESTRICTED` restent
+indisponibles sans flux métier ultérieur. Les téléchargements membre résolvent
+la ressource jusqu’à sa formation avant d’appliquer cette policy, ce qui
+empêche l’IDOR.
+
 ## 6. Visibilité et accès Learning
 
 La visibilité et l’accès sont indépendants :
@@ -192,7 +209,7 @@ TrainingAccessType = PAID
 
 signifie que la fiche est visible dans le catalogue public, mais que le
 contenu pédagogique est réservé aux utilisateurs autorisés. `Enrollment` et
-une policy serveur contrôlent la consommation effective.
+`TrainingAccessPolicy` contrôlent la consommation effective.
 
 La confidentialité YouTube ou le fait qu’un lien soit partagé ne remplacent
 jamais l’autorisation applicative.

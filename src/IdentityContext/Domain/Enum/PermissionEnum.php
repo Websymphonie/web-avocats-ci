@@ -49,6 +49,8 @@ enum PermissionEnum: string
     case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
     case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
     case LEARNING_TRAINING_DELETE = 'LEARNING_TRAINING_DELETE';
+    case LEARNING_ENROLLMENT_VIEW = 'LEARNING_ENROLLMENT_VIEW';
+    case LEARNING_ENROLLMENT_MANAGE = 'LEARNING_ENROLLMENT_MANAGE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -95,6 +97,8 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_MANAGE,
             self::LEARNING_TRAINING_PUBLISH,
             self::LEARNING_TRAINING_DELETE,
+            self::LEARNING_ENROLLMENT_VIEW,
+            self::LEARNING_ENROLLMENT_MANAGE,
         ];
     }
 
@@ -143,6 +147,8 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
             self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',
             self::LEARNING_TRAINING_DELETE => 'Formations : suppression',
+            self::LEARNING_ENROLLMENT_VIEW => 'Inscriptions : lecture',
+            self::LEARNING_ENROLLMENT_MANAGE => 'Inscriptions : attribution et révocation',
         };
     }
 
@@ -191,6 +197,8 @@ enum PermissionEnum: string
             self::LEARNING_TRAINING_MANAGE => ColorEnum::SUCCESS,
             self::LEARNING_TRAINING_PUBLISH => ColorEnum::WARNING,
             self::LEARNING_TRAINING_DELETE => ColorEnum::DANGER,
+            self::LEARNING_ENROLLMENT_VIEW => ColorEnum::INFO,
+            self::LEARNING_ENROLLMENT_MANAGE => ColorEnum::WARNING,
         };
     }
 }

@@ -138,6 +138,7 @@ Content Frontoffice                              OUT_OF_SCOPE — différé phas
 LRN-001  Training COURSE                           DONE — Backoffice uniquement
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
+LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
 ```
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.

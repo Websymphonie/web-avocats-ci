@@ -6,6 +6,8 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repos
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 use Websymphonie\LearningContext\Domain\Exception\LessonResourceNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\LessonResource;
 use Websymphonie\LearningContext\Domain\Repository\LessonResourceRepositoryInterface;
@@ -38,6 +40,13 @@ final class LessonResourceRepository extends ServiceEntityRepository implements 
     {
         $entity = $this->find($id);
         if (!$entity instanceof LessonResourceEntity) { throw LessonResourceNotFoundException::withId($id); }
+        return $this->factory->fromEntity($entity, $this->files->getById($entity->getStoredFileId()));
+    }
+
+    public function getByUuid(string $uuid): LessonResource
+    {
+        $entity = $this->createQueryBuilder('resource')->andWhere('resource.uuid = :uuid')->setParameter('uuid', Uuid::fromString($uuid), UuidType::NAME)->getQuery()->getOneOrNullResult();
+        if (!$entity instanceof LessonResourceEntity) { throw LessonResourceNotFoundException::withUuid($uuid); }
         return $this->factory->fromEntity($entity, $this->files->getById($entity->getStoredFileId()));
     }
 

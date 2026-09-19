@@ -140,6 +140,13 @@ couvertures sont des images publiques `JPEG`, `PNG` ou `WebP` stockées par
 d’une formation ne supprime pas silencieusement un média potentiellement
 partagé.
 
+Une inscription est unique par utilisateur et formation. Elle commence active,
+peut être révoquée puis réactivée sans suppression physique. L’auto-inscription
+est réservée aux formations publiées `FREE`; l’attribution administrateur est
+possible pour toute formation publiée. Une formation `DRAFT` ou `ARCHIVED` ne
+peut pas activer une nouvelle inscription. Une formation avec des inscriptions
+ne peut pas être supprimée.
+
 Les modules et leçons ont un ordre persistant `1..N`, normalisé après chaque
 création, suppression ou réordonnancement. Un module supprimé avec confirmation
 supprime ses leçons ; les médias, contenus et progressions ne sont pas encore

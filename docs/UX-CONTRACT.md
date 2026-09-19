@@ -72,6 +72,11 @@
   both drag/drop and `Monter`/`Descendre` controls.
 - Programme structure mutations use `LEARNING_TRAINING_MANAGE` and CSRF. Bulk selection is intentionally not exposed
   for modules or lessons.
+- Training enrollments use a dedicated Backoffice screen with search,
+  source/status/date columns, explicit grant, revoke confirmation and
+  reactivation. There is no enrollment bulk delete action. Member enrollment is
+  a CSRF-protected POST for published `FREE` trainings; resource downloads
+  always pass through the server access policy.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED`
   documents. Backoffice uses `/admin/content/documents/{id}/download`.
 

@@ -259,3 +259,22 @@ les tokens sémantiques existants afin de rester cohérents en thème clair et
 sombre. Le HTML est systématiquement nettoyé côté serveur avec une whitelist
 des éléments éditoriaux autorisés ; les scripts, iframes, styles, gestionnaires
 d’événements et URL dangereuses sont supprimés avant stockage et rendu.
+
+## Multi-select et autocomplete
+
+Les champs de taxonomie Backoffice utilisent Symfony UX Autocomplete et Tom
+Select lorsqu’une recherche dans une liste multi-sélection est utile. La classe
+générique `form-multi-select` sert de convention de style : elle ne dépend pas
+de News et peut être réutilisée par de futures catégories d’événements ou de
+formations.
+
+Le contrôle conserve le label Symfony, le focus clavier et les attributs ARIA
+fournis par Tom Select. Les sélections apparaissent en chips compactes avec une
+action de retrait, les chips passent à la ligne sur les petits écrans et les
+erreurs Symfony restent visibles sous le champ. Le dropdown, la recherche, les
+options sélectionnées et le focus utilisent les tokens sémantiques existants en
+thème clair comme sombre ; aucune couleur bleue ou surface blanche imposée par
+le thème par défaut de la librairie ne doit rester visible.
+
+La fondation n’ajoute pas de création inline, de drag/drop ou de nouvelle
+librairie frontend.

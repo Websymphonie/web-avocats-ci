@@ -74,6 +74,138 @@ body {
   color: var(--accent-foreground);
 }
 
+// Reusable Symfony UX Autocomplete multi-select foundation.
+.ts-wrapper.form-multi-select {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.ts-wrapper.form-multi-select .ts-control {
+  min-height: 2.75rem;
+  width: 100%;
+  border: 1px solid var(--input) !important;
+  border-radius: var(--radius) !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  padding: 0.45rem 0.75rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.ts-wrapper.form-multi-select:hover .ts-control {
+  border-color: color-mix(in oklab, var(--foreground) 28%, var(--input)) !important;
+}
+
+.ts-wrapper.form-multi-select.focus .ts-control {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent) !important;
+  outline: none;
+}
+
+.ts-wrapper.form-multi-select.disabled .ts-control,
+.ts-wrapper.form-multi-select.readonly .ts-control {
+  cursor: not-allowed;
+  background: var(--muted) !important;
+  color: var(--muted-foreground) !important;
+  opacity: 0.7;
+}
+
+.ts-wrapper.form-multi-select .ts-control > input,
+.ts-wrapper.form-multi-select .ts-control > input:focus {
+  min-width: 7rem;
+  color: var(--foreground) !important;
+  outline: none !important;
+}
+
+.ts-wrapper.form-multi-select .ts-control > input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 1;
+}
+
+.ts-wrapper.form-multi-select.multi .ts-control > .item {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0.15rem 0.35rem 0.15rem 0;
+  border: 1px solid color-mix(in oklab, var(--primary) 20%, var(--border));
+  border-radius: calc(var(--radius) * 0.7);
+  background: color-mix(in oklab, var(--primary) 12%, var(--background));
+  color: var(--foreground);
+  padding: 0.22rem 0.35rem 0.22rem 0.55rem;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.ts-wrapper.form-multi-select .item .remove {
+  display: inline-flex;
+  width: 1.15rem;
+  height: 1.15rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-left: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
+  border-radius: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.ts-wrapper.form-multi-select .item .remove:hover,
+.ts-wrapper.form-multi-select .item .remove:focus-visible {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  outline: none;
+}
+
+.ts-wrapper.form-multi-select .ts-dropdown {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  box-shadow: 0 14px 35px rgb(0 0 0 / 0.14);
+}
+
+.ts-wrapper.form-multi-select .ts-dropdown-content {
+  max-height: min(18rem, 45vh);
+  padding: 0.3rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent) transparent;
+}
+
+.ts-wrapper.form-multi-select .ts-dropdown .option {
+  border-radius: calc(var(--radius) * 0.7);
+  color: var(--popover-foreground);
+  padding: 0.55rem 0.7rem;
+}
+
+.ts-wrapper.form-multi-select .ts-dropdown .option.active,
+.ts-wrapper.form-multi-select .ts-dropdown .option.selected {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.ts-wrapper.form-multi-select .ts-dropdown .no-results,
+.ts-wrapper.form-multi-select .ts-dropdown .create {
+  color: var(--muted-foreground);
+  padding: 0.8rem 0.7rem;
+}
+
+.ts-wrapper.form-multi-select.form-multi-select-invalid .ts-control {
+  border-color: var(--destructive) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 22%, transparent) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-wrapper.form-multi-select .ts-control {
+    transition: none;
+  }
+}
+
 .antispam_robot {
   width: 0 !important;
   height: 0 !important;

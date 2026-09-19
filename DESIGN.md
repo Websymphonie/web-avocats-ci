@@ -89,6 +89,10 @@ Symfony Forms own field rendering and validation. `AlertDialog` owns individual 
 
 `RichTextEditor` is the canonical Backoffice editor for semantic editorial HTML. Its toolbar is intentionally limited to paragraphs, H2/H3, inline emphasis, lists, blockquotes, links and history. The editor and rendered content share `.rich-content` styles and semantic theme tokens, so light and dark modes do not introduce a second visual language. Media, uploads, tables and source editing are outside this foundation.
 
+### Multi-select and autocomplete
+
+Symfony UX Autocomplete with Tom Select is the canonical multi-select foundation for Backoffice taxonomy fields. The generic `form-multi-select` hook keeps the control compact, lets chips wrap naturally and gives the dropdown, search input, focus ring and selected options the same semantic token treatment in both themes. Removal stays explicit through the compact × control; inline creation and drag/drop are intentionally excluded.
+
 ### Iconography
 
 Lucide icons are used at size-4 with stroke style. Icons support, never replace, French labels on destructive or state-changing actions.

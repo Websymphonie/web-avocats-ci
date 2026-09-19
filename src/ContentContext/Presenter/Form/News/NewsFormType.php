@@ -27,8 +27,24 @@ final class NewsFormType extends AbstractType
             ->add('body', TextareaType::class, ['label' => 'Contenu', 'required' => true, 'attr' => ['rows' => 14, 'placeholder' => 'Contenu de l’actualité']]);
         $categories = $this->categoryRepository->list(null, 1, 200)->items;
         $tags = $this->tagRepository->list(null, 1, 200)->items;
-        $builder->add('categories', ChoiceType::class, ['label' => 'Catégories', 'required' => false, 'multiple' => true, 'choices' => self::choices($categories), 'placeholder' => 'Sélectionner une ou plusieurs catégories'])
-            ->add('tags', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::choices($tags), 'placeholder' => 'Sélectionner un ou plusieurs tags']);
+        $builder->add('categories', ChoiceType::class, [
+            'label' => 'Catégories',
+            'required' => false,
+            'multiple' => true,
+            'choices' => self::choices($categories),
+            'placeholder' => 'Sélectionner une ou plusieurs catégories',
+            'autocomplete' => true,
+            'tom_select_options' => self::multiSelectOptions(),
+        ])
+            ->add('tags', ChoiceType::class, [
+                'label' => 'Tags',
+                'required' => false,
+                'multiple' => true,
+                'choices' => self::choices($tags),
+                'placeholder' => 'Sélectionner un ou plusieurs tags',
+                'autocomplete' => true,
+                'tom_select_options' => self::multiSelectOptions(),
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -45,5 +61,15 @@ final class NewsFormType extends AbstractType
         $choices = [];
         foreach ($items as $item) { $choices[$item->name . ' · ' . $item->slug] = $item->id; }
         return $choices;
+    }
+
+    /** @return array{plugins: array{remove_button: array{title: string}}, create: bool, copyClassesToDropdown: bool} */
+    private static function multiSelectOptions(): array
+    {
+        return [
+            'plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']],
+            'create' => false,
+            'copyClassesToDropdown' => true,
+        ];
     }
 }

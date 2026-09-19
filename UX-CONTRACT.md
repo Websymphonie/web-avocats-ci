@@ -12,6 +12,7 @@
 | Feedback | `FlashToast` through the shared flash service |
 | Forms | Symfony `NewsFormType` |
 | Rich text editor | `assets/react/controllers/Content/RichTextEditor.tsx` mounted by the Symfony News form |
+| Multi-select / autocomplete | Symfony UX Autocomplete + Tom Select with the generic `form-multi-select` styling hook |
 | Pagination | `shared/views/_list_pagination.html.twig` |
 | Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` |
 | Content navigation | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu` |
@@ -30,6 +31,8 @@
 - Category and tag associations are edited from the News form with multi-selects; deleting an item used by News is refused by the backend.
 - The rich text editor synchronizes its semantic HTML into the Symfony form field; the backend sanitizes the same field on create and update and sanitizes again before Backoffice rendering.
 - Link input accepts only `http`, `https`, `mailto`, `tel`, relative and fragment URLs. Rendered links receive safe `rel` attributes; scripts, embeds, styles, event handlers and unsupported tags are removed.
+- Taxonomy fields use the existing Symfony UX Autocomplete/Tom Select integration. Chips wrap inside the control, the remove action remains keyboard-reachable through the component behavior, and no inline taxonomy creation is offered in this foundation.
+- Multi-select dropdowns, search inputs, selected options and focus states consume the existing semantic tokens; validation errors remain rendered by Symfony Forms below the field.
 
 ## Accessibility and responsive behavior
 

@@ -60,6 +60,17 @@ services:
     arguments:
       $modules: !tagged_iterator app.sidebar_module
 
+  Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig:
+    factory: ['Websymphonie\ContentContext\Infrastructure\Service\RichText\SymfonyRichTextSanitizer', 'config']
+
+  Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface:
+    class: Symfony\Component\HtmlSanitizer\HtmlSanitizer
+    arguments:
+      $config: '@Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig'
+
+  Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface:
+    alias: Websymphonie\ContentContext\Infrastructure\Service\RichText\SymfonyRichTextSanitizer
+
   Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler:
     class: Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler
     arguments:

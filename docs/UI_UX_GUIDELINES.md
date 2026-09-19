@@ -240,3 +240,22 @@ Avant de déclarer une fonctionnalité terminée, vérifier selon le contexte :
 - hiérarchie des actions ;
 - actions destructives ;
 - cohérence avec la fondation UI.
+
+## Éditeur de contenu riche
+
+Les champs de contenu éditorial utilisent le composant React réutilisable
+`RichTextEditor`, monté dans le formulaire Symfony sans transformer la page en
+SPA. Le champ Symfony reste la source de vérité pour la soumission et la
+validation ; l’éditeur synchronise uniquement son HTML sémantique dans ce
+champ.
+
+La barre d’outils couvre le socle éditorial utile : paragraphes, titres H2/H3,
+gras, italique, souligné, barré, listes, citation, liens et annulation/rétablissement.
+Les images, uploads, vidéos, tableaux, couleurs, polices, source HTML et
+collaboration ne font pas partie de cette fondation.
+
+L’affichage de l’éditeur et le rendu du contenu utilisent `.rich-content` et
+les tokens sémantiques existants afin de rester cohérents en thème clair et
+sombre. Le HTML est systématiquement nettoyé côté serveur avec une whitelist
+des éléments éditoriaux autorisés ; les scripts, iframes, styles, gestionnaires
+d’événements et URL dangereuses sont supprimés avant stockage et rendu.

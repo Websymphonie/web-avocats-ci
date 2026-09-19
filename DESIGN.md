@@ -83,7 +83,11 @@ Primary is reserved for create/save. Destructive is separated in `ActionDropdown
 
 ### Forms and overlays
 
-Symfony Forms own field rendering and validation. `AlertDialog` owns individual and bulk deletion confirmation. `FlashToast` owns post-action feedback. CNT-001 intentionally uses a plain textarea until a product-approved editor exists.
+Symfony Forms own field rendering and validation. `AlertDialog` owns individual and bulk deletion confirmation. `FlashToast` owns post-action feedback. Editorial body fields use the reusable `RichTextEditor` while the Symfony form remains the submission source of truth.
+
+### Rich text content
+
+`RichTextEditor` is the canonical Backoffice editor for semantic editorial HTML. Its toolbar is intentionally limited to paragraphs, H2/H3, inline emphasis, lists, blockquotes, links and history. The editor and rendered content share `.rich-content` styles and semantic theme tokens, so light and dark modes do not introduce a second visual language. Media, uploads, tables and source editing are outside this foundation.
 
 ### Iconography
 

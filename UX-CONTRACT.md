@@ -11,6 +11,7 @@
 | Bulk selection | `BulkSelection` + `BulkDeleteNews` |
 | Feedback | `FlashToast` through the shared flash service |
 | Forms | Symfony `NewsFormType` |
+| Rich text editor | `assets/react/controllers/Content/RichTextEditor.tsx` mounted by the Symfony News form |
 | Pagination | `shared/views/_list_pagination.html.twig` |
 | Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` |
 | Content navigation | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu` |
@@ -27,6 +28,8 @@
 - Empty, filtered and paginated states preserve the same table/card structure.
 - The Content group exposes only Actualités, Catégories d’actualités and Tags in this increment; Events, videos and galleries remain out of scope.
 - Category and tag associations are edited from the News form with multi-selects; deleting an item used by News is refused by the backend.
+- The rich text editor synchronizes its semantic HTML into the Symfony form field; the backend sanitizes the same field on create and update and sanitizes again before Backoffice rendering.
+- Link input accepts only `http`, `https`, `mailto`, `tel`, relative and fragment URLs. Rendered links receive safe `rel` attributes; scripts, embeds, styles, event handlers and unsupported tags are removed.
 
 ## Accessibility and responsive behavior
 

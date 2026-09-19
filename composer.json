@@ -41,6 +41,7 @@
     "symfony/flex": "^2",
     "symfony/form": "7.4.*",
     "symfony/framework-bundle": "7.4.*",
+    "symfony/html-sanitizer": "7.4.*",
     "symfony/http-client": "7.4.*",
     "symfony/intl": "7.4.*",
     "symfony/joli-notif-notifier": "7.4.*",

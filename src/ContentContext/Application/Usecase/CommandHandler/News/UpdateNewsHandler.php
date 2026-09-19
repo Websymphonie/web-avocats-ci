@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\ContentContext\Application\Usecase\CommandHandler\News;
 
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Command\News\UpdateNewsCommand;
 use Websymphonie\ContentContext\Domain\Exception\NewsSlugAlreadyExistsException;
 use Websymphonie\ContentContext\Domain\Repository\NewsCategoryRepositoryInterface;
@@ -14,7 +15,7 @@ use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class UpdateNewsHandler implements CommandHandler
 {
-    public function __construct(private NewsRepositoryInterface $repository, private NewsCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private SluggerInterface $slugger) {}
+    public function __construct(private NewsRepositoryInterface $repository, private NewsCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private RichTextSanitizerInterface $richTextSanitizer, private SluggerInterface $slugger) {}
 
     public function __invoke(UpdateNewsCommand $command): void
     {
@@ -24,7 +25,7 @@ final readonly class UpdateNewsHandler implements CommandHandler
             throw NewsSlugAlreadyExistsException::withSlug($slug ?: $command->title);
         }
 
-        $news->update(trim($command->title), $slug ?: $news->slug, $command->excerpt ?: null, $command->body);
+        $news->update(trim($command->title), $slug ?: $news->slug, $command->excerpt ?: null, $this->richTextSanitizer->sanitize($command->body));
         $news->replaceCategories($this->categoryRepository->findByIds($command->categories));
         $news->replaceTags($this->tagRepository->findByIds($command->tags));
         $this->repository->save($news);

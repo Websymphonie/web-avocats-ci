@@ -84,7 +84,7 @@ propriétaire.
 | CNT-001A | naviguer dans Content et administrer catégories d’actualités et tags génériques | `IMPLEMENTED` — Backoffice uniquement |
 | CNT-002 | publier et administrer les événements | `IMPLEMENTED` — Backoffice uniquement |
 | CNT-003 | publier et administrer les vidéos éditoriales | `IMPLEMENTED` — Backoffice uniquement |
-| CNT-004 | publier les galeries photos | `PLANNED` |
+| CNT-004 | publier les galeries photos | `IMPLEMENTED` — Backoffice uniquement; Media public minimal, sans médiathèque ni Frontoffice |
 | CNT-005 | publier les documents et annonces | `PLANNED` |
 | CNT-006 | séparer les contenus éditoriaux des contenus pédagogiques | `IMPLEMENTED` — principe |
 

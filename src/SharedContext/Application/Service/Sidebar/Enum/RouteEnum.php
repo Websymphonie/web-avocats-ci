@@ -27,4 +27,5 @@ enum RouteEnum: string
     case CONTENT_EVENT_INDEX = 'content_admin_event_list';
     case CONTENT_EVENT_CATEGORY_INDEX = 'content_admin_event_category_list';
     case CONTENT_VIDEO_INDEX = 'content_admin_video_list';
+    case CONTENT_GALLERY_INDEX = 'content_admin_gallery_list';
 }

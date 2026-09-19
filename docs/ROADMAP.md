@@ -124,6 +124,7 @@ WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
 CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice uniquement
+CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice uniquement
 LRN-001  Training COURSE                           PLANNED
 ```
 

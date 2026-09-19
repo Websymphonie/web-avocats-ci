@@ -215,6 +215,22 @@ Les éléments suivants restent volontairement ouverts :
 - détails de certification, quiz et replay ;
 - contrat API mobile.
 
+## CNT-004 — Galeries photos et Media minimal
+
+`ContentContext` possède désormais `PhotoGallery` et `PhotoGalleryItem`.
+Une galerie est `DRAFT`, `PUBLISHED` ou `ARCHIVED`; elle ne peut être publiée
+que si elle contient des images, une couverture appartenant à la galerie et un
+texte alternatif non vide pour chaque image. Le slug reste modifiable en
+brouillon et devient stable après publication. Les tags génériques existants
+sont réutilisés.
+
+`MediaContext` est une capacité technique minimale, limitée aux images
+publiques JPEG, PNG et WebP. `Media` ne référence jamais une galerie ou un
+autre consommateur métier : `PhotoGalleryItem` conserve uniquement son
+`mediaId`. Une galerie supprimée détache ses items, mais ne détruit pas
+automatiquement les médias; leur suppression physique est explicite et refusée
+tant qu’un consommateur les référence.
+
 ## CNT-003 — EditorialVideo livré
 
 `EditorialVideo` est le modèle de référence des vidéos éditoriales administrées

@@ -44,6 +44,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_VIDEO_MANAGE,
             PermissionEnum::CONTENT_VIDEO_PUBLISH,
             PermissionEnum::CONTENT_VIDEO_DELETE,
+            PermissionEnum::CONTENT_GALLERY_VIEW,
+            PermissionEnum::CONTENT_GALLERY_MANAGE,
+            PermissionEnum::CONTENT_GALLERY_PUBLISH,
+            PermissionEnum::CONTENT_GALLERY_DELETE,
         ], $permissions);
     }
 
@@ -78,6 +82,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_VIDEO_MANAGE,
             PermissionEnum::CONTENT_VIDEO_PUBLISH,
             PermissionEnum::CONTENT_VIDEO_DELETE,
+            PermissionEnum::CONTENT_GALLERY_VIEW,
+            PermissionEnum::CONTENT_GALLERY_MANAGE,
+            PermissionEnum::CONTENT_GALLERY_PUBLISH,
+            PermissionEnum::CONTENT_GALLERY_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -148,6 +156,10 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'video manage' => [PermissionEnum::CONTENT_VIDEO_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'video publish' => [PermissionEnum::CONTENT_VIDEO_PUBLISH, [UserRolesEnum::ADMIN]];
         yield 'video delete' => [PermissionEnum::CONTENT_VIDEO_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'gallery view' => [PermissionEnum::CONTENT_GALLERY_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'gallery manage' => [PermissionEnum::CONTENT_GALLERY_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'gallery publish' => [PermissionEnum::CONTENT_GALLERY_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'gallery delete' => [PermissionEnum::CONTENT_GALLERY_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

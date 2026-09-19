@@ -203,6 +203,20 @@ Les décisions suivantes restent explicitement ouvertes :
 
 ## 10. Références
 
+## CNT-004 — Galeries photos
+
+- une galerie commence en `DRAFT`; seul un brouillon peut être publié et seule
+  une galerie publiée peut être archivée ;
+- publier exige une image, une couverture faisant partie de la galerie et un
+  texte alternatif renseigné pour chaque image ;
+- l’ordre des images est complet, stable et sans doublon ; la couverture est
+  retirée si son image est détachée ;
+- `altText` décrit l’image pour l’accessibilité et reste distinct de la
+  `caption`, qui est facultative ;
+- les médias sont conservés après suppression d’une galerie. Leur effacement
+  physique est explicite et refusé quand un item les référence ;
+- un tag utilisé par une galerie ne peut pas être supprimé.
+
 - [`docs/PERMISSIONS.md`](PERMISSIONS.md) ;
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;
 - [`docs/specifications_techniques_plateforme_avocats_ci_v3.md`](specifications_techniques_plateforme_avocats_ci_v3.md).

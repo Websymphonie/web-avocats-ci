@@ -7,6 +7,9 @@ parameters:
   app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
   app.sender_name: '%env(MAILER_SENDER_NAME)%'
   upload_dir: '/uploads'
+  media.gallery.directory: '%kernel.project_dir%/public/uploads/galleries'
+  media.gallery.prefix: 'uploads/galleries'
+  media.gallery.max_size: 5242880
   app.logo_default: '/assets/logo.png'
   app.avatar_default: '/assets/avatar.png'
   account_activation_ttl: '%env(ACCOUNT_ACTIVATION_TTL)%'
@@ -23,6 +26,9 @@ services:
       string $uploadDir: '%upload_dir%'
       string $activationTtl: '%account_activation_ttl%'
       string $resetTtl: '%password_reset_ttl%'
+      string $galleryMediaDirectory: '%media.gallery.directory%'
+      string $galleryMediaPrefix: '%media.gallery.prefix%'
+      int $galleryMediaMaxSize: '%media.gallery.max_size%'
 
   _instanceof:
     Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:
@@ -70,6 +76,18 @@ services:
 
   Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface:
     alias: Websymphonie\ContentContext\Infrastructure\Service\RichText\SymfonyRichTextSanitizer
+
+  Websymphonie\MediaContext\Application\Service\MediaStorageInterface:
+    alias: Websymphonie\MediaContext\Infrastructure\Service\LocalPublicImageStorage
+
+  Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface:
+    alias: Websymphonie\MediaContext\Infrastructure\Service\LocalMediaUploadService
+
+  Websymphonie\MediaContext\Application\Service\MediaUsageCheckerInterface:
+    alias: Websymphonie\ContentContext\Application\Service\GalleryMediaUsageChecker
+
+  Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface:
+    alias: Websymphonie\MediaContext\Infrastructure\Service\MediaPublicUrlResolver
 
   Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler:
     class: Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler

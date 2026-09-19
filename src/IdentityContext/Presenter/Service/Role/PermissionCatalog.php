@@ -51,6 +51,10 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_VIDEO_MANAGE,
             PermissionEnum::CONTENT_VIDEO_PUBLISH,
             PermissionEnum::CONTENT_VIDEO_DELETE => 'Contenu · Vidéos éditoriales',
+            PermissionEnum::CONTENT_GALLERY_VIEW,
+            PermissionEnum::CONTENT_GALLERY_MANAGE,
+            PermissionEnum::CONTENT_GALLERY_PUBLISH,
+            PermissionEnum::CONTENT_GALLERY_DELETE => 'Contenu · Galeries photos',
         };
     }
 

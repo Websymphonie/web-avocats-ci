@@ -355,3 +355,11 @@ Les permissions `CONTENT_VIDEO_VIEW`, `CONTENT_VIDEO_MANAGE`,
 `CONTENT_VIDEO_PUBLISH` et `CONTENT_VIDEO_DELETE` sont accordées par défaut à
 `ROLE_ADMIN` uniquement. Elles ne sont pas accordées par défaut à
 `ROLE_AVOCAT` ni `ROLE_USER`.
+
+### Galeries photos — CNT-004
+
+`CONTENT_GALLERY_VIEW`, `CONTENT_GALLERY_MANAGE`, `CONTENT_GALLERY_PUBLISH` et
+`CONTENT_GALLERY_DELETE` sont accordées par défaut à `ROLE_ADMIN` et à
+`ROLE_SUPER_ADMIN` (via son comportement global). Elles ne sont pas accordées
+par défaut à `ROLE_AVOCAT` ni `ROLE_USER`. Les configurations persistées de la
+matrice de rôles restent prioritaires.

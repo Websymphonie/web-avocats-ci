@@ -113,6 +113,14 @@ Existing short transitions communicate menu/dialog state. No animation is added 
 
 Product copy is concise French operational language. Dates use the existing locale format; empty states explain that no news matches the current criteria.
 
+### Photo galleries
+
+Gallery editing follows the same register vocabulary: a responsive image grid,
+semantic preview cards, text-alternative and optional-caption fields, a visible
+cover marker, and explicit remove actions. Drag and drop is enhanced with
+keyboard-reachable Monter/Descendre controls. Dropzones, cards and validation
+states use semantic tokens so light and dark themes stay equivalent.
+
 ## Do’s and Don’ts
 
 - **Do:** keep status, publication date and modification date visible in the register.

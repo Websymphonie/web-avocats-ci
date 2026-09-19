@@ -41,6 +41,12 @@ doctrine:
         DATE: DoctrineExtensions\Query\Mysql\Date
         JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
     mappings:
+      Media:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/MediaContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Media
       Content:
         is_bundle: false
         type: attribute

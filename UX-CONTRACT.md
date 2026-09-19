@@ -36,6 +36,8 @@
 - Event lifecycle actions are state-aware: publish is available for drafts, cancel for published events, and archive for published or cancelled events. Event status is never a free form field.
 - Event practical fields follow the selected format visually, but date ordering, safe URL protocols and publication invariants are always checked server-side.
 - Editorial videos reuse the same listing, action menu, bulk selection and confirmation patterns. The Backoffice preview uses a validated YouTube no-cookie embed only; arbitrary external URLs remain links.
+- Galeries photos reuse `ActionDropdown`, `BulkSelection`, `AlertDialog` and the shared feedback service. The listing exposes Couverture, Titre, Images, Statut, Publication and one ellipsis action menu.
+- The Gallery editor accepts multiple JPEG/PNG/WebP images, previews selected files, keeps alt text distinct from optional captions, and exposes both drag/drop plus Monter/Descendre fallback controls. A gallery cannot publish until its cover and all alt texts are valid.
 
 ## Accessibility and responsive behavior
 

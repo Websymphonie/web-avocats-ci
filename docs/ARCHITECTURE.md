@@ -279,3 +279,15 @@ Existing context?
    ↙ yes      no ↘
 reuse       justify new context
 ```
+
+## 12. MediaContext minimal — CNT-004
+
+`MediaContext` est introduit uniquement pour stocker les images publiques de
+galeries. Il porte les métadonnées techniques (`originalName`, nom sûr généré,
+MIME réel, taille, dimensions et chemin local), la validation serveur et le
+stockage. Son contrat de stockage est local aujourd’hui, sous
+`public/uploads/galleries`; il n’introduit ni S3, ni médiathèque, ni relation
+Doctrine vers `ContentContext`.
+
+Les variantes sont rendues par LiipImagine à partir de l’original maîtrisé. Les
+fichiers privés, documents et médias Learning restent hors de cette capacité.

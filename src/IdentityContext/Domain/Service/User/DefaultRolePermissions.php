@@ -78,6 +78,10 @@ final class DefaultRolePermissions
             PermissionEnum::CONTENT_VIDEO_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_VIDEO_PUBLISH->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_VIDEO_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_GALLERY_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_GALLERY_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_GALLERY_PUBLISH->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_GALLERY_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

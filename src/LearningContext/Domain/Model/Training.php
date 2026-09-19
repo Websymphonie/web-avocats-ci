@@ -55,7 +55,7 @@ final class Training
         $this->coverMediaId = $mediaId;
     }
 
-    public function publish(int $moduleCount = 0, int $emptyModuleCount = 0): void
+    public function publish(int $moduleCount = 0, int $emptyModuleCount = 0, int $unreadyLessonCount = 0): void
     {
         if ($this->status !== TrainingStatus::DRAFT) {
             throw new InvalidTrainingTransitionException('Seul un brouillon peut être publié.');
@@ -63,6 +63,9 @@ final class Training
         $this->assertPublishable();
         if ($this->type === TrainingType::COURSE && ($moduleCount < 1 || $emptyModuleCount > 0)) {
             throw new InvalidTrainingDetailsException('Ajoutez au moins un module contenant une leçon avant de publier cette formation.');
+        }
+        if ($this->type === TrainingType::COURSE && $unreadyLessonCount > 0) {
+            throw new InvalidTrainingDetailsException('Chaque leçon doit contenir un contenu, une vidéo YouTube valide ou au moins une ressource avant la publication.');
         }
         $this->status = TrainingStatus::PUBLISHED;
         $this->publishedAt ??= new DateTimeImmutable();

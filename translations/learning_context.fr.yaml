@@ -7,3 +7,5 @@ exceptions:
     invalid_course_structure: "Cette opération nécessite une formation de type COURSE."
     course_module_not_found: "Ce module de cours est introuvable."
     lesson_not_found: "Cette leçon est introuvable."
+    invalid_lesson_video: "La vidéo doit être une URL YouTube valide."
+    lesson_resource_not_found: "Cette ressource de leçon est introuvable."

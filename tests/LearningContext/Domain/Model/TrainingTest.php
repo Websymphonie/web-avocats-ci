@@ -71,6 +71,13 @@ final class TrainingTest extends TestCase
         $this->training()->publish(1, 1);
     }
 
+    public function testCourseCannotBePublishedWithAnUnreadyLesson(): void
+    {
+        $this->expectException(InvalidTrainingDetailsException::class);
+
+        $this->training()->publish(1, 0, 1);
+    }
+
     private function training(): Training
     {
         return new Training(

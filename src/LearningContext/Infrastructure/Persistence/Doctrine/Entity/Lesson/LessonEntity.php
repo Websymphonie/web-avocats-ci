@@ -31,6 +31,18 @@ class LessonEntity
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $summary = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $content = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $videoProvider = null;
+
+    #[ORM\Column(length: 2048, nullable: true)]
+    private ?string $videoUrl = null;
+
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $externalVideoId = null;
+
     #[ORM\Column(type: 'integer')]
     private int $position = 1;
 
@@ -40,6 +52,14 @@ class LessonEntity
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getSummary(): ?string { return $this->summary; }
     public function setSummary(?string $value): self { $this->summary = $value; return $this; }
+    public function getContent(): ?string { return $this->content; }
+    public function setContent(?string $value): self { $this->content = $value; return $this; }
+    public function getVideoProvider(): ?string { return $this->videoProvider; }
+    public function setVideoProvider(?string $value): self { $this->videoProvider = $value; return $this; }
+    public function getVideoUrl(): ?string { return $this->videoUrl; }
+    public function setVideoUrl(?string $value): self { $this->videoUrl = $value; return $this; }
+    public function getExternalVideoId(): ?string { return $this->externalVideoId; }
+    public function setExternalVideoId(?string $value): self { $this->externalVideoId = $value; return $this; }
     public function getPosition(): int { return $this->position; }
     public function setPosition(int $value): self { $this->position = $value; return $this; }
 }

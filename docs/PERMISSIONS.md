@@ -382,6 +382,7 @@ Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`. Les
 configurations persistées de la matrice de rôles restent prioritaires.
 
 La verticale livrée concerne l’administration Backoffice des formations
-`COURSE`, de leur structure modules/leçons et des transitions prévues. Les
-inscriptions, paiements, LIVE et accès pédagogique ne sont pas couverts par ces
-permissions.
+`COURSE`, de leur structure modules/leçons, de leur contenu pédagogique et des
+transitions prévues. Les ressources de leçon restent couvertes par la même
+permission ; aucune permission Media générique n’est ajoutée. Les inscriptions,
+paiements, LIVE et accès pédagogique ne sont pas couverts par ces permissions.

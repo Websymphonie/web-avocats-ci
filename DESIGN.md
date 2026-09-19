@@ -142,8 +142,11 @@ and edit screens. Modules and lessons use compact ellipsis action menus,
 explicit AlertDialog confirmation for destructive actions, and visible
 positions. Stimulus drag/drop is paired with Monter/Descendre controls so the
 structure remains usable by keyboard and on narrow screens. The builder does
-not introduce a bulk action bar or content/player affordances before the
-learning-content slice.
+not introduce a bulk action bar. The lesson editor adds the shared rich-text
+editor, a validated YouTube reference and a private-resource area with
+multiple upload, title editing, secure download, reorder drag/drop and
+Monter/Descendre keyboard fallback. It uses the same semantic tokens in light
+and dark mode.
 
 ## Do’s and Don’ts
 

@@ -165,6 +165,22 @@ restantes. Le déplacement d’une leçon vers un autre module est différé.
 Les contenus de leçon, médias pédagogiques, durée, progression, quiz,
 certificats et lecteur restent hors périmètre de LRN-002.
 
+### LRN-003 — Contenu pédagogique des leçons
+
+Une `Lesson` peut porter un contenu HTML issu du rich-text editor partagé, une
+référence vidéo YouTube validée (`watch`, `youtu.be` ou `embed`) et des
+`LessonResource`. Les iframes et scripts ne sont pas conservés dans le contenu.
+Les ressources réutilisent `MediaContext.StoredFile` par identifiant scalaire,
+mais leurs fichiers sont stockés séparément sous la racine privée
+`private/learning/resources`. Cette capacité reste Backoffice-only jusqu’à la
+livraison de l’accès pédagogique.
+
+Une leçon est prête pour publication si elle possède un contenu significatif,
+une vidéo YouTube valide ou au moins une ressource. Une `COURSE` publiée reste
+éditable sans versioning. Les ressources ont un titre, un ordre persistant et
+un téléchargement sécurisé réservé au Backoffice ; leur suppression détache
+la ressource puis nettoie le fichier uniquement s’il n’est plus référencé.
+
 ## 6. Visibilité et accès Learning
 
 La visibilité et l’accès sont indépendants :

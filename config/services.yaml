@@ -35,6 +35,7 @@ services:
       string $appStorageDir: '%app.storage_dir%'
       int $galleryMediaMaxSize: '%media.gallery.max_size%'
       int $documentMaxSize: '%media.document.max_size%'
+      int $resourceMaxSize: '%media.document.max_size%'
 
   _instanceof:
     Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:
@@ -112,7 +113,23 @@ services:
     alias: Websymphonie\MediaContext\Infrastructure\Service\LocalStoredFileUploadService
 
   Websymphonie\MediaContext\Application\Service\StoredFileUsageCheckerInterface:
-    alias: Websymphonie\ContentContext\Application\Service\DocumentStoredFileUsageChecker
+    alias: Websymphonie\SharedContext\Application\Service\Media\CompositeStoredFileUsageChecker
+
+  Websymphonie\SharedContext\Application\Service\Media\CompositeStoredFileUsageChecker:
+    arguments:
+      $checkers: !tagged_iterator app.stored_file_usage_checker
+
+  Websymphonie\ContentContext\Application\Service\DocumentStoredFileUsageChecker:
+    tags: [ 'app.stored_file_usage_checker' ]
+
+  Websymphonie\LearningContext\Application\Service\LearningStoredFileUsageChecker:
+    tags: [ 'app.stored_file_usage_checker' ]
+
+  Websymphonie\LearningContext\Application\Service\LearningResourceStorageInterface:
+    alias: Websymphonie\LearningContext\Infrastructure\Service\LocalLearningResourceStorage
+
+  Websymphonie\LearningContext\Application\Service\LearningResourceFileServiceInterface:
+    alias: Websymphonie\LearningContext\Infrastructure\Service\LocalLearningResourceFileService
 
   Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler:
     class: Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler

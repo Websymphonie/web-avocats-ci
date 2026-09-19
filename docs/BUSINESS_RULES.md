@@ -266,3 +266,13 @@ Les décisions suivantes restent explicitement ouvertes :
 - [`docs/PERMISSIONS.md`](PERMISSIONS.md) ;
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;
 - [`docs/specifications_techniques_plateforme_avocats_ci_v3.md`](specifications_techniques_plateforme_avocats_ci_v3.md).
+
+## LRN-003 — Contenu pédagogique des leçons
+
+Une leçon est publiable lorsqu’elle possède un contenu riche significatif, une
+référence YouTube valide ou au moins une ressource. Chaque ressource doit avoir
+un nom et un ordre unique ; PDF, DOCX, XLSX et PPTX sont les seuls formats
+livrés. Les fichiers restent privés et téléchargeables uniquement depuis le
+Backoffice tant que l’accès pédagogique membre n’est pas livré. Retirer une
+ressource ne supprime pas un fichier partagé ; le nettoyage physique n’est
+effectué que lorsqu’il n’existe plus aucune référence.

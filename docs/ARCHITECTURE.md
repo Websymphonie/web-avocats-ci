@@ -328,6 +328,23 @@ drop, avec les boutons Monter et Descendre comme alternative clavier. Il
 n’introduit ni React, ni BulkSelection pour les modules/leçons. Les mutations
 sont protégées par CSRF et LEARNING_TRAINING_MANAGE.
 
+## 12.2 LearningContext — contenu pédagogique LRN-003
+
+Le contenu d’une `Lesson` est nettoyé par le service Tiptap/sanitizer partagé.
+La vidéo est une référence externe YouTube : seul son identifiant est utilisé
+pour l’embed, sans appel API ni hébergement vidéo privé. `LessonResource`
+conserve un `storedFileId` scalaire et ne crée aucune relation Doctrine vers
+`MediaContext`.
+
+Les ressources privées utilisent la racine persistante configurée
+`APP_STORAGE_DIR`, sous `private/learning/resources`; elles ne sont pas
+placées sous `var/` et ne possèdent aucun alias public. Les formats autorisés
+sont PDF, DOCX, XLSX et PPTX, avec validation MIME réelle, extension
+cohérente, taille maximale configurable et nom de stockage aléatoire. La
+suppression est DB-first puis best-effort sur le fichier physique, et le
+nettoyage est refusé lorsqu’un `StoredFile` est encore utilisé par un document
+ou une ressource Learning.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

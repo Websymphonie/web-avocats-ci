@@ -10,7 +10,6 @@ use Websymphonie\LearningContext\Domain\Exception\CourseModuleNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\CourseModule;
 use Websymphonie\LearningContext\Domain\Repository\CourseModuleRepositoryInterface;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\CourseModule\CourseModuleEntity;
-use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Lesson\LessonEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Factory\CourseModuleFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
 use Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface;
@@ -51,7 +50,6 @@ final class CourseModuleRepository extends ServiceEntityRepository implements Co
     {
         $entity = $this->find($module->id);
         if (!$entity instanceof CourseModuleEntity) { throw CourseModuleNotFoundException::withId($module->id); }
-        $this->getEntityManager()->createQueryBuilder()->delete(LessonEntity::class, 'lesson')->where('lesson.moduleId = :moduleId')->setParameter('moduleId', $module->id)->getQuery()->execute();
         DbLogListener::disable();
         try { $this->manager->execute($entity, DbActionEnum::DELETE); } finally { DbLogListener::enable(); }
     }

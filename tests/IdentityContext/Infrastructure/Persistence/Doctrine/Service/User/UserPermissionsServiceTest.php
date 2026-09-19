@@ -34,6 +34,23 @@ final class UserPermissionsServiceTest extends TestCase
         self::assertFalse($service->has($user, PermissionEnum::EDIT));
     }
 
+    public function testAnEmptyPersistedConfigurationDoesNotFallBackToDefaults(): void
+    {
+        $hierarchy = $this->createMock(RoleHierarchyInterface::class);
+        $hierarchy->method('getReachableRoleNames')->willReturn([UserRolesEnum::AVOCAT->value]);
+        $repository = $this->createMock(RolePermissionsRepositoryInterface::class);
+        $repository
+            ->expects(self::exactly(2))
+            ->method('getForRole')
+            ->with(UserRolesEnum::AVOCAT)
+            ->willReturn(new RolePermissions(2, UserRolesEnum::AVOCAT, []));
+        $service = new UserPermissionsService(new UserRoleResolver($hierarchy), $repository, $this->cacheService());
+        $user = (new User())->setRoles([UserRolesEnum::AVOCAT->value]);
+
+        self::assertFalse($service->has($user, PermissionEnum::LIST));
+        self::assertSame([], $service->permissions($user));
+    }
+
     private function cacheService(): CacheServiceInterface
     {
         return new class implements CacheServiceInterface {

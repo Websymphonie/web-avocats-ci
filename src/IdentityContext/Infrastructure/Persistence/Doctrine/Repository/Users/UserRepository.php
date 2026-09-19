@@ -147,7 +147,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return [];
         }
 
-        /** @var list<User> $users */
         return $queryBuilder->where($or)->getQuery()->getResult();
     }
 

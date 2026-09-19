@@ -11,10 +11,11 @@ use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
 use Websymphonie\IdentityContext\Domain\Enum\UserRolesEnum;
 use Websymphonie\IdentityContext\Domain\Model\Role\RolePermissions;
 use Websymphonie\IdentityContext\Domain\Repository\Role\RolePermissionsRepositoryInterface;
+use Websymphonie\IdentityContext\Domain\Service\User\DefaultRolePermissions;
 
 final class ListRolePermissionsHandlerTest extends TestCase
 {
-    public function testItCombinesPersistedConfigurationWithSafeDefaults(): void
+    public function testItKeepsPersistedConfigurationAndUsesDefaultsOnlyForMissingRoles(): void
     {
         $repository = $this->createMock(RolePermissionsRepositoryInterface::class);
         $repository
@@ -26,13 +27,18 @@ final class ListRolePermissionsHandlerTest extends TestCase
 
         $configurations = (new ListRolePermissionsHandler($repository))(new ListRolePermissionsQuery());
 
-        self::assertCount(7, $configurations);
-        self::assertSame(UserRolesEnum::AVOCAT, $configurations[0]->getRole());
-        self::assertSame([PermissionEnum::CREATE], $configurations[0]->getPermissions());
-        self::assertSame(UserRolesEnum::ADMIN, $configurations[1]->getRole());
-        foreach ([PermissionEnum::LIST, PermissionEnum::VIEW] as $permission) {
-            self::assertContains($permission, $configurations[1]->getPermissions());
-        }
-        self::assertSame(UserRolesEnum::ADMIN, $configurations[2]->getRole());
+        self::assertCount(3, $configurations);
+        self::assertSame(UserRolesEnum::ADMIN, $configurations[0]->getRole());
+        self::assertSame(
+            DefaultRolePermissions::forRole(UserRolesEnum::ADMIN),
+            $configurations[0]->getPermissions(),
+        );
+        self::assertSame(UserRolesEnum::AVOCAT, $configurations[1]->getRole());
+        self::assertSame([PermissionEnum::CREATE], $configurations[1]->getPermissions());
+        self::assertSame(UserRolesEnum::USER, $configurations[2]->getRole());
+        self::assertSame(
+            DefaultRolePermissions::forRole(UserRolesEnum::USER),
+            $configurations[2]->getPermissions(),
+        );
     }
 }

@@ -47,13 +47,6 @@ class RoleGroupAccessVoter extends Voter
         // On reconstruit l’enum de groupe si nécessaire.
         $group = is_string($subject) ? RoleGroupEnum::from($subject) : $subject;
 
-        if ($user instanceof User) {
-            $permission = PermissionEnum::tryFrom($group->value);
-            if ($permission !== null) {
-                return $this->permissions->has($user, $permission);
-            }
-        }
-
         $allowedRoles = $group->roles();
         $userRoles = $token->getRoleNames();
 

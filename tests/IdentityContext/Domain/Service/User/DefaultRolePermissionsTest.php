@@ -11,29 +11,43 @@ use Websymphonie\IdentityContext\Domain\Service\User\DefaultRolePermissions;
 
 final class DefaultRolePermissionsTest extends TestCase
 {
-    public function testLegacyAdministratorKeepsOnlyGenericReadOnlyPermissions(): void
+    public function testManagerReceivesTheExistingGenericManagementPermissions(): void
     {
         $permissions = DefaultRolePermissions::forRole(UserRolesEnum::ADMIN);
 
         self::assertSame([
             PermissionEnum::LIST,
             PermissionEnum::VIEW,
+            PermissionEnum::CREATE,
+            PermissionEnum::EDIT,
+            PermissionEnum::PRINT,
+            PermissionEnum::DELETE,
         ], $permissions);
     }
 
-    public function testNonAdministrativeAndLegacyRolesKeepGenericReadOnlyPermissions(): void
+    public function testConfigurableRolesReceiveTheirExistingGenericPermissions(): void
     {
-        foreach ([
-                     UserRolesEnum::ADMIN,
-                     UserRolesEnum::AVOCAT,
-                     UserRolesEnum::USER,
-                 ] as $role) {
-            $permissions = DefaultRolePermissions::forRole($role);
-            self::assertContains(PermissionEnum::LIST, $permissions);
-            self::assertContains(PermissionEnum::VIEW, $permissions);
-            self::assertNotContains(PermissionEnum::CREATE, $permissions);
-            self::assertNotContains(PermissionEnum::EDIT, $permissions);
-        }
+        self::assertSame([
+            PermissionEnum::LIST,
+            PermissionEnum::VIEW,
+            PermissionEnum::CREATE,
+            PermissionEnum::EDIT,
+            PermissionEnum::PRINT,
+            PermissionEnum::DELETE,
+        ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
+        self::assertSame([
+            PermissionEnum::LIST,
+            PermissionEnum::VIEW,
+            PermissionEnum::CREATE,
+            PermissionEnum::EDIT,
+            PermissionEnum::PRINT,
+        ], DefaultRolePermissions::forRole(UserRolesEnum::AVOCAT));
+        self::assertSame([
+            PermissionEnum::LIST,
+            PermissionEnum::VIEW,
+            PermissionEnum::CREATE,
+            PermissionEnum::EDIT,
+        ], DefaultRolePermissions::forRole(UserRolesEnum::USER));
     }
 
     public function testAvocatHasTheExistingGenericManagementPermissions(): void
@@ -44,12 +58,30 @@ final class DefaultRolePermissionsTest extends TestCase
         }
     }
 
-    public function testBusinessDefaultsMatchTheDocumentedMatrix(PermissionEnum $permission, array $allowedRoles): void
+    /**
+     * @dataProvider defaultPermissionMatrix
+     * @param list<UserRolesEnum> $allowedRoles
+     */
+    public function testCurrentDefaultsMatchThePermissionMatrix(PermissionEnum $permission, array $allowedRoles): void
     {
         foreach (UserRolesEnum::configurableRoles() as $role) {
             $granted = in_array($permission, DefaultRolePermissions::forRole($role), true);
             self::assertSame(in_array($role, $allowedRoles, true), $granted, $role->value . ' / ' . $permission->value);
         }
+    }
+
+    /**
+     * @return iterable<string, array{PermissionEnum, list<UserRolesEnum>}>
+     */
+    public static function defaultPermissionMatrix(): iterable
+    {
+        yield 'list' => [PermissionEnum::LIST, UserRolesEnum::configurableRoles()];
+        yield 'view' => [PermissionEnum::VIEW, UserRolesEnum::configurableRoles()];
+        yield 'create' => [PermissionEnum::CREATE, UserRolesEnum::configurableRoles()];
+        yield 'edit' => [PermissionEnum::EDIT, UserRolesEnum::configurableRoles()];
+        yield 'print' => [PermissionEnum::PRINT, [UserRolesEnum::ADMIN, UserRolesEnum::AVOCAT]];
+        yield 'delete' => [PermissionEnum::DELETE, [UserRolesEnum::ADMIN]];
+        yield 'role management' => [PermissionEnum::ROLE_MANAGE, []];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

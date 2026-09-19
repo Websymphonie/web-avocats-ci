@@ -31,6 +31,10 @@ final class RoleGroupEnumTest extends TestCase
         self::assertNotContains(UserRolesEnum::USER->value, $roles);
     }
 
+    /**
+     * @dataProvider roleMatrix
+     * @param list<string> $expectedRoles
+     */
     public function testRecentBusinessPermissionsMatchTheExactRoleMatrix(RoleGroupEnum $group, array $expectedRoles): void
     {
         $actualRoles = $group->roles();
@@ -38,5 +42,31 @@ final class RoleGroupEnumTest extends TestCase
         sort($expectedRoles);
 
         self::assertSame($expectedRoles, $actualRoles);
+    }
+
+    /**
+     * @return iterable<string, array{RoleGroupEnum, list<string>}>
+     */
+    public static function roleMatrix(): iterable
+    {
+        yield 'super' => [RoleGroupEnum::SUPER, [UserRolesEnum::SUPER_ADMIN->value]];
+        yield 'user account' => [RoleGroupEnum::USER_ACCOUNT, [
+            UserRolesEnum::SUPER_ADMIN->value,
+            UserRolesEnum::ADMIN->value,
+            UserRolesEnum::AVOCAT->value,
+        ]];
+        yield 'logs' => [RoleGroupEnum::LOGS, [UserRolesEnum::SUPER_ADMIN->value]];
+        yield 'images' => [RoleGroupEnum::IMAGES, [UserRolesEnum::SUPER_ADMIN->value]];
+        yield 'reglages' => [RoleGroupEnum::REGLAGES, [
+            UserRolesEnum::SUPER_ADMIN->value,
+            UserRolesEnum::ADMIN->value,
+        ]];
+        yield 'maintenance' => [RoleGroupEnum::MAINTENANCE, [UserRolesEnum::SUPER_ADMIN->value]];
+        yield 'all' => [RoleGroupEnum::ALL, [
+            UserRolesEnum::SUPER_ADMIN->value,
+            UserRolesEnum::ADMIN->value,
+            UserRolesEnum::AVOCAT->value,
+            UserRolesEnum::USER->value,
+        ]];
     }
 }

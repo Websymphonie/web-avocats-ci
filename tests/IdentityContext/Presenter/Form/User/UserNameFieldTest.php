@@ -62,9 +62,12 @@ final class UserNameFieldTest extends TypeTestCase
         $choices = $form->get('role')->getConfig()->getOption('choices');
 
         self::assertSame(UserRolesEnum::allRoles(), array_values($choices));
-        self::assertNotContains(UserRolesEnum::ADMIN, $choices);
-        self::assertNotContains(UserRolesEnum::AVOCAT, $choices);
-        self::assertNotContains(UserRolesEnum::USER, $choices);
+        self::assertSame([
+            UserRolesEnum::SUPER_ADMIN->label(),
+            UserRolesEnum::ADMIN->label(),
+            UserRolesEnum::AVOCAT->label(),
+            UserRolesEnum::USER->label(),
+        ], array_keys($choices));
     }
 
     public function testRoleSubmissionKeepsStringRoleCodesInTheCommand(): void
@@ -81,6 +84,6 @@ final class UserNameFieldTest extends TypeTestCase
             'enabled' => true,
         ]);
 
-        self::assertSame([UserRolesEnum::USER->value, UserRolesEnum::AVOCAT->value], $command->roles);
+        self::assertSame([UserRolesEnum::AVOCAT->value, UserRolesEnum::USER->value], $command->roles);
     }
 }

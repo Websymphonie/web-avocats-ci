@@ -15,14 +15,17 @@ enum PermissionEnum: string
     case PRINT = 'ROLE_PRINT';
     case ROLE_MANAGE = 'ROLE_MANAGE';
 
-    // Permissions métier configurables
-
+    /** @return list<self> */
     public static function configurableCases(): array
     {
-        return array_values(array_filter(
-            self::cases(),
-            static fn(self $permission): bool => $permission !== self::ROLE_MANAGE,
-        ));
+        return [
+            self::LIST,
+            self::VIEW,
+            self::CREATE,
+            self::EDIT,
+            self::DELETE,
+            self::PRINT,
+        ];
     }
 
     public function label(): string

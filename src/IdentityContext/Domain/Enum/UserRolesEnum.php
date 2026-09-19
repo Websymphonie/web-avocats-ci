@@ -66,8 +66,8 @@ enum UserRolesEnum: string
     {
         return [
             self::ADMIN,
-            self::USER,
             self::AVOCAT,
+            self::USER,
         ];
     }
 

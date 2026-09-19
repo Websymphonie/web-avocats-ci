@@ -69,7 +69,7 @@ readonly class CurrencyService implements CurrencyServiceInterface
         $numberTransformer = $numberToWords->getNumberTransformer(CurrencyEnum::LOCAL->value);
         $words = $numberTransformer->toWords($amount);
         $currencyCode = strtoupper(
-            trim($currency?->currencyCode ?? CurrencyEnum::DEVISE->value)
+            trim($currency->currencyCode ?? CurrencyEnum::DEVISE->value)
         );
         $currencyLabel = match ($currencyCode) {
             CurrencyEnum::DEVISE->value => 'francs CFA',

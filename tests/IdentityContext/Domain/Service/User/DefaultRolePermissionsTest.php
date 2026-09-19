@@ -32,6 +32,14 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_TAG_VIEW,
             PermissionEnum::CONTENT_TAG_MANAGE,
             PermissionEnum::CONTENT_TAG_DELETE,
+            PermissionEnum::CONTENT_EVENT_VIEW,
+            PermissionEnum::CONTENT_EVENT_MANAGE,
+            PermissionEnum::CONTENT_EVENT_PUBLISH,
+            PermissionEnum::CONTENT_EVENT_CANCEL,
+            PermissionEnum::CONTENT_EVENT_DELETE,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE,
         ], $permissions);
     }
 
@@ -54,6 +62,14 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_TAG_VIEW,
             PermissionEnum::CONTENT_TAG_MANAGE,
             PermissionEnum::CONTENT_TAG_DELETE,
+            PermissionEnum::CONTENT_EVENT_VIEW,
+            PermissionEnum::CONTENT_EVENT_MANAGE,
+            PermissionEnum::CONTENT_EVENT_PUBLISH,
+            PermissionEnum::CONTENT_EVENT_CANCEL,
+            PermissionEnum::CONTENT_EVENT_DELETE,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -112,6 +128,14 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'tag view' => [PermissionEnum::CONTENT_TAG_VIEW, [UserRolesEnum::ADMIN]];
         yield 'tag manage' => [PermissionEnum::CONTENT_TAG_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'tag delete' => [PermissionEnum::CONTENT_TAG_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'event view' => [PermissionEnum::CONTENT_EVENT_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'event manage' => [PermissionEnum::CONTENT_EVENT_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'event publish' => [PermissionEnum::CONTENT_EVENT_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'event cancel' => [PermissionEnum::CONTENT_EVENT_CANCEL, [UserRolesEnum::ADMIN]];
+        yield 'event delete' => [PermissionEnum::CONTENT_EVENT_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'event category view' => [PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'event category manage' => [PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'event category delete' => [PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

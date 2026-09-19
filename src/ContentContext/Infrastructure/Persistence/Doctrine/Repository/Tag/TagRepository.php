@@ -11,6 +11,7 @@ use Websymphonie\ContentContext\Domain\Model\Tag;
 use Websymphonie\ContentContext\Domain\Model\TagListResult;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Factory\TagFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
@@ -67,7 +68,11 @@ final class TagRepository extends ServiceEntityRepository implements TagReposito
 
     public function countNewsUsage(int $id): int
     {
-        return (int) $this->getEntityManager()->createQueryBuilder()->select('COUNT(news.id)')->from(NewsEntity::class, 'news')->join('news.tags', 'tag')->where('tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
+        $entityManager = $this->getEntityManager();
+        $newsCount = (int) $entityManager->createQueryBuilder()->select('COUNT(news.id)')->from(NewsEntity::class, 'news')->join('news.tags', 'news_tag')->where('news_tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
+        $eventCount = (int) $entityManager->createQueryBuilder()->select('COUNT(event.id)')->from(EventEntity::class, 'event')->join('event.tags', 'event_tag')->where('event_tag.id = :id')->setParameter('id', $id)->getQuery()->getSingleScalarResult();
+
+        return $newsCount + $eventCount;
     }
 
     public function delete(Tag $tag): void

@@ -260,6 +260,19 @@ sombre. Le HTML est systématiquement nettoyé côté serveur avec une whitelist
 des éléments éditoriaux autorisés ; les scripts, iframes, styles, gestionnaires
 d’événements et URL dangereuses sont supprimés avant stockage et rendu.
 
+## Événements éditoriaux
+
+Le Backoffice Content réutilise les patterns News pour les événements : titre,
+description Tiptap, multi-selects génériques catégories/tags, listing responsive,
+`ActionDropdown`, `BulkSelection`, `AlertDialog` et `FlashToast`. Le format est
+présenté avec les libellés français « Présentiel », « En ligne » et « Hybride ».
+
+Les champs de lieu et d’URL sont regroupés dans une section pratique et affichés
+selon le format sélectionné. Cette aide d’interface ne remplace pas la
+validation serveur. La date de début reste obligatoire, la date de fin doit lui
+être postérieure ou égale et les URLs de participation utilisent uniquement
+`http` ou `https`.
+
 ## Multi-select et autocomplete
 
 Les champs de taxonomie Backoffice utilisent Symfony UX Autocomplete et Tom

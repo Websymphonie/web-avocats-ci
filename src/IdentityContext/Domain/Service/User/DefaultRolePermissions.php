@@ -66,6 +66,14 @@ final class DefaultRolePermissions
             PermissionEnum::CONTENT_TAG_VIEW->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_TAG_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_TAG_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_PUBLISH->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_CANCEL->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

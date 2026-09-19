@@ -83,6 +83,16 @@ l’actualité est un brouillon. `NewsCategory` et `Tag` appartiennent à
 et sont administrés sous `/admin/content/news-categories` et `/admin/content/tags`.
 Cette verticale ne livre volontairement aucune page Frontoffice, API ni image de couverture.
 
+### CNT-002 — Event livré
+
+`Event` est le modèle éditorial des événements administrés sous
+`/admin/content/events`. Il porte un format `IN_PERSON`, `ONLINE` ou `HYBRID`,
+des dates, les informations de lieu ou de participation en ligne, un statut
+`DRAFT`, `PUBLISHED`, `CANCELLED` ou `ARCHIVED`, ainsi que des catégories
+propres `EventCategory` et les tags génériques `Tag`. Les transitions de
+publication, annulation et archivage sont explicites ; aucun archivage
+automatique, Frontoffice, inscription ou lien avec `Training LIVE` n’est livré.
+
 ## 5. Learning domain
 
 `Training` est le concept central du e-learning.

@@ -37,7 +37,7 @@ The visual reference is a legal clerk’s register: quiet, dense and dependable,
 
 ### Product context and register
 
-- **Audience and primary job:** Backoffice administrators create, review, publish, archive and remove editorial news.
+- **Audience and primary job:** Backoffice administrators create, review, publish, archive and remove editorial news and events.
 - **Target market(s) and evidence:** Côte d’Ivoire; product context and French-language requirement are documented in `docs/PROJECT_CONTEXT.md` and `docs/UI_UX_GUIDELINES.md`.
 - **Locale(s) and language policy:** French UI and content labels; dates use `d/m/Y H:i`.
 - **Usage scene:** authenticated desktop-first Backoffice with mobile fallback and moderate information density.
@@ -92,6 +92,14 @@ Symfony Forms own field rendering and validation. `AlertDialog` owns individual 
 ### Multi-select and autocomplete
 
 Symfony UX Autocomplete with Tom Select is the canonical multi-select foundation for Backoffice taxonomy fields. The generic `form-multi-select` hook keeps the control compact, lets chips wrap naturally and gives the dropdown, search input, focus ring and selected options the same semantic token treatment in both themes. Removal stays explicit through the compact × control; inline creation and drag/drop are intentionally excluded.
+
+### Event workflow
+
+Event forms reuse the News editor and taxonomy patterns. Format is a business
+choice (`Présentiel`, `En ligne`, `Hybride`) with a small Stimulus layer that
+reveals the relevant practical fields; server-side validation remains
+authoritative. Listings keep start date, format, status and one ellipsis action
+menu visible, with deletion confirmed through the shared bulk/alert primitives.
 
 ### Iconography
 

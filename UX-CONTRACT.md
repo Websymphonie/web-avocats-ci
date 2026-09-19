@@ -6,17 +6,17 @@
 | --- | --- |
 | Backoffice shell | `templates/layouts/base.html.twig` |
 | Sidebar rail | `templates/layouts/components/sidebar/main_side_bar_component.html.twig` + `assets/styles/app.scss` |
-| Row actions | `ActionDropdown` + `NewsTableDropdown` |
+| Row actions | `ActionDropdown` + `NewsTableDropdown` / `EventTableDropdown` |
 | Individual deletion | `DeleteFormComponent` + `AlertDialog` |
-| Bulk selection | `BulkSelection` + `BulkDeleteNews` |
+| Bulk selection | `BulkSelection` + `BulkDeleteNews` / `BulkDeleteEvents` |
 | Feedback | `FlashToast` through the shared flash service |
-| Forms | Symfony `NewsFormType` |
+| Forms | Symfony `NewsFormType` / `EventFormType` |
 | Rich text editor | `assets/react/controllers/Content/RichTextEditor.tsx` mounted by the Symfony News form |
 | Multi-select / autocomplete | Symfony UX Autocomplete + Tom Select with the generic `form-multi-select` styling hook |
 | Pagination | `shared/views/_list_pagination.html.twig` |
-| Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` |
+| Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` / `CONTENT_EVENT_*` |
 | Content navigation | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu` |
-| Taxonomy listings | `BulkSelection` + `ActionDropdown` in `news_category` and `tag` templates |
+| Taxonomy listings | `BulkSelection` + `ActionDropdown` in `news_category`, `event_category` and `tag` templates |
 
 ## Interaction rules
 
@@ -27,12 +27,14 @@
 - Publish and archive are explicit POST transitions protected by CSRF and permissions.
 - The form never exposes status; lifecycle transitions are action-based.
 - Empty, filtered and paginated states preserve the same table/card structure.
-- The Content group exposes only Actualités, Catégories d’actualités and Tags in this increment; Events, videos and galleries remain out of scope.
+- The Content group exposes Actualités, Catégories d’actualités, Événements, Catégories d’événements and Tags; videos and galleries remain out of scope.
 - Category and tag associations are edited from the News form with multi-selects; deleting an item used by News is refused by the backend.
 - The rich text editor synchronizes its semantic HTML into the Symfony form field; the backend sanitizes the same field on create and update and sanitizes again before Backoffice rendering.
 - Link input accepts only `http`, `https`, `mailto`, `tel`, relative and fragment URLs. Rendered links receive safe `rel` attributes; scripts, embeds, styles, event handlers and unsupported tags are removed.
 - Taxonomy fields use the existing Symfony UX Autocomplete/Tom Select integration. Chips wrap inside the control, the remove action remains keyboard-reachable through the component behavior, and no inline taxonomy creation is offered in this foundation.
 - Multi-select dropdowns, search inputs, selected options and focus states consume the existing semantic tokens; validation errors remain rendered by Symfony Forms below the field.
+- Event lifecycle actions are state-aware: publish is available for drafts, cancel for published events, and archive for published or cancelled events. Event status is never a free form field.
+- Event practical fields follow the selected format visually, but date ordering, safe URL protocols and publication invariants are always checked server-side.
 
 ## Accessibility and responsive behavior
 

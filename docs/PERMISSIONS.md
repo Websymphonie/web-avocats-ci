@@ -150,6 +150,24 @@ CONTENT_TAG_DELETE
 
 Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`.
 
+### Événements — CNT-002
+
+Les permissions dédiées suivantes sont accordées par défaut à `ROLE_ADMIN`
+uniquement :
+
+```text
+CONTENT_EVENT_VIEW
+CONTENT_EVENT_MANAGE
+CONTENT_EVENT_PUBLISH
+CONTENT_EVENT_CANCEL
+CONTENT_EVENT_DELETE
+CONTENT_EVENT_CATEGORY_VIEW
+CONTENT_EVENT_CATEGORY_MANAGE
+CONTENT_EVENT_CATEGORY_DELETE
+```
+
+Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`.
+
 ### Surfaces de présentation
 
 Les surfaces Web sont séparées du catalogue des rôles :

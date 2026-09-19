@@ -79,6 +79,28 @@ remplacée via le use case de création ou de modification. Une catégorie ou un
 tag utilisé par au moins une actualité ne peut pas être supprimé : l’opération
 est refusée avec un message explicite, sans détachement silencieux.
 
+### CNT-002 — Événements éditoriaux
+
+- un nouvel événement commence en `DRAFT` ;
+- `EventFormat` vaut `IN_PERSON`, `ONLINE` ou `HYBRID` ;
+- `startsAt` est obligatoire et `endsAt`, lorsqu’elle est renseignée, ne peut
+  pas précéder le début ;
+- les formats présentiel et hybride nécessitent un nom de lieu et une adresse
+  au moment de la publication ; les formats en ligne et hybride nécessitent
+  une URL `http` ou `https` sûre ;
+- seul un brouillon peut être publié ; la première publication fixe
+  `publishedAt` ; seul un événement publié peut être annulé ; un événement
+  publié ou annulé peut être archivé ;
+- l’annulation conserve les dates, le lieu et l’URL ; les événements passés ne
+  changent pas automatiquement de statut ;
+- le slug reste stable après publication ; une `EventCategory` utilisée par un
+  événement et un `Tag` utilisé par une actualité ou un événement ne peuvent
+  pas être supprimés.
+
+Les événements éditoriaux restent distincts de `Training LIVE`. Les
+inscriptions, participants, tickets, calendrier public et archivage automatique
+sont hors périmètre de CNT-002.
+
 ## 5. Learning — règles validées
 
 `Training` est le concept principal du e-learning.

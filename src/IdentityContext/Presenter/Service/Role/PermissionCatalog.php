@@ -39,6 +39,14 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_TAG_VIEW,
             PermissionEnum::CONTENT_TAG_MANAGE,
             PermissionEnum::CONTENT_TAG_DELETE => 'Contenu · Tags',
+            PermissionEnum::CONTENT_EVENT_VIEW,
+            PermissionEnum::CONTENT_EVENT_MANAGE,
+            PermissionEnum::CONTENT_EVENT_PUBLISH,
+            PermissionEnum::CONTENT_EVENT_CANCEL,
+            PermissionEnum::CONTENT_EVENT_DELETE => 'Contenu · Événements',
+            PermissionEnum::CONTENT_EVENT_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_EVENT_CATEGORY_DELETE => 'Contenu · Catégories d’événements',
         };
     }
 

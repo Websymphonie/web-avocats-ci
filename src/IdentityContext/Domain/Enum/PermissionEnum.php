@@ -24,6 +24,14 @@ enum PermissionEnum: string
     case CONTENT_TAG_VIEW = 'CONTENT_TAG_VIEW';
     case CONTENT_TAG_MANAGE = 'CONTENT_TAG_MANAGE';
     case CONTENT_TAG_DELETE = 'CONTENT_TAG_DELETE';
+    case CONTENT_EVENT_VIEW = 'CONTENT_EVENT_VIEW';
+    case CONTENT_EVENT_MANAGE = 'CONTENT_EVENT_MANAGE';
+    case CONTENT_EVENT_PUBLISH = 'CONTENT_EVENT_PUBLISH';
+    case CONTENT_EVENT_CANCEL = 'CONTENT_EVENT_CANCEL';
+    case CONTENT_EVENT_DELETE = 'CONTENT_EVENT_DELETE';
+    case CONTENT_EVENT_CATEGORY_VIEW = 'CONTENT_EVENT_CATEGORY_VIEW';
+    case CONTENT_EVENT_CATEGORY_MANAGE = 'CONTENT_EVENT_CATEGORY_MANAGE';
+    case CONTENT_EVENT_CATEGORY_DELETE = 'CONTENT_EVENT_CATEGORY_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -45,6 +53,14 @@ enum PermissionEnum: string
             self::CONTENT_TAG_VIEW,
             self::CONTENT_TAG_MANAGE,
             self::CONTENT_TAG_DELETE,
+            self::CONTENT_EVENT_VIEW,
+            self::CONTENT_EVENT_MANAGE,
+            self::CONTENT_EVENT_PUBLISH,
+            self::CONTENT_EVENT_CANCEL,
+            self::CONTENT_EVENT_DELETE,
+            self::CONTENT_EVENT_CATEGORY_VIEW,
+            self::CONTENT_EVENT_CATEGORY_MANAGE,
+            self::CONTENT_EVENT_CATEGORY_DELETE,
         ];
     }
 
@@ -68,6 +84,14 @@ enum PermissionEnum: string
             self::CONTENT_TAG_VIEW => 'Tags : lecture',
             self::CONTENT_TAG_MANAGE => 'Tags : création et édition',
             self::CONTENT_TAG_DELETE => 'Tags : suppression',
+            self::CONTENT_EVENT_VIEW => 'Événements : lecture',
+            self::CONTENT_EVENT_MANAGE => 'Événements : création et édition',
+            self::CONTENT_EVENT_PUBLISH => 'Événements : publication et archivage',
+            self::CONTENT_EVENT_CANCEL => 'Événements : annulation',
+            self::CONTENT_EVENT_DELETE => 'Événements : suppression',
+            self::CONTENT_EVENT_CATEGORY_VIEW => 'Catégories d’événements : lecture',
+            self::CONTENT_EVENT_CATEGORY_MANAGE => 'Catégories d’événements : création et édition',
+            self::CONTENT_EVENT_CATEGORY_DELETE => 'Catégories d’événements : suppression',
         };
     }
 
@@ -91,6 +115,14 @@ enum PermissionEnum: string
             self::CONTENT_TAG_VIEW => ColorEnum::INFO,
             self::CONTENT_TAG_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_TAG_DELETE => ColorEnum::DANGER,
+            self::CONTENT_EVENT_VIEW => ColorEnum::INFO,
+            self::CONTENT_EVENT_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_EVENT_PUBLISH => ColorEnum::WARNING,
+            self::CONTENT_EVENT_CANCEL => ColorEnum::WARNING,
+            self::CONTENT_EVENT_DELETE => ColorEnum::DANGER,
+            self::CONTENT_EVENT_CATEGORY_VIEW => ColorEnum::INFO,
+            self::CONTENT_EVENT_CATEGORY_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_EVENT_CATEGORY_DELETE => ColorEnum::DANGER,
         };
     }
 }

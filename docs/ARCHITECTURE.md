@@ -282,13 +282,15 @@ reuse       justify new context
 
 ## 12. MediaContext minimal — CNT-004
 
-`MediaContext` est introduit uniquement pour stocker les images publiques de
-galeries. Il porte les métadonnées techniques (`originalName`, nom sûr généré,
-MIME réel, taille, dimensions et chemin local), la validation serveur et le
-stockage. Sa racine persistante unique est configurée par `APP_STORAGE_DIR`
-(valeur canonique `/shared/storage`) et ses adaptateurs dérivent
-`/shared/storage/public/galleries` pour les galeries et
-`/shared/storage/public/content/covers` pour les couvertures News/Event;
+`MediaContext` est introduit uniquement pour stocker les images publiques
+nécessaires aux galeries, couvertures éditoriales et couvertures de formations.
+Il porte les métadonnées techniques (`originalName`, nom sûr généré, MIME réel,
+taille, dimensions et chemin local), la validation serveur et le stockage. Sa
+racine persistante unique est configurée par `APP_STORAGE_DIR` (valeur canonique
+`/shared/storage`) et ses adaptateurs dérivent `/shared/storage/public/galleries`
+pour les galeries, `/shared/storage/public/content/covers` pour les couvertures
+News/Event et `/shared/storage/public/training/covers` pour les couvertures
+Training;
 l’exposition HTTP publique attendue est `/uploads/<storage-key>` et ne doit
 jamais contenir le chemin absolu. Sur un déploiement neuf, la stratégie
 préférée est une seule exposition `public/uploads -> /shared/storage/public`.
@@ -297,11 +299,14 @@ Vich/Admin : jusqu’à leur migration, l’infrastructure doit exposer au minim
 `/uploads/galleries` et `/uploads/content/covers` vers les deux sous-répertoires
 persistants. `private/` ne doit disposer d’aucun alias ou lien HTTP. Les clés
 persistées en base restent relatives (`galleries/<nom>` ou
-`content/covers/<nom>`). Il n’introduit ni S3, ni médiathèque, ni relation
-Doctrine vers `ContentContext`.
+`content/covers/<nom>` ou `training/covers/<nom>`). Il n’introduit ni S3, ni
+médiathèque, ni relation Doctrine vers un contexte métier. Les consommateurs
+signalent leurs usages via le contrat applicatif partagé de vérification média.
 
 Les variantes sont rendues par LiipImagine à partir de l’original maîtrisé. Les
-fichiers privés, documents et médias Learning restent hors de cette capacité.
+fichiers privés, documents et médias pédagogiques Learning restent hors de
+cette capacité; seule la couverture publique de la fiche Training est livrée
+dans LRN-001.
 
 ## 13. Documents privés — CNT-005
 

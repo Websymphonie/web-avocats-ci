@@ -66,7 +66,7 @@ d’un `MemberContext`.
 | ADM-001 | conserver l’entrée `/admin` et le dashboard existant | `IMPLEMENTED` |
 | ADM-002 | réserver l’accès du dashboard aux rôles administratifs autorisés | `IMPLEMENTED` |
 | ADM-003 | gérer les contenus éditoriaux dans leur contexte propriétaire | `IMPLEMENTED` — News |
-| ADM-004 | gérer les formations et Lives dans `LearningContext` | `PLANNED` |
+| ADM-004 | gérer les formations et Lives dans `LearningContext` | `IMPLEMENTED` — Training COURSE Backoffice; LIVE hors périmètre |
 | ADM-005 | gérer les cotisations dans `ContributionContext` après découverte | `DISCOVERY` |
 | ADM-006 | gérer les utilisateurs et permissions via `IdentityContext` | `IMPLEMENTED` |
 | ADM-007 | consulter les logs et capacités de notification existantes | `IMPLEMENTED` |
@@ -93,8 +93,8 @@ propriétaire.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| LRN-001 | introduire `Training` comme concept central | `PLANNED` |
-| LRN-002 | distinguer les types `COURSE` et `LIVE` | `PLANNED` — décision validée |
+| LRN-001 | introduire `Training` comme concept central | `IMPLEMENTED` — fondation + COURSE Backoffice |
+| LRN-002 | distinguer les types `COURSE` et `LIVE` | `IMPLEMENTED` — enum et frontière; LIVE non administré |
 | LRN-003 | administrer une `COURSE` et ses modules | `PLANNED` |
 | LRN-004 | gérer les contenus pédagogiques | `PLANNED` |
 | LRN-005 | gérer `Enrollment` et l’accès pédagogique | `PLANNED` |

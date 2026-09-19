@@ -53,6 +53,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
             PermissionEnum::CONTENT_DOCUMENT_DELETE,
             PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
+            PermissionEnum::LEARNING_TRAINING_VIEW,
+            PermissionEnum::LEARNING_TRAINING_MANAGE,
+            PermissionEnum::LEARNING_TRAINING_PUBLISH,
+            PermissionEnum::LEARNING_TRAINING_DELETE,
         ], $permissions);
     }
 
@@ -96,6 +100,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
             PermissionEnum::CONTENT_DOCUMENT_DELETE,
             PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
+            PermissionEnum::LEARNING_TRAINING_VIEW,
+            PermissionEnum::LEARNING_TRAINING_MANAGE,
+            PermissionEnum::LEARNING_TRAINING_PUBLISH,
+            PermissionEnum::LEARNING_TRAINING_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -175,6 +183,10 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'document publish' => [PermissionEnum::CONTENT_DOCUMENT_PUBLISH, [UserRolesEnum::ADMIN]];
         yield 'document delete' => [PermissionEnum::CONTENT_DOCUMENT_DELETE, [UserRolesEnum::ADMIN]];
         yield 'restricted document download' => [PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD, [UserRolesEnum::ADMIN]];
+        yield 'training view' => [PermissionEnum::LEARNING_TRAINING_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'training manage' => [PermissionEnum::LEARNING_TRAINING_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'training publish' => [PermissionEnum::LEARNING_TRAINING_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'training delete' => [PermissionEnum::LEARNING_TRAINING_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

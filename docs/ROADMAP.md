@@ -135,7 +135,7 @@ CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice 
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 Content Backoffice foundation                     DONE
 Content Frontoffice                              OUT_OF_SCOPE — différé phase Manus
-LRN-001  Training COURSE                           PLANNED
+LRN-001  Training COURSE                           DONE — Backoffice uniquement
 ```
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.

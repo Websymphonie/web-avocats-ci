@@ -60,6 +60,10 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_DOCUMENT_PUBLISH,
             PermissionEnum::CONTENT_DOCUMENT_DELETE,
             PermissionEnum::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => 'Contenu · Documents',
+            PermissionEnum::LEARNING_TRAINING_VIEW,
+            PermissionEnum::LEARNING_TRAINING_MANAGE,
+            PermissionEnum::LEARNING_TRAINING_PUBLISH,
+            PermissionEnum::LEARNING_TRAINING_DELETE => 'Formations · Formations',
         };
     }
 

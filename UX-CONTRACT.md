@@ -16,7 +16,10 @@
 | Pagination | `shared/views/_list_pagination.html.twig` |
 | Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` / `CONTENT_EVENT_*` |
 | Content navigation | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu` |
+| Learning navigation | `SharedContext\Application\Service\Sidebar\Modules\LearningMenu` |
 | Taxonomy listings | `BulkSelection` + `ActionDropdown` in `news_category`, `event_category` and `tag` templates |
+| Training listing | `TrainingTableDropdown` + `BulkSelection` + `AlertDialog` in the Learning Backoffice |
+| Training form | `TrainingFormType` + shared `RichTextEditor` + public cover upload |
 
 ## Interaction rules
 
@@ -40,6 +43,7 @@
 - Galeries photos reuse `ActionDropdown`, `BulkSelection`, `AlertDialog` and the shared feedback service. The listing exposes Couverture, Titre, Images, Statut, Publication and one ellipsis action menu.
 - The Gallery editor accepts multiple JPEG/PNG/WebP images, previews selected files, keeps alt text distinct from optional captions, and exposes both drag/drop plus Monter/Descendre fallback controls. A gallery cannot publish until its cover and all alt texts are valid.
 - Documents reuse the Content register, ActionDropdown, BulkSelection and AlertDialog. Creation accepts one PDF/DOCX/XLSX/PPTX file, displays name/type/size before submission and does not expose a document preview. Status transitions remain explicit; access level is a separate field.
+- Training COURSE reuses the register, action menu, bulk selection and confirmation primitives, but is grouped under `Formations` rather than `Content`. Visibility (`PUBLIC`/`MEMBER`) and access (`FREE`/`PAID`/`RESTRICTED`) are separate fields; status remains transition-based and is never a free form field. The cover is optional and uses the public Media capability under `training/covers`.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED` documents. Backoffice uses `/admin/content/documents/{id}/download`.
 
 ## Accessibility and responsive behavior

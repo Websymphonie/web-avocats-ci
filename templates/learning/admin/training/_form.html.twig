@@ -1,0 +1,58 @@
+{{ form_start(form, {attr: {class: 'space-y-6', novalidate: true, enctype: 'multipart/form-data'}}) }}
+<div class="space-y-2">
+    {{ form_label(form.title, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+    {{ form_widget(form.title, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+    {{ form_errors(form.title) }}
+</div>
+<div class="space-y-2">
+    {{ form_label(form.summary, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+    {{ form_widget(form.summary, {attr: {class: 'min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 resize-none'}}) }}
+    {{ form_errors(form.summary) }}
+    <p class="text-xs text-muted-foreground">Ce résumé sera utilisé par le futur catalogue de formations.</p>
+</div>
+<div class="space-y-2">
+    {{ form_label(form.description, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+    <div {{ react_component('Content/RichTextEditor', {inputId: form.description.vars.id, label: 'Description', value: form.description.vars.value|default(''), placeholder: 'Présentez les objectifs et le contenu général de la formation…', invalid: form.description.vars.errors|length > 0}) }}></div>
+    {{ form_widget(form.description, {attr: {class: 'sr-only', tabindex: '-1', 'aria-hidden': 'true'}}) }}
+    {{ form_errors(form.description) }}
+    <p class="text-xs text-muted-foreground">La mise en forme est nettoyée côté serveur. Les modules et leçons seront ajoutés dans une étape ultérieure.</p>
+</div>
+<div class="grid gap-5 md:grid-cols-2">
+    <div class="space-y-2">
+        {{ form_label(form.visibility, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+        {{ form_widget(form.visibility, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+        {{ form_errors(form.visibility) }}
+        <p class="text-xs text-muted-foreground">La visibilité indique où la formation pourra être découverte, pas le droit de la suivre.</p>
+    </div>
+    <div class="space-y-2">
+        {{ form_label(form.accessType, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+        {{ form_widget(form.accessType, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+        {{ form_errors(form.accessType) }}
+        <p class="text-xs text-muted-foreground">Le paiement et les règles d’accès seront raccordés ultérieurement.</p>
+    </div>
+</div>
+<div class="space-y-3" data-controller="cover-upload">
+    {{ form_label(form.cover, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+    <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem]">
+        <div class="space-y-2">
+            {{ form_widget(form.cover, {attr: {'data-cover-upload-target': 'input', 'data-action': 'change->cover-upload#changed', class: 'block w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}
+            {{ form_errors(form.cover) }}
+            <p class="text-xs text-muted-foreground">JPEG, PNG ou WebP, 5 Mio maximum. La couverture reste optionnelle.</p>
+            {% if form.removeCover is defined %}
+                <label class="flex items-center gap-2 text-sm text-muted-foreground">{{ form_widget(form.removeCover, {attr: {'data-cover-upload-target': 'remove', class: 'size-4 accent-primary'}}) }}Retirer la couverture actuelle</label>
+            {% endif %}
+        </div>
+        <div class="rounded-xl border border-dashed border-border bg-muted/20 p-2" data-cover-upload-target="preview">
+            {% if coverUrl|default(null) %}
+                <img src="{{ coverUrl }}" alt="Couverture actuelle" class="h-36 w-full rounded-lg object-cover">
+            {% else %}
+                <div class="flex h-36 items-center justify-center text-center text-xs text-muted-foreground">Aucune couverture</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-5">
+    <a class="inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-muted-foreground hover:bg-muted" href="{{ path('learning_admin_training_list') }}">Annuler</a>
+    <button class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" type="submit"><twig:ux:icon name="lucide:save" class="size-4"/>Enregistrer le brouillon</button>
+</div>
+{{ form_end(form) }}

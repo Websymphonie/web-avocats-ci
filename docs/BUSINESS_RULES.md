@@ -128,6 +128,18 @@ contenu nécessite une autorisation serveur.
 `Enrollment` contrôle l’accès pédagogique. Le fournisseur vidéo, notamment
 YouTube, ne devient pas l’autorité des droits d’accès.
 
+Pour LRN-001, une nouvelle `COURSE` commence en `DRAFT`. La publication est
+explicite, renseigne `publishedAt` et exige un titre, un résumé et une
+description non vides. La couverture est facultative et aucune collection de
+modules n’est requise à ce stade. Une formation publiée peut être archivée;
+les autres transitions ne sont pas exposées par le formulaire.
+
+Le slug est modifiable en brouillon et stable après publication. Les
+couvertures sont des images publiques `JPEG`, `PNG` ou `WebP` stockées par
+`MediaContext`; `MediaContext` ne connaît pas `Training`, et la suppression
+d’une formation ne supprime pas silencieusement un média potentiellement
+partagé.
+
 ## 6. Payment — principes validés
 
 Lorsqu’il sera introduit, le paiement devra respecter :

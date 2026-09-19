@@ -129,6 +129,14 @@ type and size summary; the server remains authoritative for acceptance. Access
 levels are shown separately from lifecycle status. No document preview or
 public viewer is introduced: download is an explicit, permission-aware action.
 
+### Learning COURSE Backoffice
+
+Training administration reuses the Content register primitives while keeping a
+separate `Formations` navigation group. The listing makes lifecycle status,
+visibility and access type distinct; the form uses the shared rich-text editor
+and the public image cover control. Future modules, enrollment and learning
+consumption must not be implied by this Backoffice foundation.
+
 ## Do’s and Don’ts
 
 - **Do:** keep status, publication date and modification date visible in the register.

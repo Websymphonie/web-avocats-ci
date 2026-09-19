@@ -90,7 +90,17 @@ services:
     alias: Websymphonie\MediaContext\Infrastructure\Service\LocalMediaUploadService
 
   Websymphonie\MediaContext\Application\Service\MediaUsageCheckerInterface:
-    alias: Websymphonie\ContentContext\Application\Service\GalleryMediaUsageChecker
+    alias: Websymphonie\SharedContext\Application\Service\Media\CompositeMediaUsageChecker
+
+  Websymphonie\SharedContext\Application\Service\Media\CompositeMediaUsageChecker:
+    arguments:
+      $checkers: !tagged_iterator app.media_usage_checker
+
+  Websymphonie\ContentContext\Application\Service\GalleryMediaUsageChecker:
+    tags: [ 'app.media_usage_checker' ]
+
+  Websymphonie\LearningContext\Application\Service\TrainingMediaUsageChecker:
+    tags: [ 'app.media_usage_checker' ]
 
   Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\MediaPublicUrlResolver

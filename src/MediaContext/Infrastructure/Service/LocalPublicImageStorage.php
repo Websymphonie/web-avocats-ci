@@ -26,7 +26,7 @@ final readonly class LocalPublicImageStorage implements MediaStorageInterface
         if (!isset($this->extensions[$mimeType])) { throw new InvalidMediaUploadException('Seules les images JPEG, PNG et WebP sont acceptées.'); }
         $imageInfo = @getimagesize($file->getPathname());
         if (!is_array($imageInfo) || (int) $imageInfo[0] < 1 || (int) $imageInfo[1] < 1) { throw new InvalidMediaUploadException('Le fichier envoyé n’est pas une image décodable.'); }
-        if (!preg_match('/^(?:galleries|content\/covers)$/', $storagePrefix)) {
+        if (!preg_match('/^(?:galleries|content\/covers|training\/covers)$/', $storagePrefix)) {
             throw new InvalidMediaUploadException('Le préfixe de stockage de l’image est invalide.');
         }
         $storageName = bin2hex(random_bytes(24)) . '.' . $this->extensions[$mimeType];
@@ -43,8 +43,13 @@ final readonly class LocalPublicImageStorage implements MediaStorageInterface
         }
         $galleryPath = 'galleries/' . $media->storageName;
         $coverPath = 'content/covers/' . $media->storageName;
-        if (!in_array($media->storagePath, [$galleryPath, $coverPath], true)) { throw new InvalidMediaUploadException('Le chemin de stockage du média est invalide.'); }
-        $storagePrefix = $media->storagePath === $galleryPath ? 'galleries' : 'content/covers';
+        $trainingCoverPath = 'training/covers/' . $media->storageName;
+        if (!in_array($media->storagePath, [$galleryPath, $coverPath, $trainingCoverPath], true)) { throw new InvalidMediaUploadException('Le chemin de stockage du média est invalide.'); }
+        $storagePrefix = match ($media->storagePath) {
+            $galleryPath => 'galleries',
+            $coverPath => 'content/covers',
+            default => 'training/covers',
+        };
         $path = $this->publicDirectory($storagePrefix) . '/' . $media->storageName;
         if ($this->filesystem->exists($path)) { $this->filesystem->remove($path); }
     }

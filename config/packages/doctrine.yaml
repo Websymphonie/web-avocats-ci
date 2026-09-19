@@ -53,6 +53,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/ContentContext/Infrastructure/Persistence/Doctrine/Entity'
         prefix: 'Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity'
         alias: Content
+      Learning:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/LearningContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Learning
       Admin:
         type: attribute
         is_bundle: false

@@ -372,3 +372,15 @@ Les permissions `CONTENT_DOCUMENT_VIEW`, `CONTENT_DOCUMENT_MANAGE`,
 `ROLE_ADMIN` et `ROLE_SUPER_ADMIN`. `ROLE_AVOCAT` et `ROLE_USER` ne les
 reçoivent pas par défaut. Le téléchargement `PUBLIC` ne dépend pas de ces
 permissions ; les autres niveaux restent contrôlés côté serveur.
+
+### Formations COURSE — LRN-001
+
+Les permissions `LEARNING_TRAINING_VIEW`, `LEARNING_TRAINING_MANAGE`,
+`LEARNING_TRAINING_PUBLISH` et `LEARNING_TRAINING_DELETE` sont accordées par
+défaut à `ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global.
+Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`. Les
+configurations persistées de la matrice de rôles restent prioritaires.
+
+La verticale livrée concerne uniquement l’administration Backoffice des
+formations `COURSE`; les modules, inscriptions, paiements, LIVE et accès
+pédagogique ne sont pas couverts par ces permissions.

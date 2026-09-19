@@ -48,4 +48,17 @@ final class LocalPublicImageStorageTest extends TestCase
         self::assertMatchesRegularExpression('/^content\/covers\/[a-f0-9]{48}\.png$/', $stored->storagePath);
         self::assertFileExists($this->directory . '/public/' . $stored->storagePath);
     }
+
+    public function testItStoresATrainingCoverUnderTheLearningPublicPrefix(): void
+    {
+        $source = tempnam(sys_get_temp_dir(), 'lrn001-');
+        self::assertNotFalse($source);
+        file_put_contents($source, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', true));
+
+        $stored = (new LocalPublicImageStorage($this->directory, 5 * 1024 * 1024, new Filesystem()))
+            ->store(new UploadedFile($source, 'cover.png', 'image/png', null, true), 'training/covers');
+
+        self::assertMatchesRegularExpression('/^training\/covers\/[a-f0-9]{48}\.png$/', $stored->storagePath);
+        self::assertFileExists($this->directory . '/public/' . $stored->storagePath);
+    }
 }

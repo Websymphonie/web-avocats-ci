@@ -45,6 +45,10 @@ enum PermissionEnum: string
     case CONTENT_DOCUMENT_PUBLISH = 'CONTENT_DOCUMENT_PUBLISH';
     case CONTENT_DOCUMENT_DELETE = 'CONTENT_DOCUMENT_DELETE';
     case CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD = 'CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD';
+    case LEARNING_TRAINING_VIEW = 'LEARNING_TRAINING_VIEW';
+    case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
+    case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
+    case LEARNING_TRAINING_DELETE = 'LEARNING_TRAINING_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -87,6 +91,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH,
             self::CONTENT_DOCUMENT_DELETE,
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
+            self::LEARNING_TRAINING_VIEW,
+            self::LEARNING_TRAINING_MANAGE,
+            self::LEARNING_TRAINING_PUBLISH,
+            self::LEARNING_TRAINING_DELETE,
         ];
     }
 
@@ -131,6 +139,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH => 'Documents : publication et archivage',
             self::CONTENT_DOCUMENT_DELETE => 'Documents : suppression',
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => 'Documents : téléchargement restreint',
+            self::LEARNING_TRAINING_VIEW => 'Formations : lecture',
+            self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
+            self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',
+            self::LEARNING_TRAINING_DELETE => 'Formations : suppression',
         };
     }
 
@@ -175,6 +187,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_DOCUMENT_DELETE => ColorEnum::DANGER,
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => ColorEnum::WARNING,
+            self::LEARNING_TRAINING_VIEW => ColorEnum::INFO,
+            self::LEARNING_TRAINING_MANAGE => ColorEnum::SUCCESS,
+            self::LEARNING_TRAINING_PUBLISH => ColorEnum::WARNING,
+            self::LEARNING_TRAINING_DELETE => ColorEnum::DANGER,
         };
     }
 }

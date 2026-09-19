@@ -37,7 +37,7 @@ porte sa règle.
 | Contexte candidat | Responsabilité cible | Statut |
 |---|---|---|
 | `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — première verticale News |
-| `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `PLANNED` |
+| `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `IMPLEMENTED` — fondation Training COURSE + Backoffice |
 | `PaymentContext` | commandes, transactions et intégration des paiements | `PLANNED` |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
 | `MediaContext` | images publiques et fichiers documentaires privés minimaux | `IMPLEMENTED` — capacités CNT-004/CNT-005 |
@@ -96,6 +96,25 @@ automatique, Frontoffice, inscription ou lien avec `Training LIVE` n’est livr�
 ## 5. Learning domain
 
 `Training` est le concept central du e-learning.
+
+### LRN-001 — Training COURSE livré
+
+La première verticale de `LearningContext` administre les formations de type
+`COURSE` dans le Backoffice sous `/admin/learning/trainings`. Un Training porte
+son titre, slug, résumé, description riche, visibilité (`PUBLIC` ou `MEMBER`),
+type d’accès (`FREE`, `PAID` ou `RESTRICTED`), statut (`DRAFT`, `PUBLISHED` ou
+`ARCHIVED`), dates et couverture média publique optionnelle. Une création
+commence en `DRAFT`; publier et archiver sont des transitions explicites.
+
+La publication exige un titre, un résumé et une description non vides. Le slug
+peut évoluer en brouillon et devient stable après publication. Les modules,
+inscriptions, paiements, lecture pédagogique, LIVE et surfaces Frontoffice/API
+restent hors périmètre de cette verticale.
+
+Les couvertures utilisent la capacité image publique minimale de
+`MediaContext`, sous la clé `training/covers`, sans relation Doctrine entre les
+contextes. La suppression d’un Training ne supprime pas silencieusement son
+fichier média.
 
 Les deux types validés pour la cible sont :
 

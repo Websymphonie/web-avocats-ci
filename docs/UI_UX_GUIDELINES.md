@@ -1,6 +1,6 @@
 # Avocat CI — UI/UX Guidelines
 
-Ce document définit les conventions permanentes d’interface de KLE Immobilier.
+Ce document définit les conventions permanentes d’interface d’Avocat CI.
 Il complète `AGENTS.md` et s’applique à toute nouvelle fonctionnalité.
 
 ## Rôle de conception

@@ -70,7 +70,13 @@ NONE   = no normal access
 
 ---
 
-## 4. Initial matrix
+## 4. Initial matrix — legacy inherited reference
+
+The following matrix is retained only as historical project documentation. Its
+old operational vocabulary is not an Avocat CI product requirement and must not
+be used to design new Content, Learning, Contribution or Payment features.
+The active Avocat CI role catalog and current surface rules are defined in
+sections 2.1 and 5.
 
 | Capability        | Direction | Agency Manager | Technical Manager | Commercial        | Customer Relations | Executive Assistant |
 |-------------------|-----------|----------------|-------------------|-------------------|--------------------|---------------------|
@@ -180,7 +186,12 @@ immédiatement.
 Le rôle `ROLE_SUPER_ADMIN` conserve toutes les permissions connues, sans nécessiter de ligne en base, et ne peut pas
 être modifié depuis `/admin/roles`.
 
-## 9. Vocabulaire métier configurable
+## 9. Vocabulaire métier configurable — legacy inherited reference
+
+The permission codes in this section are retained to read existing stored
+configuration. They are not a specification for new Avocat CI business
+features. New permissions require an explicit product and architecture
+decision.
 
 Le périmètre HTTP applicatif est privé par défaut. Les routes publiques sont
 explicitement listées dans la configuration de sécurité (connexion et

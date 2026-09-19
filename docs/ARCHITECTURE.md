@@ -46,7 +46,8 @@ These contexts must be preserved.
 
 Responsible for technical and system administration.
 
-It is not automatically responsible for every administrative business feature of the real-estate agency.
+It is not automatically responsible for every future business administration
+feature of the Avocat CI platform.
 
 ---
 
@@ -60,7 +61,8 @@ Responsible for authentication workflows.
 
 Responsible for application users, identity and authorization concepts.
 
-Employee accounts and application roles should reuse this context.
+Member and administrator accounts and application roles should reuse this
+context.
 
 ---
 
@@ -208,23 +210,22 @@ Use Queries for reads.
 Examples:
 
 ```text
-CreateOwnerCommand
-UpdateOwnerCommand
-CreatePropertyCommand
-ScheduleVisitCommand
-RegisterRentPaymentCommand
-CompleteInterventionCommand
+CreateContentCommand
+UpdateContentCommand
+PublishContentCommand
+CreateTrainingCommand
+CreateEnrollmentCommand
+RecordPaymentCommand
 ```
 
 Queries:
 
 ```text
-GetOwnerListQuery
-GetPropertyDetailsQuery
-GetAvailablePropertyListQuery
-GetProspectListQuery
-GetUnpaidRentListQuery
-GetInterventionListQuery
+ListPublishedContentQuery
+GetTrainingDetailsQuery
+GetMemberEnrollmentQuery
+GetContributionSituationQuery
+GetPaymentDetailsQuery
 ```
 
 Names must follow existing project conventions if they differ.

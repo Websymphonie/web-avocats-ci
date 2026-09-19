@@ -18,6 +18,12 @@ enum PermissionEnum: string
     case CONTENT_NEWS_MANAGE = 'CONTENT_NEWS_MANAGE';
     case CONTENT_NEWS_PUBLISH = 'CONTENT_NEWS_PUBLISH';
     case CONTENT_NEWS_DELETE = 'CONTENT_NEWS_DELETE';
+    case CONTENT_NEWS_CATEGORY_VIEW = 'CONTENT_NEWS_CATEGORY_VIEW';
+    case CONTENT_NEWS_CATEGORY_MANAGE = 'CONTENT_NEWS_CATEGORY_MANAGE';
+    case CONTENT_NEWS_CATEGORY_DELETE = 'CONTENT_NEWS_CATEGORY_DELETE';
+    case CONTENT_TAG_VIEW = 'CONTENT_TAG_VIEW';
+    case CONTENT_TAG_MANAGE = 'CONTENT_TAG_MANAGE';
+    case CONTENT_TAG_DELETE = 'CONTENT_TAG_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -33,6 +39,12 @@ enum PermissionEnum: string
             self::CONTENT_NEWS_MANAGE,
             self::CONTENT_NEWS_PUBLISH,
             self::CONTENT_NEWS_DELETE,
+            self::CONTENT_NEWS_CATEGORY_VIEW,
+            self::CONTENT_NEWS_CATEGORY_MANAGE,
+            self::CONTENT_NEWS_CATEGORY_DELETE,
+            self::CONTENT_TAG_VIEW,
+            self::CONTENT_TAG_MANAGE,
+            self::CONTENT_TAG_DELETE,
         ];
     }
 
@@ -50,6 +62,12 @@ enum PermissionEnum: string
             self::CONTENT_NEWS_MANAGE => 'Actualités : création et édition',
             self::CONTENT_NEWS_PUBLISH => 'Actualités : publication et archivage',
             self::CONTENT_NEWS_DELETE => 'Actualités : suppression',
+            self::CONTENT_NEWS_CATEGORY_VIEW => 'Catégories d’actualités : lecture',
+            self::CONTENT_NEWS_CATEGORY_MANAGE => 'Catégories d’actualités : création et édition',
+            self::CONTENT_NEWS_CATEGORY_DELETE => 'Catégories d’actualités : suppression',
+            self::CONTENT_TAG_VIEW => 'Tags : lecture',
+            self::CONTENT_TAG_MANAGE => 'Tags : création et édition',
+            self::CONTENT_TAG_DELETE => 'Tags : suppression',
         };
     }
 
@@ -67,6 +85,12 @@ enum PermissionEnum: string
             self::CONTENT_NEWS_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_NEWS_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_NEWS_DELETE => ColorEnum::DANGER,
+            self::CONTENT_NEWS_CATEGORY_VIEW => ColorEnum::INFO,
+            self::CONTENT_NEWS_CATEGORY_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_NEWS_CATEGORY_DELETE => ColorEnum::DANGER,
+            self::CONTENT_TAG_VIEW => ColorEnum::INFO,
+            self::CONTENT_TAG_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_TAG_DELETE => ColorEnum::DANGER,
         };
     }
 }

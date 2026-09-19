@@ -12,5 +12,5 @@ use Websymphonie\SharedContext\Application\Service\Messaging\QueryHandler;
 final readonly class GetNewsListQueryHandler implements QueryHandler
 {
     public function __construct(private NewsRepositoryInterface $repository) {}
-    public function __invoke(GetNewsListQuery $query): NewsListResult { return $this->repository->list($query->search, $query->status, max(1, $query->page), max(1, $query->limit)); }
+    public function __invoke(GetNewsListQuery $query): NewsListResult { return $this->repository->list($query->search, $query->status, max(1, $query->page), max(1, $query->limit), $query->categoryId, $query->tagId); }
 }

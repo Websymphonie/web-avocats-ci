@@ -26,6 +26,12 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_NEWS_MANAGE,
             PermissionEnum::CONTENT_NEWS_PUBLISH,
             PermissionEnum::CONTENT_NEWS_DELETE,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_DELETE,
+            PermissionEnum::CONTENT_TAG_VIEW,
+            PermissionEnum::CONTENT_TAG_MANAGE,
+            PermissionEnum::CONTENT_TAG_DELETE,
         ], $permissions);
     }
 
@@ -42,6 +48,12 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::CONTENT_NEWS_MANAGE,
             PermissionEnum::CONTENT_NEWS_PUBLISH,
             PermissionEnum::CONTENT_NEWS_DELETE,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_DELETE,
+            PermissionEnum::CONTENT_TAG_VIEW,
+            PermissionEnum::CONTENT_TAG_MANAGE,
+            PermissionEnum::CONTENT_TAG_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -94,6 +106,12 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'news manage' => [PermissionEnum::CONTENT_NEWS_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'news publish' => [PermissionEnum::CONTENT_NEWS_PUBLISH, [UserRolesEnum::ADMIN]];
         yield 'news delete' => [PermissionEnum::CONTENT_NEWS_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'news category view' => [PermissionEnum::CONTENT_NEWS_CATEGORY_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'news category manage' => [PermissionEnum::CONTENT_NEWS_CATEGORY_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'news category delete' => [PermissionEnum::CONTENT_NEWS_CATEGORY_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'tag view' => [PermissionEnum::CONTENT_TAG_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'tag manage' => [PermissionEnum::CONTENT_TAG_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'tag delete' => [PermissionEnum::CONTENT_TAG_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

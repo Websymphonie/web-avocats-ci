@@ -81,6 +81,7 @@ propriétaire.
 | ID | Exigence | Statut |
 |---|---|---|
 | CNT-001 | publier et administrer les actualités | `IMPLEMENTED` — Backoffice uniquement |
+| CNT-001A | naviguer dans Content et administrer catégories d’actualités et tags génériques | `IMPLEMENTED` — Backoffice uniquement |
 | CNT-002 | publier et administrer les événements | `PLANNED` |
 | CNT-003 | publier les vidéos éditoriales | `PLANNED` |
 | CNT-004 | publier les galeries photos | `PLANNED` |

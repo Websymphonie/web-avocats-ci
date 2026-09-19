@@ -33,6 +33,12 @@ final class PermissionCatalog
             PermissionEnum::CONTENT_NEWS_MANAGE,
             PermissionEnum::CONTENT_NEWS_PUBLISH,
             PermissionEnum::CONTENT_NEWS_DELETE => 'Contenu · Actualités',
+            PermissionEnum::CONTENT_NEWS_CATEGORY_VIEW,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_MANAGE,
+            PermissionEnum::CONTENT_NEWS_CATEGORY_DELETE => 'Contenu · Catégories d’actualités',
+            PermissionEnum::CONTENT_TAG_VIEW,
+            PermissionEnum::CONTENT_TAG_MANAGE,
+            PermissionEnum::CONTENT_TAG_DELETE => 'Contenu · Tags',
         };
     }
 

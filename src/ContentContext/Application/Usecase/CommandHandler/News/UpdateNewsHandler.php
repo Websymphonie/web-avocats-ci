@@ -7,12 +7,14 @@ namespace Websymphonie\ContentContext\Application\Usecase\CommandHandler\News;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Command\News\UpdateNewsCommand;
 use Websymphonie\ContentContext\Domain\Exception\NewsSlugAlreadyExistsException;
+use Websymphonie\ContentContext\Domain\Repository\NewsCategoryRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class UpdateNewsHandler implements CommandHandler
 {
-    public function __construct(private NewsRepositoryInterface $repository, private SluggerInterface $slugger) {}
+    public function __construct(private NewsRepositoryInterface $repository, private NewsCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private SluggerInterface $slugger) {}
 
     public function __invoke(UpdateNewsCommand $command): void
     {
@@ -23,6 +25,8 @@ final readonly class UpdateNewsHandler implements CommandHandler
         }
 
         $news->update(trim($command->title), $slug ?: $news->slug, $command->excerpt ?: null, $command->body);
+        $news->replaceCategories($this->categoryRepository->findByIds($command->categories));
+        $news->replaceTags($this->tagRepository->findByIds($command->tags));
         $this->repository->save($news);
     }
 }

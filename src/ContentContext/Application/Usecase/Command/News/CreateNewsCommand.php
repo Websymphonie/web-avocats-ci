@@ -6,5 +6,9 @@ namespace Websymphonie\ContentContext\Application\Usecase\Command\News;
 
 final class CreateNewsCommand
 {
-    public function __construct(public string $title = '', public ?string $excerpt = null, public string $body = '') {}
+    /**
+     * @param list<int> $categories
+     * @param list<int> $tags
+     */
+    public function __construct(public string $title = '', public ?string $excerpt = null, public string $body = '', public array $categories = [], public array $tags = []) {}
 }

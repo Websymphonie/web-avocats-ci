@@ -60,6 +60,12 @@ final class DefaultRolePermissions
             PermissionEnum::CONTENT_NEWS_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_NEWS_PUBLISH->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTENT_NEWS_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_CATEGORY_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_CATEGORY_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_CATEGORY_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_TAG_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_TAG_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_TAG_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

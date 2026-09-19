@@ -1,0 +1,4 @@
+<twig:ActionDropdown>
+    {% if is_granted('CONTENT_NEWS_CATEGORY_MANAGE') %}<a href="{{ path('content_admin_news_category_edit', {id: category.id}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>{% endif %}
+    {% if is_granted('CONTENT_NEWS_CATEGORY_DELETE') %}{{ component('DeleteFormComponent', {id: category.id, instanceId: instanceId, urlPath: path('content_admin_news_category_delete', {id: category.id}), csrfTokenId: 'delete', buttonLabel: 'Supprimer', description: 'La catégorie « ' ~ category.name ~ ' » sera supprimée si elle n’est utilisée par aucune actualité.'}) }}{% endif %}
+</twig:ActionDropdown>

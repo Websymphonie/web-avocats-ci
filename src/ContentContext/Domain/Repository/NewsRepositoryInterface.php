@@ -21,5 +21,5 @@ interface NewsRepositoryInterface
      */
     public function findByIds(array $ids): array;
 
-    public function list(?string $search, ?NewsStatus $status, int $page, int $limit): NewsListResult;
+    public function list(?string $search, ?NewsStatus $status, int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult;
 }

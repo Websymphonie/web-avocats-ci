@@ -9,9 +9,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Domain\Exception\NewsNotFoundException;
 use Websymphonie\ContentContext\Domain\Model\News;
+use Websymphonie\ContentContext\Domain\Model\NewsCategory;
+use Websymphonie\ContentContext\Domain\Model\Tag;
 use Websymphonie\ContentContext\Domain\Model\NewsListResult;
 use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\NewsCategory\NewsCategoryEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Factory\NewsFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
 use Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface;
@@ -31,7 +35,9 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
     public function save(News $news): News
     {
         $entity = $news->id > 0 ? $this->find($news->id) : null;
-        $entity = $this->factory->toEntity($news, $entity);
+        $categoryEntities = array_values(array_filter(array_map(fn (NewsCategory $category): ?NewsCategoryEntity => $this->getEntityManager()->find(NewsCategoryEntity::class, $category->id), $news->categories)));
+        $tagEntities = array_values(array_filter(array_map(fn (Tag $tag): ?TagEntity => $this->getEntityManager()->find(TagEntity::class, $tag->id), $news->tags)));
+        $entity = $this->factory->toEntity($news, $entity, $categoryEntities, $tagEntities);
         DbLogListener::disable();
         try {
             $this->manager->execute($entity, $news->id > 0 ? DbActionEnum::EDIT : DbActionEnum::NEW);
@@ -93,7 +99,7 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
         );
     }
 
-    public function list(?string $search, ?NewsStatus $status, int $page, int $limit): NewsListResult
+    public function list(?string $search, ?NewsStatus $status, int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult
     {
         $qb = $this->createQueryBuilder('news');
         if ($search !== null && trim($search) !== '') {
@@ -101,6 +107,12 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
         }
         if ($status !== null) {
             $qb->andWhere('news.status = :status')->setParameter('status', $status);
+        }
+        if ($categoryId !== null) {
+            $qb->join('news.categories', 'category_filter')->andWhere('category_filter.id = :categoryId')->setParameter('categoryId', $categoryId);
+        }
+        if ($tagId !== null) {
+            $qb->join('news.tags', 'tag_filter')->andWhere('tag_filter.id = :tagId')->setParameter('tagId', $tagId);
         }
 
         $countQb = clone $qb;

@@ -8,12 +8,14 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Command\News\CreateNewsCommand;
 use Websymphonie\ContentContext\Domain\Exception\NewsSlugAlreadyExistsException;
 use Websymphonie\ContentContext\Domain\Model\News;
+use Websymphonie\ContentContext\Domain\Repository\NewsCategoryRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class CreateNewsHandler implements CommandHandler
 {
-    public function __construct(private NewsRepositoryInterface $repository, private SluggerInterface $slugger) {}
+    public function __construct(private NewsRepositoryInterface $repository, private NewsCategoryRepositoryInterface $categoryRepository, private TagRepositoryInterface $tagRepository, private SluggerInterface $slugger) {}
 
     public function __invoke(CreateNewsCommand $command): News
     {
@@ -22,6 +24,9 @@ final readonly class CreateNewsHandler implements CommandHandler
             throw NewsSlugAlreadyExistsException::withSlug($slug ?: $command->title);
         }
 
-        return $this->repository->save(new News(0, '', trim($command->title), $slug, $command->excerpt ?: null, $command->body));
+        $news = new News(0, '', trim($command->title), $slug, $command->excerpt ?: null, $command->body);
+        $news->replaceCategories($this->categoryRepository->findByIds($command->categories));
+        $news->replaceTags($this->tagRepository->findByIds($command->tags));
+        return $this->repository->save($news);
     }
 }

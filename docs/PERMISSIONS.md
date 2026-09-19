@@ -134,6 +134,22 @@ l’archivage relèvent de `CONTENT_NEWS_PUBLISH`. Une configuration de rôle d�
 persistée reste prioritaire et doit être ajustée explicitement par un Super
 Admin si nécessaire.
 
+### Taxonomies éditoriales — CNT-001A
+
+Les permissions suivantes sont accordées par défaut à `ROLE_ADMIN` uniquement
+(`ROLE_SUPER_ADMIN` conserve toutes les permissions) :
+
+```text
+CONTENT_NEWS_CATEGORY_VIEW
+CONTENT_NEWS_CATEGORY_MANAGE
+CONTENT_NEWS_CATEGORY_DELETE
+CONTENT_TAG_VIEW
+CONTENT_TAG_MANAGE
+CONTENT_TAG_DELETE
+```
+
+Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`.
+
 ### Surfaces de présentation
 
 Les surfaces Web sont séparées du catalogue des rôles :

@@ -21,6 +21,10 @@ final class News
         public ?DateTimeImmutable $publishedAt = null,
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
+        /** @var list<NewsCategory> */
+        public array $categories = [],
+        /** @var list<Tag> */
+        public array $tags = [],
     ) {
     }
 
@@ -33,6 +37,18 @@ final class News
         if ($this->status === NewsStatus::DRAFT) {
             $this->slug = $slug;
         }
+    }
+
+    /** @param list<NewsCategory> $categories */
+    public function replaceCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
+
+    /** @param list<Tag> $tags */
+    public function replaceTags(array $tags): void
+    {
+        $this->tags = $tags;
     }
 
     public function publish(): void

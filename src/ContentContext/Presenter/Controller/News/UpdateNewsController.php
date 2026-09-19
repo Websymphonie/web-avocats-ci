@@ -22,7 +22,7 @@ final class UpdateNewsController extends AbstractController
     public function __invoke(Request $request, int $id): Response
     {
         $news = $this->handleQuery(new GetNewsDetailsQuery($id));
-        $command = new UpdateNewsCommand($news->id, $news->title, $news->excerpt, $news->body);
+        $command = new UpdateNewsCommand($news->id, $news->title, $news->excerpt, $news->body, array_map(static fn ($category): int => $category->id, $news->categories), array_map(static fn ($tag): int => $tag->id, $news->tags));
         $form = $this->createForm(NewsFormType::class, $command);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -1,0 +1,18 @@
+<?php
+declare(strict_types=1);
+namespace Websymphonie\SharedContext\Application\Service\Sidebar\Modules;
+use Websymphonie\SharedContext\Application\Service\Sidebar\Enum\RouteEnum;
+use Websymphonie\SharedContext\Application\Service\Sidebar\Model\MenuFactory;
+use Websymphonie\SharedContext\Application\Service\Sidebar\Service\SidebarModuleInterface;
+final class ContentMenu implements SidebarModuleInterface
+{
+    public const string GROUP = 'Contenu';
+    public static function items(): array
+    {
+        return [
+            MenuFactory::item('Actualités', [RouteEnum::CONTENT_NEWS_INDEX->value, 'content_admin_news_new', 'content_admin_news_show', 'content_admin_news_edit'], [], 'lucide:newspaper', RouteEnum::CONTENT_NEWS_INDEX->value, self::GROUP, permission: 'CONTENT_NEWS_VIEW', groupOrder: 2, order: 1),
+            MenuFactory::item('Catégories d’actualités', [RouteEnum::CONTENT_NEWS_CATEGORY_INDEX->value, 'content_admin_news_category_new', 'content_admin_news_category_edit'], [], 'lucide:folders', RouteEnum::CONTENT_NEWS_CATEGORY_INDEX->value, self::GROUP, permission: 'CONTENT_NEWS_CATEGORY_VIEW', groupOrder: 2, order: 2),
+            MenuFactory::item('Tags', [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'], [], 'lucide:tags', RouteEnum::CONTENT_TAG_INDEX->value, self::GROUP, permission: 'CONTENT_TAG_VIEW', groupOrder: 2, order: 3),
+        ];
+    }
+}

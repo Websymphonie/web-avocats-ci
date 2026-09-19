@@ -13,6 +13,8 @@
 | Forms | Symfony `NewsFormType` |
 | Pagination | `shared/views/_list_pagination.html.twig` |
 | Authorization | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` |
+| Content navigation | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu` |
+| Taxonomy listings | `BulkSelection` + `ActionDropdown` in `news_category` and `tag` templates |
 
 ## Interaction rules
 
@@ -23,6 +25,8 @@
 - Publish and archive are explicit POST transitions protected by CSRF and permissions.
 - The form never exposes status; lifecycle transitions are action-based.
 - Empty, filtered and paginated states preserve the same table/card structure.
+- The Content group exposes only Actualités, Catégories d’actualités and Tags in this increment; Events, videos and galleries remain out of scope.
+- Category and tag associations are edited from the News form with multi-selects; deleting an item used by News is refused by the backend.
 
 ## Accessibility and responsive behavior
 

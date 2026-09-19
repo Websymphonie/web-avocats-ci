@@ -23,7 +23,7 @@ final class GetNewsListController extends AbstractController
         $query = new GetNewsListQuery(page: max(1, $request->query->getInt('page', 1)));
         $form = $this->createForm(NewsFilterType::class, $query, ['method' => 'GET', 'action' => $this->generateUrl('content_admin_news_list')]);
         $form->handleRequest($request);
-        $result = $this->handleQuery(new GetNewsListQuery($query->search ?: null, $query->status instanceof NewsStatus ? $query->status : null, $query->page, 20));
+        $result = $this->handleQuery(new GetNewsListQuery($query->search ?: null, $query->status instanceof NewsStatus ? $query->status : null, $query->page, 20, $query->categoryId ?: null, $query->tagId ?: null));
 
         return $this->render('content/admin/news/index.html.twig', ['news' => $result, 'filterForm' => $form->createView()]);
     }

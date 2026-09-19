@@ -49,6 +49,7 @@ Tickets immédiats :
 
 ```text
 CNT-001 — Actualités                         IMPLEMENTED
+CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements
 ```
 

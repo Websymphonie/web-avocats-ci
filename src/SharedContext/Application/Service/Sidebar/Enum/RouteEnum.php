@@ -21,4 +21,7 @@ enum RouteEnum: string
 
     case LOG_INDEX = 'app_log_index';
     case MAINTENANCE_INDEX = 'admin_maintenance_edit';
+    case CONTENT_NEWS_INDEX = 'content_admin_news_list';
+    case CONTENT_NEWS_CATEGORY_INDEX = 'content_admin_news_category_list';
+    case CONTENT_TAG_INDEX = 'content_admin_tag_list';
 }

@@ -102,4 +102,5 @@ Product copy is concise French operational language. Dates use the existing loca
 - **Do:** keep status, publication date and modification date visible in the register.
 - **Do:** preserve shared action and confirmation primitives across Backoffice listings.
 - **Don’t:** expose status as a free form field or hide destructive actions behind unconfirmed requests.
-- **Don’t:** introduce cover images, categories, tags or a rich editor in CNT-001.
+- **Do:** keep taxonomy selectors grouped after the editorial body and reuse the same register/list primitives for categories and tags.
+- **Don’t:** introduce cover images, a rich editor or taxonomy-specific decorative controls without a product requirement.

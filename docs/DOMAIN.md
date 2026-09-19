@@ -75,11 +75,13 @@ comme une actualité simplement parce que les deux utilisent YouTube.
 ### CNT-001 — News livré
 
 `News` est un modèle éditorial administré sous `/admin/content/news`. Il porte
-son titre, slug, chapeau, corps, statut et dates de publication. Les statuts
+son titre, slug, chapeau, corps, statut, catégories et tags, ainsi que ses dates de publication. Les statuts
 livrés sont `DRAFT`, `PUBLISHED` et `ARCHIVED` ; la publication et l’archivage
 sont des transitions explicites. Le slug est régénéré uniquement tant que
-l’actualité est un brouillon. Cette verticale ne livre volontairement aucune
-page Frontoffice, API, image de couverture, catégorie ou tag.
+l’actualité est un brouillon. `NewsCategory` et `Tag` appartiennent à
+`ContentContext`, sont reliés à `News` par des associations plusieurs-à-plusieurs
+et sont administrés sous `/admin/content/news-categories` et `/admin/content/tags`.
+Cette verticale ne livre volontairement aucune page Frontoffice, API ni image de couverture.
 
 ## 5. Learning domain
 

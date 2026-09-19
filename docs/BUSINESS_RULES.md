@@ -72,6 +72,13 @@ Pour `CNT-001`, les règles suivantes sont implémentées :
 Le champ de statut n’est pas éditable dans le formulaire : les transitions
 passent par les commandes applicatives dédiées.
 
+Pour `CNT-001A`, les catégories d’actualités et les tags génériques sont
+portés par `ContentContext`. Leur slug est normalisé et unique. Une actualité
+peut recevoir plusieurs catégories et plusieurs tags ; la sélection est
+remplacée via le use case de création ou de modification. Une catégorie ou un
+tag utilisé par au moins une actualité ne peut pas être supprimé : l’opération
+est refusée avec un message explicite, sans détachement silencieux.
+
 ## 5. Learning — règles validées
 
 `Training` est le concept principal du e-learning.

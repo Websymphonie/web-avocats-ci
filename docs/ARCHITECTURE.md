@@ -308,6 +308,26 @@ fichiers privés, documents et médias pédagogiques Learning restent hors de
 cette capacité; seule la couverture publique de la fiche Training est livrée
 dans LRN-001.
 
+## 12.1 LearningContext — structure COURSE LRN-002
+
+La structure pédagogique minimale est répartie dans deux tables dédiées :
+course_module et lesson. Les entités Doctrine conservent un trainingId et un
+moduleId scalaires ; elles ne chargent pas de relation Doctrine vers Training
+ni entre tous les niveaux. Les repositories et le guard applicatif valident
+explicitement l’appartenance au bon Training COURSE.
+
+Les réordonnancements vérifient côté application que la liste reçue est
+complète, sans doublon et sans identifiant étranger. La persistence utilise
+une phase temporaire transactionnelle avant d’écrire les positions finales afin
+de respecter les contraintes d’unicité (training_id, position) et
+(module_id, position). La suppression d’un module supprime explicitement ses
+leçons puis normalise les positions restantes.
+
+Le builder Backoffice utilise Twig, Symfony Forms et Stimulus pour le drag &
+drop, avec les boutons Monter et Descendre comme alternative clavier. Il
+n’introduit ni React, ni BulkSelection pour les modules/leçons. Les mutations
+sont protégées par CSRF et LEARNING_TRAINING_MANAGE.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

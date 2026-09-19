@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
+use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQuery;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
@@ -51,6 +52,7 @@ final class UpdateTrainingController extends AbstractController
             'training' => $training,
             'form' => $form->createView(),
             'coverUrl' => $mediaUrls[$training->coverMediaId] ?? null,
+            'structure' => $this->handleQuery(new GetCourseStructureQuery($training->id)),
         ]);
     }
 }

@@ -95,7 +95,7 @@ propriétaire.
 |---|---|---|
 | LRN-001 | introduire `Training` comme concept central | `IMPLEMENTED` — fondation + COURSE Backoffice |
 | LRN-002 | distinguer les types `COURSE` et `LIVE` | `IMPLEMENTED` — enum et frontière; LIVE non administré |
-| LRN-003 | administrer une `COURSE` et ses modules | `PLANNED` |
+| LRN-003 | administrer une `COURSE` et ses modules | `IMPLEMENTED` — structure modules/leçons Backoffice; contenus hors périmètre |
 | LRN-004 | gérer les contenus pédagogiques | `PLANNED` |
 | LRN-005 | gérer `Enrollment` et l’accès pédagogique | `PLANNED` |
 | LRN-006 | suivre la progression | `PLANNED` |

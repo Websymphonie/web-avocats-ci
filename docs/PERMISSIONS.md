@@ -381,6 +381,7 @@ défaut à `ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global.
 Elles ne sont pas accordées par défaut à `ROLE_AVOCAT` ni `ROLE_USER`. Les
 configurations persistées de la matrice de rôles restent prioritaires.
 
-La verticale livrée concerne uniquement l’administration Backoffice des
-formations `COURSE`; les modules, inscriptions, paiements, LIVE et accès
-pédagogique ne sont pas couverts par ces permissions.
+La verticale livrée concerne l’administration Backoffice des formations
+`COURSE`, de leur structure modules/leçons et des transitions prévues. Les
+inscriptions, paiements, LIVE et accès pédagogique ne sont pas couverts par ces
+permissions.

@@ -42,6 +42,23 @@ final class LearningAccessTest extends WebTestCase
         self::assertSelectorExists('form input[name$="[title]"]');
     }
 
+    public function testAdminCourseStructureRouteIsProtectedByTheTrainingLookup(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        $client->request('GET', '/admin/learning/trainings/999999/structure', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/');
+    }
+
+    /** @dataProvider deniedRoles */
+    public function testNonAdministratorsCannotAccessCourseStructure(string $role): void
+    {
+        $client = $this->authenticatedClient([$role]);
+        $client->request('GET', '/admin/learning/trainings/999999/structure', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
     /** @dataProvider deniedRoles */
     public function testNonAdministratorsAreDeniedFromTrainingBackoffice(string $role): void
     {

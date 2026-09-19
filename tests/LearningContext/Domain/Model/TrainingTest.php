@@ -27,7 +27,7 @@ final class TrainingTest extends TestCase
     public function testPublishSetsPublishedAtAndKeepsSlugStableAfterward(): void
     {
         $training = $this->training();
-        $training->publish();
+        $training->publish(1, 0);
         $publishedAt = $training->publishedAt;
 
         $training->update('Nouveau titre', 'nouveau-slug', 'Nouveau résumé', '<p>Nouvelle description</p>', TrainingVisibility::MEMBER, TrainingAccessType::PAID);
@@ -42,7 +42,7 @@ final class TrainingTest extends TestCase
     public function testArchiveIsASeparateTransition(): void
     {
         $training = $this->training();
-        $training->publish();
+        $training->publish(1, 0);
         $training->archive();
 
         self::assertSame(TrainingStatus::ARCHIVED, $training->status);
@@ -54,7 +54,21 @@ final class TrainingTest extends TestCase
         $training->update('', 'cours-de-test', '', '<p></p>', TrainingVisibility::PUBLIC, TrainingAccessType::FREE);
 
         $this->expectException(InvalidTrainingDetailsException::class);
-        $training->publish();
+        $training->publish(1, 0);
+    }
+
+    public function testCourseCannotBePublishedWithoutAModule(): void
+    {
+        $this->expectException(InvalidTrainingDetailsException::class);
+
+        $this->training()->publish(0, 0);
+    }
+
+    public function testCourseCannotBePublishedWithAnEmptyModule(): void
+    {
+        $this->expectException(InvalidTrainingDetailsException::class);
+
+        $this->training()->publish(1, 1);
     }
 
     private function training(): Training

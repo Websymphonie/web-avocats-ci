@@ -137,6 +137,14 @@ visibility and access type distinct; the form uses the shared rich-text editor
 and the public image cover control. Future modules, enrollment and learning
 consumption must not be implied by this Backoffice foundation.
 
+The COURSE Programme builder is a nested, inline editor on the training detail
+and edit screens. Modules and lessons use compact ellipsis action menus,
+explicit AlertDialog confirmation for destructive actions, and visible
+positions. Stimulus drag/drop is paired with Monter/Descendre controls so the
+structure remains usable by keyboard and on narrow screens. The builder does
+not introduce a bulk action bar or content/player affordances before the
+learning-content slice.
+
 ## Do’s and Don’ts
 
 - **Do:** keep status, publication date and modification date visible in the register.

@@ -55,12 +55,15 @@ final class Training
         $this->coverMediaId = $mediaId;
     }
 
-    public function publish(): void
+    public function publish(int $moduleCount = 0, int $emptyModuleCount = 0): void
     {
         if ($this->status !== TrainingStatus::DRAFT) {
             throw new InvalidTrainingTransitionException('Seul un brouillon peut être publié.');
         }
         $this->assertPublishable();
+        if ($this->type === TrainingType::COURSE && ($moduleCount < 1 || $emptyModuleCount > 0)) {
+            throw new InvalidTrainingDetailsException('Ajoutez au moins un module contenant une leçon avant de publier cette formation.');
+        }
         $this->status = TrainingStatus::PUBLISHED;
         $this->publishedAt ??= new DateTimeImmutable();
     }

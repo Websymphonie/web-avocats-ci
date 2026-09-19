@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
+use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQuery;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -31,6 +32,7 @@ final class GetTrainingDetailsController extends AbstractController
             'training' => $training,
             'coverUrl' => $mediaUrls[$training->coverMediaId] ?? null,
             'safeDescription' => $this->sanitizer->sanitize($training->description),
+            'structure' => $this->handleQuery(new GetCourseStructureQuery($training->id)),
         ]);
     }
 }

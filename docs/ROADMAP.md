@@ -65,7 +65,7 @@ Backoffice.
 
 ### PHASE 3 — Learning COURSE et inscriptions
 
-**Statut : `PLANNED`**
+**Statut : `IN PROGRESS`**
 
 Ticket de départ :
 
@@ -136,6 +136,7 @@ CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffic
 Content Backoffice foundation                     DONE
 Content Frontoffice                              OUT_OF_SCOPE — différé phase Manus
 LRN-001  Training COURSE                           DONE — Backoffice uniquement
+LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 ```
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.

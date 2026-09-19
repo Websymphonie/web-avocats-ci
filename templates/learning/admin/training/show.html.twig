@@ -14,8 +14,8 @@
             <p class="text-lg leading-8 text-muted-foreground">{{ training.summary }}</p>
             <div class="rich-content text-sm">{{ safeDescription|raw }}</div>
             <dl class="grid gap-4 border-t border-border pt-5 sm:grid-cols-3"><div><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Visibilité</dt><dd class="mt-1">{{ training.visibility.label }}</dd></div><div><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Accès</dt><dd class="mt-1">{{ training.accessType.label }}</dd></div><div><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Publication</dt><dd class="mt-1">{{ training.publishedAt ? training.publishedAt|date('d/m/Y H:i') : '—' }}</dd></div></dl>
-            <div class="rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-muted-foreground">Cette fondation gère les métadonnées du cours. Les modules, leçons, inscriptions et paiements seront ajoutés dans des étapes dédiées.</div>
         </article>
+        {% include 'learning/admin/course_structure/_programme.html.twig' with {structure: structure} only %}
     </div>
 </main>
 {% endblock %}

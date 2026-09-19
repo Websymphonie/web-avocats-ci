@@ -128,10 +128,10 @@ contenu nécessite une autorisation serveur.
 `Enrollment` contrôle l’accès pédagogique. Le fournisseur vidéo, notamment
 YouTube, ne devient pas l’autorité des droits d’accès.
 
-Pour LRN-001, une nouvelle `COURSE` commence en `DRAFT`. La publication est
-explicite, renseigne `publishedAt` et exige un titre, un résumé et une
-description non vides. La couverture est facultative et aucune collection de
-modules n’est requise à ce stade. Une formation publiée peut être archivée;
+Pour LRN-001/LRN-002, une nouvelle `COURSE` commence en `DRAFT`. La publication
+est explicite, renseigne `publishedAt` et exige un titre, un résumé, une
+description non vides, au moins un module et au moins une leçon par module.
+Une formation publiée peut être archivée;
 les autres transitions ne sont pas exposées par le formulaire.
 
 Le slug est modifiable en brouillon et stable après publication. Les
@@ -139,6 +139,13 @@ couvertures sont des images publiques `JPEG`, `PNG` ou `WebP` stockées par
 `MediaContext`; `MediaContext` ne connaît pas `Training`, et la suppression
 d’une formation ne supprime pas silencieusement un média potentiellement
 partagé.
+
+Les modules et leçons ont un ordre persistant `1..N`, normalisé après chaque
+création, suppression ou réordonnancement. Un module supprimé avec confirmation
+supprime ses leçons ; les médias, contenus et progressions ne sont pas encore
+concernés. Une COURSE publiée reste éditable structurellement sans versioning.
+Le déplacement inter-module est explicitement différé ; le builder fournit le
+réordonnancement intra-module et les contrôles clavier Monter/Descendre.
 
 ## 6. Payment — principes validés
 

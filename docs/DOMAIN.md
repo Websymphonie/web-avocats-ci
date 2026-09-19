@@ -107,9 +107,9 @@ type d’accès (`FREE`, `PAID` ou `RESTRICTED`), statut (`DRAFT`, `PUBLISHED` o
 commence en `DRAFT`; publier et archiver sont des transitions explicites.
 
 La publication exige un titre, un résumé et une description non vides. Le slug
-peut évoluer en brouillon et devient stable après publication. Les modules,
-inscriptions, paiements, lecture pédagogique, LIVE et surfaces Frontoffice/API
-restent hors périmètre de cette verticale.
+peut évoluer en brouillon et devient stable après publication. La structure
+COURSE est détaillée dans LRN-002 ci-dessous ; les inscriptions, paiements,
+lecture pédagogique, LIVE et surfaces Frontoffice/API restent hors périmètre.
 
 Les couvertures utilisent la capacité image publique minimale de
 `MediaContext`, sous la clé `training/covers`, sans relation Doctrine entre les
@@ -140,6 +140,30 @@ Les concepts cibles sont :
 
 `Module` est donc rattaché au parcours d’une `COURSE`, tandis que `LIVE` porte
 ses propres détails de session.
+
+### LRN-002 — Structure COURSE : modules et leçons
+
+Le Backoffice expose désormais `CourseModule` et `Lesson` uniquement pour les
+formations `COURSE` :
+
+    Training
+      └── CourseModule (trainingId, position)
+            └── Lesson (moduleId, position)
+
+Les modules et les leçons sont des modèles autonomes, référencés par
+identifiants scalaires. `Training` ne charge donc pas tout l’arbre comme un
+agrégat géant ; l’écran Programme l’assemble par Query dédiée. Les positions
+sont persistées et normalisées de `1` à `N` après création, suppression ou
+réordonnancement.
+
+Une `COURSE` ne peut être publiée que si elle possède au moins un module et que
+chaque module contient au moins une leçon. Une structure publiée reste
+modifiable sans versioning dans cette tranche. La suppression explicite d’un
+module supprime ses leçons ; la suppression d’une leçon réordonne les leçons
+restantes. Le déplacement d’une leçon vers un autre module est différé.
+
+Les contenus de leçon, médias pédagogiques, durée, progression, quiz,
+certificats et lecteur restent hors périmètre de LRN-002.
 
 ## 6. Visibilité et accès Learning
 

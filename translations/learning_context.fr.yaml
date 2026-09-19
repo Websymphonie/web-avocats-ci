@@ -1,0 +1,9 @@
+exceptions:
+  learning:
+    training_not_found: "Cette formation est introuvable."
+    invalid_training_details: "Cette formation doit comporter un titre, un résumé et une description valides. Pour publier un cours, ajoutez au moins un module contenant une leçon."
+    invalid_training_transition: "Cette transition de formation n’est pas autorisée."
+    training_slug_already_exists: "Le slug de cette formation est déjà utilisé."
+    invalid_course_structure: "Cette opération nécessite une formation de type COURSE."
+    course_module_not_found: "Ce module de cours est introuvable."
+    lesson_not_found: "Cette leçon est introuvable."

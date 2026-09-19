@@ -164,6 +164,51 @@ selon les composants existants.
 
 Les actions disponibles dépendent toujours de l’état métier et des permissions.
 
+### Sélection multiple et actions en lot
+
+Les écrans Backoffice qui proposent des actions en lot utilisent le composant
+Twig partagé `BulkSelection` et le contrôleur Stimulus `bulk-selection`.
+
+- chaque ligne sélectionnable expose une checkbox native avec un identifiant
+  stable et `name="ids[]"` lorsque l’action est portée par un formulaire ;
+- l’en-tête propose une checkbox « Tout sélectionner » avec un état
+  indéterminé lorsqu’une partie seulement de la page est sélectionnée ;
+- la barre d’actions reste absente de l’interface tant qu’aucun élément n’est
+  sélectionné, puis affiche le nombre exact d’éléments concernés ;
+- les actions de la barre sont fournies par l’écran propriétaire et restent
+  soumises à `is_granted()` côté interface, sans remplacer l’autorisation
+  serveur de la route ou du CommandHandler ;
+- la sélection par défaut porte sur la page affichée. Une sélection de tous les
+  résultats filtrés doit être explicitement conçue et annoncée, notamment lors
+  d’un changement de page, de filtre ou de tri ;
+- la sélection ne doit pas supprimer ni réécrire silencieusement des données
+  historiques ou financières ;
+- les écrans mobiles conservent la sélection et présentent la barre d’actions
+  sur plusieurs lignes si nécessaire, sans masquer les libellés ni le focus.
+
+Le composant publie également un événement Stimulus `bulk-selection:changed`
+avec le nombre et les identifiants sélectionnés. Cet événement sert uniquement
+à relier la présentation au formulaire ou à l’action déjà définie par l’écran ;
+il ne porte aucune règle métier.
+
+### Confirmations d’actions en lot
+
+Les confirmations réutilisent `AlertDialog` et `DeleteFormComponent` lorsqu’ils
+sont adaptés. Une confirmation destructive doit :
+
+- nommer l’action et son périmètre (« 3 utilisateurs sélectionnés ») ;
+- utiliser un verbe d’action explicite et une variante visuelle destructive ;
+- laisser « Annuler » accessible et recevoir le focus initial pour les actions
+  à conséquence importante ;
+- se fermer avec Échap ou Annuler et rendre le focus au déclencheur ;
+- conserver l’action dans son contexte jusqu’à la réponse serveur lorsque le
+  traitement est asynchrone ;
+- afficher le résultat via le composant `FlashToast` existant, sans exposer
+  d’erreur technique brute.
+
+Une action de sélection ou une confirmation ne crée jamais à elle seule une
+autorisation. Les contrôles et les routes serveur restent l’autorité.
+
 ## Actions destructives et historique financier
 
 Une action destructive doit être visuellement identifiable, confirmée lorsque

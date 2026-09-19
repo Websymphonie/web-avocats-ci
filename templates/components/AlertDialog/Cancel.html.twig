@@ -1,4 +1,4 @@
 {# @block content The cancel button label #}
-<twig:Button variant="outline" data-action="click->alert-dialog#close" {{ ...attributes }}>
+<twig:Button variant="outline" data-alert-dialog-initial-focus="true" data-action="click->alert-dialog#close" {{ ...attributes }}>
     {{- block(outerBlocks.content) -}}
 </twig:Button>

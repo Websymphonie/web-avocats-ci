@@ -1,0 +1,48 @@
+{#
+    Shared Backoffice selection primitive.
+
+    The caller owns the table/list markup and supplies row checkboxes with
+    `data-bulk-selection-target="row"`. Actions belong to the screen and can
+    be provided through the optional `actions` block.
+#}
+{# @prop id string Stable identifier for the selection region #}
+{# @prop selectionLabelSingular string French singular label used by the live status #}
+{# @prop selectionLabelPlural string French plural label used by the live status #}
+{# @block actions Contextual screen-owned actions #}
+{# @block content The table or list containing the selection controls #}
+{%- props id, selectionLabelSingular = 'élément', selectionLabelPlural = 'éléments' -%}
+
+<section
+    id="{{ id }}"
+    aria-label="Sélection multiple"
+    data-controller="bulk-selection"
+    data-bulk-selection-selection-label-singular-value="{{ selectionLabelSingular }}"
+    data-bulk-selection-selection-label-plural-value="{{ selectionLabelPlural }}"
+    {{ attributes }}
+>
+    <div
+        class="mb-4 flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        data-bulk-selection-target="toolbar"
+        aria-hidden="true"
+        hidden
+    >
+        <p class="text-sm font-medium text-foreground" data-bulk-selection-target="summary">
+            Aucun élément sélectionné.
+        </p>
+        {% if block('actions') is defined %}
+            <div class="flex flex-wrap gap-2" aria-label="Actions sur la sélection">
+                {% block actions %}{% endblock %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <p
+        class="sr-only"
+        data-bulk-selection-target="status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    >Aucun élément sélectionné.</p>
+</section>

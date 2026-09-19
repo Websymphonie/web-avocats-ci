@@ -6,6 +6,7 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Factory;
 
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
+use Websymphonie\LearningContext\Domain\Exception\InvalidTrainingDetailsException;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 
 final class TrainingFactory
@@ -39,10 +40,13 @@ final class TrainingFactory
      */
     public function toEntity(Training $model, ?TrainingEntity $entity = null, array $categoryEntities = [], array $tagEntities = []): TrainingEntity
     {
-        $entity ??= new TrainingEntity();
+        if ($entity !== null && $entity->getType() !== $model->type) {
+            throw new InvalidTrainingDetailsException('Le type d’une formation ne peut pas être modifié après sa création.');
+        }
+
+        $entity ??= new TrainingEntity($model->type);
 
         return $entity
-            ->setType($model->type)
             ->setTitle($model->title)
             ->setSlug($model->slug)
             ->setSummary($model->summary)

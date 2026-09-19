@@ -99,6 +99,7 @@ propriétaire.
 | LRN-004 | gérer `Enrollment` et l’accès pédagogique | `IMPLEMENTED` — inscription gratuite, attribution/révocation admin et policy serveur |
 | LRN-004A | classer les formations par catégories et tags Learning | `IMPLEMENTED` — taxonomies Backoffice et filtres Training |
 | LRN-005 | gérer les détails d’un `LIVE` autonome | `IMPLEMENTED` — Backoffice, publication et accès membre au lien HTTPS |
+| LRN-REV-001A | durcir les flux Learning existants | `IMPLEMENTED` — valeurs LIVE stables, invariants de type, accès membre, CSRF, bulk et intégrité interne |
 | LRN-006 | suivre la progression | `PLANNED` |
 | LRN-007 | gérer quiz et certificats | `PLANNED` |
 | LRN-008 | intégrer YouTube comme fournisseur, sans lui déléguer l’autorisation | `PLANNED` |

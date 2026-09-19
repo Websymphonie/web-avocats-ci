@@ -311,10 +311,12 @@ dans LRN-001.
 ## 12.1 LearningContext — structure COURSE LRN-002
 
 La structure pédagogique minimale est répartie dans deux tables dédiées :
-course_module et lesson. Les entités Doctrine conservent un trainingId et un
-moduleId scalaires ; elles ne chargent pas de relation Doctrine vers Training
-ni entre tous les niveaux. Les repositories et le guard applicatif valident
-explicitement l’appartenance au bon Training COURSE.
+course_module et lesson. L’API applicative conserve des identifiants scalaires
+trainingId et moduleId pour ne pas exposer de graphe Doctrine ; l’infrastructure
+porte néanmoins les relations internes nécessaires aux clés étrangères
+`training_id -> training.id` et `module_id -> course_module.id`. Les
+repositories et le guard applicatif valident explicitement l’appartenance au
+bon Training COURSE.
 
 Les réordonnancements vérifient côté application que la liste reçue est
 complète, sans doublon et sans identifiant étranger. La persistence utilise
@@ -348,12 +350,21 @@ ou une ressource Learning.
 ## 12.3 LearningContext — inscriptions LRN-004
 
 `Enrollment` est une persistence Learning indépendante : `trainingId` et
-`userId` sont des identifiants scalaires, sans relation Doctrine vers Identity.
+`userId` restent des identifiants scalaires dans l’API de contexte, sans
+relation Doctrine vers Identity. L’infrastructure porte uniquement la clé
+étrangère interne `training_id -> training.id`; `user_id` ne possède aucune
+contrainte cross-context.
 `UserDirectoryInterface` fournit uniquement un read model utilisateur pour le
 Backoffice. `TrainingAccessPolicy` centralise les contrôles utilisateur actif,
 formation publiée et inscription active. Les commandes d’auto-inscription,
 d’attribution admin et de révocation sont idempotentes et ne suppriment jamais
 physiquement une inscription.
+
+Les suppressions bulk prévalident toute la sélection avant d’exécuter une seule
+suppression. Les clés étrangères internes sur `course_module`, `lesson`,
+`lesson_resource`, `enrollment` et `live_training_details` sont restrictives ;
+la suppression applicative retire explicitement la structure COURSE avant la
+formation. Aucun FK n’est créé vers Identity, Media ou StoredFile.
 
 Le Backoffice expose `/admin/learning/trainings/{trainingId}/enrollments` avec
 recherche, attribution, révocation et réactivation. Le membre dispose de
@@ -404,6 +415,11 @@ L’accès au lien externe passe par la query applicative
 `GET /espace/learning/trainings/{uuid}/join`. Le client ne fournit jamais la
 destination de redirection. Les APIs Zoom, Teams, Google Meet et YouTube,
 l’attendance, le calendrier et le replay restent hors scope.
+
+Le formulaire HTML sérialise les modes avec leurs valeurs métier
+`ONLINE`/`IN_PERSON`/`HYBRID`; le contrôleur et le domaine restent l’autorité de
+la validation. Une session `IN_PERSON` répond de manière contrôlée sans
+redirection externe.
 
 ## 13. Documents privés — CNT-005
 

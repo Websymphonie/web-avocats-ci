@@ -128,6 +128,10 @@ LIVE
 Un `LIVE` est une formation autonome. Il ne constitue pas automatiquement un
 module d’une formation `COURSE`.
 
+Le type est immuable après création, y compris lors du remapping Doctrine.
+Les flux Backoffice Learning sont livrés ; les surfaces Learner Frontoffice et
+le catalogue public restent différés.
+
 Les concepts cibles sont :
 
 - `Training` : identité, titre, type, statut, visibilité, accès et politique
@@ -156,6 +160,11 @@ tandis qu’un LIVE exige seulement ses détails valides. Les deux types
 réutilisent `TrainingVisibility`, `TrainingAccessType`, `TrainingCategory`,
 `TrainingTag`, `Enrollment` et `TrainingAccessPolicy`. Le join membre résout
 le Training par UUID et n’expose le lien qu’après contrôle d’accès serveur.
+
+Les valeurs HTML du mode LIVE restent alignées sur l’enum métier
+`ONLINE`/`IN_PERSON`/`HYBRID`. Les clés étrangères internes Learning sont
+restrictives et aucune relation de persistence n’est ajoutée vers Identity,
+Media ou StoredFile.
 
 ### LRN-002 — Structure COURSE : modules et leçons
 

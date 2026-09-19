@@ -11,6 +11,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetAccessibleLiveJoinDetailsQuery;
+use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
+use Websymphonie\LearningContext\Domain\Exception\LiveTrainingDetailsNotFoundException;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/espace/learning/trainings/{uuid}/join', name: 'learning_member_live_join', methods: ['GET'])]
@@ -28,7 +30,13 @@ final class JoinLiveTrainingController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $details = $this->handleQuery(new GetAccessibleLiveJoinDetailsQuery($uuid, $user->id));
+        try {
+            $details = $this->handleQuery(new GetAccessibleLiveJoinDetailsQuery($uuid, $user->id));
+        } catch (InvalidLiveTrainingDetailsException $exception) {
+            return new Response($exception->getMessage(), Response::HTTP_CONFLICT);
+        } catch (LiveTrainingDetailsNotFoundException $exception) {
+            throw $this->createNotFoundException($exception->getMessage(), $exception);
+        }
         if ($details->joinUrl === null) {
             throw $this->createNotFoundException('Cette session ne propose pas de lien de connexion.');
         }

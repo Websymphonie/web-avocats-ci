@@ -12,7 +12,7 @@ exceptions:
     enrollment_not_found: "Cette inscription est introuvable."
     training_access_denied: "Vous ne disposez pas d’un accès actif à cette formation."
     training_enrollment_denied: "Cette inscription n’est pas autorisée pour cette formation."
-    training_has_enrollments: "Cette formation ne peut pas être supprimée tant qu’elle possède des inscriptions."
+    training_has_enrollments: "%message%"
     training_category_not_found: "Cette catégorie de formation est introuvable."
     training_tag_not_found: "Ce tag de formation est introuvable."
     training_taxonomy_slug_already_exists: "Ce slug est déjà utilisé dans cette taxonomie."

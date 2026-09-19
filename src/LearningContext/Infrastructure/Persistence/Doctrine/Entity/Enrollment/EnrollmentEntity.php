@@ -6,8 +6,11 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entit
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repository\Enrollment\EnrollmentRepository;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\DatesTrait;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\IdTrait;
@@ -26,7 +29,11 @@ class EnrollmentEntity
     use UuidTrait;
     use DatesTrait;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\ManyToOne(targetEntity: TrainingEntity::class)]
+    #[ORM\JoinColumn(name: 'training_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')]
+    private ?TrainingEntity $training = null;
+
+    #[ORM\Column(name: 'training_id', type: 'integer', insertable: false, updatable: false)]
     private int $trainingId = 0;
     #[ORM\Column(type: 'integer')]
     private int $userId = 0;
@@ -41,6 +48,14 @@ class EnrollmentEntity
 
     public function getTrainingId(): int { return $this->trainingId; }
     public function setTrainingId(int $value): self { $this->trainingId = $value; return $this; }
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function syncTrainingAssociation(PrePersistEventArgs|PreUpdateEventArgs $event): void
+    {
+        if ($this->trainingId > 0 && ($this->training === null || $this->training->getId() !== $this->trainingId)) {
+            $this->training = $event->getObjectManager()->getReference(TrainingEntity::class, $this->trainingId);
+        }
+    }
     public function getUserId(): int { return $this->userId; }
     public function setUserId(int $value): self { $this->userId = $value; return $this; }
     public function getStatus(): EnrollmentStatus { return $this->status; }

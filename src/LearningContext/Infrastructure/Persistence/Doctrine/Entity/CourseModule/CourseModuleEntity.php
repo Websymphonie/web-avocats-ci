@@ -6,6 +6,9 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entit
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repository\CourseModule\CourseModuleRepository;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\DatesTrait;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\IdTrait;
@@ -22,7 +25,11 @@ class CourseModuleEntity
     use UuidTrait;
     use DatesTrait;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\ManyToOne(targetEntity: TrainingEntity::class)]
+    #[ORM\JoinColumn(name: 'training_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')]
+    private ?TrainingEntity $training = null;
+
+    #[ORM\Column(name: 'training_id', type: 'integer', insertable: false, updatable: false)]
     private int $trainingId = 0;
 
     #[ORM\Column(length: 255)]
@@ -36,6 +43,14 @@ class CourseModuleEntity
 
     public function getTrainingId(): int { return $this->trainingId; }
     public function setTrainingId(int $value): self { $this->trainingId = $value; return $this; }
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function syncTrainingAssociation(PrePersistEventArgs|PreUpdateEventArgs $event): void
+    {
+        if ($this->trainingId > 0 && ($this->training === null || $this->training->getId() !== $this->trainingId)) {
+            $this->training = $event->getObjectManager()->getReference(TrainingEntity::class, $this->trainingId);
+        }
+    }
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getDescription(): string { return $this->description; }

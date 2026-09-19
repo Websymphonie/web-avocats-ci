@@ -89,9 +89,15 @@ final class TrainingFormType extends AbstractType
             $builder
                 ->add('startsAt', DateTimeType::class, ['label' => 'Date/heure de début', 'required' => true, 'input' => 'datetime_immutable', 'widget' => 'single_text', 'html5' => true])
                 ->add('endsAt', DateTimeType::class, ['label' => 'Date/heure de fin', 'required' => true, 'input' => 'datetime_immutable', 'widget' => 'single_text', 'html5' => true])
-                ->add('deliveryMode', ChoiceType::class, ['label' => 'Mode', 'choices' => self::deliveryModeChoices(), 'choice_translation_domain' => false, 'choice_label' => static fn (LiveDeliveryMode $value): string => $value->label()])
+                ->add('deliveryMode', ChoiceType::class, [
+                    'label' => 'Mode',
+                    'choices' => self::deliveryModeChoices(),
+                    'choice_translation_domain' => false,
+                    'choice_label' => static fn (LiveDeliveryMode $value): string => $value->label(),
+                    'choice_value' => static fn (?LiveDeliveryMode $value): ?string => $value?->value,
+                ])
                 ->add('location', TextType::class, ['label' => 'Lieu', 'required' => false, 'attr' => ['placeholder' => 'Adresse ou localisation']])
-                ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], message: 'Utilisez une URL HTTPS valide.')]]);
+                ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL HTTPS valide.')]]);
         }
 
         if ($options['data'] instanceof UpdateTrainingCommand) {

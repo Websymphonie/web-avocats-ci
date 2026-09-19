@@ -68,10 +68,14 @@ class TrainingEntity
     #[ORM\JoinTable(name: 'training_training_tag')]
     private Collection $tags;
 
-    public function __construct() { $this->categories = new ArrayCollection(); $this->tags = new ArrayCollection(); }
+    public function __construct(TrainingType $type = TrainingType::COURSE)
+    {
+        $this->type = $type;
+        $this->categories = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+    }
 
     public function getType(): TrainingType { return $this->type; }
-    public function setType(TrainingType $value): self { $this->type = $value; return $this; }
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getSlug(): string { return $this->slug; }

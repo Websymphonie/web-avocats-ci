@@ -42,6 +42,18 @@ final class LearningAccessTest extends WebTestCase
         self::assertSelectorExists('form input[name$="[title]"]');
     }
 
+    public function testLiveFormUsesStableDeliveryModeValues(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        $client->request('GET', '/admin/learning/trainings/new/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSame(
+            ['ONLINE', 'IN_PERSON', 'HYBRID'],
+            $client->getCrawler()->filter('#training_form_deliveryMode option')->extract(['value']),
+        );
+    }
+
     public function testAdminCourseStructureRouteIsProtectedByTheTrainingLookup(): void
     {
         $client = $this->authenticatedClient(['ROLE_ADMIN']);

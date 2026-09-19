@@ -63,9 +63,9 @@ La suite de la phase concerne les parcours Frontoffice et les décisions de
 visibilité publique ; ces éléments restent hors de la présente fondation
 Backoffice.
 
-### PHASE 3 — Learning COURSE et inscriptions
+### PHASE 3 — Learning Backoffice foundation
 
-**Statut : `IN PROGRESS`**
+**Statut : `COMPLETE`**
 
 Ticket de départ :
 
@@ -73,8 +73,9 @@ Ticket de départ :
 LRN-001 — Training COURSE
 ```
 
-Ordre indicatif : `Training`, modules, contenus pédagogiques, catalogue,
-`Enrollment`, puis lecture protégée et intégration à la Member Area.
+`Training`, modules, contenus pédagogiques, `Enrollment`, taxonomies et LIVE
+sont livrés pour le Backoffice, avec les contrôles d’accès membre nécessaires.
+Le catalogue public et le parcours Learner Frontoffice restent différés.
 
 ### PHASE 4 — Payment
 
@@ -141,6 +142,9 @@ LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube
 LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
 LRN-004A Catégories et tags des formations           DONE — taxonomies Learning, associations et filtres Backoffice
 LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre au lien HTTPS
+LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des accès, CSRF, suppressions bulk et intégrité interne
+Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
+Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.

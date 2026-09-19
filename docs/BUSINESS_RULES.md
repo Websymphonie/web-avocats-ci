@@ -147,6 +147,12 @@ possible pour toute formation publiée. Une formation `DRAFT` ou `ARCHIVED` ne
 peut pas activer une nouvelle inscription. Une formation avec des inscriptions
 ne peut pas être supprimée.
 
+Le type `COURSE`/`LIVE` est immuable après la création. Les modes LIVE sont
+transportés par leurs valeurs métier stables `ONLINE`, `IN_PERSON` et `HYBRID`.
+Une suppression bulk de formations prévalide toute la sélection : si une
+formation possède des inscriptions, aucune formation de la sélection n’est
+supprimée et un message explicite est affiché.
+
 ### LRN-004A — Classification Learning
 
 Les catégories et tags de formation sont facultatifs, plats et indépendants
@@ -183,6 +189,11 @@ cliente. `GET /espace/learning/trainings/{uuid}/join` vérifie l’utilisateur,
 le Training publié et l’Enrollment actif avant de rediriger vers le lien HTTPS
 administré. Les sessions `IN_PERSON`, les brouillons, archivés et inscriptions
 révoquées ne donnent pas accès à un lien.
+
+Un téléchargement membre autorisé dont le fichier physique est absent répond
+par un `404` contrôlé et journalise les identifiants de la ressource, de la
+formation et du fichier ; il ne redirige pas avec une erreur générique. Une
+session `IN_PERSON` répond de manière contrôlée sans redirection externe.
 Le déplacement inter-module est explicitement différé ; le builder fournit le
 réordonnancement intra-module et les contrôles clavier Monter/Descendre.
 

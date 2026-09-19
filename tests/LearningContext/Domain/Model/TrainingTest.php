@@ -13,6 +13,8 @@ use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Exception\InvalidTrainingDetailsException;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Factory\TrainingFactory;
 
 final class TrainingTest extends TestCase
 {
@@ -96,6 +98,26 @@ final class TrainingTest extends TestCase
 
         $this->expectException(InvalidTrainingDetailsException::class);
         $training->publish();
+    }
+
+    public function testTrainingTypeCannotChangeWhenMappingAnExistingEntity(): void
+    {
+        $entity = new TrainingEntity(TrainingType::COURSE);
+        $model = new Training(
+            id: 1,
+            uuid: 'uuid',
+            type: TrainingType::LIVE,
+            title: 'Live de test',
+            slug: 'live-de-test',
+            summary: 'Résumé',
+            description: '<p>Description</p>',
+            visibility: TrainingVisibility::PUBLIC,
+            accessType: TrainingAccessType::FREE,
+        );
+
+        $this->expectException(InvalidTrainingDetailsException::class);
+
+        (new TrainingFactory())->toEntity($model, $entity);
     }
 
     private function training(): Training

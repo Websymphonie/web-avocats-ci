@@ -244,6 +244,27 @@ Symfony UX React est réservé aux dashboards et visualisations analytiques qui
 justifient une interface riche. Les calculs métier et l’autorisation restent
 côté Symfony.
 
+### Surfaces Web
+
+Les surfaces de présentation sont explicites et ne constituent pas de nouveaux
+Bounded Contexts :
+
+- **Public / Frontoffice** : porté par `WebContext`, accessible anonymement sur
+  les routes publiques explicitement déclarées. La page d’accueil `/` est la
+  surface publique actuellement implémentée ; les futurs contenus publics ne
+  sont pas considérés comme développés par cette formalisation.
+- **Member Area** : portée par l’authentification et l’identité existantes,
+  accessible sous `/espace` aux utilisateurs authentifiés. Cette surface ne
+  crée pas de `MemberContext`.
+- **Backoffice** : conservé sous `/admin`, avec les contrôleurs existants dans
+  leurs contextes. `AdminContext` reste dédié à ses responsabilités actuelles ;
+  les fonctionnalités métier administrées restent à la charge de leur
+  contexte propriétaire lorsqu’elles seront introduites.
+
+Les routes non déclarées publiques sont protégées par défaut. La visibilité
+publique future d’une fiche ou d’un catalogue ne vaut pas autorisation d’accès
+à un contenu protégé.
+
 ---
 
 ## 11. Architecture decision principle

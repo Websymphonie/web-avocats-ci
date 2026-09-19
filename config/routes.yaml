@@ -19,6 +19,13 @@ identity:
   type: attribute
   prefix: '/admin/identity'
 
+member:
+  resource:
+    path: ../src/IdentityContext/Presenter/Controller/Member/
+    namespace: Websymphonie\IdentityContext\Presenter\Controller\Member
+  type: attribute
+  prefix: '/'
+
 log:
   resource:
     path: ../src/LogContext/Presenter/Controller/
@@ -41,6 +48,13 @@ shared:
   prefix: '/shared'
 
 # SUPER ADMIN
+admin_root:
+  path: '/admin'
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  defaults:
+    route: app_admin
+    permanent: false
+
 admin:
   resource:
     path: ../src/AdminContext/Presenter/Controller/

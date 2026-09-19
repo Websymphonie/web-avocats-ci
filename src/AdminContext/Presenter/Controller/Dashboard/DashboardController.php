@@ -5,13 +5,15 @@ namespace Websymphonie\AdminContext\Presenter\Controller\Dashboard;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
 use Websymphonie\SharedContext\Domain\Service\Helper\BreadcrumsServiceInterface;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route(path: '/dashboard')]
-#[HasGroupAccess(RoleGroupEnum::ALL)]
+#[HasGroupAccess(RoleGroupEnum::ADMIN)]
+#[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractController
 {
 

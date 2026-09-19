@@ -5,6 +5,7 @@ namespace Websymphonie\IdentityContext\Infrastructure\Security\Voter\Permission;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
 use Websymphonie\IdentityContext\Domain\Service\User\PermissionsInterface;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
@@ -23,7 +24,7 @@ final class PermissionVoter extends Voter
         return PermissionEnum::tryFrom($attribute) !== null;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
 

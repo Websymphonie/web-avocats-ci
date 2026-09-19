@@ -55,16 +55,19 @@ security:
   access_control:
     # Routes publiques explicites
     - { path: ^/$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
-    - { path: ^/email-request, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
-    - { path: ^/password-reset, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
-    - { path: ^/user-email-verify, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
-    - { path: ^/account/activate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/auth/login$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/auth/email-request, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/auth/password-reset, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/auth/user-email-verify$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/auth/account/activate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/(actualites|evenements|videos|galeries|formations|lives)(/|$), roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
 
-    # Partie applicative protégée
-    - { path: ^/admin, roles: IS_AUTHENTICATED_FULLY, requires_channel: '%env(SECURE_SCHEME)%' }
+    # Surfaces applicatives
+    - { path: ^/espace(/|$), roles: IS_AUTHENTICATED_FULLY, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/admin(/|$), roles: IS_AUTHENTICATED_FULLY, requires_channel: '%env(SECURE_SCHEME)%' }
 
-    # Périmètre applicatif privé par défaut
-    - { path: ^/, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    # Les routes non déclarées publiques restent privées par défaut.
+    - { path: ^/, roles: IS_AUTHENTICATED_FULLY, requires_channel: '%env(SECURE_SCHEME)%' }
 
 when@test:
   security:

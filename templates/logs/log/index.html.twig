@@ -1,0 +1,90 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <p class="text-sm font-medium text-muted-foreground">Observabilité</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Logs applicatifs</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Consultez les événements techniques enregistrés par l’application.</p>
+            </section>
+
+            <details class="group rounded-2xl border border-border bg-card shadow-sm" {% if app.request.query.all|length > 0 %}open{% endif %}>
+                <summary class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium marker:hidden">
+                    <span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter" class="size-4 text-muted-foreground" aria-hidden="true"/>Filtrer les événements</span>
+                    <twig:ux:icon name="lucide:chevron-down" class="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true"/>
+                </summary>
+                <div class="border-t border-border px-6 py-5">
+                    {{ form_start(form, {'attr': {'class': 'grid gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]', 'data-loading-label': 'Recherche…'}}) }}
+                    <div class="space-y-2">
+                        {{ form_label(form.message, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.message, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.levelName, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.levelName, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button class="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:pointer-events-none disabled:opacity-50" type="submit">Appliquer</button>
+                        <a class="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground" href="{{ path('app_log_index') }}">Effacer</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </details>
+
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm" aria-labelledby="logs-list-title">
+                <div class="border-b border-border px-6 py-4">
+                    <h2 id="logs-list-title" class="text-sm font-semibold">Journal technique</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ logs.totalItemCount }} événement{{ logs.totalItemCount > 1 ? 's' : '' }}</p>
+                </div>
+
+                <div class="divide-y divide-border md:hidden">
+                    {% for log in logs.items %}
+                        <article class="space-y-4 p-5">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs text-muted-foreground">{{ log.createdAt ? log.createdAt|date('d/m/Y H:i:s') : 'Date inconnue' }}</p>
+                                    <h3 class="mt-2 line-clamp-3 text-sm font-medium leading-6">{{ log.message }}</h3>
+                                </div>
+                                <div class="shrink-0">{{ log_level_badge(log.level ?? 0, log.levelName ?? 'Inconnu') }}</div>
+                            </div>
+                            <div class="flex items-center justify-between gap-4 border-y border-border py-3 text-sm">
+                                <span class="text-muted-foreground">Utilisateur</span>
+                                <span class="max-w-[65%] truncate font-medium">{{ log.user ? log.user.email : 'Système' }}</span>
+                            </div>
+                            <div class="flex justify-end"><twig:ActionDropdown>{% if is_granted('ROLE_VIEW') %}<a href="{{ path('app_log_view', {id: log.id}) }}"><twig:ux:icon name="lucide:eye" class="size-4"/>Détails</a>{% endif %}{% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: log.id, instanceId: 'mobile-log-' ~ log.id, urlPath: path('app_log_delete', {id: log.id}), description: 'Cet événement technique sera définitivement supprimé.'}) }}{% endif %}</twig:ActionDropdown></div>
+                        </article>
+                    {% else %}
+                        <div class="px-6 py-14 text-center text-muted-foreground">Aucun log ne correspond à vos critères.</div>
+                    {% endfor %}
+                </div>
+
+                <div class="hidden overflow-x-auto md:block">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr><th class="px-6 py-3 font-medium">Date</th><th class="px-6 py-3 font-medium">Niveau</th><th class="px-6 py-3 font-medium">Message</th><th class="px-6 py-3 font-medium">Utilisateur</th><th class="px-6 py-3 text-right font-medium">Actions</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                        {% for log in logs.items %}
+                            <tr class="hover:bg-muted/40">
+                                <td class="whitespace-nowrap px-6 py-4 text-muted-foreground">{{ log.createdAt ? log.createdAt|date('d/m/Y H:i:s') : '—' }}</td>
+                                <td class="px-6 py-4">{{ log_level_badge(log.level ?? 0, log.levelName ?? 'Inconnu') }}</td>
+                                <td class="max-w-xl px-6 py-4"><p class="line-clamp-2">{{ log.message }}</p></td>
+                                <td class="px-6 py-4 text-muted-foreground">{{ log.user ? log.user.email : 'Système' }}</td>
+                                <td class="px-6 py-4 text-right"><twig:ActionDropdown>{% if is_granted('ROLE_VIEW') %}<a href="{{ path('app_log_view', {id: log.id}) }}"><twig:ux:icon name="lucide:eye" class="size-4"/>Détails</a>{% endif %}{% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: log.id, instanceId: 'desktop-log-' ~ log.id, urlPath: path('app_log_delete', {id: log.id}), description: 'Cet événement technique sera définitivement supprimé.'}) }}{% endif %}</twig:ActionDropdown></td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="px-6 py-14 text-center text-muted-foreground" colspan="5">Aucun log ne correspond à vos critères.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'shared/views/_list_pagination.html.twig' with {pager: logs, route: 'app_log_index'} only %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

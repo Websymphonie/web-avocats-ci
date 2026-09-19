@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<main class="container py-5">
+    <h1>Activer votre compte</h1>
+    <p>Choisissez votre mot de passe pour terminer la création de votre compte.</p>
+    {{ form_start(form) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.confirmPassword) }}
+        <button class="btn btn-primary" type="submit">Activer mon compte</button>
+    {{ form_end(form) }}
+</main>
+{% endblock %}

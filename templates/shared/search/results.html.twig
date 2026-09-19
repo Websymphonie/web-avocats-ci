@@ -1,0 +1,86 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="mx-auto w-full max-w-5xl space-y-6">
+        {{ component('Breadcrumbs', {breadcrumbs: breadcrumbs}) }}
+
+        <section class="rounded-2xl border border-border bg-card p-5 shadow-xs sm:p-7">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-sm font-medium text-primary">Navigation rapide</p>
+                    <h1 class="mt-1 text-2xl font-semibold tracking-tight text-foreground">Recherche globale</h1>
+                    <p class="mt-2 text-sm text-muted-foreground">Retrouvez les informations auxquelles vous avez accès dans tous les modules.</p>
+                </div>
+
+                <kbd class="hidden rounded-lg border border-border bg-muted px-2 py-1 text-xs text-muted-foreground sm:inline">⌘ K</kbd>
+            </div>
+
+            <form class="mt-6" action="{{ path('app_global_search_results') }}" method="get">
+                <label class="sr-only" for="search-page-input">Rechercher</label>
+                <div class="flex gap-2">
+                    <input id="search-page-input"
+                           class="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30"
+                           name="q"
+                           type="search"
+                           value="{{ term }}"
+                           placeholder="Rechercher dans l’application">
+                    <button class="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            type="submit">
+                        <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/>
+                        Rechercher
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        {% if term|length < 2 %}
+            <div class="rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
+                <twig:ux:icon name="lucide:search" class="mx-auto size-8 text-muted-foreground" aria-hidden="true"/>
+                <h2 class="mt-4 text-base font-semibold text-foreground">Lancez une recherche</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Saisissez au moins 2 caractères pour afficher les résultats.</p>
+            </div>
+        {% elseif groups is empty %}
+            <div class="rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
+                <twig:ux:icon name="lucide:search-x" class="mx-auto size-8 text-muted-foreground" aria-hidden="true"/>
+                <h2 class="mt-4 text-base font-semibold text-foreground">Aucun résultat</h2>
+                <p class="mt-1 text-sm text-muted-foreground">Aucun élément accessible ne correspond à « {{ term }} ».</p>
+            </div>
+        {% else %}
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
+                <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+                    <h2 class="text-sm font-semibold text-foreground">Résultats pour « {{ term }} »</h2>
+                    <span class="text-sm text-muted-foreground">{{ total }} trouvé{{ total > 1 ? 's' : '' }}</span>
+                </div>
+
+                <div class="divide-y divide-border">
+                    {% for group in groups %}
+                        <section>
+                            <div class="flex items-center justify-between bg-muted/30 px-5 py-3 sm:px-6">
+                                <span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{{ group.label }}</span>
+                                <span class="rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">{{ group.items|length }}</span>
+                            </div>
+
+                            <div class="divide-y divide-border">
+                                {% for item in group.items %}
+                                    <a class="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-6"
+                                       href="{{ item.url }}">
+                                        <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                            <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/>
+                                        </span>
+                                        <span class="min-w-0 flex-1">
+                                            <span class="block truncate text-sm font-medium text-foreground">{{ item.title|highlight_search(term) }}</span>
+                                            <span class="mt-0.5 block truncate text-sm text-muted-foreground">{{ item.subtitle|highlight_search(term) }}</span>
+                                        </span>
+                                        <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if this.formatted %}
+    {% if clickable %}
+        <a href="tel:{{ this.telLink }}" class="flex flex-row items-center gap-2">
+            {{ component('IconSvg', {name: 'ph:phone'}) }} <span>{{ this.formatted }}</span>
+        </a>
+    {% else %}
+        {{ component('IconSvg', {name: 'ph:phone'}) }} <span>{{ this.formatted }}</span>
+    {% endif %}
+{% else %}
+    <span class="text-muted">{{ component('DefaultDataComponent') }}</span>
+{% endif %}

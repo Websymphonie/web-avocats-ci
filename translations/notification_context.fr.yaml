@@ -1,0 +1,3 @@
+exceptions:
+  notifications:
+    notification_not_found: Aucune notification trouvée

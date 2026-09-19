@@ -1,0 +1,7 @@
+{% if this.date is not null %}
+    {% if this.timeOnly %}
+        {{ this.date|format_time('short', locale=app.request.locale) }}
+    {% else %}
+        {{ this.date|format_datetime(this.format, this.formatTime, locale=app.request.locale) }}
+    {% endif %}
+{% endif %}

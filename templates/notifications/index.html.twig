@@ -1,0 +1,146 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-5xl space-y-6">
+            <section class="rounded-2xl border border-border bg-card px-6 py-7 shadow-sm sm:px-8"
+                     aria-labelledby="notifications-title">
+                <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">Centre de notifications</p>
+                        <h1 id="notifications-title"
+                            class="mt-2 text-2xl font-semibold tracking-[-0.03em] text-foreground">Restez informé</h1>
+                        <p class="mt-2 text-sm leading-6 text-muted-foreground">Consultez les événements importants liés
+                            à votre espace de travail.</p>
+                    </div>
+
+                    {% if is_granted('ROLE_EDIT') %}
+                        <form method="post" action="{{ path('app_notifications_read_all') }}" data-loading-label="Mise à jour…">
+                            <button class="inline-flex h-10 items-center justify-center rounded-lg border border-border bg-background px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    type="submit">
+                                Tout marquer comme lu
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </section>
+
+            <details class="group rounded-2xl border border-border bg-card shadow-sm"
+                     {% if app.request.query.all|length > 0 %}open{% endif %}>
+                <summary
+                        class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-sm font-medium text-foreground marker:hidden sm:px-8">
+                    <span class="flex items-center gap-3">
+                        <svg class="size-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.8" aria-hidden="true"><path
+                                    d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"></path></svg>
+                        Filtrer les notifications
+                    </span>
+                    <svg class="size-4 text-muted-foreground transition-transform group-open:rotate-180"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                </summary>
+
+                <div class="border-t border-border px-6 py-5 sm:px-8">
+                    {{ form_start(form, {'attr': {'class': 'grid gap-4 md:grid-cols-2 xl:grid-cols-4', 'data-loading-label': 'Recherche…'}}) }}
+                    <div class="space-y-2 md:col-span-2 xl:col-span-1">
+                        <label class="text-sm font-medium" for="{{ form.message.vars.id }}">Message</label>
+                        {{ form_widget(form.message, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium" for="{{ form.action.vars.id }}">Action</label>
+                        {{ form_widget(form.action, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium" for="{{ form.type.vars.id }}">Type</label>
+                        {{ form_widget(form.type, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    {% if form.access is defined %}
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium" for="{{ form.access.vars.id }}">Canal</label>
+                            {{ form_widget(form.access, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                        </div>
+                    {% endif %}
+                    <div class="flex items-end gap-3 {% if form.access is not defined %}xl:col-start-4{% endif %}">
+                        <button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                type="submit">Appliquer
+                        </button>
+                        <a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                           href="{{ path('app_notifications_index') }}">Réinitialiser</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </details>
+
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                     aria-labelledby="inbox-title">
+                <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-5 sm:px-8">
+                    <div>
+                        <h2 id="inbox-title" class="text-sm font-semibold text-foreground">Boîte de réception</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">{{ notifications.totalItemCount }}
+                            notification{{ notifications.totalItemCount > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+
+                <div class="divide-y divide-border">
+                    {% for notification in notifications.items %}
+                        <a class="group flex gap-4 px-6 py-5 transition-colors hover:bg-muted/60 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-8 {{ notification.isRead ? '' : 'bg-primary/[0.03]' }}"
+                           href="{{ path('app_notifications_view', {id: notification.id}) }}">
+                            <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl {{ notification.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground' }}">
+                                {% if notification.context.resource is defined and notification.context.resource == 'follow_up' %}
+                                    <twig:ux:icon name="lucide:list-checks" class="size-4"/>
+                                {% elseif notification.type and notification.type.value == 'password' %}
+                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="1.8" aria-hidden="true"><rect x="4" y="11" width="16" height="9"
+                                                                                     rx="2"></rect><path
+                                                d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2"></path></svg>
+                                {% elseif notification.type and notification.type.value == 'account' %}
+                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path
+                                                d="M4 21a8 8 0 0 1 16 0"></path></svg>
+                                {% else %}
+                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="1.8" aria-hidden="true"><path
+                                                d="M12 8v4l2.5 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"></path></svg>
+                                {% endif %}
+                            </span>
+
+                            <span class="min-w-0 flex-1">
+                                <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <span class="text-sm font-medium text-foreground">{{ notification.title ?? (notification.type ? notification.type.label() : 'Information') }}</span>
+                                    <span class="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">{{ notification.action ? notification.action.label() : 'Mise à jour' }}</span>
+                                    {% if not notification.isRead %}
+                                        <span class="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Nouveau</span>
+                                    {% endif %}
+                                </span>
+                                <span class="mt-1 block text-sm leading-6 text-muted-foreground">{{ notification.message }}</span>
+                                <span class="mt-2 block text-xs text-muted-foreground">{{ notification.createdAt ? notification.createdAt|ago : '' }}</span>
+                            </span>
+
+                            <svg class="mt-3 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                 aria-hidden="true">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <div class="px-6 py-16 text-center sm:px-8">
+                            <span class="mx-auto flex size-11 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="1.8" aria-hidden="true"><path
+                                            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></svg>
+                            </span>
+                            <h3 class="mt-4 text-sm font-semibold text-foreground">Aucune notification</h3>
+                            <p class="mt-1 text-sm text-muted-foreground">Les nouvelles activités importantes
+                                apparaîtront ici.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: 'app_notifications_index'} only %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

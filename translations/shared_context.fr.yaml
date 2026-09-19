@@ -1,0 +1,5 @@
+exceptions:
+  invalid_argument: Argument invalide
+  accessDenied:
+    access_denied: >
+      Accès refusé au groupe %groupName%.

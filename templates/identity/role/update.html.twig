@@ -1,0 +1,49 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-6xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">Matrice d’accès</p>
+                        <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">{{ userRole.label }}</h1>
+                        <p class="mt-2 text-sm text-muted-foreground">Cochez uniquement les actions que les utilisateurs de ce rôle peuvent effectuer.</p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm text-muted-foreground">
+                        <twig:ux:icon name="lucide:key-round" class="size-4" aria-hidden="true"/>
+                        {{ rolePermissions.permissions|length }} permission{{ rolePermissions.permissions|length > 1 ? 's' : '' }} actuelle{{ rolePermissions.permissions|length > 1 ? 's' : '' }}
+                    </span>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'mt-8'}}) }}
+                    {{ form_errors(form) }}
+                    <fieldset>
+                        <legend class="text-sm font-semibold">{{ form.permissions.vars.label }}</legend>
+                        <p class="mt-1 text-sm text-muted-foreground">Les changements sont appliqués immédiatement aux comptes concernés.</p>
+                        <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            {% for permission in form.permissions %}
+                                <label class="flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                    {{ form_widget(permission, {'attr': {'class': 'size-4 rounded border-input text-primary focus:ring-ring'}}) }}
+                                    <span class="leading-snug">{{ permission.vars.label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {{ form_errors(form.permissions) }}
+                    </fieldset>
+                    <div class="mt-8 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
+                        <a class="inline-flex h-10 items-center justify-center rounded-lg border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-muted" href="{{ path('app_role_permissions_index') }}">Annuler</a>
+                        <button class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90" type="submit">
+                            <twig:ux:icon name="lucide:save" class="size-4" aria-hidden="true"/>
+                            Enregistrer les permissions
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </section>
+        </div>
+    </main>
+{% endblock %}

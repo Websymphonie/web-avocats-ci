@@ -1,0 +1,97 @@
+{% if app.user is not null %}
+    {% set userIdentifier = app.user.userIdentifier %}
+    {% set userName = app.user.name ?? userIdentifier %}
+    {% set userMainRole = mainRole(app.user) %}
+
+    <header class="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6 lg:left-72 lg:px-8"
+            data-sidebar-layout="header">
+        <div class="flex min-w-0 items-center gap-3">
+            <button class="inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
+                    type="button"
+                    data-action="sidebar#open"
+                    aria-label="Ouvrir la navigation">
+                <twig:ux:icon name="lucide:menu" class="size-5" aria-hidden="true"/>
+            </button>
+
+            <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-foreground">{{ title|raw }}</p>
+                <p class="hidden truncate text-xs text-muted-foreground sm:block">{{ userName }}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    type="button"
+                    data-controller="theme-toggle"
+                    data-action="theme-toggle#toggle"
+                    aria-label="Activer le mode sombre"
+                    aria-pressed="false">
+                <twig:ux:icon name="lucide:sun" class="size-4 dark:hidden" aria-hidden="true"/>
+                <twig:ux:icon name="lucide:moon" class="hidden size-4 dark:block" aria-hidden="true"/>
+                <span class="sr-only">Changer de thème</span>
+            </button>
+
+            <a class="relative inline-flex size-10 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+               href="{{ path('app_notifications_index') }}"
+               aria-label="Voir les notifications">
+                <twig:ux:icon name="lucide:bell" class="size-4" aria-hidden="true"/>
+                {{ component('NotificationCount') }}
+            </a>
+
+            <details class="group relative"
+                     data-controller="dropdown"
+                     data-action="toggle->dropdown#toggle">
+                <summary
+                        class="flex cursor-pointer list-none items-center gap-2 rounded-lg p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring marker:hidden"
+                        aria-haspopup="menu"
+                        aria-expanded="false">
+                    <span class="flex size-8 items-center justify-center rounded-md bg-primary text-xs font-semibold text-primary-foreground">{{ userName|slice(0, 1)|upper }}</span>
+                    <span class="hidden max-w-36 truncate text-sm font-medium text-foreground md:block">{{ userName }}</span>
+                    <twig:ux:icon name="lucide:chevron-down"
+                                  class="hidden size-4 text-muted-foreground transition-transform group-open:rotate-180 md:block"
+                                  aria-hidden="true"/>
+                </summary>
+
+                <div class="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-popover p-1 shadow-lg"
+                     role="menu">
+                    <div class="border-b border-border px-3 py-2.5">
+                        <p class="truncate text-sm font-medium text-popover-foreground">{{ userName }}</p>
+                        <p class="mt-0.5 truncate text-xs text-muted-foreground">{{ userIdentifier }}</p>
+                        <span class="mt-2 inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                            {{ userMainRole ? userMainRole.label() : 'Utilisateur' }}
+                        </span>
+                    </div>
+
+                    <a class="mt-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-popover-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                       href="{{ path('app_user_profile_update', {id: app.user.id}) }}"
+                       role="menuitem">
+                        <twig:ux:icon name="lucide:user-round" class="size-4 text-muted-foreground" aria-hidden="true"/>
+                        Mon profil
+                    </a>
+
+                    {% if canEdit(app.user) %}
+                        <button class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-popover-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                type="button"
+                                data-action="click->modal#open"
+                                data-modal-id-param="change-user-password-{{ app.user.id }}"
+                                role="menuitem">
+                            <twig:ux:icon name="lucide:lock-keyhole" class="size-4 text-muted-foreground"
+                                          aria-hidden="true"/>
+                            Changer mon mot de passe
+                        </button>
+                    {% endif %}
+
+                    <form class="mt-1" method="post" action="{{ path('app_logout') }}">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                        <button class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40"
+                                type="submit"
+                                role="menuitem">
+                        <twig:ux:icon name="lucide:log-out" class="size-4" aria-hidden="true"/>
+                        Se déconnecter
+                        </button>
+                    </form>
+                </div>
+            </details>
+        </div>
+    </header>
+{% endif %}

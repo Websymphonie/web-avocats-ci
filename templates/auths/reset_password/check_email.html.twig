@@ -1,0 +1,38 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block auth_content %}
+    <section class="w-full max-w-md" aria-labelledby="check-email-title">
+        <div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <div class="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+            </div>
+
+            <div class="mt-6">
+                <p class="text-sm font-medium text-muted-foreground">Vérifiez votre boîte de réception</p>
+                <h1 id="check-email-title" class="mt-2 text-2xl font-semibold tracking-[-0.03em]">Le lien est en route</h1>
+                <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                    Si un compte correspond à cette adresse, vous recevrez un e-mail pour réinitialiser votre mot de passe.
+                </p>
+            </div>
+
+            <div class="mt-6 rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm leading-6 text-muted-foreground">
+                Le lien envoyé est valable pendant 30 minutes. Une nouvelle demande invalide automatiquement le lien précédent.
+            </div>
+
+            <p class="mt-5 text-sm leading-6 text-muted-foreground">
+                Vous ne recevez rien&nbsp;? Vérifiez vos indésirables ou
+                <a class="font-medium text-foreground underline underline-offset-4 hover:text-primary" href="{{ path('password.request') }}">réessayez</a>.
+            </p>
+
+            <a class="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="{{ path('app_login') }}">
+                Retourner à la connexion
+            </a>
+
+            <div class="mt-5 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                Vous pouvez fermer cette page en toute sécurité
+            </div>
+        </div>
+    </section>
+{% endblock %}

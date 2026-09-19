@@ -1,0 +1,8 @@
+nucleos_dompdf:
+  defaults:
+    font_cache: '%kernel.cache_dir%/fonts'
+    font_dir: '%kernel.project_dir%/public/assets/pdf/fonts'
+    chroot: '%kernel.project_dir%/public/assets' # See https://github.com/dompdf/dompdf/wiki/Usage#security-restrictions-for-local-files
+    logOutputFile: '' # Prevent creating `/tmp/log.htm` which causes problems in some server configurations
+    isRemoteEnabled: true
+    defaultFont: 'helvetica'

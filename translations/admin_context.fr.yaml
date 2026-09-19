@@ -1,0 +1,8 @@
+exceptions:
+  data_not_found: Aucune donnée trouvée
+
+  images:
+    image_not_found: Image introuvable
+
+  reglages:
+    reglage_not_found: Réglage introuvable

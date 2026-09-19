@@ -1,0 +1,18 @@
+exceptions:
+  account_activation:
+    unavailable: Le lien d’activation est invalide ou expiré.
+  empty_generated_code: Aucun code n'a été généré
+  empty_generated_token: Aucun token n'a été généré
+  users:
+    user_empty_name: Veuillez saisir un nom
+    user_empty_email: Veuillez saisir une adresse email
+    user_invalid_email: Adresse email invalide
+    user_password_not_identically: Mot de passe non identique
+    password_too_short: Le mot de passe doit contenir au moins 12 caractères
+    empty_current_password: Veuillez saisir un mot de passe
+    empty_new_password: Veuillez saisir un nouveau mot de passe
+    confirm_new_password: Veuillez saisir un nouveau mot de passe
+    user_new_password_not_identically: Mots de passes non identiques
+  emails:
+    subjects:
+      password_create: Création d'un nouveau mot de passe

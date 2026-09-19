@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.attributes.get('_locale') }}">
+<head>
+
+    <title>{{ reglageValue('app_title').value }} — {% block title %}{% endblock %}</title>
+    <twig:SeoComponent/>
+
+    <twig:ScriptComponent/>
+
+    {{ encore_entry_link_tags('app') }}
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="min-h-svh bg-background text-foreground antialiased">
+{% set appTitle = reglageValue('app_title').value %}
+{% set appAuthTitle = reglageValue('app_auth_title').value %}
+{% set appAuthDescription = reglageValue('app_auth_description').value %}
+
+<div class="grid min-h-svh lg:grid-cols-[minmax(0,1.15fr)_minmax(28rem,0.85fr)]">
+    <aside class="relative hidden overflow-hidden bg-zinc-950 px-10 py-12 text-zinc-100 lg:flex lg:flex-col xl:px-16">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.12),transparent_30%),radial-gradient(circle_at_80%_80%,rgba(161,161,170,0.18),transparent_34%)]"></div>
+        <div class="relative flex items-center gap-3">
+            <span class="flex size-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-sm font-bold tracking-tight">
+                {{ appTitle|slice(0, 1)|upper }}
+            </span>
+            <span class="max-w-56 truncate text-base font-semibold tracking-tight">{{ appTitle }}</span>
+        </div>
+
+        <div class="relative my-auto max-w-xl">
+            {% if appAuthTitle is not null %}
+                <h2 class="mt-5 text-4xl font-semibold leading-tight tracking-[-0.04em] text-white xl:text-5xl">
+                    {{ appAuthTitle }}
+                </h2>
+            {% endif %}
+
+            {% if appAuthDescription is not null %}
+                <p class="mt-6 max-w-lg text-base leading-7 text-zinc-300">{{ appAuthDescription }}</p>
+            {% endif %}
+
+            <div class="mt-10 grid max-w-md grid-cols-2 gap-3">
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                    <p class="text-sm font-medium text-white">Une seule vue</p>
+                    <p class="mt-1 text-sm leading-5 text-zinc-400">
+                        Pour suivre l’essentiel de votre activité.
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                    <p class="text-sm font-medium text-white">Accès sécurisé</p>
+                    <p class="mt-1 text-sm leading-5 text-zinc-400">Vos données restent protégées.</p>
+                </div>
+            </div>
+        </div>
+        <footer class="text-center text-xs text-muted-foreground sm:text-left">
+            <twig:CopyRightComponent/>
+        </footer>
+    </aside>
+
+    <div class="flex min-h-svh flex-col px-5 py-5 sm:px-8 sm:py-8 lg:px-12 lg:py-10" data-controller="submit-state"
+         data-action="submit->submit-state#submit">
+        <header class="flex items-center justify-between gap-4">
+            <a class="inline-flex min-w-0 items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+               href="{{ path('app_login') }}" aria-label="Retour à la connexion">
+                <twig:Logo className="h-9 max-w-40 object-contain object-left"/>
+            </a>
+
+            <button
+                    class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    type="button"
+                    data-controller="theme-toggle"
+                    data-action="theme-toggle#toggle"
+                    aria-label="Activer le mode sombre"
+                    aria-pressed="false"
+            >
+                <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                </svg>
+                <svg class="hidden size-4 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" aria-hidden="true">
+                    <path d="M20.27 15.21A9 9 0 1 1 8.79 3.73 7 7 0 0 0 20.27 15.21Z"></path>
+                </svg>
+                <span class="sr-only">Changer de thème</span>
+            </button>
+        </header>
+
+        <main class="flex flex-1 items-center justify-center py-10 sm:py-14">
+            {% block auth_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<twig:FlashToast/>
+{{ encore_entry_script_tags('app') }}
+{% block javascripts %}{% endblock %}
+</body>
+</html>

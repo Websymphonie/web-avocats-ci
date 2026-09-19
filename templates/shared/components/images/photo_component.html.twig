@@ -1,0 +1,4 @@
+{% props src, alt=null, class="rounded-full", size=null %}
+<img class="{{ class }}" {% if size is not null %} style="width: {{ size }}px!important;height: {{ size }}px!important;"{% endif %}
+     src="{{ src }}"
+     alt="{{ alt }}">

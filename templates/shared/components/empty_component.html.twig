@@ -1,0 +1,18 @@
+<twig:Empty>
+    <twig:Empty:Header>
+        <twig:Empty:Media variant="icon">
+            <twig:ux:icon name="{{ icon }}"/>
+        </twig:Empty:Media>
+        <twig:Empty:Title>{{ title }}</twig:Empty:Title>
+        <twig:Empty:Description>
+            {{ description }}
+        </twig:Empty:Description>
+    </twig:Empty:Header>
+    {% if buttonUrl is not null and buttonLabel is not null %}
+        <twig:Empty:Content class="flex-row justify-center gap-2">
+            <twig:Button variant="{{ buttonVariant }}" as="{{ buttonAs }}" href="{{ buttonUrl }}">
+                {{ buttonLabel }}
+            </twig:Button>
+        </twig:Empty:Content>
+    {% endif %}
+</twig:Empty>

@@ -1,0 +1,36 @@
+{% extends 'layouts/error.html.twig' %}
+
+{% block title %}Maintenance en cours{% endblock %}
+
+{% block error_content %}
+    <section class="overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-black/5">
+        <div class="grid lg:grid-cols-[1.15fr_0.85fr]">
+            <div class="p-7 sm:p-10 lg:p-12">
+                <span class="inline-flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m14.7 6.3 3-3a5 5 0 0 1-6.4 6.4l-6.6 6.6a2.1 2.1 0 1 0 3 3l6.6-6.6a5 5 0 0 1 6.4-6.4l-3 3-3-3Z"></path></svg>
+                </span>
+                <p class="mt-7 text-sm font-medium text-muted-foreground">Intervention planifiée</p>
+                <h1 class="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Nous améliorons votre espace de travail.</h1>
+                <p class="mt-5 text-sm leading-7 text-muted-foreground">L’application est temporairement indisponible pendant une opération de maintenance. Vos données restent protégées et aucune action n’est nécessaire.</p>
+                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <button class="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90" type="button" onclick="window.location.reload()">Vérifier la disponibilité</button>
+                    {% if isAuthenticated|default(false) %}
+                        <form method="post" action="{{ path('app_logout') }}">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                            <button class="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-background px-5 text-sm font-medium hover:bg-muted" type="submit">Changer de compte</button>
+                        </form>
+                    {% else %}
+                        <a class="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-background px-5 text-sm font-medium hover:bg-muted" href="{{ path('app_login') }}">Accès super administrateur</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex items-center justify-center border-t border-border bg-muted/50 p-10 lg:border-l lg:border-t-0">
+                <div class="w-full max-w-xs space-y-4">
+                    <div class="flex items-center gap-3 rounded-2xl border border-border bg-background p-4 shadow-sm"><span class="flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600"><twig:ux:icon name="lucide:shield-check" class="size-4" aria-hidden="true"/></span><div><p class="text-sm font-medium">Données sécurisées</p><p class="mt-1 text-xs text-muted-foreground">Aucune information n’est affectée.</p></div></div>
+                    <div class="flex items-center gap-3 rounded-2xl border border-border bg-background p-4 shadow-sm"><span class="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary"><twig:ux:icon name="lucide:refresh-cw" class="size-4" aria-hidden="true"/></span><div><p class="text-sm font-medium">Retour automatique</p><p class="mt-1 text-xs text-muted-foreground">Rafraîchissez cette page dans quelques instants.</p></div></div>
+                    <div class="flex items-center gap-3 rounded-2xl border border-border bg-background p-4 shadow-sm"><span class="flex size-9 items-center justify-center rounded-full bg-amber-500/10 text-amber-600"><twig:ux:icon name="lucide:lock-keyhole" class="size-4" aria-hidden="true"/></span><div><p class="text-sm font-medium">Accès restreint</p><p class="mt-1 text-xs text-muted-foreground">Seul le super administrateur peut continuer.</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <p class="text-sm font-medium text-muted-foreground">Sécurité</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Historique des authentifications</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Surveillez les connexions réussies, les échecs et les
+                    adresses utilisées.</p>
+            </section>
+
+            <details class="group rounded-2xl border border-border bg-card shadow-sm"
+                     {% if app.request.query.all|length > 0 %}open{% endif %}>
+                <summary
+                        class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium marker:hidden">
+                    <span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter"
+                                                                        class="size-4 text-muted-foreground"
+                                                                        aria-hidden="true"/>Filtrer les tentatives</span>
+                    <twig:ux:icon name="lucide:chevron-down"
+                                  class="size-4 text-muted-foreground transition-transform group-open:rotate-180"
+                                  aria-hidden="true"/>
+                </summary>
+                <div class="border-t border-border px-6 py-5">
+                    {{ form_start(form, {'attr': {'class': 'grid gap-4 lg:grid-cols-[1fr_1.5fr_auto]', 'data-loading-label': 'Recherche…'}}) }}
+                    <div class="space-y-2">
+                        {{ form_label(form.userIp, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.userIp, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.emailEntered, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.emailEntered, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button class="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:pointer-events-none disabled:opacity-50"
+                                type="submit">Appliquer
+                        </button>
+                        <a class="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                           href="{{ path('app_auth_log_index') }}">Effacer</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </details>
+
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                     aria-labelledby="auth-logs-list-title">
+                <div class="border-b border-border px-6 py-4">
+                    <h2 id="auth-logs-list-title" class="text-sm font-semibold">Tentatives de connexion</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ authLogs.totalItemCount }}
+                        tentative{{ authLogs.totalItemCount > 1 ? 's' : '' }}</p>
+                </div>
+
+                <div class="divide-y divide-border md:hidden">
+                    {% for authLog in authLogs.items %}
+                        <article class="space-y-4 p-5">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs text-muted-foreground">{{ authLog.authAttemptAt ? authLog.authAttemptAt|date('d/m/Y H:i:s') : 'Date inconnue' }}</p>
+                                    <h3 class="mt-2 truncate text-sm font-medium">{{ authLog.emailEntered }}</h3>
+                                </div>
+                                <span class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {{ authLog.isSuccessFulAuth ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-destructive/10 text-destructive' }}">{{ authLog.isSuccessFulAuth ? 'Réussie' : 'Échouée' }}</span>
+                            </div>
+                            <dl class="grid grid-cols-2 gap-3 border-y border-border py-3 text-sm">
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">Adresse IP</dt>
+                                    <dd class="mt-1 truncate font-mono text-xs">{{ authLog.userIp ?? '—' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-muted-foreground">Session</dt>
+                                    <dd class="mt-1 font-medium">{{ authLog.isRememberMeAuth ? 'Mémorisée' : 'Standard' }}</dd>
+                                </div>
+                            </dl>
+                            <div class="flex justify-end">
+                                <twig:ActionDropdown>{% if is_granted('ROLE_VIEW') %}<a
+                                        href="{{ path('app_auth_log_view', {id: authLog.id}) }}">
+                                            <twig:ux:icon name="lucide:eye" class="size-4"/>
+                                            Détails
+                                        </a>{% endif %}{% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: authLog.id, instanceId: 'mobile-auth-' ~ authLog.id, urlPath: path('app_auth_log_delete', {id: authLog.id}), description: 'Cette trace d’authentification sera définitivement supprimée.'}) }}{% endif %}
+                                </twig:ActionDropdown>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div class="px-6 py-14 text-center text-muted-foreground">Aucune tentative ne correspond à vos
+                            critères.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="hidden overflow-x-auto md:block">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr>
+                            <th class="px-6 py-3 font-medium">Date</th>
+                            <th class="px-6 py-3 font-medium">Adresse e-mail</th>
+                            <th class="px-6 py-3 font-medium">Adresse IP</th>
+                            <th class="px-6 py-3 font-medium">Résultat</th>
+                            <th class="px-6 py-3 font-medium">Session</th>
+                            <th class="px-6 py-3 text-right font-medium">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                        {% for authLog in authLogs.items %}
+                            <tr class="hover:bg-muted/40">
+                                <td class="whitespace-nowrap px-6 py-4 text-muted-foreground">{{ authLog.authAttemptAt ? authLog.authAttemptAt|date('d/m/Y H:i:s') : '—' }}</td>
+                                <td class="px-6 py-4 font-medium">{{ authLog.emailEntered }}</td>
+                                <td class="px-6 py-4 font-mono text-xs">{{ authLog.userIp ?? '—' }}</td>
+                                <td class="px-6 py-4">
+                                    <twig:Badge variant="{{ authLog.isSuccessFulAuth ? 'success' : 'danger' }}">
+                                        {{ authLog.isSuccessFulAuth ? 'Réussie' : 'Échouée' }}
+                                    </twig:Badge>
+                                </td>
+                                <td class="px-6 py-4 text-muted-foreground">
+                                    <twig:Badge variant="{{ authLog.isRememberMeAuth ? 'pink' : 'purple' }}">
+                                        {{ authLog.isRememberMeAuth ? 'Mémorisée' : 'Standard' }}
+                                    </twig:Badge>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <twig:ActionDropdown>
+                                        {% if is_granted('ROLE_VIEW') %}<a
+                                            href="{{ path('app_auth_log_view', {id: authLog.id}) }}">
+                                                <twig:ux:icon name="lucide:eye" class="size-4"/>
+                                                Détails
+                                            </a>
+                                        {% endif %}
+                                        {% if is_granted('ROLE_DELETE') %}
+                                            {{ component('DeleteFormComponent', {id: authLog.id, instanceId: 'desktop-auth-' ~ authLog.id, urlPath: path('app_auth_log_delete', {id: authLog.id}), description: 'Cette trace d’authentification sera définitivement supprimée.'}) }}
+                                        {% endif %}
+                                    </twig:ActionDropdown>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucune tentative ne
+                                    correspond à vos critères.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'shared/views/_list_pagination.html.twig' with {pager: authLogs, route: 'app_auth_log_index'} only %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

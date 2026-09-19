@@ -1,0 +1,113 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+  app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
+  app.sender_name: '%env(MAILER_SENDER_NAME)%'
+  upload_dir: '/uploads'
+  app.logo_default: '/assets/logo.png'
+  app.avatar_default: '/assets/avatar.png'
+  account_activation_ttl: '%env(ACCOUNT_ACTIVATION_TTL)%'
+  password_reset_ttl: '%env(PASSWORD_RESET_TTL)%'
+  isLocked: false
+services:
+  Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    bind:
+      string $maintenanceON: '%kernel.project_dir%/public/.maintenance-ON'
+      string $uploadDir: '%upload_dir%'
+      string $activationTtl: '%account_activation_ttl%'
+      string $resetTtl: '%password_reset_ttl%'
+
+  _instanceof:
+    Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:
+      tags:
+        - { name: messenger.message_handler, bus: 'command.bus' }
+    Websymphonie\SharedContext\Application\Service\Messaging\QueryHandler:
+      tags:
+        - { name: messenger.message_handler, bus: 'query.bus' }
+    Websymphonie\SharedContext\Application\Service\Messaging\MessageHandler:
+      tags:
+        - { name: messenger.message_handler, bus: 'message.bus' }
+    Websymphonie\SharedContext\Domain\Service\EventListener\EventListener:
+      tags:
+        - { name: 'kernel.event_listener' }
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+
+  Websymphonie\:
+    resource: '../src/'
+    exclude:
+      - '../src/**/Infrastructure/Framework/Symfony/DependencyInjection/*'
+      - '../src/**/Infrastructure/Persistence/Doctrine/Entity/*Repository.php'
+      - '../src/**/Infrastructure/Persistence/Doctrine/Entity/*Entity.php'
+      - '../src/SharedContext/Infrastructure/Framework/Symfony/Kernel.php'
+      - '../src/SharedContext/Application/Sidebar/Modules/'
+
+  Websymphonie\SharedContext\Application\Service\Sidebar\Modules\:
+    resource: '%kernel.project_dir%/src/SharedContext/Application/Service/Sidebar/Modules/*'
+    tags: [ 'app.sidebar_module' ]
+
+  Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider:
+    class: Websymphonie\IdentityContext\Infrastructure\Security\User\SymfonyCurrentUserProvider
+
+  Websymphonie\SharedContext\Application\Service\Sidebar\Service\SidebarMenuService:
+    arguments:
+      $modules: !tagged_iterator app.sidebar_module
+
+  Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler:
+    class: Websymphonie\AuthContext\Presenter\Security\AccessDeniedHandler
+    arguments:
+      - '@router'
+
+  Symfony\Bridge\Doctrine\Security\RememberMe\DoctrineTokenProvider: ~
+  Symfony\Component\Security\Core\User\UserCheckerInterface:
+    class: Websymphonie\AuthContext\Presenter\Security\UserChecker
+
+  monolog.dbhandler:
+    class: Websymphonie\LogContext\Infrastructure\Framework\Symfony\Handlers\DbLogHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+
+  Websymphonie\NotificationContext\Infrastructure\Service\Notification\NotificationDatabaseService:
+    arguments:
+      $manager: '@Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface'
+
+  Websymphonie\NotificationContext\Infrastructure\Service\Notification\NotificationsService:
+    arguments:
+      $db: '@Websymphonie\NotificationContext\Infrastructure\Service\Notification\NotificationDatabaseService'
+
+  Websymphonie\SharedContext\Application\Service\Transaction\TransactionRunnerInterface:
+    alias: Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Transaction\DoctrineTransactionRunner
+
+  Websymphonie\SharedContext\Presenter\Service\Cache\CacheService:
+    arguments:
+      $cache: '@cache.app.taggable'
+
+  Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Mailer\SymfonyMailer:
+    arguments:
+      $senderEmail: '%app.sender_email%'
+      $senderName: '%app.sender_name%'
+
+  Websymphonie\SharedContext\Presenter\Controller\Errors\ErrorController:
+    public: true
+    tags: [ 'controller.service_arguments' ]
+
+  Websymphonie\SharedContext\Application\Service\Pdf\PdfInterface:
+    alias: Websymphonie\SharedContext\Infrastructure\Service\Pdf\PdfGeneratorService
+
+  Websymphonie\SharedContext\Application\Service\Excel\ExcelInterfaces:
+    alias: Websymphonie\SharedContext\Infrastructure\Service\Excel\ExcelGeneratorServices
+
+  Websymphonie\SharedContext\Application\Service\Csv\CsvStreamWriterInterface:
+    alias: Websymphonie\SharedContext\Infrastructure\Service\Csv\SecureCsvStreamWriter
+
+  Websymphonie\AuthContext\Application\Service\ResetPasswordThrottle:
+    arguments:
+      $emailLimiter: '@limiter.reset_password_email'
+      $ipLimiter: '@limiter.reset_password_ip'

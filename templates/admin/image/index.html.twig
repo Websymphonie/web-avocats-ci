@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8"><div class="mx-auto max-w-7xl space-y-6">
+        {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+        <section class="rounded-2xl border border-border bg-card p-6 shadow-sm"><p class="text-sm font-medium text-muted-foreground">Identité visuelle</p><h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Bibliothèque d’images</h1><p class="mt-2 text-sm text-muted-foreground">Gérez le logo, les visuels et les images système de cette installation.</p></section>
+        <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {% for image in images %}<article class="rounded-2xl border border-border bg-card shadow-sm"><div class="flex aspect-[16/9] items-center justify-center overflow-hidden rounded-t-2xl bg-muted/40 p-6"><img class="max-h-full max-w-full object-contain" src="{{ image.url }}" alt="{{ image.label }}"></div><div class="border-t border-border p-5"><div class="flex items-start justify-between gap-4"><div class="min-w-0"><h2 class="truncate font-medium">{{ image.label }}</h2><p class="mt-1 truncate font-mono text-xs text-muted-foreground">{{ image.name }}</p></div>{% if is_granted('ROLE_EDIT') %}<twig:ActionDropdown><button type="button" data-action="click->modal#open" data-modal-id-param="edit-image-{{ image.id }}"><twig:ux:icon name="lucide:image-up" class="size-4"/>Remplacer</button></twig:ActionDropdown>{% endif %}</div><p class="mt-4 text-xs text-muted-foreground">Mise à jour {{ image.updatedAt ? image.updatedAt|ago : 'non renseignée' }}</p></div></article>{% else %}<div class="col-span-full rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center text-sm text-muted-foreground">Aucune image n’est configurée.</div>{% endfor %}
+        </section>
+    </div></main>
+    {% if is_granted('ROLE_EDIT') %}{% for image in images %}<twig:AppModal id="edit-image-{{ image.id }}" title="Remplacer une image" description="Le nouveau fichier remplacera le visuel actuellement utilisé.">{{ component('ImageModalFormComponent', {image: image, id: 'edit-image-' ~ image.id, title: image.label, urlPath: path('app_images_edit', {id: image.id})}) }}</twig:AppModal>{% endfor %}{% endif %}
+{% endblock %}

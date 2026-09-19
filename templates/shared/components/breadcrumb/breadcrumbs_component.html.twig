@@ -1,0 +1,24 @@
+{% if this.breadcrumbs|length > 0 %}
+    <twig:Breadcrumb>
+        <twig:Breadcrumb:List>
+            <twig:Breadcrumb:Item>
+                <twig:Breadcrumb:Link href="{{ dashboard_route(app.user) }}">Accueil</twig:Breadcrumb:Link>
+            </twig:Breadcrumb:Item>
+            <twig:Breadcrumb:Separator/>
+            {% for breadcrumb in breadcrumbs %}
+                {% if not loop.last %}
+                    <twig:Breadcrumb:Item>
+                        <twig:Breadcrumb:Link href="{{ breadcrumb.url }}">
+                            {{ breadcrumb.name }}
+                        </twig:Breadcrumb:Link>
+                    </twig:Breadcrumb:Item>
+                    <twig:Breadcrumb:Separator/>
+                {% else %}
+                    <twig:Breadcrumb:Item>
+                        <twig:Breadcrumb:Page>{{ breadcrumb.name }}</twig:Breadcrumb:Page>
+                    </twig:Breadcrumb:Item>
+                {% endif %}
+            {% endfor %}
+        </twig:Breadcrumb:List>
+    </twig:Breadcrumb>
+{% endif %}

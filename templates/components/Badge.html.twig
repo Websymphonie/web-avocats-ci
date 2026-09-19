@@ -1,0 +1,28 @@
+{# @prop variant 'default'|'secondary'|'destructive'|'outline' The visual style variant. Defaults to `default` #}
+{# @prop as 'div' The HTML tag to render. Defaults to `div` #}
+{# @block content The badge label or content #}
+{%- props variant = 'default', as = 'div' -%}
+{%- set style = html_cva(
+    base: 'inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden',
+    variants: {
+        variant: {
+            default: 'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90',
+            secondary: 'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
+            destructive: 'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+            outline: 'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+            pink: 'inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-pink-400 inset-ring inset-ring-pink-400/20',
+            success: 'inline-flex items-center rounded-md bg-green-400/10 px-2 py-1 text-xs font-medium text-green-400 inset-ring inset-ring-green-500/20',
+            purple: 'inline-flex items-center rounded-md bg-purple-400/10 px-2 py-1 text-xs font-medium text-purple-400 inset-ring inset-ring-purple-400/30',
+            primary: 'inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-xs font-medium text-blue-400 inset-ring inset-ring-blue-400/30',
+            info: 'inline-flex items-center rounded-md bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 inset-ring inset-ring-indigo-400/30',
+            warning: 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20',
+            danger: 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20',
+        },
+    },
+) -%}
+<{{ as }}
+class="{{ style.apply({variant: variant}, attributes.render('class'))|tailwind_merge }}"
+{{ attributes }}
+>
+{%- block content %}{% endblock -%}
+</{{ as }}>

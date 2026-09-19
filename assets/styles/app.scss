@@ -1,0 +1,207 @@
+body {
+  font-family: "Geist", sans-serif;
+}
+
+// Symfony UX Autocomplete / Tom Select, aligned with the application theme.
+.ts-wrapper {
+  width: 100%;
+}
+
+.ts-wrapper .ts-control,
+.ts-wrapper.single .ts-control,
+.ts-wrapper.single.input-active .ts-control {
+  min-height: 2.75rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background) !important;
+  background-image: none !important;
+  color: var(--foreground);
+  padding: 0.45rem 0.75rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.ts-wrapper.disabled .ts-control {
+  background-color: var(--muted) !important;
+}
+
+.ts-wrapper.focus .ts-control {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent);
+}
+
+.ts-wrapper.multi .ts-control > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: calc(var(--radius) * 0.75);
+  background: color-mix(in oklab, var(--primary) 14%, var(--background));
+  color: var(--foreground);
+  padding: 0.3rem 0.55rem;
+  font-weight: 500;
+}
+
+.ts-wrapper.multi .ts-control > div .remove {
+  border-left-color: color-mix(in oklab, var(--primary) 20%, transparent);
+  color: var(--muted-foreground);
+}
+
+.ts-wrapper input,
+.ts-wrapper input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.ts-dropdown {
+  z-index: 50;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover) !important;
+  color: var(--popover-foreground);
+  box-shadow: 0 14px 35px rgb(0 0 0 / 0.14);
+}
+
+.ts-dropdown .optgroup-header {
+  background-color: var(--popover) !important;
+  color: var(--popover-foreground);
+}
+
+.ts-dropdown .option {
+  padding: 0.65rem 0.75rem;
+}
+
+.ts-dropdown .active {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.antispam_robot {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.antispam_robot > input,
+.antispam_robot > label {
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+[data-sidebar-panel],
+[data-sidebar-layout] {
+  transition-property: width, left, padding-left;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-sidebar-panel] {
+  background-image: linear-gradient(180deg, color-mix(in oklab, var(--sidebar-foreground) 3%, transparent), transparent 28%);
+}
+
+[data-sidebar-scroll] {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--sidebar-foreground) 18%, transparent) transparent;
+}
+
+[data-sidebar-label],
+[data-sidebar-meta],
+[data-sidebar-brand-full],
+[data-sidebar-group-label] {
+  transition: opacity 150ms ease, width 180ms ease, max-height 180ms ease;
+}
+
+[data-sidebar-compact-only] {
+  display: none;
+}
+
+[data-sidebar-flyout]:not(.hidden) {
+  transform-origin: left center;
+  animation: sidebar-flyout-enter 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sidebar-flyout-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-0.375rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (min-width: 64rem) {
+  html[data-sidebar-collapsed='true'] [data-sidebar-panel] {
+    width: 5rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-layout='header'] {
+    left: 5rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-layout='content'] {
+    padding-left: 5rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-brand-full],
+  html[data-sidebar-collapsed='true'] [data-sidebar-expanded-only] {
+    display: none;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-compact-only] {
+    display: flex;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-label],
+  html[data-sidebar-collapsed='true'] [data-sidebar-meta] {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-group-label] {
+    max-height: 0;
+    padding: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-group] {
+    margin-top: 0.875rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-item] {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0.75rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-toggle] svg {
+    transform: rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-sidebar-panel],
+  [data-sidebar-layout],
+  [data-sidebar-label],
+  [data-sidebar-meta],
+  [data-sidebar-brand-full],
+  [data-sidebar-group-label] {
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-sidebar-flyout]:not(.hidden) {
+    animation-duration: 0.01ms !important;
+  }
+}

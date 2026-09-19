@@ -1,0 +1,4 @@
+{% set start = (pagination.page - 1) * pagination.itemNumberPerPage + 1 %}
+{% set end = start + pagination.itemCount() - 1 %}
+{% set total = pagination.totalItemCount %}
+<div class="datatable-info">Affichage de {{ start }} à {{ end }} sur {{ total }} entrées</div>

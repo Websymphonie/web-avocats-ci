@@ -1,0 +1,96 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}Se connecter{% endblock %}
+
+{% block auth_content %}
+    <section class="w-full max-w-md" aria-labelledby="login-title">
+        <div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <div>
+                <p class="text-sm font-medium text-muted-foreground">Espace avocat</p>
+                <h1 id="login-title" class="mt-2 text-2xl font-semibold tracking-[-0.03em]">
+                    Authentification
+                </h1>
+                <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                    Connectez-vous pour retrouver votre activité.
+                </p>
+            </div>
+
+            {% if error %}
+                <div class="mt-6 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+                     role="alert">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mt-6 rounded-xl border border-border bg-muted px-4 py-3 text-sm text-foreground"
+                     role="status">
+                    Vous êtes connecté en tant que <span class="font-medium">{{ app.user.userIdentifier }}</span>.
+                    <form class="mt-2" method="post" action="{{ path('app_logout') }}">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                        <button class="font-medium underline underline-offset-4 hover:text-primary" type="submit">Se
+                            déconnecter
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+
+            <form class="mt-7 space-y-5" method="post" data-loading-label="Connexion…">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token('login') }}">
+
+                <div class="space-y-2">
+                    <twig:Field>
+                        <twig:Field:Label for="email">Adresse e-mail</twig:Field:Label>
+                        <twig:Input
+                                id="email"
+                                type="email"
+                                placeholder="vous@agence.com"
+                                value="{{ last_username }}"
+                                name="email"
+                                autocomplete="email"
+                                required
+                                autofocus
+                        />
+                    </twig:Field>
+                </div>
+
+                <div class="space-y-2">
+                    <twig:Field>
+                        <div class="flex items-center justify-between gap-3">
+                            <twig:Field:Label for="password">Mot de passe</twig:Field:Label>
+                            <a class="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                               href="{{ path('password.request') }}">Mot de passe oublié&nbsp;?</a>
+                        </div>
+                        <div class="toggle-password-container">
+                            <twig:Input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    placeholder="Saisissez votre mot de passe"
+                                    required
+                                    minlength="6"
+                                    autocomplete="current-password"
+                                    data-controller="toggle-password"
+                            />
+                        </div>
+                    </twig:Field>
+                </div>
+
+                <twig:Field orientation="horizontal">
+                    <twig:Checkbox type="checkbox" name="_remember_me" id="remember_me"/>
+                    <twig:Label for="remember_me">Se souvenir de moi pendant 7 jours</twig:Label>
+                </twig:Field>
+
+                <twig:Button size="lg" type="submit" class="h-11 w-full cursor-pointer">Se connecter</twig:Button>
+            </form>
+        </div>
+        <div class="mt-5 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 aria-hidden="true">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+            Connexion sécurisée et accès réservé à votre équipe
+        </div>
+    </section>
+{% endblock %}

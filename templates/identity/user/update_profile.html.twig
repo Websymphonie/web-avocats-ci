@@ -1,0 +1,30 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-3xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex items-center gap-4 border-b border-border pb-6">
+                    <span class="flex size-12 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">{{ command.email|slice(0, 1)|upper }}</span>
+                    <div><p class="text-sm font-medium text-muted-foreground">Mon compte</p><h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Informations du profil</h1></div>
+                </div>
+                {{ form_start(form, {'attr': {'class': 'mt-7 space-y-6', 'data-loading-label': 'Enregistrement…'}}) }}
+                <div class="space-y-2">
+                    {{ form_label(form.name, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/30', 'autocomplete': 'name'}}) }}
+                    <div class="text-sm text-destructive">{{ form_errors(form.name) }}</div>
+                </div>
+                <div class="space-y-2">
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    <div class="text-sm text-destructive">{{ form_errors(form.email) }}</div>
+                </div>
+                <div class="flex justify-end border-t border-border pt-6"><button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground" type="submit">Mettre à jour</button></div>
+                {{ form_end(form) }}
+            </section>
+        </div>
+    </main>
+{% endblock %}

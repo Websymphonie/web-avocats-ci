@@ -1,0 +1,222 @@
+{% if app.user is not null %}
+    {% set menuByGroup = sidebar_menu_entries(app.user.getRoles()) %}
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    {% set appTitle = reglageValue('app_title').value %}
+
+    <div class="fixed inset-0 z-40 hidden bg-foreground/30 backdrop-blur-sm lg:hidden"
+         data-sidebar-target="overlay"
+         data-action="click->sidebar#close"></div>
+
+    <aside id="main-sidebar"
+           class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-2xl shadow-black/10 transition-[width,transform] duration-200 ease-out lg:translate-x-0 lg:shadow-lg lg:shadow-black/5"
+           data-sidebar-target="panel"
+           data-sidebar-panel
+           aria-label="Navigation principale">
+        <div class="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-sidebar-border px-4">
+            <a class="flex min-w-0 items-center gap-3 rounded-xl px-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+               data-sidebar-brand-full
+               href="{{ dashboard_route(app.user) }}">
+                {{ component('Logo', {'className': 'h-8 max-w-36 object-contain object-left'}) }}
+            </a>
+
+            <a class="hidden size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+               data-sidebar-compact-only
+               href="{{ dashboard_route(app.user) }}"
+               title="{{ appTitle }}"
+               aria-label="{{ appTitle }}">
+                {{ appTitle|slice(0, 1)|upper }}
+            </a>
+
+            <div class="flex items-center gap-1">
+                <button class="hidden size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-border bg-sidebar text-sidebar-foreground/65 shadow-xs transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring lg:inline-flex"
+                        type="button"
+                        data-sidebar-target="compactToggle"
+                        data-sidebar-toggle
+                        data-action="sidebar#toggleCompact"
+                        aria-controls="main-sidebar"
+                        aria-expanded="true"
+                        aria-label="Réduire la navigation">
+                    <svg class="size-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="m14 18-6-6 6-6"></path>
+                    </svg>
+                </button>
+                <button class="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring lg:hidden"
+                        type="button"
+                        data-action="sidebar#close"
+                        aria-label="Fermer la navigation">
+                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="m6 6 12 12M18 6 6 18"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-3 py-4" data-sidebar-scroll data-action="scroll->sidebar#closeFlyouts">
+            <a class="group flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ is_parent_active(['app_admin', 'app_hr_dashboard']) ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }}"
+               data-sidebar-item
+               href="{{ dashboard_route(app.user) }}"
+               title="Tableau de bord">
+                <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: 'si:dashboard-line', style: 'height:19px;'}) }}</span>
+                <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>Tableau de bord</span>
+            </a>
+
+            {% for group, items in menuByGroup %}
+                <div class="mt-6 first:mt-5" data-sidebar-group>
+                    <p class="max-h-6 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-sidebar-foreground/40"
+                       data-sidebar-group-label>{{ group }}</p>
+                    <div class="mt-2 space-y-1">
+                        {% for entry in items %}
+                            {% set parentActive = entry.isActive(currentRoute) %}
+                            {% set badgeValue = entry.badgeComponent ? component(entry.badgeComponent)|striptags|trim : null %}
+
+                            {% if entry.hasChildren() %}
+                                <button class="hidden h-11 w-full items-center justify-center rounded-xl px-3 outline-none transition-all focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ parentActive ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }}"
+                                   data-sidebar-compact-only
+                                   data-sidebar-item
+                                   data-sidebar-target="flyoutTrigger"
+                                   data-action="sidebar#toggleFlyout"
+                                   data-sidebar-menu-param="{{ group }}::{{ entry.label }}"
+                                   type="button"
+                                   title="{{ entry.label }}"
+                                   aria-label="Ouvrir le menu {{ entry.label }}"
+                                   aria-haspopup="menu"
+                                   aria-expanded="false">
+                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                </button>
+
+                                <details class="group/menu" data-sidebar-expanded-only {% if parentActive %}open{% endif %}>
+                                    <summary class="flex h-11 cursor-pointer list-none items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition-all marker:hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ parentActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }}"
+                                             title="{{ entry.label }}">
+                                        <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                        <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
+                                        {% if badgeValue and badgeValue|integer > 0 %}
+                                            <span class="rounded-full bg-sidebar-primary px-1.5 py-0.5 text-[10px] font-semibold text-sidebar-primary-foreground" data-sidebar-meta>{{ badgeValue }}</span>
+                                        {% endif %}
+                                        <svg class="size-4 shrink-0 transition-transform group-open/menu:rotate-90" data-sidebar-meta viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                            <path d="m9 18 6-6-6-6"></path>
+                                        </svg>
+                                    </summary>
+                                    <div class="mt-1 space-y-1 border-l border-sidebar-border py-1 pl-4">
+                                        {% for child in entry.children %}
+                                            {% set childActive = child.isActive(currentRoute) %}
+                                            <a class="flex min-h-9 items-center rounded-lg px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ childActive ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground' : 'text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }}"
+                                               href="{{ child.link ? path(child.link, child.routeParams ?? {}) : 'javascript:void(0)' }}">{{ child.label }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </details>
+                            {% elseif entry.isModal %}
+                                <button class="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-sidebar-foreground/70 outline-none transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:pointer-events-none disabled:opacity-40"
+                                        data-sidebar-item
+                                        type="button"
+                                        data-action="click->modal#open"
+                                        data-modal-id-param="{{ entry.modalId }}"
+                                        title="{{ entry.label }}"
+                                        {% if entry.disabled %}disabled{% endif %}>
+                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                    <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
+                                </button>
+                            {% else %}
+                                <a class="flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ parentActive ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }} {{ entry.disabled ? 'pointer-events-none opacity-40' : '' }}"
+                                   data-sidebar-item
+                                   href="{{ entry.link ? path(entry.link, entry.routeParams ?? {}) : 'javascript:void(0)' }}"
+                                   title="{{ entry.label }}">
+                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                    <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
+                                    {% if badgeValue and badgeValue|integer > 0 %}
+                                        <span class="rounded-full bg-sidebar-primary px-1.5 py-0.5 text-[10px] font-semibold text-sidebar-primary-foreground" data-sidebar-meta>{{ badgeValue }}</span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </nav>
+
+        <div class="shrink-0 border-t border-sidebar-border p-3" data-sidebar-footer>
+            <form method="post" action="{{ path('app_logout') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button class="flex h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-sidebar-foreground/60 outline-none transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+                        data-sidebar-item
+                        type="submit"
+                        title="Se déconnecter">
+                <span class="flex size-5 shrink-0 items-center justify-center">
+                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path d="M10 17l5-5-5-5M15 12H3M21 3v18"></path>
+                    </svg>
+                </span>
+                <span class="whitespace-nowrap" data-sidebar-label>Se déconnecter</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    {% for group, items in menuByGroup %}
+        {% for entry in items %}
+            {% if entry.hasChildren() %}
+                <div class="fixed z-[60] hidden max-h-[calc(100vh-1.5rem)] w-72 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl shadow-black/15"
+                     data-sidebar-target="flyout"
+                     data-sidebar-flyout="{{ group }}::{{ entry.label }}"
+                     role="menu"
+                     aria-label="{{ entry.label }}"
+                     aria-hidden="true">
+                    <div class="border-b border-border bg-muted/60 px-4 py-3">
+                        <div class="flex items-center gap-3">
+                            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground shadow-xs">
+                                {{ component('IconSvg', {name: entry.icon, style: 'height:18px;'}) }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-semibold">{{ entry.label }}</p>
+                                <p class="mt-0.5 text-xs text-muted-foreground">Choisissez une destination</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-1 p-2">
+                        {% for child in entry.children %}
+                            {% set childActive = child.isActive(currentRoute) %}
+                            <a class="group flex min-h-10 items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring {{ childActive ? 'bg-primary font-medium text-primary-foreground shadow-sm' : 'text-popover-foreground/75 hover:bg-muted hover:text-popover-foreground' }}"
+                               data-action="sidebar#closeFlyouts"
+                               role="menuitem"
+                               href="{{ child.link ? path(child.link, child.routeParams ?? {}) : 'javascript:void(0)' }}">
+                                <span class="min-w-0 truncate">{{ child.label }}</span>
+                                {% if childActive %}
+                                    <span class="size-1.5 shrink-0 rounded-full bg-primary-foreground" aria-hidden="true"></span>
+                                {% else %}
+                                    <svg class="size-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                        <path d="m9 18 6-6-6-6"></path>
+                                    </svg>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if entry.isModal and entry.modalId and entry.modalComponent %}
+                <twig:AppModal
+                        id="{{ entry.modalId }}"
+                        title="{{ entry.modalTitle ?? entry.label }}"
+                        description="{{ entry.modalDescription }}"
+                        size="{{ entry.modalSize }}"
+                >
+                    {{ component(entry.modalComponent) }}
+                </twig:AppModal>
+            {% endif %}
+
+            {% if entry.hasChildren() %}
+                {% for child in entry.children %}
+                    {% if child.isModal and child.modalId and child.modalComponent %}
+                        <twig:AppModal
+                                id="{{ child.modalId }}"
+                                title="{{ child.modalTitle ?? child.label }}"
+                                description="{{ child.modalDescription }}"
+                                size="{{ child.modalSize }}"
+                        >
+                            {{ component(child.modalComponent) }}
+                        </twig:AppModal>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}

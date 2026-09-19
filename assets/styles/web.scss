@@ -1,0 +1,15 @@
+body {
+  font-family: "Geist", sans-serif;
+}
+
+.antispam_robot {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.antispam_robot > input,
+.antispam_robot > label {
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}

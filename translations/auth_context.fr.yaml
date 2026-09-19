@@ -1,0 +1,24 @@
+exceptions:
+  users:
+    email_already_used: Vous ne pouvez pas utiliser cette adresse email !
+    empty_generated_code: Veuillez générer un code !
+    empty_generated_token: Veuillez générer un token !
+    account_is_locked: Votre compte n'est pas actif
+    password_invalid: Le mot de passe actuel n'est pas valide
+    user_not_found: Aucun utilisateur trouvé
+    user_empty_name: Veuillez saisir votre nom et prénoms
+    user_empty_username: "Veuillez saisir votre nom d'utilisateur."
+    user_empty_email: Veuillez saisir votre email.
+    user_invalid_email: Adresse email invalide
+    user_empty_password: Veuillez saisir un mot de passe.
+    user_confirm_password: Veuillez confirmer le mot de passe.
+    user_password_not_identically: Le mot de passe et le mot de passe de confirmation doivent correspondre.
+    empty_new_password: Veuillez saisir le nouveau mot de passe.
+    confirm_new_password: Veuillez confirmer le nouveau mot de passe.
+    user_new_password_not_identically: Le nouveau mot de passe et le mot de passe de confirmation doivent correspondre.
+  empty_current_password: Veuillez saisir le mot de passe actuel.
+  password_too_short: Le mot de passe doit contenir au moins 12 caractères.
+  password_not_match: Les deux mots de passe doivent être identiques.
+  empty_confirm_password: Veuillez confirmer le nouveau mot de passe.
+  reset_password_not_found: Aucune donnée ne correction à votre demande !
+  reset_password_unavailable: Le lien de réinitialisation est invalide ou expiré. Demandez-en un nouveau.

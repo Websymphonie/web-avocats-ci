@@ -1,0 +1,64 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-4xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center gap-4">
+                        <span class="flex size-14 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-foreground">{{ (user.name ?? user.email)|slice(0, 1)|upper }}</span>
+                        <div><p class="text-xl font-semibold">{{ user.name ?? 'Utilisateur' }}</p>
+                            <p class="mt-1 text-sm text-muted-foreground">{{ user.email }}</p></div>
+                    </div>
+                    {% if is_granted('ROLE_EDIT') %}
+                        <div class="flex flex-wrap gap-2"><a
+                            class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+                            href="{{ path('app_user_update', {id: user.id}) }}">Modifier le
+                            compte</a>{% if not user.enabled %}
+                    <form method="post" action="{{ path('app_user_activation_resend', {id: user.id}) }}"><input
+                                type="hidden" name="_token" value="{{ csrf_token('resend_account_activation') }}">
+                        <button class="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted"
+                                type="submit">Renvoyer le lien d’activation
+                        </button></form>{% endif %}</div>{% endif %}
+                </div>
+                <dl class="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="rounded-xl bg-muted/50 p-4">
+                        <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            Rôle principal
+                        </dt>
+                        <dd class="mt-2">{{ user_role_badge(user) }}</dd>
+                    </div>
+                    <div class="rounded-xl bg-muted/50 p-4">
+                        <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">État</dt>
+                        <dd class="mt-2 text-sm font-medium">
+                            <twig:Badge variant="{{ user.enabled ? 'success' : 'danger' }}">
+                                {{ user.enabled ? 'Compte inactif' : 'Compte inactif' }}
+                            </twig:Badge>
+                        </dd>
+                    </div>
+                    <div class="rounded-xl bg-muted/50 p-4">
+                        <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Identifiant</dt>
+                        <dd class="mt-2 truncate font-mono text-xs">{{ user.uuid }}</dd>
+                    </div>
+                    <div class="rounded-xl bg-muted/50 p-4">
+                        <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Création</dt>
+                        <dd class="mt-2 text-sm font-medium">{{ user.createdAt ? user.createdAt|date('d/m/Y à H:i') : 'Non renseignée' }}</dd>
+                        {% if user.updatedAt %}
+                            <dd class="mt-1 text-xs text-muted-foreground">
+                                Mis à jour {{ user.updatedAt|ago }}
+                            </dd>
+                        {% endif %}
+                    </div>
+                </dl>
+                <div class="mt-6 flex flex-wrap gap-2">
+                    <a class="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted"
+                       href="{{ path('app_user_index') }}">Retour à la liste</a>
+                    {% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: user.id, urlPath: path('app_user_delete', {id: user.id}), description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'}) }}{% endif %}
+                </div>
+            </section>
+        </div>
+    </main>
+{% endblock %}

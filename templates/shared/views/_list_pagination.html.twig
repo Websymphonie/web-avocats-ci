@@ -1,0 +1,67 @@
+{% set queryParameters = app.request.query.all %}
+
+{% if pager.totalItemCount > 0 %}
+    {% set firstItem = ((pager.page - 1) * pager.itemNumberPerPage) + 1 %}
+    {% set calculatedLastItem = pager.page * pager.itemNumberPerPage %}
+    {% set lastItem = calculatedLastItem < pager.totalItemCount ? calculatedLastItem : pager.totalItemCount %}
+
+    <div class="flex flex-col gap-4 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <p class="text-sm text-muted-foreground">
+            <span class="font-medium text-foreground">{{ firstItem }}–{{ lastItem }}</span>
+            sur {{ pager.totalItemCount }} résultat{{ pager.totalItemCount > 1 ? 's' : '' }}
+        </p>
+
+        {% if pager.lastPage > 1 %}
+            {% set startPage = pager.page - 2 > 1 ? pager.page - 2 : 1 %}
+            {% set endPage = pager.page + 2 < pager.lastPage ? pager.page + 2 : pager.lastPage %}
+
+            <nav class="flex items-center gap-1" aria-label="Pagination">
+                {% if pager.page > 1 %}
+                    <a class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                       href="{{ path(route, queryParameters|merge({page: pager.page - 1})) }}"
+                       aria-label="Page précédente">
+                        <twig:ux:icon name="lucide:chevron-left" class="size-4" aria-hidden="true"/>
+                    </a>
+                {% else %}
+                    <span class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-muted text-muted-foreground opacity-60" aria-disabled="true">
+                        <twig:ux:icon name="lucide:chevron-left" class="size-4" aria-hidden="true"/>
+                    </span>
+                {% endif %}
+
+                <span class="px-2 text-sm text-muted-foreground sm:hidden">{{ pager.page }} / {{ pager.lastPage }}</span>
+
+                <div class="hidden items-center gap-1 sm:flex">
+                    {% if startPage > 1 %}
+                        <a class="inline-flex size-10 items-center justify-center rounded-lg text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ path(route, queryParameters|merge({page: 1})) }}">1</a>
+                        {% if startPage > 2 %}<span class="inline-flex size-10 items-center justify-center text-muted-foreground" aria-hidden="true">…</span>{% endif %}
+                    {% endif %}
+
+                    {% for pageNumber in startPage..endPage %}
+                        {% if pageNumber == pager.page %}
+                            <span class="inline-flex size-10 items-center justify-center rounded-lg bg-primary text-sm font-medium text-primary-foreground" aria-current="page">{{ pageNumber }}</span>
+                        {% else %}
+                            <a class="inline-flex size-10 items-center justify-center rounded-lg text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ path(route, queryParameters|merge({page: pageNumber})) }}">{{ pageNumber }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if endPage < pager.lastPage %}
+                        {% if endPage < pager.lastPage - 1 %}<span class="inline-flex size-10 items-center justify-center text-muted-foreground" aria-hidden="true">…</span>{% endif %}
+                        <a class="inline-flex size-10 items-center justify-center rounded-lg text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ path(route, queryParameters|merge({page: pager.lastPage})) }}">{{ pager.lastPage }}</a>
+                    {% endif %}
+                </div>
+
+                {% if pager.page < pager.lastPage %}
+                    <a class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                       href="{{ path(route, queryParameters|merge({page: pager.page + 1})) }}"
+                       aria-label="Page suivante">
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                    </a>
+                {% else %}
+                    <span class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-muted text-muted-foreground opacity-60" aria-disabled="true">
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                    </span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    </div>
+{% endif %}

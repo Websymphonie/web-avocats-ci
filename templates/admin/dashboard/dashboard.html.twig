@@ -1,0 +1,88 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    {% set quickActionClass = 'group flex min-h-20 items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2' %}
+
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-5">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section class="flex flex-col gap-4 rounded-xl border border-border bg-card px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div>
+                    <p class="text-sm font-medium text-primary">Tableau de bord</p>
+                    <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
+                        Bonjour, {{ app.user.name ?? app.user.userIdentifier }}
+                    </h1>
+                    <p class="mt-1 text-sm text-muted-foreground">Accédez rapidement à vos outils et poursuivez votre configuration.</p>
+                </div>
+            </section>
+
+            <section aria-label="Indicateurs de pilotage">
+                <div {{ react_component('Dashboard/Dashboard') }}></div>
+            </section>
+
+            <section aria-labelledby="quick-access-title">
+                <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
+                    <h2 id="quick-access-title" class="text-lg font-semibold">Accès rapides</h2>
+                    <p class="text-sm text-muted-foreground">Selon vos autorisations.</p>
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {% if isSuperAdmin(app.user) or isAdmin(app.user) %}
+                        <a class="{{ quickActionClass }}" href="{{ path('app_user_index') }}">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:users-round" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <span class="min-w-0 flex-1"><span class="block truncate font-medium">Comptes utilisateurs</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Accès et rôles de l’équipe</span></span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                        </a>
+
+                        <a class="{{ quickActionClass }}" href="{{ path('admin_reglages_index') }}">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:settings-2" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <span class="min-w-0 flex-1"><span class="block truncate font-medium">Réglages</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Paramètres de l’application</span></span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                        </a>
+                    {% endif %}
+
+                    <a class="{{ quickActionClass }}" href="{{ path('app_notifications_index') }}">
+                        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <twig:ux:icon name="lucide:bell" class="size-5" aria-hidden="true"/>
+                        </span>
+                        <span class="min-w-0 flex-1"><span class="block truncate font-medium">Notifications</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Événements récents de votre espace</span></span>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                    </a>
+
+                    {% if isSuperAdmin(app.user) %}
+                        <a class="{{ quickActionClass }}" href="{{ path('app_auth_log_index') }}">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:shield-check" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <span class="min-w-0 flex-1"><span class="block truncate font-medium">Authentifications</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Connexions et échecs</span></span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                        </a>
+
+                        <a class="{{ quickActionClass }}" href="{{ path('app_log_index') }}">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:scroll-text" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <span class="min-w-0 flex-1"><span class="block truncate font-medium">Logs applicatifs</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Événements techniques</span></span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                        </a>
+
+                        <a class="{{ quickActionClass }}" href="{{ path('app_images_index') }}">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:images" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <span class="min-w-0 flex-1"><span class="block truncate font-medium">Images</span><span class="mt-0.5 block truncate text-sm text-muted-foreground">Identité visuelle</span></span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true"/>
+                        </a>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </main>
+{% endblock %}

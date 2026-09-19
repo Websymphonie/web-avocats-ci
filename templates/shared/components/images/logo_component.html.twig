@@ -1,0 +1,20 @@
+{% set logo = imageValue('app_logo') %}
+{% set appTitle = reglageValue('app_title').value %}
+
+{% if logo is not null and logo.url is not null %}
+    <img
+            src="{{ logo.url }}"
+            alt="{{ appTitle }}"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            {{ attributes.defaults({
+                class: 'block h-10 max-h-10 w-auto max-w-40 shrink-0 object-contain'
+            }) }}
+    >
+{% else %}
+    <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+        {{ appTitle|slice(0, 1)|upper }}
+    </span>
+    <span class="max-w-48 truncate text-sm font-semibold tracking-tight">{{ appTitle }}</span>
+{% endif %}

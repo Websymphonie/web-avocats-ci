@@ -1,0 +1,5 @@
+{% if isPrefixText %}
+    <u>{{ textPrefix }}</u>  <strong>{{ this.toCurrency }}</strong>
+{% else %}
+    {{ this.toCurrency|ucfirst }}
+{% endif %}

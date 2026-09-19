@@ -1,0 +1,21 @@
+{% extends 'emails/_layout.html.twig' %}
+
+{% block email_title %}Réinitialisation de votre mot de passe{% endblock %}
+{% block email_preheader %}Utilisez ce lien sécurisé pour choisir un nouveau mot de passe.{% endblock %}
+
+{% block email_content %}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="font-size:13px;font-weight:700;color:#71717a;text-transform:uppercase;letter-spacing:0.08em;">Sécurité du compte</td></tr>
+        <tr><td style="padding-top:10px;font-size:26px;line-height:1.25;font-weight:700;color:#18181b;letter-spacing:-0.03em;">Réinitialisez votre mot de passe</td></tr>
+        <tr><td style="padding-top:18px;font-size:15px;line-height:1.7;color:#52525b;">Bonjour <strong style="color:#18181b;">{{ fullname }}</strong>,</td></tr>
+        <tr><td style="padding-top:10px;font-size:15px;line-height:1.7;color:#52525b;">Une demande de réinitialisation a été reçue pour votre compte. Utilisez le bouton ci-dessous pour définir un nouveau mot de passe.</td></tr>
+        <tr>
+            <td style="padding:26px 0 22px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-radius:10px;background:#18181b;"><a href="{{ resetUrl }}" style="display:inline-block;padding:14px 22px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">Choisir un nouveau mot de passe</a></td></tr></table>
+            </td>
+        </tr>
+        <tr><td style="padding:16px;border:1px solid #e4e4e7;border-radius:12px;background:#fafafa;font-size:13px;line-height:1.65;color:#52525b;"><strong style="color:#18181b;">Lien valable jusqu’au</strong><br>{{ expiresAt|date('d/m/Y à H:i') }}. Après cette heure, une nouvelle demande sera nécessaire.</td></tr>
+        <tr><td style="padding-top:22px;font-size:13px;line-height:1.65;color:#71717a;">Le bouton ne fonctionne pas&nbsp;? Copiez cette adresse dans votre navigateur&nbsp;:<br><a href="{{ resetUrl }}" style="color:#18181b;text-decoration:underline;word-break:break-all;">{{ resetUrl }}</a></td></tr>
+        <tr><td style="padding-top:22px;font-size:13px;line-height:1.65;color:#71717a;">Si vous n’êtes pas à l’origine de cette demande, ignorez cet email. Votre mot de passe actuel reste inchangé.</td></tr>
+    </table>
+{% endblock %}

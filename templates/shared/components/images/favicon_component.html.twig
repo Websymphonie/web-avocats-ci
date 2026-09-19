@@ -1,0 +1,8 @@
+{% set favicon = imageValue('app_favicon') %}
+{% if favicon is not null and favicon.url is not null %}
+    <link rel="icon" href="{{ favicon.url }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ imageValue('app_favicon').url }}" type="image/x-icon">
+{% else %}
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
+{% endif %}

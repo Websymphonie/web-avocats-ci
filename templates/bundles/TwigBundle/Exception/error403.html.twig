@@ -1,0 +1,21 @@
+{% extends 'layouts/error.html.twig' %}
+
+{% block title %}Accès refusé{% endblock %}
+
+{% block error_content %}
+    <section class="relative overflow-hidden rounded-3xl border border-border bg-card p-7 shadow-xl shadow-black/5 sm:p-10 lg:p-12">
+        <span class="pointer-events-none absolute -right-4 -top-12 select-none text-[10rem] font-bold leading-none tracking-[-0.08em] text-muted/60 sm:text-[14rem]">403</span>
+        <div class="relative max-w-xl">
+            <span class="inline-flex size-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.7 7.5 9.5 4.3-1.8 7.5-5 7.5-9.5V6L12 3Z"></path><path d="M9.5 12.5 11 14l3.5-4"></path></svg>
+            </span>
+            <p class="mt-7 text-sm font-medium text-muted-foreground">Erreur 403</p>
+            <h1 class="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Cette zone ne fait pas partie de vos accès.</h1>
+            <p class="mt-5 max-w-lg text-sm leading-7 text-muted-foreground">Votre session est active, mais votre rôle ne permet pas d’ouvrir cette ressource. Si cela vous semble anormal, rapprochez-vous d’un administrateur.</p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a class="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90" href="{{ path(app.user ? 'app_admin' : 'app_login') }}">Revenir à mon espace</a>
+                <a class="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-background px-5 text-sm font-medium hover:bg-muted" href="mailto:dev@web-symphonie.com">Contacter l’assistance</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

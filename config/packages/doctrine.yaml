@@ -1,0 +1,99 @@
+doctrine:
+  dbal:
+    url: '%env(resolve:DATABASE_URL)%'
+    driver: 'mysql'
+    server_version: '%env(resolve:MYSQL_VERSION)%'
+
+    # IMPORTANT: You MUST configure your server version,
+    # either here or in the DATABASE_URL env var (see .env file)
+    #server_version: '16'
+
+    profiling_collect_backtrace: '%kernel.debug%'
+    use_savepoints: true
+  orm:
+    filters:
+      softdeleteable:
+        class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+        enabled: true
+    controller_resolver:
+      auto_mapping: true
+    auto_generate_proxy_classes: true
+    enable_lazy_ghost_objects: true
+    report_fields_where_declared: true
+    validate_xml_mapping: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    auto_mapping: true
+    dql:
+      numeric_functions:
+        rand: DoctrineExtensions\Query\Mysql\Rand
+      string_functions:
+        YEAR: DoctrineExtensions\Query\Mysql\Year
+        MONTH: DoctrineExtensions\Query\Mysql\Month
+        DAY: DoctrineExtensions\Query\Mysql\Day
+        HOUR: DoctrineExtensions\Query\Mysql\Hour
+        MINUTE: DoctrineExtensions\Query\Mysql\Minute
+        DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
+      datetime_functions:
+        YEAR: DoctrineExtensions\Query\Mysql\Year
+        MONTH: DoctrineExtensions\Query\Mysql\Month
+        DAY: DoctrineExtensions\Query\Mysql\Day
+        DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
+        DATE: DoctrineExtensions\Query\Mysql\Date
+        JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
+    mappings:
+      Admin:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/AdminContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Admin
+      Auth:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/AuthContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\AuthContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Auth
+      Identity:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/IdentityContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Identity
+      Log:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/LogContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Log
+      Notification:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/NotificationContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Notification\Infrastructure\Persistence\Doctrine\Entity'
+
+when@test:
+  doctrine:
+    dbal:
+      # "TEST_TOKEN" is typically set by ParaTest
+      dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+  doctrine:
+    orm:
+      auto_generate_proxy_classes: false
+      proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+      query_cache_driver:
+        type: pool
+        pool: doctrine.system_cache_pool
+      result_cache_driver:
+        type: pool
+        pool: doctrine.result_cache_pool
+
+  framework:
+    cache:
+      pools:
+        doctrine.result_cache_pool:
+          adapter: cache.app
+        doctrine.system_cache_pool:
+          adapter: cache.system

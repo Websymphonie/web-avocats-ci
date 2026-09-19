@@ -1,0 +1,49 @@
+web:
+  resource:
+    path: ../src/WebContext/Presenter/Controller/
+    namespace: Websymphonie\WebContext\Presenter\Controller
+  type: attribute
+  prefix: '/'
+
+auth:
+  resource:
+    path: ../src/AuthContext/Presenter/Controller/
+    namespace: Websymphonie\AuthContext\Presenter\Controller
+  type: attribute
+  prefix: '/auth'
+
+identity:
+  resource:
+    path: ../src/IdentityContext/Presenter/Controller/
+    namespace: Websymphonie\IdentityContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/identity'
+
+log:
+  resource:
+    path: ../src/LogContext/Presenter/Controller/
+    namespace: Websymphonie\LogContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/log'
+
+notification:
+  resource:
+    path: ../src/NotificationContext/Presenter/Controller/
+    namespace: Websymphonie\NotificationContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/notification'
+
+shared:
+  resource:
+    path: ../src/SharedContext/Presenter/Controller/
+    namespace: Websymphonie\SharedContext\Presenter\Controller
+  type: attribute
+  prefix: '/shared'
+
+# SUPER ADMIN
+admin:
+  resource:
+    path: ../src/AdminContext/Presenter/Controller/
+    namespace: Websymphonie\AdminContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin'

@@ -1,0 +1,9 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <h1>Page d'accueil</h1>
+    <p>{{ 500000|price }}</p>
+    <p>{{ 500000|amountToLetter }}</p>
+{% endblock %}

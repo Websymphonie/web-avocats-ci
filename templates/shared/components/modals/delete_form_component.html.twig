@@ -1,0 +1,97 @@
+{% set dialogInstanceId = instanceId ?? id %}
+{% set deleteFormId = 'delete-form-' ~ dialogInstanceId %}
+
+<form
+        id="{{ deleteFormId }}"
+        method="post"
+        action="{{ urlPath }}"
+        class="hidden"
+        data-loading-label="Suppression…"
+>
+    <input type="hidden" name="_method" value="DELETE">
+    <input
+            type="hidden"
+            name="_token"
+            value="{{ csrf_token(csrfTokenId ~ id) }}"
+    >
+</form>
+
+<twig:AlertDialog id="delete-dialog-{{ dialogInstanceId }}">
+    <twig:AlertDialog:Trigger>
+        <twig:Button
+                type="button"
+                size="md"
+                variant="{{ variant }}"
+                aria-label="{{ buttonLabel }}"
+                {{ ...alert_dialog_trigger_attrs }}
+        >
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+            >
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 14H6L5 6"></path>
+                <path d="M10 11v5"></path>
+                <path d="M14 11v5"></path>
+            </svg>
+
+            <span>{{ buttonLabel }}</span>
+        </twig:Button>
+    </twig:AlertDialog:Trigger>
+
+    <twig:AlertDialog:Content>
+        <twig:AlertDialog:Header>
+            <twig:AlertDialog:Title>
+                {{ confirmText }}
+            </twig:AlertDialog:Title>
+
+            {% if description %}
+                <twig:AlertDialog:Description>
+                    {{ description }}
+                </twig:AlertDialog:Description>
+            {% endif %}
+        </twig:AlertDialog:Header>
+
+        <twig:AlertDialog:Footer>
+            <twig:AlertDialog:Cancel>
+                {{ cancelLabel }}
+            </twig:AlertDialog:Cancel>
+
+            <twig:Button
+                    type="submit"
+                    form="{{ deleteFormId }}"
+                    variant="destructive"
+            >
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                >
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4h8v2"></path>
+                    <path d="M19 6l-1 14H6L5 6"></path>
+                    <path d="M10 11v5"></path>
+                    <path d="M14 11v5"></path>
+                </svg>
+
+                <span>{{ confirmButtonLabel }}</span>
+            </twig:Button>
+        </twig:AlertDialog:Footer>
+    </twig:AlertDialog:Content>
+</twig:AlertDialog>

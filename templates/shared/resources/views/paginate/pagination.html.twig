@@ -1,0 +1,84 @@
+{% if pageCount > 1 %}
+    {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-content-end' : '') %}
+    {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
+
+    <twig:Pagination class="{{ classAlign }}{{ classSize }}" aria-label="Pagination">
+        <twig:Pagination:Content>
+            {% if previous is defined %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Previous href="{{ path(route, query|merge({(pageParameterName): previous})) }}"/>
+                </twig:Pagination:Item>
+            {% else %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Ellipsis/>
+                </twig:Pagination:Item>
+            {% endif %}
+
+            {% if startPage > 1 %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Link href="{{ path(route, query|merge({(pageParameterName): 1})) }}">
+                        1
+                    </twig:Pagination:Link>
+                </twig:Pagination:Item>
+
+                {% if startPage == 3 %}
+                    <twig:Pagination:Item>
+                        <twig:Pagination:Link href="{{ path(route, query|merge({(pageParameterName): 2})) }}">
+                            2
+                        </twig:Pagination:Link>
+                    </twig:Pagination:Item>
+                {% elseif startPage != 2 %}
+                    <twig:Pagination:Item>
+                        <twig:Pagination:Ellipsis/>
+                    </twig:Pagination:Item>
+                {% endif %}
+            {% endif %}
+
+            {% for page in pagesInRange %}
+                {% if page != current %}
+                    <twig:Pagination:Item>
+                        <twig:Pagination:Link href="{{ path(route, query|merge({(pageParameterName): page})) }}">
+                            {{ page }}
+                        </twig:Pagination:Link>
+                    </twig:Pagination:Item>
+                {% else %}
+                    <twig:Pagination:Item>
+                        <twig:Pagination:Link href="javascript:" active>{{ page }}</twig:Pagination:Link>
+                    </twig:Pagination:Item>
+                {% endif %}
+            {% endfor %}
+
+            {% if pageCount > endPage %}
+                {% if pageCount > (endPage + 1) %}
+                    {% if pageCount > (endPage + 2) %}
+                        <twig:Pagination:Item>
+                            <twig:Pagination:Ellipsis/>
+                        </twig:Pagination:Item>
+                    {% else %}
+                        <twig:Pagination:Item>
+                            <twig:Pagination:Link
+                                    href="{{ path(route, query|merge({(pageParameterName): (pageCount - 1)})) }}">
+                                {{ pageCount -1 }}
+                            </twig:Pagination:Link>
+                        </twig:Pagination:Item>
+                    {% endif %}
+                {% endif %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Link href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}">
+                        {{ pageCount }}
+                    </twig:Pagination:Link>
+                </twig:Pagination:Item>
+            {% endif %}
+
+            {% if next is defined %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Next href="{{ path(route, query|merge({(pageParameterName): next})) }}"/>
+                </twig:Pagination:Item>
+            {% else %}
+                <twig:Pagination:Item>
+                    <twig:Pagination:Ellipsis/>
+                </twig:Pagination:Item>
+            {% endif %}
+        </twig:Pagination:Content>
+    </twig:Pagination>
+{% endif %}

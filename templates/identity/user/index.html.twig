@@ -1,0 +1,201 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section
+                    class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Administration</p>
+                    <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Comptes utilisateurs</h1>
+                    <p class="mt-2 text-sm text-muted-foreground">Gérez les accès, les rôles et l’état des comptes de
+                        votre équipe.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    {% if is_granted('ROLE_MANAGE') %}
+                        <a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                           href="{{ path('app_role_permissions_index') }}">
+                            <twig:ux:icon name="lucide:shield-check" class="size-4" aria-hidden="true"/>
+                            Rôles et permissions
+                        </a>
+                    {% endif %}
+                    {% if is_granted('ROLE_CREATE') %}
+                        <a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                           href="{{ path('app_user_add') }}">
+                            <twig:ux:icon name="lucide:user-round-plus" class="size-4" aria-hidden="true"/>
+                            Ajouter un utilisateur
+                        </a>
+                    {% endif %}
+                </div>
+            </section>
+
+            <details class="group rounded-2xl border border-border bg-card shadow-sm"
+                     {% if app.request.query.all|length > 0 %}open{% endif %}>
+                <summary
+                        class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium marker:hidden">
+                    <span class="flex items-center gap-2">
+                        <twig:ux:icon name="lucide:list-filter" class="size-4 text-muted-foreground"
+                                      aria-hidden="true"/>
+                        Filtrer les comptes
+                    </span>
+                    <twig:ux:icon name="lucide:chevron-down"
+                                  class="size-4 text-muted-foreground transition-transform group-open:rotate-180"
+                                  aria-hidden="true"/>
+                </summary>
+                <div class="border-t border-border px-6 py-5">
+                    {{ form_start(form, {'attr': {
+                        'class': 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto]',
+                        'data-loading-label': 'Recherche…'
+                    }}) }}
+                    <div class="space-y-2">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.role, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.role, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                    </div>
+                    <div class="flex flex-wrap items-end gap-2">
+                        <button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+                                type="submit">Appliquer
+                        </button>
+                        <a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                           href="{{ path('app_user_index') }}">Réinitialiser</a>
+                    </div>
+                    <div class="space-y-2 lg:col-span-4">
+                        {{ form_label(form.enabled, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        <div class="flex flex-wrap gap-4 text-sm">{{ form_widget(form.enabled) }}</div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </details>
+
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                     aria-labelledby="users-list-title">
+                <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+                    <div>
+                        <h2 id="users-list-title" class="text-sm font-semibold">Équipe</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">{{ users.totalItemCount }}
+                            compte{{ users.totalItemCount > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+
+                <div class="divide-y divide-border md:hidden">
+                    {% for user in users.items %}
+                        <article class="space-y-4 p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{{ (user.name ?? user.email)|slice(0, 1)|upper }}</span>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="truncate font-medium">{{ user.name ?? 'Utilisateur' }}</h3>
+                                    <p class="truncate text-sm text-muted-foreground">{{ user.email }}</p>
+                                    {% if user.createdAt %}
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            Ajouté le {{ user.createdAt|date('d/m/Y') }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                                <twig:Badge variant="{{ user.enabled ? 'success' : 'danger' }}">
+                                    {{ user.enabled ? 'Actif' : 'Inactif' }}
+                                </twig:Badge>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4 border-y border-border py-3 text-sm">
+                                <span class="text-muted-foreground">Rôle</span>
+                                {{ user_role_badge(user) }}
+                            </div>
+
+                            <div class="flex justify-end">
+                                <twig:ActionDropdown>{% if is_granted('ROLE_VIEW') %}<a
+                                        href="{{ path('app_user_view', {id: user.id}) }}">
+                                            <twig:ux:icon name="lucide:eye" class="size-4"/>
+                                            Voir</a>{% endif %}{% if is_granted('ROLE_EDIT') %}<a
+                                        href="{{ path('app_user_update', {id: user.id}) }}">
+                                            <twig:ux:icon name="lucide:pencil" class="size-4"/>
+                                            Modifier
+                                        </a>{% endif %}{% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: user.id, instanceId: 'mobile-' ~ user.id, urlPath: path('app_user_delete', {id: user.id}), buttonLabel: 'Supprimer', description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'}) }}{% endif %}
+                                </twig:ActionDropdown>
+                            </div>
+                        </article>
+                    {% else %}
+                        <div class="px-6 py-14 text-center text-muted-foreground">Aucun utilisateur ne correspond à vos
+                            critères.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="hidden overflow-x-auto md:block">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr>
+                            <th class="px-5 py-3 font-medium sm:px-6">Utilisateur</th>
+                            <th class="px-5 py-3 font-medium">Rôle</th>
+                            <th class="px-5 py-3 font-medium">État</th>
+                            <th class="px-5 py-3 text-right font-medium sm:px-6">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                        {% for user in users.items %}
+                            <tr class="transition-colors hover:bg-muted/40">
+                                <td class="px-5 py-4 sm:px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{{ (user.name ?? user.email)|slice(0, 1)|upper }}</span>
+                                        <div class="min-w-0">
+                                            <p class="truncate font-medium">{{ user.name ?? 'Utilisateur' }}</p>
+                                            <p class="truncate text-muted-foreground">{{ user.email }}</p>
+                                            {% if user.createdAt %}<p class="mt-1 text-xs text-muted-foreground">Ajouté
+                                                le {{ user.createdAt|date('d/m/Y') }}</p>{% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4">{{ user_role_badge(user) }}</td>
+                                <td class="px-5 py-4">
+                                    <twig:Badge variant="{{ user.enabled ? 'success' : 'danger' }}">
+                                        {{ user.enabled ? 'Actif' : 'Inactif' }}
+                                    </twig:Badge>
+                                </td>
+                                <td class="px-5 py-4 sm:px-6">
+                                    <div class="flex justify-end">
+                                        <twig:ActionDropdown>
+                                            {% if is_granted('ROLE_VIEW') %}
+                                                <a href="{{ path('app_user_view', {id: user.id}) }}">
+                                                    <twig:ux:icon name="lucide:eye" class="size-4"/>
+                                                    Voir
+                                                </a>
+                                            {% endif %}
+                                            {% if is_granted('ROLE_EDIT') %}
+                                                <a href="{{ path('app_user_update', {id: user.id}) }}">
+                                                    <twig:ux:icon name="lucide:pencil" class="size-4"/>
+                                                    Modifier
+                                                </a>
+                                            {% endif %}
+                                            {% if is_granted('ROLE_DELETE') %}
+                                                {{ component('DeleteFormComponent', {id: user.id, instanceId: 'desktop-' ~ user.id, urlPath: path('app_user_delete', {id: user.id}), buttonLabel: 'Supprimer', description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'}) }}
+                                            {% endif %}
+                                        </twig:ActionDropdown>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="4">Aucun utilisateur
+                                    ne correspond à vos critères.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% include 'shared/views/_list_pagination.html.twig' with {pager: users, route: 'app_user_index'} only %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

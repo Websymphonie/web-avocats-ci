@@ -1,0 +1,16 @@
+{% for notification in notifications %}
+    <li>
+        <div>
+            <h6>
+                {{ notification.createdAt|date('d-m-Y') }}
+                <span>{{ notification.createdAt|ago }}</span>
+            </h6>
+            {% if notification.user %}
+                <h5>{{ notification.user.getFullname() }}</h5>
+            {% endif %}
+            <p>{{ notification.message }}</p>
+        </div>
+    </li>
+{% else %}
+    <li>Aucune nouvelle notification</li>
+{% endfor %}

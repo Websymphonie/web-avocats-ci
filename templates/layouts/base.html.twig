@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.attributes.get('_locale') }}">
+<head>
+    <title>{{ reglageValue('app_title').value }} - {% block title %}{% endblock %}</title>
+    {{ component('SeoComponent') }}
+
+    {{ component('ScriptComponent') }}
+
+    {{ encore_entry_link_tags('app') }}
+    {% block stylesheets %}{% endblock %}
+
+</head>
+<body class="min-h-svh bg-background text-foreground antialiased" data-controller="sidebar modal submit-state"
+      data-action="keydown.esc@window->sidebar#close resize@window->sidebar#handleResize submit->submit-state#submit">
+
+<div id="pageWrapper" class="min-h-svh">
+    <twig:Header title="{{ block('title')|striptags|trim }}"/>
+
+    <twig:MainSideBar/>
+
+    <div class="flex min-h-svh min-w-0 flex-col pt-16 lg:pl-72" data-sidebar-layout="content">
+        <twig:FlashToast/>
+        <div class="flex min-w-0 flex-1 flex-col" data-page-content>
+            {% block body %}{% endblock %}
+        </div>
+        <twig:Footer/>
+    </div>
+
+    {% if app.user is not null and canEdit(app.user) %}
+        <twig:ProfilePasswordChangeModalFormComponent
+                title="Changer mon mot de passe"
+                id="change-user-password-{{ app.user.id }}"
+                urlPath="{{ path('app_user_profile_change_password', {'id': app.user.id}) }}"
+        />
+    {% endif %}
+</div>
+
+{{ encore_entry_script_tags('app') }}
+{% block javascripts %}{% endblock %}
+</body>
+</html>

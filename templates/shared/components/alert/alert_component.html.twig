@@ -1,0 +1,13 @@
+<twig:Alert class="max-w-md {{ this.classes }}">
+    <twig:ux:icon name="lucide:triangle-alert"/>
+
+    {% if title is not null %}
+        <twig:Alert:Title>
+            {{ title }}
+        </twig:Alert:Title>
+    {% endif %}
+
+    <twig:Alert:Description>
+        {{ message }}
+    </twig:Alert:Description>
+</twig:Alert>

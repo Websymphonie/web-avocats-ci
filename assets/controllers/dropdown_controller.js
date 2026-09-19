@@ -21,9 +21,15 @@ export default class extends Controller {
 
     toggle() {
         this.syncExpandedState();
+        const menu = this.element.querySelector('[data-dropdown-menu]');
 
         if (this.element.open) {
+            if (menu) {
+                menu.hidden = false;
+            }
             window.requestAnimationFrame(() => this.positionMenu());
+        } else if (menu) {
+            menu.hidden = true;
         }
     }
 
@@ -85,6 +91,10 @@ export default class extends Controller {
 
     close(restoreFocus) {
         this.element.open = false;
+        const menu = this.element.querySelector('[data-dropdown-menu]');
+        if (menu) {
+            menu.hidden = true;
+        }
         this.syncExpandedState();
 
         if (restoreFocus) {

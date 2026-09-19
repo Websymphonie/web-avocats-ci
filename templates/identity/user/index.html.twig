@@ -80,49 +80,19 @@
 
             <form id="user-bulk-delete" method="post" action="{{ path('app_users_bulk_delete') }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_users') }}">
-                <twig:BulkSelection
-                    id="user-selection"
-                    inputName="ids[]"
-                    selectionLabelSingular="utilisateur"
-                    selectionLabelPlural="utilisateurs"
-                    confirmationTemplate="Supprimer {count} utilisateur(s) ?"
-                >
+            </form>
+            <twig:BulkSelection
+                id="user-selection"
+                inputName="ids[]"
+                inputForm="user-bulk-delete"
+                selectionLabelSingular="utilisateur"
+                selectionLabelPlural="utilisateurs"
+                confirmationTemplate="Supprimer {count} utilisateur(s) ?"
+                confirmationDescriptionTemplate="{count} utilisateur(s) seront retirés de la liste active. Une restauration n’est pas proposée dans cette interface."
+            >
                     {% block actions %}
                         {% if is_granted('ROLE_DELETE') %}
-                            <twig:AlertDialog id="bulk-user-delete">
-                            <twig:AlertDialog:Trigger>
-                                <twig:Button
-                                    type="button"
-                                    variant="destructive"
-                                    size="sm"
-                                    data-bulk-selection-target="action"
-                                    aria-label="Supprimer les utilisateurs sélectionnés"
-                                    data-action="click->alert-dialog#open"
-                                    data-alert-dialog-target="trigger"
-                                    aria-haspopup="dialog"
-                                    aria-expanded="false"
-                                >
-                                    <twig:ux:icon name="lucide:trash-2" class="size-4" aria-hidden="true"/>
-                                    Supprimer
-                                </twig:Button>
-                            </twig:AlertDialog:Trigger>
-                            <twig:AlertDialog:Content>
-                                <twig:AlertDialog:Header>
-                                    <twig:AlertDialog:Title>
-                                        <span data-bulk-selection-target="confirmation">Supprimer les utilisateurs sélectionnés ?</span>
-                                    </twig:AlertDialog:Title>
-                                    <twig:AlertDialog:Description>
-                                        Cette action retire les comptes sélectionnés de la liste active. Une restauration n’est pas proposée dans cette interface.
-                                    </twig:AlertDialog:Description>
-                                </twig:AlertDialog:Header>
-                                <twig:AlertDialog:Footer>
-                                    <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
-                                    <twig:Button type="submit" form="user-bulk-delete" variant="destructive">
-                                        Supprimer les utilisateurs
-                                    </twig:Button>
-                                </twig:AlertDialog:Footer>
-                            </twig:AlertDialog:Content>
-                            </twig:AlertDialog>
+                            {{ component('BulkDeleteUsers', {formId: 'user-bulk-delete'}) }}
                         {% endif %}
                     {% endblock %}
 
@@ -180,15 +150,7 @@
                             </div>
 
                             <div class="flex justify-end">
-                                <twig:ActionDropdown>{% if is_granted('ROLE_VIEW') %}<a
-                                        href="{{ path('app_user_view', {id: user.id}) }}">
-                                            <twig:ux:icon name="lucide:eye" class="size-4"/>
-                                            Voir</a>{% endif %}{% if is_granted('ROLE_EDIT') %}<a
-                                        href="{{ path('app_user_update', {id: user.id}) }}">
-                                            <twig:ux:icon name="lucide:pencil" class="size-4"/>
-                                            Modifier
-                                        </a>{% endif %}{% if is_granted('ROLE_DELETE') %}{{ component('DeleteFormComponent', {id: user.id, instanceId: 'mobile-' ~ user.id, urlPath: path('app_user_delete', {id: user.id}), buttonLabel: 'Supprimer', description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'}) }}{% endif %}
-                                </twig:ActionDropdown>
+                                {{ component('UserTableDropdown', {user: user, instanceId: 'mobile-' ~ user.id}) }}
                             </div>
                         </article>
                     {% else %}
@@ -239,25 +201,7 @@
                                     </twig:Badge>
                                 </td>
                                 <td class="px-5 py-4 sm:px-6">
-                                    <div class="flex justify-end">
-                                        <twig:ActionDropdown>
-                                            {% if is_granted('ROLE_VIEW') %}
-                                                <a href="{{ path('app_user_view', {id: user.id}) }}">
-                                                    <twig:ux:icon name="lucide:eye" class="size-4"/>
-                                                    Voir
-                                                </a>
-                                            {% endif %}
-                                            {% if is_granted('ROLE_EDIT') %}
-                                                <a href="{{ path('app_user_update', {id: user.id}) }}">
-                                                    <twig:ux:icon name="lucide:pencil" class="size-4"/>
-                                                    Modifier
-                                                </a>
-                                            {% endif %}
-                                            {% if is_granted('ROLE_DELETE') %}
-                                                {{ component('DeleteFormComponent', {id: user.id, instanceId: 'desktop-' ~ user.id, urlPath: path('app_user_delete', {id: user.id}), buttonLabel: 'Supprimer', description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'}) }}
-                                            {% endif %}
-                                        </twig:ActionDropdown>
-                                    </div>
+                                    <div class="flex justify-end">{{ component('UserTableDropdown', {user: user, instanceId: 'desktop-' ~ user.id}) }}</div>
                                 </td>
                             </tr>
                         {% else %}
@@ -274,8 +218,7 @@
                             {% include 'shared/views/_list_pagination.html.twig' with {pager: users, route: 'app_user_index'} only %}
                         </section>
                     {% endblock %}
-                </twig:BulkSelection>
-            </form>
+            </twig:BulkSelection>
         </div>
     </main>
 {% endblock %}

@@ -10,9 +10,11 @@ use Websymphonie\IdentityContext\Domain\Model\User\UserModel;
 class UserTableDropdownComponents
 {
     public UserModel $user;
+    public string $instanceId;
 
-    public function mount(UserModel $user): void
+    public function mount(UserModel $user, string $instanceId = ''): void
     {
         $this->user = $user;
+        $this->instanceId = $instanceId !== '' ? $instanceId : 'user-' . $user->id;
     }
 }

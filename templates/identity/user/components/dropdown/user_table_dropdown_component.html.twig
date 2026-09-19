@@ -1,0 +1,23 @@
+<twig:ActionDropdown>
+    {% if is_granted('ROLE_VIEW') %}
+        <a href="{{ path('app_user_view', {id: user.id}) }}">
+            <twig:ux:icon name="lucide:eye" class="size-4"/>
+            Voir
+        </a>
+    {% endif %}
+    {% if is_granted('ROLE_EDIT') %}
+        <a href="{{ path('app_user_update', {id: user.id}) }}">
+            <twig:ux:icon name="lucide:pencil" class="size-4"/>
+            Modifier
+        </a>
+    {% endif %}
+    {% if is_granted('ROLE_DELETE') %}
+        {{ component('DeleteFormComponent', {
+            id: user.id,
+            instanceId: instanceId,
+            urlPath: path('app_user_delete', {id: user.id}),
+            buttonLabel: 'Supprimer',
+            description: 'Le compte ' ~ user.email ~ ' sera définitivement supprimé.'
+        }) }}
+    {% endif %}
+</twig:ActionDropdown>

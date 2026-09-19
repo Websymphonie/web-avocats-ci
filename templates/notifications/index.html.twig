@@ -76,49 +76,19 @@
 
             <form id="notification-bulk-delete" method="post" action="{{ path('app_notifications_bulk_delete') }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_notifications') }}">
-                <twig:BulkSelection
-                    id="notification-selection"
-                    inputName="ids[]"
-                    selectionLabelSingular="notification"
-                    selectionLabelPlural="notifications"
-                    confirmationTemplate="Supprimer {count} notification(s) ?"
-                >
+            </form>
+            <twig:BulkSelection
+                id="notification-selection"
+                inputName="ids[]"
+                inputForm="notification-bulk-delete"
+                selectionLabelSingular="notification"
+                selectionLabelPlural="notifications"
+                confirmationTemplate="Supprimer {count} notification(s) ?"
+                confirmationDescriptionTemplate="{count} notification(s) seront supprimées de votre boîte de réception."
+            >
                     {% block actions %}
                         {% if is_granted('ROLE_DELETE') %}
-                            <twig:AlertDialog id="bulk-notification-delete">
-                            <twig:AlertDialog:Trigger>
-                                <twig:Button
-                                    type="button"
-                                    variant="destructive"
-                                    size="sm"
-                                    data-bulk-selection-target="action"
-                                    aria-label="Supprimer les notifications sélectionnées"
-                                    data-action="click->alert-dialog#open"
-                                    data-alert-dialog-target="trigger"
-                                    aria-haspopup="dialog"
-                                    aria-expanded="false"
-                                >
-                                    <twig:ux:icon name="lucide:trash-2" class="size-4" aria-hidden="true"/>
-                                    Supprimer
-                                </twig:Button>
-                            </twig:AlertDialog:Trigger>
-                            <twig:AlertDialog:Content>
-                                <twig:AlertDialog:Header>
-                                    <twig:AlertDialog:Title>
-                                        <span data-bulk-selection-target="confirmation">Supprimer les notifications sélectionnées ?</span>
-                                    </twig:AlertDialog:Title>
-                                    <twig:AlertDialog:Description>
-                                        Cette action supprimera les notifications sélectionnées de votre boîte de réception.
-                                    </twig:AlertDialog:Description>
-                                </twig:AlertDialog:Header>
-                                <twig:AlertDialog:Footer>
-                                    <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
-                                    <twig:Button type="submit" form="notification-bulk-delete" variant="destructive">
-                                        Supprimer les notifications
-                                    </twig:Button>
-                                </twig:AlertDialog:Footer>
-                            </twig:AlertDialog:Content>
-                            </twig:AlertDialog>
+                            {{ component('BulkDeleteNotifications', {formId: 'notification-bulk-delete'}) }}
                         {% endif %}
                     {% endblock %}
 
@@ -188,8 +158,7 @@
                             {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: 'app_notifications_index'} only %}
                         </section>
                     {% endblock %}
-                </twig:BulkSelection>
-            </form>
+            </twig:BulkSelection>
         </div>
     </main>
 {% endblock %}

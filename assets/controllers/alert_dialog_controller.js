@@ -25,6 +25,7 @@ export default class extends Controller {
             this.activeTrigger = event.currentTarget;
         }
 
+        this.dialogTarget.hidden = false;
         this.dialogTarget.showModal();
 
         if (this.hasTriggerTarget) {
@@ -38,6 +39,8 @@ export default class extends Controller {
         if (this.dialogTarget.open) {
             this.dialogTarget.close();
         }
+
+        this.dialogTarget.hidden = true;
 
         if (this.hasTriggerTarget) {
             this.triggerTarget.setAttribute('aria-expanded', 'false');
@@ -54,6 +57,8 @@ export default class extends Controller {
     }
 
     restoreFocus() {
+        this.dialogTarget.hidden = true;
+
         if (this.hasTriggerTarget) {
             this.triggerTarget.setAttribute('aria-expanded', 'false');
         }

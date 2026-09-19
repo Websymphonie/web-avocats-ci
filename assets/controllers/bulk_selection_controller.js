@@ -1,13 +1,15 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action', 'inputs', 'confirmation'];
+    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action', 'inputs', 'confirmation', 'confirmationDescription'];
 
     static values = {
         selectionLabelSingular: { type: String, default: 'élément' },
         selectionLabelPlural: { type: String, default: 'éléments' },
         inputName: { type: String, default: '' },
+        inputForm: { type: String, default: '' },
         confirmationTemplate: { type: String, default: '' },
+        confirmationDescriptionTemplate: { type: String, default: '' },
     };
 
     connect() {
@@ -85,6 +87,10 @@ export default class extends Controller {
             confirmation.textContent = this.confirmationTemplateValue.replace('{count}', String(selectedCount));
         });
 
+        this.confirmationDescriptionTargets.forEach((description) => {
+            description.textContent = this.confirmationDescriptionTemplateValue.replace('{count}', String(selectedCount));
+        });
+
         this.syncInputs(selectedIds);
 
         this.dispatch('changed', {
@@ -113,6 +119,9 @@ export default class extends Controller {
             input.type = 'hidden';
             input.name = this.inputNameValue;
             input.value = id;
+            if (this.hasInputFormValue && this.inputFormValue !== '') {
+                input.setAttribute('form', this.inputFormValue);
+            }
             return input;
         }));
     }

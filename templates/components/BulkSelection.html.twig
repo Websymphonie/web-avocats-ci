@@ -9,10 +9,12 @@
 {# @prop selectionLabelSingular string French singular label used by the live status #}
 {# @prop selectionLabelPlural string French plural label used by the live status #}
 {# @prop inputName string Optional form field name generated from unique selected IDs #}
+{# @prop inputForm string Optional external form ID receiving generated fields #}
 {# @prop confirmationTemplate string Optional template containing `{count}` #}
+{# @prop confirmationDescriptionTemplate string Optional confirmation description containing `{count}` #}
 {# @block actions Contextual screen-owned actions #}
 {# @block content The table or list containing the selection controls #}
-{%- props id, selectionLabelSingular = 'élément', selectionLabelPlural = 'éléments', inputName = null, confirmationTemplate = null -%}
+{%- props id, selectionLabelSingular = 'élément', selectionLabelPlural = 'éléments', inputName = null, inputForm = null, confirmationTemplate = null, confirmationDescriptionTemplate = null -%}
 
 <section
     id="{{ id }}"
@@ -21,24 +23,29 @@
     data-bulk-selection-selection-label-singular-value="{{ selectionLabelSingular }}"
     data-bulk-selection-selection-label-plural-value="{{ selectionLabelPlural }}"
     data-bulk-selection-input-name-value="{{ inputName ?? '' }}"
+    data-bulk-selection-input-form-value="{{ inputForm ?? '' }}"
     data-bulk-selection-confirmation-template-value="{{ confirmationTemplate ?? '' }}"
+    data-bulk-selection-confirmation-description-template-value="{{ confirmationDescriptionTemplate ?? '' }}"
     {{ attributes }}
 >
-    <div
-        class="mb-4 flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-        data-bulk-selection-target="toolbar"
-        aria-hidden="true"
-        hidden
-    >
-        <p class="text-sm font-medium text-foreground" data-bulk-selection-target="summary">
-            Aucun élément sélectionné.
-        </p>
-        {% if block('actions') is defined %}
-            <div class="flex flex-wrap gap-2" aria-label="Actions sur la sélection">
-                {% block actions %}{% endblock %}
+    {% if block('actions') is defined %}
+        {% set actionContent = block('actions') %}
+        {% if actionContent|trim is not empty %}
+            <div
+                class="mb-4 flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                data-bulk-selection-target="toolbar"
+                aria-hidden="true"
+                hidden
+            >
+                <p class="text-sm font-medium text-foreground" data-bulk-selection-target="summary">
+                    Aucun élément sélectionné.
+                </p>
+                <div class="flex flex-wrap gap-2" aria-label="Actions sur la sélection">
+                    {{ actionContent|raw }}
+                </div>
             </div>
         {% endif %}
-    </div>
+    {% endif %}
 
     {% block content %}{% endblock %}
 

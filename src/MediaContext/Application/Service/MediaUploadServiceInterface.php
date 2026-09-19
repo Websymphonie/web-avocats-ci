@@ -11,6 +11,6 @@ interface MediaUploadServiceInterface
 {
     public function upload(UploadedFile $file, string $storagePrefix = 'galleries'): Media;
 
-    /** Deletes an unreferenced media, including its local file. */
+    /** Deletes an unreferenced media and attempts best-effort physical cleanup. */
     public function delete(Media $media): void;
 }

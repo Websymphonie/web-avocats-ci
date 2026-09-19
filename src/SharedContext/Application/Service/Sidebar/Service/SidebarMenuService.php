@@ -57,7 +57,7 @@ final readonly class SidebarMenuService
             foreach ($items as $item) {
                 $item->children = $filterAndSort($item->children);
 
-                if ($item->isVisibleFor($roles, $this->authorizationChecker->isGranted(...))) {
+                if ($item->isVisibleFor($roles, $this->authorizationChecker->isGranted(...)) || $item->hasChildren()) {
                     // Tri des enfants
                     usort($item->children, fn(MenuItem $a, MenuItem $b) => $a->order <=> $b->order);
                     $result[] = $item;

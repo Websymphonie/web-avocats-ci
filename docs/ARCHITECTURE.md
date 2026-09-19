@@ -289,10 +289,16 @@ stockage. Sa racine persistante unique est configurée par `APP_STORAGE_DIR`
 (valeur canonique `/shared/storage`) et ses adaptateurs dérivent
 `/shared/storage/public/galleries` pour les galeries et
 `/shared/storage/public/content/covers` pour les couvertures News/Event;
-l’exposition HTTP publique passe par
-`/uploads/galleries` via un lien symbolique ou un alias serveur. Les clés
-persistées en base restent relatives (`galleries/<nom>`). Il n’introduit ni
-S3, ni médiathèque, ni relation Doctrine vers `ContentContext`.
+l’exposition HTTP publique attendue est `/uploads/<storage-key>` et ne doit
+jamais contenir le chemin absolu. Sur un déploiement neuf, la stratégie
+préférée est une seule exposition `public/uploads -> /shared/storage/public`.
+Le dépôt conserve toutefois `public/uploads` pour les anciens uploads
+Vich/Admin : jusqu’à leur migration, l’infrastructure doit exposer au minimum
+`/uploads/galleries` et `/uploads/content/covers` vers les deux sous-répertoires
+persistants. `private/` ne doit disposer d’aucun alias ou lien HTTP. Les clés
+persistées en base restent relatives (`galleries/<nom>` ou
+`content/covers/<nom>`). Il n’introduit ni S3, ni médiathèque, ni relation
+Doctrine vers `ContentContext`.
 
 Les variantes sont rendues par LiipImagine à partir de l’original maîtrisé. Les
 fichiers privés, documents et médias Learning restent hors de cette capacité.
@@ -318,14 +324,39 @@ persistante avec les droits d’écriture du processus PHP. Le provisionnement
 initial est idempotent :
 
 ```bash
-mkdir -p "$APP_STORAGE_DIR/public/galleries" "$APP_STORAGE_DIR/private/documents"
+mkdir -p "$APP_STORAGE_DIR/public/galleries" \
+         "$APP_STORAGE_DIR/public/content/covers" \
+         "$APP_STORAGE_DIR/private/documents"
 ```
 
-Les galeries sont exposées sous `/uploads/galleries` par un lien symbolique ou
-un alias serveur vers `$APP_STORAGE_DIR/public/galleries`. Le dépôt conserve
-encore `public/uploads` pour les anciens uploads Vich/Admin : il ne faut donc
-pas remplacer ce répertoire par un lien global sans migration explicite. Les
-documents privés ne doivent avoir aucun alias HTTP direct.
+La configuration préférée d’un déploiement neuf est :
+
+```text
+public/uploads -> $APP_STORAGE_DIR/public
+```
+
+Lorsque `public/uploads` contient encore les anciens uploads Vich/Admin, ne pas
+le remplacer sans migration : utiliser des alias ou liens spécialisés pour
+`/uploads/galleries` et `/uploads/content/covers`, puis planifier la migration.
+Les documents privés ne doivent avoir aucun alias HTTP direct.
+
+Checklist minimale :
+
+```text
+APP_STORAGE_DIR=/shared/storage
+$APP_STORAGE_DIR/public writable
+$APP_STORAGE_DIR/private writable
+public/uploads -> $APP_STORAGE_DIR/public (ou aliases spécialisés temporaires)
+$APP_STORAGE_DIR/private non exposé par le serveur web
+base de données sauvegardée avec $APP_STORAGE_DIR
+```
+
+Les uploads compensent une erreur de persistence en supprimant le fichier
+nouvellement stocké lorsque c’est possible. Pour une suppression, la ligne DB
+est supprimée d’abord, puis le fichier physique est nettoyé au mieux ; un
+échec de filesystem est journalisé comme fichier orphelin à traiter plus tard.
+Cette opération n’est pas artificiellement présentée comme une transaction
+atomique DB/filesystem.
 
 `var/` reste réservé aux caches, logs et fichiers runtime. Il ne doit contenir
 aucun document métier ni image persistante. Les sauvegardes doivent inclure

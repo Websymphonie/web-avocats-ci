@@ -40,7 +40,7 @@ porte sa règle.
 | `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `PLANNED` |
 | `PaymentContext` | commandes, transactions et intégration des paiements | `PLANNED` |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
-| `MediaContext` | médias partagés si la frontière devient réelle | `DISCOVERY` |
+| `MediaContext` | images publiques et fichiers documentaires privés minimaux | `IMPLEMENTED` — capacités CNT-004/CNT-005 |
 | `AuditContext` | audit métier transverse si les besoins dépassent `LogContext` | `DISCOVERY` |
 
 Ces contextes ne sont pas à créer dans le cadre de DOC-001.
@@ -233,9 +233,10 @@ tant qu’un consommateur les référence.
 
 Le stockage persistant est centralisé par `APP_STORAGE_DIR`, dont la valeur
 canonique est `/shared/storage` : les images publiques résident sous
-`public/galleries` et les documents privés sous `private/documents`, sans
-chemin absolu ni relation de consommateur enregistrée en base. `var/` reste
-réservé au runtime Symfony et aux caches.
+`public/galleries` et `public/content/covers`, tandis que les documents privés
+résident sous `private/documents`, sans chemin absolu ni relation de
+consommateur enregistrée en base. `var/` reste réservé au runtime Symfony et
+aux caches.
 
 ## CNT-004A — Couvertures et galeries liées
 

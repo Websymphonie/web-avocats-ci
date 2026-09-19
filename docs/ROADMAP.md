@@ -45,6 +45,11 @@ FND-003 — Surfaces Public / Member / Backoffice     DONE
 
 **Statut : `IN PROGRESS`**
 
+La fondation Content Backoffice est terminée et vérifiable (`DONE`) pour les
+actualités, événements, vidéos éditoriales, galeries, couvertures et documents.
+Les parcours Content Frontoffice restent différés dans la phase Manus et ne
+doivent pas retarder le démarrage de Learning.
+
 Tickets immédiats :
 
 ```text
@@ -54,8 +59,9 @@ CNT-002 — Événements                         IMPLEMENTED
 CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
 ```
 
-La phase couvrira ensuite les vidéos éditoriales, galeries, documents,
-annonces, publication, visibilité et administration Content.
+La suite de la phase concerne les parcours Frontoffice et les décisions de
+visibilité publique ; ces éléments restent hors de la présente fondation
+Backoffice.
 
 ### PHASE 3 — Learning COURSE et inscriptions
 
@@ -127,6 +133,8 @@ CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice
 CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice uniquement
 CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
+Content Backoffice foundation                     DONE
+Content Frontoffice                              OUT_OF_SCOPE — différé phase Manus
 LRN-001  Training COURSE                           PLANNED
 ```
 

@@ -6,6 +6,7 @@ namespace Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Reposi
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
@@ -43,7 +44,7 @@ final class DocumentPublicationRepository extends ServiceEntityRepository implem
     public function getByUuid(string $uuid): DocumentPublication
     {
         try { $identifier = Uuid::fromString($uuid); } catch (\Throwable) { throw DocumentPublicationNotFoundException::withUuid($uuid); }
-        $entity = $this->createQueryBuilder('document')->andWhere('document.uuid = :uuid')->setParameter('uuid', $identifier)->getQuery()->getOneOrNullResult();
+        $entity = $this->createQueryBuilder('document')->andWhere('document.uuid = :uuid')->setParameter('uuid', $identifier, UuidType::NAME)->getQuery()->getOneOrNullResult();
         if (!$entity instanceof DocumentPublicationEntity) { throw DocumentPublicationNotFoundException::withUuid($uuid); }
         return $this->factory->fromEntity($entity);
     }

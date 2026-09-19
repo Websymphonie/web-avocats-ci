@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Websymphonie\MediaContext\Infrastructure\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Websymphonie\MediaContext\Application\Service\MediaStorageInterface;
 use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
@@ -14,7 +15,7 @@ use Websymphonie\MediaContext\Domain\Repository\MediaRepositoryInterface;
 
 final readonly class LocalMediaUploadService implements MediaUploadServiceInterface
 {
-    public function __construct(private MediaStorageInterface $storage, private MediaRepositoryInterface $repository, private MediaUsageCheckerInterface $usageChecker) {}
+    public function __construct(private MediaStorageInterface $storage, private MediaRepositoryInterface $repository, private MediaUsageCheckerInterface $usageChecker, private LoggerInterface $logger) {}
 
     public function upload(UploadedFile $file, string $storagePrefix = 'galleries'): Media
     {
@@ -30,7 +31,15 @@ final readonly class LocalMediaUploadService implements MediaUploadServiceInterf
     public function delete(Media $media): void
     {
         if ($this->usageChecker->isUsed($media->id)) { throw MediaInUseException::withId($media->id); }
-        $this->storage->delete($media);
-        try { $this->repository->delete($media); } catch (\Throwable $exception) { throw $exception; }
+        $this->repository->delete($media);
+        try {
+            $this->storage->delete($media);
+        } catch (\Throwable $exception) {
+            $this->logger->error('Le média a été supprimé de la base mais son fichier physique doit être nettoyé.', [
+                'media_id' => $media->id,
+                'storage_path' => $media->storagePath,
+                'exception' => $exception,
+            ]);
+        }
     }
 }

@@ -78,19 +78,86 @@
                 </div>
             </details>
 
-            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-                     aria-labelledby="users-list-title">
-                <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
-                    <div>
-                        <h2 id="users-list-title" class="text-sm font-semibold">Équipe</h2>
-                        <p class="mt-1 text-sm text-muted-foreground">{{ users.totalItemCount }}
-                            compte{{ users.totalItemCount > 1 ? 's' : '' }}</p>
-                    </div>
-                </div>
+            <form id="user-bulk-delete" method="post" action="{{ path('app_users_bulk_delete') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_users') }}">
+                <twig:BulkSelection
+                    id="user-selection"
+                    inputName="ids[]"
+                    selectionLabelSingular="utilisateur"
+                    selectionLabelPlural="utilisateurs"
+                    confirmationTemplate="Supprimer {count} utilisateur(s) ?"
+                >
+                    {% block actions %}
+                        {% if is_granted('ROLE_DELETE') %}
+                            <twig:AlertDialog id="bulk-user-delete">
+                            <twig:AlertDialog:Trigger>
+                                <twig:Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    data-bulk-selection-target="action"
+                                    aria-label="Supprimer les utilisateurs sélectionnés"
+                                    data-action="click->alert-dialog#open"
+                                    data-alert-dialog-target="trigger"
+                                    aria-haspopup="dialog"
+                                    aria-expanded="false"
+                                >
+                                    <twig:ux:icon name="lucide:trash-2" class="size-4" aria-hidden="true"/>
+                                    Supprimer
+                                </twig:Button>
+                            </twig:AlertDialog:Trigger>
+                            <twig:AlertDialog:Content>
+                                <twig:AlertDialog:Header>
+                                    <twig:AlertDialog:Title>
+                                        <span data-bulk-selection-target="confirmation">Supprimer les utilisateurs sélectionnés ?</span>
+                                    </twig:AlertDialog:Title>
+                                    <twig:AlertDialog:Description>
+                                        Cette action retire les comptes sélectionnés de la liste active. Une restauration n’est pas proposée dans cette interface.
+                                    </twig:AlertDialog:Description>
+                                </twig:AlertDialog:Header>
+                                <twig:AlertDialog:Footer>
+                                    <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
+                                    <twig:Button type="submit" form="user-bulk-delete" variant="destructive">
+                                        Supprimer les utilisateurs
+                                    </twig:Button>
+                                </twig:AlertDialog:Footer>
+                            </twig:AlertDialog:Content>
+                            </twig:AlertDialog>
+                        {% endif %}
+                    {% endblock %}
 
-                <div class="divide-y divide-border md:hidden">
+                    {% block content %}
+                        <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                                 aria-labelledby="users-list-title">
+                            <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+                                <div class="flex items-start gap-3">
+                                    <label class="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+                                        <input type="checkbox"
+                                               class="size-4 rounded border-input accent-primary"
+                                               data-bulk-selection-target="master"
+                                               aria-label="Sélectionner tous les utilisateurs de la page">
+                                    </label>
+                                    <div>
+                                        <h2 id="users-list-title" class="text-sm font-semibold">Équipe</h2>
+                                        <p class="mt-1 text-sm text-muted-foreground">{{ users.totalItemCount }}
+                                            compte{{ users.totalItemCount > 1 ? 's' : '' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="divide-y divide-border md:hidden">
                     {% for user in users.items %}
                         <article class="space-y-4 p-5">
+                            <div class="flex items-center gap-2">
+                                <label class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+                                    <input type="checkbox"
+                                           class="size-4 rounded border-input accent-primary"
+                                           value="{{ user.id }}"
+                                           data-bulk-selection-target="row"
+                                           aria-label="Sélectionner l’utilisateur : {{ user.name ?? user.email }}">
+                                </label>
+                                <span class="text-xs text-muted-foreground">Sélectionner ce compte</span>
+                            </div>
                             <div class="flex items-start gap-3">
                                 <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{{ (user.name ?? user.email)|slice(0, 1)|upper }}</span>
                                 <div class="min-w-0 flex-1">
@@ -129,13 +196,14 @@
                             critères.
                         </div>
                     {% endfor %}
-                </div>
+                            </div>
 
-                <div class="hidden overflow-x-auto md:block">
+                            <div class="hidden overflow-x-auto md:block">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
                         <tr>
-                            <th class="px-5 py-3 font-medium sm:px-6">Utilisateur</th>
+                            <th class="px-5 py-3 font-medium sm:px-6"><span class="sr-only">Sélection</span></th>
+                            <th class="px-5 py-3 font-medium">Utilisateur</th>
                             <th class="px-5 py-3 font-medium">Rôle</th>
                             <th class="px-5 py-3 font-medium">État</th>
                             <th class="px-5 py-3 text-right font-medium sm:px-6">Actions</th>
@@ -144,6 +212,15 @@
                         <tbody class="divide-y divide-border">
                         {% for user in users.items %}
                             <tr class="transition-colors hover:bg-muted/40">
+                                <td class="px-5 py-4 sm:px-6">
+                                    <label class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+                                        <input type="checkbox"
+                                               class="size-4 rounded border-input accent-primary"
+                                               value="{{ user.id }}"
+                                               data-bulk-selection-target="row"
+                                               aria-label="Sélectionner l’utilisateur : {{ user.name ?? user.email }}">
+                                    </label>
+                                </td>
                                 <td class="px-5 py-4 sm:px-6">
                                     <div class="flex items-center gap-3">
                                         <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{{ (user.name ?? user.email)|slice(0, 1)|upper }}</span>
@@ -185,17 +262,20 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="4">Aucun utilisateur
+                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="5">Aucun utilisateur
                                     ne correspond à vos critères.
                                 </td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
-                </div>
+                            </div>
 
-                {% include 'shared/views/_list_pagination.html.twig' with {pager: users, route: 'app_user_index'} only %}
-            </section>
+                            {% include 'shared/views/_list_pagination.html.twig' with {pager: users, route: 'app_user_index'} only %}
+                        </section>
+                    {% endblock %}
+                </twig:BulkSelection>
+            </form>
         </div>
     </main>
 {% endblock %}

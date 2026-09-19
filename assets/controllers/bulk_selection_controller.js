@@ -1,11 +1,13 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action'];
+    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action', 'inputs', 'confirmation'];
 
     static values = {
         selectionLabelSingular: { type: String, default: 'élément' },
         selectionLabelPlural: { type: String, default: 'éléments' },
+        inputName: { type: String, default: '' },
+        confirmationTemplate: { type: String, default: '' },
     };
 
     connect() {
@@ -25,6 +27,11 @@ export default class extends Controller {
         }
 
         if (this.rowTargets.includes(event.target)) {
+            this.rowTargets
+                .filter((checkbox) => checkbox.value === event.target.value)
+                .forEach((checkbox) => {
+                    checkbox.checked = event.target.checked;
+                });
             this.update();
         }
     }
@@ -40,8 +47,9 @@ export default class extends Controller {
     }
 
     update() {
-        const selectedCount = this.rowTargets.filter((checkbox) => checkbox.checked).length;
-        const totalCount = this.rowTargets.length;
+        const selectedIds = this.selectedIds();
+        const totalCount = new Set(this.rowTargets.map((checkbox) => checkbox.value)).size;
+        const selectedCount = selectedIds.length;
         const hasSelection = selectedCount > 0;
 
         if (this.hasMasterTarget) {
@@ -73,14 +81,40 @@ export default class extends Controller {
             this.statusTarget.textContent = this.selectionSummary(selectedCount);
         }
 
+        this.confirmationTargets.forEach((confirmation) => {
+            confirmation.textContent = this.confirmationTemplateValue.replace('{count}', String(selectedCount));
+        });
+
+        this.syncInputs(selectedIds);
+
         this.dispatch('changed', {
             detail: {
                 selectedCount,
-                selectedIds: this.rowTargets
-                    .filter((checkbox) => checkbox.checked)
-                    .map((checkbox) => checkbox.value),
+                selectedIds,
             },
         });
+    }
+
+    selectedIds() {
+        return [...new Set(
+            this.rowTargets
+                .filter((checkbox) => checkbox.checked)
+                .map((checkbox) => checkbox.value)
+        )];
+    }
+
+    syncInputs(selectedIds) {
+        if (!this.hasInputsTarget || !this.hasInputNameValue || this.inputNameValue === '') {
+            return;
+        }
+
+        this.inputsTarget.replaceChildren(...selectedIds.map((id) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = this.inputNameValue;
+            input.value = id;
+            return input;
+        }));
     }
 
     selectionSummary(selectedCount) {

@@ -8,9 +8,11 @@
 {# @prop id string Stable identifier for the selection region #}
 {# @prop selectionLabelSingular string French singular label used by the live status #}
 {# @prop selectionLabelPlural string French plural label used by the live status #}
+{# @prop inputName string Optional form field name generated from unique selected IDs #}
+{# @prop confirmationTemplate string Optional template containing `{count}` #}
 {# @block actions Contextual screen-owned actions #}
 {# @block content The table or list containing the selection controls #}
-{%- props id, selectionLabelSingular = 'élément', selectionLabelPlural = 'éléments' -%}
+{%- props id, selectionLabelSingular = 'élément', selectionLabelPlural = 'éléments', inputName = null, confirmationTemplate = null -%}
 
 <section
     id="{{ id }}"
@@ -18,6 +20,8 @@
     data-controller="bulk-selection"
     data-bulk-selection-selection-label-singular-value="{{ selectionLabelSingular }}"
     data-bulk-selection-selection-label-plural-value="{{ selectionLabelPlural }}"
+    data-bulk-selection-input-name-value="{{ inputName ?? '' }}"
+    data-bulk-selection-confirmation-template-value="{{ confirmationTemplate ?? '' }}"
     {{ attributes }}
 >
     <div
@@ -37,6 +41,8 @@
     </div>
 
     {% block content %}{% endblock %}
+
+    <div class="hidden" data-bulk-selection-target="inputs" aria-hidden="true"></div>
 
     <p
         class="sr-only"

@@ -20,6 +20,12 @@ interface NotificationModelRepository
 
     public function getAccessibleById(int $id, User $user): Notifications;
 
+    /**
+     * @param list<int> $ids
+     * @return list<Notifications>
+     */
+    public function findAccessibleByIds(array $ids, User $user): array;
+
     /** @return list<Notifications> */
     public function getUnreadNotifs(?User $user): array;
 

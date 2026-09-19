@@ -74,73 +74,122 @@
                 </div>
             </details>
 
-            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-                     aria-labelledby="inbox-title">
-                <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-5 sm:px-8">
-                    <div>
-                        <h2 id="inbox-title" class="text-sm font-semibold text-foreground">Boîte de réception</h2>
-                        <p class="mt-1 text-sm text-muted-foreground">{{ notifications.totalItemCount }}
-                            notification{{ notifications.totalItemCount > 1 ? 's' : '' }}</p>
-                    </div>
-                </div>
+            <form id="notification-bulk-delete" method="post" action="{{ path('app_notifications_bulk_delete') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_notifications') }}">
+                <twig:BulkSelection
+                    id="notification-selection"
+                    inputName="ids[]"
+                    selectionLabelSingular="notification"
+                    selectionLabelPlural="notifications"
+                    confirmationTemplate="Supprimer {count} notification(s) ?"
+                >
+                    {% block actions %}
+                        {% if is_granted('ROLE_DELETE') %}
+                            <twig:AlertDialog id="bulk-notification-delete">
+                            <twig:AlertDialog:Trigger>
+                                <twig:Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    data-bulk-selection-target="action"
+                                    aria-label="Supprimer les notifications sélectionnées"
+                                    data-action="click->alert-dialog#open"
+                                    data-alert-dialog-target="trigger"
+                                    aria-haspopup="dialog"
+                                    aria-expanded="false"
+                                >
+                                    <twig:ux:icon name="lucide:trash-2" class="size-4" aria-hidden="true"/>
+                                    Supprimer
+                                </twig:Button>
+                            </twig:AlertDialog:Trigger>
+                            <twig:AlertDialog:Content>
+                                <twig:AlertDialog:Header>
+                                    <twig:AlertDialog:Title>
+                                        <span data-bulk-selection-target="confirmation">Supprimer les notifications sélectionnées ?</span>
+                                    </twig:AlertDialog:Title>
+                                    <twig:AlertDialog:Description>
+                                        Cette action supprimera les notifications sélectionnées de votre boîte de réception.
+                                    </twig:AlertDialog:Description>
+                                </twig:AlertDialog:Header>
+                                <twig:AlertDialog:Footer>
+                                    <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
+                                    <twig:Button type="submit" form="notification-bulk-delete" variant="destructive">
+                                        Supprimer les notifications
+                                    </twig:Button>
+                                </twig:AlertDialog:Footer>
+                            </twig:AlertDialog:Content>
+                            </twig:AlertDialog>
+                        {% endif %}
+                    {% endblock %}
 
-                <div class="divide-y divide-border">
-                    {% for notification in notifications.items %}
-                        <a class="group flex gap-4 px-6 py-5 transition-colors hover:bg-muted/60 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-8 {{ notification.isRead ? '' : 'bg-primary/[0.03]' }}"
-                           href="{{ path('app_notifications_view', {id: notification.id}) }}">
-                            <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl {{ notification.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground' }}">
-                                {% if notification.context.resource is defined and notification.context.resource == 'follow_up' %}
-                                    <twig:ux:icon name="lucide:list-checks" class="size-4"/>
-                                {% elseif notification.type and notification.type.value == 'password' %}
-                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                         stroke-width="1.8" aria-hidden="true"><rect x="4" y="11" width="16" height="9"
-                                                                                     rx="2"></rect><path
-                                                d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2"></path></svg>
-                                {% elseif notification.type and notification.type.value == 'account' %}
-                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                         stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path
-                                                d="M4 21a8 8 0 0 1 16 0"></path></svg>
+                    {% block content %}
+                        <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                                 aria-labelledby="inbox-title">
+                            <div class="flex items-center justify-between gap-4 border-b border-border px-6 py-5 sm:px-8">
+                                <div class="flex items-start gap-3">
+                                    <label class="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+                                        <input type="checkbox"
+                                               class="size-4 rounded border-input accent-primary"
+                                               data-bulk-selection-target="master"
+                                               aria-label="Sélectionner toutes les notifications de la page">
+                                    </label>
+                                    <div>
+                                        <h2 id="inbox-title" class="text-sm font-semibold text-foreground">Boîte de réception</h2>
+                                        <p class="mt-1 text-sm text-muted-foreground">{{ notifications.totalItemCount }}
+                                            notification{{ notifications.totalItemCount > 1 ? 's' : '' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="divide-y divide-border">
+                                {% for notification in notifications.items %}
+                                    <div class="group flex gap-3 px-6 py-5 transition-colors hover:bg-muted/60 sm:px-8 {{ notification.isRead ? '' : 'bg-primary/[0.03]' }}">
+                                        <label class="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring">
+                                            <input type="checkbox"
+                                                   class="size-4 rounded border-input accent-primary"
+                                                   value="{{ notification.id }}"
+                                                   data-bulk-selection-target="row"
+                                                   aria-label="Sélectionner la notification : {{ notification.title ?? 'Information' }}">
+                                        </label>
+                                        <a class="flex min-w-0 flex-1 gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                                           href="{{ path('app_notifications_view', {id: notification.id}) }}">
+                                            <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl {{ notification.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground' }}">
+                                                {% if notification.context.resource is defined and notification.context.resource == 'follow_up' %}
+                                                    <twig:ux:icon name="lucide:list-checks" class="size-4"/>
+                                                {% elseif notification.type and notification.type.value == 'password' %}
+                                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2"></path></svg>
+                                                {% elseif notification.type and notification.type.value == 'account' %}
+                                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+                                                {% else %}
+                                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 8v4l2.5 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"></path></svg>
+                                                {% endif %}
+                                            </span>
+                                            <span class="min-w-0 flex-1">
+                                                <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                    <span class="text-sm font-medium text-foreground">{{ notification.title ?? (notification.type ? notification.type.label() : 'Information') }}</span>
+                                                    <span class="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">{{ notification.action ? notification.action.label() : 'Mise à jour' }}</span>
+                                                    {% if not notification.isRead %}<span class="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Nouveau</span>{% endif %}
+                                                </span>
+                                                <span class="mt-1 block text-sm leading-6 text-muted-foreground">{{ notification.message }}</span>
+                                                <span class="mt-2 block text-xs text-muted-foreground">{{ notification.createdAt ? notification.createdAt|ago : '' }}</span>
+                                            </span>
+                                            <svg class="mt-3 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                                        </a>
+                                    </div>
                                 {% else %}
-                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                         stroke-width="1.8" aria-hidden="true"><path
-                                                d="M12 8v4l2.5 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"></path></svg>
-                                {% endif %}
-                            </span>
+                                    <div class="px-6 py-16 text-center sm:px-8">
+                                        <span class="mx-auto flex size-11 items-center justify-center rounded-xl bg-muted text-muted-foreground"><svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></svg></span>
+                                        <h3 class="mt-4 text-sm font-semibold text-foreground">Aucune notification</h3>
+                                        <p class="mt-1 text-sm text-muted-foreground">Les nouvelles activités importantes apparaîtront ici.</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
 
-                            <span class="min-w-0 flex-1">
-                                <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span class="text-sm font-medium text-foreground">{{ notification.title ?? (notification.type ? notification.type.label() : 'Information') }}</span>
-                                    <span class="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">{{ notification.action ? notification.action.label() : 'Mise à jour' }}</span>
-                                    {% if not notification.isRead %}
-                                        <span class="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Nouveau</span>
-                                    {% endif %}
-                                </span>
-                                <span class="mt-1 block text-sm leading-6 text-muted-foreground">{{ notification.message }}</span>
-                                <span class="mt-2 block text-xs text-muted-foreground">{{ notification.createdAt ? notification.createdAt|ago : '' }}</span>
-                            </span>
-
-                            <svg class="mt-3 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                 aria-hidden="true">
-                                <path d="m9 18 6-6-6-6"></path>
-                            </svg>
-                        </a>
-                    {% else %}
-                        <div class="px-6 py-16 text-center sm:px-8">
-                            <span class="mx-auto flex size-11 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="1.8" aria-hidden="true"><path
-                                            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></svg>
-                            </span>
-                            <h3 class="mt-4 text-sm font-semibold text-foreground">Aucune notification</h3>
-                            <p class="mt-1 text-sm text-muted-foreground">Les nouvelles activités importantes
-                                apparaîtront ici.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: 'app_notifications_index'} only %}
-            </section>
+                            {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: 'app_notifications_index'} only %}
+                        </section>
+                    {% endblock %}
+                </twig:BulkSelection>
+            </form>
         </div>
     </main>
 {% endblock %}

@@ -78,6 +78,26 @@ class NotificationsRepository extends ServiceEntityRepository implements Notific
         return $notification;
     }
 
+    /**
+     * @param list<int> $ids
+     * @return list<Notifications>
+     */
+    public function findAccessibleByIds(array $ids, User $user): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('notification')
+            ->andWhere('notification.id IN (:ids)')
+            ->andWhere('notification.access = :public OR notification.user = :user')
+            ->setParameter('ids', $ids)
+            ->setParameter('public', NotificationAccessEnum::NOTIF_PUBLIC)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
     /** @return list<Notifications> */
     public function getUnreadNotifs(?User $user = null): array
     {

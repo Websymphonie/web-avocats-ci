@@ -36,7 +36,7 @@ porte sa règle.
 
 | Contexte candidat | Responsabilité cible | Statut |
 |---|---|---|
-| `ContentContext` | contenus éditoriaux publics et leur administration | `PLANNED` |
+| `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — première verticale News |
 | `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `PLANNED` |
 | `PaymentContext` | commandes, transactions et intégration des paiements | `PLANNED` |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
@@ -47,8 +47,9 @@ Ces contextes ne sont pas à créer dans le cadre de DOC-001.
 
 ## 4. Content domain
 
-Le domaine Content regroupera les contenus éditoriaux publiés sur le
-Frontoffice :
+Le domaine Content regroupe désormais une première verticale Backoffice de
+gestion des actualités. Les contenus éditoriaux publiés sur le Frontoffice
+pourront ensuite inclure :
 
 - actualités ;
 - événements ;
@@ -70,6 +71,15 @@ Content editorial != Learning content
 Une vidéo publiée dans Content ne devient donc pas automatiquement une
 ressource de formation, et une vidéo pédagogique ne doit pas être administrée
 comme une actualité simplement parce que les deux utilisent YouTube.
+
+### CNT-001 — News livré
+
+`News` est un modèle éditorial administré sous `/admin/content/news`. Il porte
+son titre, slug, chapeau, corps, statut et dates de publication. Les statuts
+livrés sont `DRAFT`, `PUBLISHED` et `ARCHIVED` ; la publication et l’archivage
+sont des transitions explicites. Le slug est régénéré uniquement tant que
+l’actualité est un brouillon. Cette verticale ne livre volontairement aucune
+page Frontoffice, API, image de couverture, catégorie ou tag.
 
 ## 5. Learning domain
 

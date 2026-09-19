@@ -65,7 +65,7 @@ d’un `MemberContext`.
 |---|---|---|
 | ADM-001 | conserver l’entrée `/admin` et le dashboard existant | `IMPLEMENTED` |
 | ADM-002 | réserver l’accès du dashboard aux rôles administratifs autorisés | `IMPLEMENTED` |
-| ADM-003 | gérer les contenus éditoriaux dans leur contexte propriétaire | `PLANNED` |
+| ADM-003 | gérer les contenus éditoriaux dans leur contexte propriétaire | `IMPLEMENTED` — News |
 | ADM-004 | gérer les formations et Lives dans `LearningContext` | `PLANNED` |
 | ADM-005 | gérer les cotisations dans `ContributionContext` après découverte | `DISCOVERY` |
 | ADM-006 | gérer les utilisateurs et permissions via `IdentityContext` | `IMPLEMENTED` |
@@ -80,7 +80,7 @@ propriétaire.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| CNT-001 | publier et administrer les actualités | `PLANNED` |
+| CNT-001 | publier et administrer les actualités | `IMPLEMENTED` — Backoffice uniquement |
 | CNT-002 | publier et administrer les événements | `PLANNED` |
 | CNT-003 | publier les vidéos éditoriales | `PLANNED` |
 | CNT-004 | publier les galeries photos | `PLANNED` |

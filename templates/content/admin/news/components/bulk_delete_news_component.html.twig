@@ -1,0 +1,23 @@
+<twig:AlertDialog id="bulk-news-delete">
+    <twig:AlertDialog:Trigger>
+        <twig:Button type="button" variant="destructive" size="sm"
+                     data-bulk-selection-target="action"
+                     aria-label="Supprimer les actualités sélectionnées"
+                     data-action="click->alert-dialog#open"
+                     data-alert-dialog-target="trigger"
+                     aria-haspopup="dialog" aria-expanded="false">
+            <twig:ux:icon name="lucide:trash-2" class="size-4" aria-hidden="true"/>
+            Supprimer
+        </twig:Button>
+    </twig:AlertDialog:Trigger>
+    <twig:AlertDialog:Content>
+        <twig:AlertDialog:Header>
+            <twig:AlertDialog:Title><span data-bulk-selection-target="confirmation">Supprimer les actualités sélectionnées ?</span></twig:AlertDialog:Title>
+            <twig:AlertDialog:Description><span data-bulk-selection-target="confirmationDescription">Les actualités sélectionnées seront définitivement supprimées.</span></twig:AlertDialog:Description>
+        </twig:AlertDialog:Header>
+        <twig:AlertDialog:Footer>
+            <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
+            <twig:Button type="submit" form="{{ formId }}" variant="destructive">Supprimer les actualités</twig:Button>
+        </twig:AlertDialog:Footer>
+    </twig:AlertDialog:Content>
+</twig:AlertDialog>

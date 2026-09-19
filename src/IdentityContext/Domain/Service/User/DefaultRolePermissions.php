@@ -56,7 +56,10 @@ final class DefaultRolePermissions
     private static function businessDefaults(): array
     {
         return [
-
+            PermissionEnum::CONTENT_NEWS_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_MANAGE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_PUBLISH->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTENT_NEWS_DELETE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

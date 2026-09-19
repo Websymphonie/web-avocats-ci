@@ -56,7 +56,7 @@
                data-sidebar-item
                href="{{ dashboard_route(app.user) }}"
                title="Tableau de bord">
-                <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: 'si:dashboard-line', style: 'height:19px;'}) }}</span>
+                <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>{{ component('IconSvg', {name: 'si:dashboard-line', style: 'height:19px;'}) }}</span>
                 <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>Tableau de bord</span>
             </a>
 
@@ -81,13 +81,13 @@
                                    aria-label="Ouvrir le menu {{ entry.label }}"
                                    aria-haspopup="menu"
                                    aria-expanded="false">
-                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                    <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
                                 </button>
 
                                 <details class="group/menu" data-sidebar-expanded-only {% if parentActive %}open{% endif %}>
                                     <summary class="flex h-11 cursor-pointer list-none items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition-all marker:hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring {{ parentActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' }}"
                                              title="{{ entry.label }}">
-                                        <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                        <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
                                         <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
                                         {% if badgeValue and badgeValue|integer > 0 %}
                                             <span class="rounded-full bg-sidebar-primary px-1.5 py-0.5 text-[10px] font-semibold text-sidebar-primary-foreground" data-sidebar-meta>{{ badgeValue }}</span>
@@ -112,7 +112,7 @@
                                         data-modal-id-param="{{ entry.modalId }}"
                                         title="{{ entry.label }}"
                                         {% if entry.disabled %}disabled{% endif %}>
-                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                    <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
                                     <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
                                 </button>
                             {% else %}
@@ -120,7 +120,7 @@
                                    data-sidebar-item
                                    href="{{ entry.link ? path(entry.link, entry.routeParams ?? {}) : 'javascript:void(0)' }}"
                                    title="{{ entry.label }}">
-                                    <span class="flex size-5 shrink-0 items-center justify-center">{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
+                                    <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>{{ component('IconSvg', {name: entry.icon, style: 'height:19px;'}) }}</span>
                                     <span class="min-w-0 flex-1 truncate whitespace-nowrap" data-sidebar-label>{{ entry.label }}</span>
                                     {% if badgeValue and badgeValue|integer > 0 %}
                                         <span class="rounded-full bg-sidebar-primary px-1.5 py-0.5 text-[10px] font-semibold text-sidebar-primary-foreground" data-sidebar-meta>{{ badgeValue }}</span>
@@ -140,7 +140,7 @@
                         data-sidebar-item
                         type="submit"
                         title="Se déconnecter">
-                <span class="flex size-5 shrink-0 items-center justify-center">
+                <span class="flex size-5 shrink-0 items-center justify-center" data-sidebar-icon>
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                         <path d="M10 17l5-5-5-5M15 12H3M21 3v18"></path>
                     </svg>

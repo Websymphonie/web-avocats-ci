@@ -1,0 +1,22 @@
+<twig:ActionDropdown>
+    {% if is_granted('CONTENT_NEWS_VIEW') %}
+        <a href="{{ path('content_admin_news_show', {id: news.id}) }}"><twig:ux:icon name="lucide:eye" class="size-4"/>Voir</a>
+    {% endif %}
+    {% if is_granted('CONTENT_NEWS_MANAGE') %}
+        <a href="{{ path('content_admin_news_edit', {id: news.id}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>
+    {% endif %}
+    {% if news.status.value == 'DRAFT' and is_granted('CONTENT_NEWS_PUBLISH') %}
+        <form method="post" action="{{ path('content_admin_news_publish', {id: news.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('news_publish_' ~ news.id) }}">
+            <button type="submit"><twig:ux:icon name="lucide:send" class="size-4"/>Publier</button>
+        </form>
+    {% elseif news.status.value == 'PUBLISHED' and is_granted('CONTENT_NEWS_PUBLISH') %}
+        <form method="post" action="{{ path('content_admin_news_archive', {id: news.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('news_archive_' ~ news.id) }}">
+            <button type="submit"><twig:ux:icon name="lucide:archive" class="size-4"/>Archiver</button>
+        </form>
+    {% endif %}
+    {% if is_granted('CONTENT_NEWS_DELETE') %}
+        {{ component('DeleteFormComponent', {id: news.id, instanceId: instanceId, urlPath: path('content_admin_news_delete', {id: news.id}), csrfTokenId: 'delete', buttonLabel: 'Supprimer', description: 'L’actualité « ' ~ news.title ~ ' » sera définitivement supprimée.'}) }}
+    {% endif %}
+</twig:ActionDropdown>

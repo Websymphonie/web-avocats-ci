@@ -116,6 +116,24 @@ Before implementing authorization:
 
 Twig visibility is not sufficient authorization.
 
+### Actualités — CNT-001
+
+Les permissions dédiées suivantes sont disponibles dans `PermissionEnum` et
+sont accordées par défaut à `ROLE_ADMIN` lorsque le rôle ne possède pas encore
+de configuration persistée :
+
+```text
+CONTENT_NEWS_VIEW
+CONTENT_NEWS_MANAGE
+CONTENT_NEWS_PUBLISH
+CONTENT_NEWS_DELETE
+```
+
+`CONTENT_NEWS_MANAGE` couvre la création et la modification ; la publication et
+l’archivage relèvent de `CONTENT_NEWS_PUBLISH`. Une configuration de rôle déjà
+persistée reste prioritaire et doit être ajustée explicitement par un Super
+Admin si nécessaire.
+
 ### Surfaces de présentation
 
 Les surfaces Web sont séparées du catalogue des rôles :

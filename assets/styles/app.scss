@@ -109,6 +109,16 @@ body {
   transition: opacity 150ms ease, width 180ms ease, max-height 180ms ease;
 }
 
+[data-sidebar-icon] {
+  display: inline-flex;
+  width: 1.25rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.25rem;
+}
+
 [data-sidebar-compact-only] {
   display: none;
 }
@@ -172,9 +182,17 @@ body {
   }
 
   html[data-sidebar-collapsed='true'] [data-sidebar-item] {
+    position: relative;
     justify-content: center;
     gap: 0;
     padding-inline: 0.75rem;
+  }
+
+  html[data-sidebar-collapsed='true'] [data-sidebar-item] [data-sidebar-icon] {
+    position: absolute;
+    left: 50%;
+    margin-inline: 0;
+    transform: translateX(-50%);
   }
 
   html[data-sidebar-collapsed='true'] [data-sidebar-toggle] svg {

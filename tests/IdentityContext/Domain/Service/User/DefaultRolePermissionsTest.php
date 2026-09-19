@@ -22,6 +22,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::EDIT,
             PermissionEnum::PRINT,
             PermissionEnum::DELETE,
+            PermissionEnum::CONTENT_NEWS_VIEW,
+            PermissionEnum::CONTENT_NEWS_MANAGE,
+            PermissionEnum::CONTENT_NEWS_PUBLISH,
+            PermissionEnum::CONTENT_NEWS_DELETE,
         ], $permissions);
     }
 
@@ -34,6 +38,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::EDIT,
             PermissionEnum::PRINT,
             PermissionEnum::DELETE,
+            PermissionEnum::CONTENT_NEWS_VIEW,
+            PermissionEnum::CONTENT_NEWS_MANAGE,
+            PermissionEnum::CONTENT_NEWS_PUBLISH,
+            PermissionEnum::CONTENT_NEWS_DELETE,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -82,6 +90,10 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'print' => [PermissionEnum::PRINT, [UserRolesEnum::ADMIN, UserRolesEnum::AVOCAT]];
         yield 'delete' => [PermissionEnum::DELETE, [UserRolesEnum::ADMIN]];
         yield 'role management' => [PermissionEnum::ROLE_MANAGE, []];
+        yield 'news view' => [PermissionEnum::CONTENT_NEWS_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'news manage' => [PermissionEnum::CONTENT_NEWS_MANAGE, [UserRolesEnum::ADMIN]];
+        yield 'news publish' => [PermissionEnum::CONTENT_NEWS_PUBLISH, [UserRolesEnum::ADMIN]];
+        yield 'news delete' => [PermissionEnum::CONTENT_NEWS_DELETE, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

@@ -58,8 +58,19 @@ futurs appliqueront en plus les permissions de leur contexte propriétaire.
 - un document ou média protégé doit faire l’objet d’un contrôle serveur ;
 - la visibilité publique d’une fiche ne vaut pas accès à une ressource privée.
 
-Les valeurs détaillées du futur modèle Content sont décrites dans la V3 et
-seront confirmées lors de l’implémentation de `ContentContext`.
+Pour `CNT-001`, les règles suivantes sont implémentées :
+
+- une nouvelle actualité est créée en `DRAFT` ;
+- seul un brouillon peut passer à `PUBLISHED` ; la première publication fixe
+  `publishedAt` ;
+- seule une actualité publiée peut passer à `ARCHIVED` ;
+- une actualité publiée ou archivée conserve son slug lors d’une modification ;
+- le slug est unique ;
+- la suppression est une action explicite protégée par permission et
+  confirmation, sans suppression en cascade d’un historique externe.
+
+Le champ de statut n’est pas éditable dans le formulaire : les transitions
+passent par les commandes applicatives dédiées.
 
 ## 5. Learning — règles validées
 

@@ -14,6 +14,10 @@ enum PermissionEnum: string
     case DELETE = 'ROLE_DELETE';
     case PRINT = 'ROLE_PRINT';
     case ROLE_MANAGE = 'ROLE_MANAGE';
+    case CONTENT_NEWS_VIEW = 'CONTENT_NEWS_VIEW';
+    case CONTENT_NEWS_MANAGE = 'CONTENT_NEWS_MANAGE';
+    case CONTENT_NEWS_PUBLISH = 'CONTENT_NEWS_PUBLISH';
+    case CONTENT_NEWS_DELETE = 'CONTENT_NEWS_DELETE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -25,6 +29,10 @@ enum PermissionEnum: string
             self::EDIT,
             self::DELETE,
             self::PRINT,
+            self::CONTENT_NEWS_VIEW,
+            self::CONTENT_NEWS_MANAGE,
+            self::CONTENT_NEWS_PUBLISH,
+            self::CONTENT_NEWS_DELETE,
         ];
     }
 
@@ -38,6 +46,10 @@ enum PermissionEnum: string
             self::DELETE => 'Suppression',
             self::PRINT => 'Impression',
             self::ROLE_MANAGE => 'Rôles : configuration de la matrice des permissions',
+            self::CONTENT_NEWS_VIEW => 'Actualités : lecture',
+            self::CONTENT_NEWS_MANAGE => 'Actualités : création et édition',
+            self::CONTENT_NEWS_PUBLISH => 'Actualités : publication et archivage',
+            self::CONTENT_NEWS_DELETE => 'Actualités : suppression',
         };
     }
 
@@ -51,6 +63,10 @@ enum PermissionEnum: string
             self::VIEW => ColorEnum::INFO,
             self::PRINT => ColorEnum::SECONDARY,
             self::ROLE_MANAGE => ColorEnum::PRIMARY,
+            self::CONTENT_NEWS_VIEW => ColorEnum::INFO,
+            self::CONTENT_NEWS_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_NEWS_PUBLISH => ColorEnum::WARNING,
+            self::CONTENT_NEWS_DELETE => ColorEnum::DANGER,
         };
     }
 }

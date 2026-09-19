@@ -41,6 +41,12 @@ doctrine:
         DATE: DoctrineExtensions\Query\Mysql\Date
         JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
     mappings:
+      Content:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/ContentContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Content
       Admin:
         type: attribute
         is_bundle: false
@@ -70,7 +76,7 @@ doctrine:
         is_bundle: false
         dir: '%kernel.project_dir%/src/NotificationContext/Infrastructure/Persistence/Doctrine/Entity'
         prefix: 'Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity'
-        alias: Notification\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Notification
 
 when@test:
   doctrine:

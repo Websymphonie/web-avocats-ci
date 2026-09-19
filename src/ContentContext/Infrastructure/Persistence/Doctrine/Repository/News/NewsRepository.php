@@ -1,0 +1,113 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Repository\News;
+
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
+use Websymphonie\ContentContext\Domain\Exception\NewsNotFoundException;
+use Websymphonie\ContentContext\Domain\Model\News;
+use Websymphonie\ContentContext\Domain\Model\NewsListResult;
+use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Factory\NewsFactory;
+use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
+use Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface;
+use Websymphonie\SharedContext\Domain\Enum\DbActionEnum;
+
+/** @extends ServiceEntityRepository<NewsEntity> */
+final class NewsRepository extends ServiceEntityRepository implements NewsRepositoryInterface
+{
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly ManagersInterface $manager,
+        private readonly NewsFactory $factory,
+    ) {
+        parent::__construct($registry, NewsEntity::class);
+    }
+
+    public function save(News $news): News
+    {
+        $entity = $news->id > 0 ? $this->find($news->id) : null;
+        $entity = $this->factory->toEntity($news, $entity);
+        DbLogListener::disable();
+        try {
+            $this->manager->execute($entity, $news->id > 0 ? DbActionEnum::EDIT : DbActionEnum::NEW);
+        } finally {
+            DbLogListener::enable();
+        }
+
+        return $this->factory->fromEntity($entity);
+    }
+
+    public function getById(int $id): News
+    {
+        $entity = $this->find($id);
+        if (!$entity instanceof NewsEntity) {
+            throw NewsNotFoundException::withId($id);
+        }
+
+        return $this->factory->fromEntity($entity);
+    }
+
+    public function delete(News $news): void
+    {
+        $entity = $this->find($news->id);
+        if (!$entity instanceof NewsEntity) {
+            throw NewsNotFoundException::withId($news->id);
+        }
+
+        DbLogListener::disable();
+        try {
+            $this->manager->execute($entity, DbActionEnum::DELETE);
+        } finally {
+            DbLogListener::enable();
+        }
+    }
+
+    public function slugExists(string $slug, ?int $exceptId = null): bool
+    {
+        $qb = $this->createQueryBuilder('news')->select('COUNT(news.id)')->where('news.slug = :slug')->setParameter('slug', $slug);
+        if ($exceptId !== null) {
+            $qb->andWhere('news.id != :exceptId')->setParameter('exceptId', $exceptId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    /**
+     * @param list<int> $ids
+     * @return list<News>
+     */
+    public function findByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_map(
+            fn (NewsEntity $entity): News => $this->factory->fromEntity($entity),
+            $this->createQueryBuilder('news')->andWhere('news.id IN (:ids)')->setParameter('ids', $ids)->getQuery()->getResult()
+        );
+    }
+
+    public function list(?string $search, ?NewsStatus $status, int $page, int $limit): NewsListResult
+    {
+        $qb = $this->createQueryBuilder('news');
+        if ($search !== null && trim($search) !== '') {
+            $qb->andWhere('LOWER(news.title) LIKE LOWER(:search)')->setParameter('search', '%' . trim($search) . '%');
+        }
+        if ($status !== null) {
+            $qb->andWhere('news.status = :status')->setParameter('status', $status);
+        }
+
+        $countQb = clone $qb;
+        $total = (int) $countQb->select('COUNT(news.id)')->getQuery()->getSingleScalarResult();
+        $entities = $qb->orderBy('news.updatedAt', 'DESC')->addOrderBy('news.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
+
+        return new NewsListResult(array_map(fn (NewsEntity $entity): News => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
+    }
+}

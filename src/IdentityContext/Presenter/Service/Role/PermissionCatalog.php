@@ -29,6 +29,10 @@ final class PermissionCatalog
             PermissionEnum::DELETE,
             PermissionEnum::PRINT => 'Administration',
             PermissionEnum::ROLE_MANAGE => 'Administration',
+            PermissionEnum::CONTENT_NEWS_VIEW,
+            PermissionEnum::CONTENT_NEWS_MANAGE,
+            PermissionEnum::CONTENT_NEWS_PUBLISH,
+            PermissionEnum::CONTENT_NEWS_DELETE => 'Contenu · Actualités',
         };
     }
 

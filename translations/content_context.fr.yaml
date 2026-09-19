@@ -1,0 +1,5 @@
+exceptions:
+  content:
+    news_not_found: "Cette actualité est introuvable."
+    invalid_news_transition: "Cette transition de statut n’est pas autorisée."
+    news_slug_exists: "Le slug de cette actualité est déjà utilisé."

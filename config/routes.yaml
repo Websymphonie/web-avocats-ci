@@ -40,6 +40,13 @@ notification:
   type: attribute
   prefix: '/admin/notification'
 
+content:
+  resource:
+    path: ../src/ContentContext/Presenter/Controller/
+    namespace: Websymphonie\ContentContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/content'
+
 shared:
   resource:
     path: ../src/SharedContext/Presenter/Controller/

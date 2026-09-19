@@ -43,12 +43,12 @@ FND-003 — Surfaces Public / Member / Backoffice     DONE
 
 ### PHASE 2 — ContentContext
 
-**Statut : `PLANNED`**
+**Statut : `IN PROGRESS`**
 
 Tickets immédiats :
 
 ```text
-CNT-001 — Actualités
+CNT-001 — Actualités                         IMPLEMENTED
 CNT-002 — Événements
 ```
 
@@ -119,7 +119,7 @@ expose.
 ```text
 DOC-001  Documentation produit                     IN PROGRESS
 WEB-001  Shell Frontoffice                         PLANNED
-CNT-001  Actualités                                PLANNED
+CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                PLANNED
 LRN-001  Training COURSE                           PLANNED
 ```

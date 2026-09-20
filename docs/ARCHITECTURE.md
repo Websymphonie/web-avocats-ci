@@ -486,6 +486,28 @@ PAY-001 ne livre ni KkiaPay, ni SDK, ni webhook, ni checkout JavaScript. Ces
 éléments sont réservés à une future intégration fournisseur avec vérification
 serveur et idempotence.
 
+### 12.8 PaymentContext — KkiaPay et webhook PAY-002
+
+KkiaPay est sélectionné par configuration (PAYMENT_PROVIDER=KKIAPAY) et
+derrière PaymentGatewayInterface; PAYMENT_PROVIDER=FAKE reste la valeur de
+test. Le SDK PHP officiel actuel est volontairement écarté : sa version
+publique 0.0.4 est ancienne, peu typée et encapsule Guzzle. L’adaptateur
+utilise donc Symfony HttpClient pour appeler l’endpoint serveur de statut
+KkiaPay, avec la sélection sandbox/production dans l’Infrastructure.
+
+Symfony Webhook expose /webhook/kkiapay. KkiaPayRequestParser exige POST,
+JSON, x-kkiapay-secret valide et les champs minimaux avant de produire un
+RemoteEvent. KkiaPayWebhookConsumer résout le Payment par son UUID
+(partnerId), vérifie la transaction côté serveur et ne dispatch les
+commandes Payment qu’après comparaison du montant, de la référence et de la
+devise lorsque celle-ci est fournie. Le consumer est synchrone tant qu’un
+worker asynchrone supervisé n’est pas garanti.
+
+La surface membre redirige vers une page de statut serveur. Le widget ne
+reçoit que KKIAPAY_PUBLIC_KEY, le montant snapshot et le partnerId; ses
+callbacks ne mutent jamais Payment. Les clés privées et le secret webhook
+restent côté serveur.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

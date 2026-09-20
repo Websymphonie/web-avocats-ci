@@ -7,9 +7,13 @@ namespace Websymphonie\PaymentContext\Domain\Enum;
 enum PaymentProvider: string
 {
     case FAKE = 'FAKE';
+    case KKIAPAY = 'KKIAPAY';
 
     public function label(): string
     {
-        return 'Fake';
+        return match ($this) {
+            self::FAKE => 'Fake',
+            self::KKIAPAY => 'KkiaPay',
+        };
     }
 }

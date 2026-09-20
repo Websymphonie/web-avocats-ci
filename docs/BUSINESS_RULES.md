@@ -244,8 +244,21 @@ vers AdminContext. La devise est résolue lors de l’enregistrement de l’offr
 puis le code est snapshoté dans chaque Payment pour préserver l’historique,
 même si le référentiel change ultérieurement.
 
-PAY-001 utilise exclusivement un fournisseur Fake. KkiaPay, les webhooks, le
-checkout réel, les remboursements et les paiements partiels restent hors scope.
+PAY-001 conserve Fake pour les tests et PAY-002 ajoute KkiaPay derrière le même
+port. Un paiement KkiaPay reste PENDING jusqu’à la réception d’un événement
+authentifié et à la vérification serveur de la transaction. Le montant et le
+partnerId doivent correspondre au Payment local; un mismatch ne confirme rien
+et n’accorde aucun accès. Le callback JavaScript n’est jamais une preuve.
+
+Les webhooks transaction.success et transaction.failed sont acceptés après
+validation de x-kkiapay-secret, de la méthode POST, du JSON et de la
+cohérence du booléen isPaymentSucces. Les doublons sont sans effet métier
+supplémentaire, FAILED ne rétrograde pas CONFIRMED et une transaction
+vérifiée après FAILED reste refusée. Les erreurs temporaires de vérification
+restent rejouables.
+
+Les remboursements, paiements partiels, abonnements, coupons, factures PDF et
+paiements de cotisations restent hors scope.
 
 ## 7. Contribution — statut de découverte
 

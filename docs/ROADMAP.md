@@ -82,15 +82,15 @@ Le catalogue public et le parcours Learner Frontoffice restent différés.
 **Statut : `IN PROGRESS`**
 
 PAY-001 livre la fondation PaymentContext, les offres de formation, le workflow
-Fake et l’administration Backoffice. L’intégration d’un fournisseur réel, les
-webhooks et le checkout restent à séquencer.
+Fake et l’administration Backoffice. PAY-002 ajoute KkiaPay, sa vérification
+serveur, le webhook et le checkout membre minimal.
 
 Tickets :
 
 ```text
 PAY-001 — PaymentContext + workflow Fake              DONE
-PAY-002 — fournisseur réel et vérification serveur    PLANNED
-PAY-003 — webhooks idempotents                        PLANNED
+PAY-002 — KkiaPay + vérification serveur + Webhook    DONE
+PAY-003 — webhooks idempotents                        DONE — livré avec PAY-002
 ```
 
 ### PHASE 5 — Learning LIVE et YouTube

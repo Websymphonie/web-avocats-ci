@@ -312,6 +312,20 @@ Les règles livrées sont :
   seuls userId, trainingId et l’offre interne sont stockés ;
 - aucun webhook, SDK ou fournisseur réel n’est livré dans PAY-001.
 
+PAY-002 ajoute KkiaPay uniquement comme adaptateur Infrastructure. Le
+PaymentContext reste provider-agnostic : l’initiation crée un paiement
+PENDING avec un UUID local utilisé comme partnerId, tandis que la
+référence KkiaPay n’est renseignée qu’après vérification serveur. Un callback
+JavaScript ou un webhook isolé ne confirme jamais un paiement. Le webhook
+Symfony valide le secret, puis le verifier KkiaPay contrôle la transaction,
+le montant, le partnerId et, lorsque fourni de manière fiable, la devise
+avant de dispatcher ConfirmPaymentCommand ou FailPaymentCommand.
+
+Le traitement des événements webhook est synchrone dans cette fondation :
+le transport Messenger asynchrone existe dans le projet, mais aucun worker
+supervisé n’est présupposé par PAY-002. Les doublons restent idempotents et
+un événement FAILED ne rétrograde jamais un paiement CONFIRMED.
+
 Le Backoffice expose la gestion des tarifs et la consultation en lecture seule
 des paiements. Le parcours membre expose uniquement l’initiation POST protégée
 par authentification et CSRF ; aucun checkout fournisseur réel n’est inclus.

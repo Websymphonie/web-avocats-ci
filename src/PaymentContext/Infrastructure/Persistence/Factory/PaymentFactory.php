@@ -16,6 +16,11 @@ final class PaymentFactory
 
     public function toEntity(Payment $model, ?PaymentEntity $entity = null): PaymentEntity
     {
-        return ($entity ?? new PaymentEntity())->setUserId($model->userId)->setTrainingId($model->trainingId)->setTrainingOfferId($model->trainingOfferId)->setAmount($model->amount)->setCurrency($model->currency)->setStatus($model->status)->setProvider($model->provider)->setProviderReference($model->providerReference)->setIdempotencyKey($model->idempotencyKey)->setConfirmedAt($model->confirmedAt)->setFailedAt($model->failedAt);
+        $entity = $entity ?? new PaymentEntity();
+        if ($model->uuid !== '') {
+            $entity->setUuidFromString($model->uuid);
+        }
+
+        return $entity->setUserId($model->userId)->setTrainingId($model->trainingId)->setTrainingOfferId($model->trainingOfferId)->setAmount($model->amount)->setCurrency($model->currency)->setStatus($model->status)->setProvider($model->provider)->setProviderReference($model->providerReference)->setIdempotencyKey($model->idempotencyKey)->setConfirmedAt($model->confirmedAt)->setFailedAt($model->failedAt);
     }
 }

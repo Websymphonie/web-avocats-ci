@@ -1,0 +1,6 @@
+framework:
+  webhook:
+    routing:
+      kkiapay:
+        service: Websymphonie\PaymentContext\Infrastructure\Webhook\KkiaPayRequestParser
+        secret: '%env(KKIAPAY_WEBHOOK_SECRET)%'

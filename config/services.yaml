@@ -13,6 +13,8 @@ parameters:
   app.storage.private_dir: '%app.storage_dir%/private'
   app.storage.gallery_dir: '%app.storage.public_dir%/galleries'
   app.storage.document_dir: '%app.storage.private_dir%/documents'
+  payment.provider.default: 'FAKE'
+  payment.provider: '%env(default:payment.provider.default:PAYMENT_PROVIDER)%'
   media.gallery.max_size: 5242880
   media.document.max_size: 20971520
   app.logo_default: '/assets/logo.png'
@@ -73,7 +75,14 @@ services:
     alias: Websymphonie\IdentityContext\Infrastructure\Service\User\DoctrineUserDirectory
 
   Websymphonie\PaymentContext\Application\Service\PaymentGatewayInterface:
-    alias: Websymphonie\PaymentContext\Infrastructure\Service\FakePaymentGateway
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\ConfiguredPaymentGateway
+
+  Websymphonie\PaymentContext\Infrastructure\Service\ConfiguredPaymentGateway:
+    arguments:
+      $paymentProvider: '%payment.provider%'
+
+  Websymphonie\PaymentContext\Application\Service\PaymentTransactionVerifierInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\KkiaPayTransactionVerifier
 
   Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningTrainingCatalog

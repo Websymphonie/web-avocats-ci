@@ -27,8 +27,9 @@ final class InitiateTrainingPaymentController extends AbstractController
         if ($user === null || $user->id === null) { throw $this->createAccessDeniedException(); }
         try {
             $training = $trainings->getByUuid($uuid);
-            $this->handleCommand(new InitiateTrainingPaymentCommand($user->id, $training->id, (string) $request->request->get('idempotencyKey')));
+            $payment = $this->handleCommand(new InitiateTrainingPaymentCommand($user->id, $training->id, (string) $request->request->get('idempotencyKey')));
             $this->flash()->success('Paiement initialisé. La confirmation sera traitée par le fournisseur de paiement.');
+            return $this->redirectToRoute('payment_member_status', ['paymentUuid' => $payment->uuid]);
         } catch (UserFacingError $exception) { $this->flash()->errorFromException($exception); }
         return $this->redirectToRoute('app_member');
     }

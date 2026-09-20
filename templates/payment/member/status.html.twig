@@ -1,0 +1,65 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Statut du paiement{% endblock %}
+
+{% block body %}
+<main class="flex-1 bg-muted/30 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl space-y-6">
+        <div>
+            <p class="text-sm font-medium text-muted-foreground">Espace membre</p>
+            <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Statut du paiement</h1>
+            <p class="mt-2 text-sm text-muted-foreground">Le statut affiché provient du serveur et de la vérification KkiaPay.</p>
+        </div>
+
+        <section class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm text-muted-foreground">Montant snapshot</p>
+                    <p class="mt-1 text-2xl font-semibold">{{ payment.amount|number_format(0, ',', ' ') }} {{ payment.currency }}</p>
+                </div>
+                <twig:Badge variant="{{ payment.status.value == 'CONFIRMED' ? 'success' : (payment.status.value == 'FAILED' ? 'destructive' : 'secondary') }}">{{ payment.status.label }}</twig:Badge>
+            </div>
+
+            {% if payment.status.value == 'CONFIRMED' %}
+                <div class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm">
+                    <p class="font-medium">Paiement confirmé</p>
+                    <p class="mt-1 text-muted-foreground">Votre accès à la formation est activé.</p>
+                </div>
+            {% elseif payment.status.value == 'FAILED' %}
+                <div class="mt-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm">
+                    <p class="font-medium">Le paiement n’a pas été confirmé.</p>
+                    <p class="mt-1 text-muted-foreground">Vous pouvez revenir à la formation et recommencer selon les conditions disponibles.</p>
+                </div>
+            {% elseif payment.provider.value == 'KKIAPAY' and kkiapayPublicKey is not empty %}
+                <div
+                    class="mt-6 space-y-4"
+                    data-controller="kkiapay-checkout"
+                    data-kkiapay-checkout-amount-value="{{ payment.amount }}"
+                    data-kkiapay-checkout-public-key-value="{{ kkiapayPublicKey }}"
+                    data-kkiapay-checkout-partner-id-value="{{ payment.uuid }}"
+                    data-kkiapay-checkout-sandbox-value="{{ kkiapaySandbox ? 'true' : 'false' }}"
+                    data-kkiapay-checkout-status-url-value="{{ path('payment_member_status', {paymentUuid: payment.uuid}) }}"
+                >
+                    <p class="text-sm text-muted-foreground">Le montant est celui enregistré par le serveur. KkiaPay ouvrira une fenêtre sécurisée pour effectuer le paiement.</p>
+                    <button type="button" class="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90" data-kkiapay-checkout-target="button" data-action="kkiapay-checkout#open">
+                        Payer avec KkiaPay
+                    </button>
+                    <p class="text-sm text-muted-foreground" data-kkiapay-checkout-target="message" role="status" aria-live="polite"></p>
+                </div>
+            {% elseif payment.provider.value == 'KKIAPAY' %}
+                <div class="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+                    Le paiement KkiaPay n’est pas disponible : la clé publique n’est pas configurée.
+                </div>
+            {% else %}
+                <div class="mt-6 rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                    Votre paiement est transmis. Cette page sera actualisée après confirmation serveur.
+                </div>
+            {% endif %}
+
+            <div class="mt-6 flex justify-end border-t border-border pt-5">
+                <a class="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted" href="{{ path('app_member') }}">Retour à mon espace</a>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

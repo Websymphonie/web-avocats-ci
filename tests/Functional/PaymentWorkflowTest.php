@@ -50,6 +50,8 @@ final class PaymentWorkflowTest extends WebTestCase
             'MYSQL_VERSION' => '8.0.40',
             'SECURE_SCHEME' => 'https',
             'APP_STORAGE_DIR' => self::$storageDirectory,
+            'KKIAPAY_WEBHOOK_SECRET' => 'webhook-secret',
+            'PAYMENT_PROVIDER' => 'FAKE',
         ] as $name => $value) {
             putenv($name . '=' . $value);
             $_ENV[$name] = $value;
@@ -110,7 +112,7 @@ final class PaymentWorkflowTest extends WebTestCase
             'currency' => 'EUR',
         ], server: ['HTTPS' => 'on']);
 
-        self::assertResponseRedirects('/espace');
+        self::assertResponseRedirects('/espace/payments/' . $first->uuid . '/status');
         $browserPayment = static::getContainer()->get(PaymentRepositoryInterface::class)->findByUserAndIdempotencyKey($user->getId() ?? 0, 'checkout-unique');
         self::assertNotNull($browserPayment);
         self::assertSame(25000, $browserPayment->amount);
@@ -203,6 +205,27 @@ final class PaymentWorkflowTest extends WebTestCase
         $this->saveOffer($training, 10000);
         $client->request('POST', '/espace/payments/trainings/' . $training->getUuidAsString() . '/initiate', server: ['HTTPS' => 'on']);
         self::assertResponseRedirects('/auth/login');
+    }
+
+    public function testKkiaPayWebhookRejectsInvalidSecretWithoutAuthenticationRedirect(): void
+    {
+        $client = $this->clientWithSchema();
+        $client->request(
+            'POST',
+            '/webhook/kkiapay',
+            server: ['HTTPS' => 'on', 'CONTENT_TYPE' => 'application/json', 'HTTP_X_KKIAPAY_SECRET' => 'wrong-secret'],
+            content: json_encode([
+                'event' => 'transaction.success',
+                'transactionId' => 'transaction-success',
+                'isPaymentSucces' => true,
+                'amount' => 25000,
+                'partnerId' => '00000000-0000-7000-8000-000000000000',
+            ], JSON_THROW_ON_ERROR),
+        );
+
+        self::assertResponseStatusCodeSame(401);
+        self::assertNotSame(301, $client->getResponse()->getStatusCode());
+        self::assertNotSame(302, $client->getResponse()->getStatusCode());
     }
 
     private function saveOffer(TrainingEntity $training, int $amount): void

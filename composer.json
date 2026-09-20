@@ -70,6 +70,7 @@
     "symfony/ux-twig-component": "^2.17",
     "symfony/validator": "7.4.*",
     "symfony/web-link": "7.4.*",
+    "symfony/webhook": "7.4.*",
     "symfony/webpack-encore-bundle": "^2.1",
     "symfony/workflow": "7.4.*",
     "symfony/yaml": "7.4.*",

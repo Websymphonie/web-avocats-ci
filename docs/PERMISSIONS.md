@@ -313,6 +313,12 @@ PAY-001 ne fournit aucune permission de confirmation manuelle : les paiements
 Backoffice sont consultables en lecture seule et la confirmation passe par un
 flux serveur/provider futur.
 
+PAY-002 n’ajoute pas de permission webhook. /webhook/kkiapay est une surface
+technique publique protégée par x-kkiapay-secret et la vérification serveur
+KkiaPay, sans session ni CSRF. Les clés KkiaPay restent des secrets
+d’environnement et ne sont jamais exposées au Backoffice ou au navigateur,
+à l’exception de la clé publique destinée au widget.
+
 `EXPENSE_REFERENCE_MANAGE` autorise la gestion des catégories et fournisseurs du référentiel Finance. Par défaut, cette
 permission est accordée à `ROLE_SUPER_ADMIN`, `ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`. Les autres rôles ne la
 reçoivent pas automatiquement et les configurations `RolePermissions` persistées restent prioritaires.

@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\TrainingOffer\TrainingOfferEntity;
@@ -84,6 +85,7 @@ class PaymentEntity
     public function setProviderReference(?string $value): self { $this->providerReference = $value; return $this; }
     public function getIdempotencyKey(): string { return $this->idempotencyKey; }
     public function setIdempotencyKey(string $value): self { $this->idempotencyKey = $value; return $this; }
+    public function setUuidFromString(string $value): self { $this->uuid = Uuid::fromString($value); return $this; }
     public function getConfirmedAt(): ?DateTimeImmutable { return $this->confirmedAt; }
     public function setConfirmedAt(?DateTimeImmutable $value): self { $this->confirmedAt = $value; return $this; }
     public function getFailedAt(): ?DateTimeImmutable { return $this->failedAt; }

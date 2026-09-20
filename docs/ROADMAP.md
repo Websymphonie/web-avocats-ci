@@ -107,7 +107,7 @@ Tickets :
 PAY-001 — PaymentContext + workflow Fake              DONE
 PAY-002 — KkiaPay + vérification serveur + Webhook    DONE
 PAY-002B — SDK PHP officiel KkiaPay                   DONE — adaptateur SDK et mapping DTO
-PAY-003 — webhooks idempotents                        DONE — livré avec PAY-002
+PAY-003 — fulfillment Payment → Learning              DONE — état durable, retry et réconciliation
 PAY-002A — certification Sandbox et hardening         PENDING — recette externe requise
 ```
 
@@ -173,6 +173,7 @@ LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
+PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
 NOT-001  Notifications Learning/Payment                DONE — événements in-app scalaires et déduplication persistée
 NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay et best-effort vérifiés

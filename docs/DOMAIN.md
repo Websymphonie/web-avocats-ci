@@ -313,9 +313,14 @@ Les règles livrées sont :
 - l’éligibilité est vérifiée côté serveur (PUBLISHED + PAID, offre active,
   compte actif, absence d’accès actif) ;
 - l’initiation est idempotente par utilisateur et clé d’idempotence ;
-- les transitions sont PENDING -> CONFIRMED ou PENDING -> FAILED ;
-- la confirmation Fake validée transmet l’accès à Learning via un port
-  applicatif et crée une inscription ACTIVE de source PAYMENT ;
+- les transitions financières sont PENDING -> CONFIRMED ou PENDING -> FAILED ;
+- un paiement confirmé porte séparément un fulfillment nullable puis
+  PENDING ; l’activation Learning réussie le fait passer à COMPLETED sans
+  modifier le statut financier ;
+- la confirmation validée persiste le fait financier avant de transmettre
+  l’accès à Learning via un port applicatif ; une erreur Learning laisse
+  CONFIRMED/PENDING et reste retryable ;
+- le fulfillment crée ou réutilise une inscription ACTIVE de source PAYMENT ;
 - Payment ne possède aucune relation Doctrine vers Identity ou Learning ;
   seuls userId, trainingId et l’offre interne sont stockés ;
 - aucun webhook, SDK ou fournisseur réel n’est livré dans PAY-001.
@@ -343,6 +348,14 @@ PAY-002B remplace l’appel HTTP manuel de vérification par le SDK officiel
 encapsulé par `KkiaPaySdkClient`; sa réponse est transformée en DTO interne
 avant d’atteindre le consumer et les commandes Payment. Les erreurs techniques
 ou les statuts non terminaux laissent le paiement rejouable en `PENDING`.
+
+PAY-003 ajoute `PaymentFulfillmentStatus` (`PENDING`,
+`COMPLETED`), les dates et compteurs de tentative nécessaires à
+l’exploitation. Les anciennes lignes `CONFIRMED` restent nullable lors de
+la migration : elles sont diagnostiquées et réconciliées sans supposer
+l’existence d’un `Enrollment`. La commande
+`app:payment:reconcile-fulfillment` rejoue uniquement le traitement
+interne pour les paiements confirmés et ne rappelle jamais le provider.
 
 ## 9. Services transverses
 

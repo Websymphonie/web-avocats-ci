@@ -331,9 +331,13 @@ produit pas une notification Payment séparée : l’activation Learning de sour
 - une même clé pour un utilisateur retourne le même paiement ; un autre
   paiement PENDING pour le même utilisateur et la même formation est refusé ;
 - un paiement conserve son montant et sa devise snapshot ;
-- les seules transitions sont PENDING -> CONFIRMED et PENDING -> FAILED, avec
-  confirmation et échec idempotents ;
+- les seules transitions financières sont PENDING -> CONFIRMED et PENDING ->
+  FAILED, avec confirmation et échec idempotents ;
 - une confirmation n’est acceptée qu’avec la référence fournisseur attendue ;
+- un paiement confirmé reçoit `fulfillmentStatus=PENDING` avant toute
+  tentative Learning ; l’activation réussie le fait passer à `COMPLETED` ;
+- une erreur de fulfillment ne transforme jamais un paiement confirmé en
+  `FAILED` et reste visible pour retry ou réconciliation ;
 - seul un paiement confirmé transmet l’accès à Learning ; l’inscription ACTIVE
   est idempotente et porte la source PAYMENT ;
 - aucun retour navigateur ne suffit à confirmer un paiement.
@@ -355,6 +359,27 @@ cohérence du booléen isPaymentSucces. Les doublons sont sans effet métier
 supplémentaire, FAILED ne rétrograde pas CONFIRMED et une transaction
 vérifiée après FAILED reste refusée. Les erreurs temporaires de vérification
 restent rejouables.
+
+Le statut financier et le traitement d’accès sont distincts :
+
+```text
+PENDING / null
+FAILED / null
+CONFIRMED / PENDING
+CONFIRMED / COMPLETED
+```
+
+La confirmation provider et l’activation Learning sont deux faits distincts.
+`PaymentConfirmedEvent` est émis après la persistence de
+`CONFIRMED/PENDING`. Un retry d’un webhook ou de
+`app:payment:reconcile-fulfillment` ne reconfirme pas le paiement et ne
+crée pas de doublon d’inscription, de notification ou d’audit.
+
+La commande de réconciliation sélectionne les paiements `CONFIRMED` dont
+le fulfillment est `PENDING` ou encore nullable pour les anciennes lignes.
+Elle ne vérifie pas à nouveau KkiaPay. Une incohérence d’éligibilité Learning
+laisse `CONFIRMED/PENDING`, est journalisée et ne déclenche aucun
+remboursement automatique.
 
 Les remboursements, paiements partiels, abonnements, coupons, factures PDF et
 paiements de cotisations restent hors scope.

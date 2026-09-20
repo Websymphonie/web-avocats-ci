@@ -21,10 +21,17 @@
             </div>
 
             {% if payment.status.value == 'CONFIRMED' %}
-                <div class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm">
-                    <p class="font-medium">Paiement confirmé</p>
-                    <p class="mt-1 text-muted-foreground">Votre accès à la formation est activé.</p>
-                </div>
+                {% if payment.fulfillmentStatus.value|default('') == 'COMPLETED' %}
+                    <div class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm">
+                        <p class="font-medium">Paiement confirmé</p>
+                        <p class="mt-1 text-muted-foreground">Votre accès à la formation est activé.</p>
+                    </div>
+                {% else %}
+                    <div class="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+                        <p class="font-medium">Paiement confirmé</p>
+                        <p class="mt-1 text-muted-foreground">L’activation de votre accès est en cours de traitement. Aucun nouveau paiement n’est nécessaire.</p>
+                    </div>
+                {% endif %}
             {% elseif payment.status.value == 'FAILED' %}
                 <div class="mt-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm">
                     <p class="font-medium">Le paiement n’a pas été confirmé.</p>

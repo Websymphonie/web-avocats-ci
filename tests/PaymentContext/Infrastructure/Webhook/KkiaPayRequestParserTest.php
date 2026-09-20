@@ -94,7 +94,8 @@ final class KkiaPayRequestParserTest extends TestCase
         $verifier->expects(self::exactly(2))->method('verify')->willReturn(new VerifiedPaymentTransaction('transaction-success', true, 25000, $payment->uuid));
         $accessGranter = $this->createMock(\Websymphonie\PaymentContext\Application\Service\PaidTrainingAccessGranterInterface::class);
         $accessGranter->expects(self::once())->method('grant')->with(10, 20);
-        $confirm = new \Websymphonie\PaymentContext\Application\Usecase\CommandHandler\ConfirmPaymentHandler($payments, $accessGranter);
+        $fulfillment = new \Websymphonie\PaymentContext\Application\Usecase\CommandHandler\FulfillConfirmedPaymentHandler($payments, $accessGranter, new NullLogger());
+        $confirm = new \Websymphonie\PaymentContext\Application\Usecase\CommandHandler\ConfirmPaymentHandler($payments, $fulfillment);
         $bus = $this->createMock(CommandBus::class);
         $bus->expects(self::exactly(2))->method('handle')->willReturnCallback(function (object $command) use ($confirm): void {
             if ($command instanceof ConfirmPaymentCommand) {

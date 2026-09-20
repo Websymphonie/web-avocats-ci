@@ -16,5 +16,8 @@ interface PaymentRepositoryInterface
     public function findByProviderReference(string $provider, string $reference): ?Payment;
 
     /** @return list<Payment> */
-    public function list(int $page, int $limit): array;
+    public function list(int $page, int $limit, bool $pendingFulfillmentOnly = false): array;
+
+    /** @return list<Payment> */
+    public function listPendingFulfillment(?string $paymentUuid = null): array;
 }

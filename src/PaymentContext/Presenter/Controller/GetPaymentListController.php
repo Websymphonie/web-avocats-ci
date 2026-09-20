@@ -21,6 +21,12 @@ final class GetPaymentListController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
-        return $this->render('payment/admin/payment/index.html.twig', ['items' => $this->handleQuery(new GetPaymentListQuery(max(1, $request->query->getInt('page', 1))))]);
+        return $this->render('payment/admin/payment/index.html.twig', [
+            'items' => $this->handleQuery(new GetPaymentListQuery(
+                page: max(1, $request->query->getInt('page', 1)),
+                pendingFulfillmentOnly: $request->query->getBoolean('pendingFulfillment'),
+            )),
+            'pendingFulfillmentOnly' => $request->query->getBoolean('pendingFulfillment'),
+        ]);
     }
 }

@@ -18,7 +18,7 @@ final readonly class GetPaymentListHandler implements QueryHandler
     /** @return list<PaymentListItem> */
     public function __invoke(GetPaymentListQuery $query): array
     {
-        $payments = $this->payments->list(max(1, $query->page), $query->limit);
+        $payments = $this->payments->list(max(1, $query->page), $query->limit, $query->pendingFulfillmentOnly);
         $users = [];
         $userIds = array_values(array_unique(array_map(static fn ($payment): int => $payment->userId, $payments)));
         foreach ($this->users->getByIds($userIds) as $user) {

@@ -6,6 +6,7 @@ namespace Websymphonie\PaymentContext\Domain\Model;
 
 use DateTimeImmutable;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
+use Websymphonie\PaymentContext\Domain\Enum\PaymentFulfillmentStatus;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Domain\Exception\InvalidPaymentTransitionException;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventEmitterFeature;
@@ -30,6 +31,10 @@ final class Payment
         public ?DateTimeImmutable $failedAt = null,
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
+        public ?PaymentFulfillmentStatus $fulfillmentStatus = null,
+        public ?DateTimeImmutable $fulfillmentCompletedAt = null,
+        public int $fulfillmentAttempts = 0,
+        public ?DateTimeImmutable $lastFulfillmentAttemptAt = null,
     ) {}
 
     public function assignProviderReference(string $reference): void
@@ -44,6 +49,8 @@ final class Payment
         $this->status = PaymentStatus::CONFIRMED;
         $this->confirmedAt ??= $now ?? new DateTimeImmutable();
         $this->failedAt = null;
+        $this->fulfillmentStatus = PaymentFulfillmentStatus::PENDING;
+        $this->fulfillmentCompletedAt = null;
     }
 
     public function fail(?DateTimeImmutable $now = null): void
@@ -52,5 +59,41 @@ final class Payment
         if ($this->status === PaymentStatus::CONFIRMED) { throw new InvalidPaymentTransitionException('Un paiement confirmé ne peut pas être rétrogradé.'); }
         $this->status = PaymentStatus::FAILED;
         $this->failedAt ??= $now ?? new DateTimeImmutable();
+        $this->fulfillmentStatus = null;
+        $this->fulfillmentCompletedAt = null;
+    }
+
+    public function ensureFulfillmentPending(): void
+    {
+        if ($this->status !== PaymentStatus::CONFIRMED) {
+            throw new InvalidPaymentTransitionException('Seul un paiement confirmé peut être traité.');
+        }
+
+        if ($this->fulfillmentStatus !== PaymentFulfillmentStatus::COMPLETED) {
+            $this->fulfillmentStatus = PaymentFulfillmentStatus::PENDING;
+            $this->fulfillmentCompletedAt = null;
+        }
+    }
+
+    public function registerFulfillmentAttempt(?DateTimeImmutable $now = null): void
+    {
+        $this->ensureFulfillmentPending();
+        $this->fulfillmentAttempts++;
+        $this->lastFulfillmentAttemptAt = $now ?? new DateTimeImmutable();
+    }
+
+    public function completeFulfillment(?DateTimeImmutable $now = null): void
+    {
+        if ($this->status !== PaymentStatus::CONFIRMED) {
+            throw new InvalidPaymentTransitionException('Seul un paiement confirmé peut être finalisé.');
+        }
+
+        $this->fulfillmentStatus = PaymentFulfillmentStatus::COMPLETED;
+        $this->fulfillmentCompletedAt ??= $now ?? new DateTimeImmutable();
+    }
+
+    public function isFulfillmentCompleted(): bool
+    {
+        return $this->fulfillmentStatus === PaymentFulfillmentStatus::COMPLETED;
     }
 }

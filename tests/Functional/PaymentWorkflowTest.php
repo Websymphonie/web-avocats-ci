@@ -12,6 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\RemoteEvent\RemoteEvent;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use Psr\Log\NullLogger;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
@@ -34,6 +36,7 @@ use Websymphonie\PaymentContext\Application\Usecase\Command\FailPaymentCommand;
 use Websymphonie\PaymentContext\Application\Usecase\Command\InitiateTrainingPaymentCommand;
 use Websymphonie\PaymentContext\Application\Usecase\Command\SaveTrainingOfferCommand;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
+use Websymphonie\PaymentContext\Domain\Enum\PaymentFulfillmentStatus;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Domain\Exception\CurrencyNotFoundException;
 use Websymphonie\PaymentContext\Domain\Exception\PaymentDeniedException;
@@ -95,6 +98,7 @@ final class PaymentWorkflowTest extends WebTestCase
 
         $stored = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
         self::assertSame(PaymentStatus::CONFIRMED, $stored->status);
+        self::assertSame(PaymentFulfillmentStatus::COMPLETED, $stored->fulfillmentStatus);
         self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
         $enrollment = $this->entityManager()->getRepository(EnrollmentEntity::class)->findOneBy(['trainingId' => $training->getId(), 'userId' => $user->getId()]);
         self::assertSame(EnrollmentStatus::ACTIVE, $enrollment->getStatus());
@@ -316,8 +320,135 @@ final class PaymentWorkflowTest extends WebTestCase
 
         $stored = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
         self::assertSame(PaymentStatus::CONFIRMED, $stored->status);
+        self::assertSame(PaymentFulfillmentStatus::COMPLETED, $stored->fulfillmentStatus);
         self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
         self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
+    }
+
+    public function testExistingActiveEnrollmentIsReusedByPaymentFulfillment(): void
+    {
+        $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_AVOCAT']);
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $enrollment = (new EnrollmentEntity())
+            ->setTrainingId($training->getId() ?? 0)
+            ->setUserId($user->getId() ?? 0)
+            ->setStatus(EnrollmentStatus::ACTIVE)
+            ->setSource(EnrollmentSource::PAYMENT)
+            ->setActivatedAt(new DateTimeImmutable());
+        $this->entityManager()->persist($enrollment);
+        $this->entityManager()->flush();
+        $payment = static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            status: PaymentStatus::CONFIRMED,
+            provider: PaymentProvider::FAKE,
+            providerReference: 'existing-enrollment-reference',
+            fulfillmentStatus: PaymentFulfillmentStatus::PENDING,
+        ));
+
+        $this->commandBus()->handle(new ConfirmPaymentCommand($payment->uuid, (string) $payment->providerReference));
+
+        $stored = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
+        self::assertSame(PaymentFulfillmentStatus::COMPLETED, $stored->fulfillmentStatus);
+        self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
+    }
+
+    public function testReconciliationProcessesOnlyConfirmedPendingPaymentsAndIsIdempotent(): void
+    {
+        $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_AVOCAT']);
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $pending = static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            status: PaymentStatus::CONFIRMED,
+            provider: PaymentProvider::FAKE,
+            providerReference: 'reconcile-reference',
+            idempotencyKey: 'reconcile-pending',
+            fulfillmentStatus: PaymentFulfillmentStatus::PENDING,
+        ));
+        $completed = static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            status: PaymentStatus::CONFIRMED,
+            provider: PaymentProvider::FAKE,
+            providerReference: 'completed-reference',
+            idempotencyKey: 'reconcile-completed',
+            fulfillmentStatus: PaymentFulfillmentStatus::COMPLETED,
+            fulfillmentCompletedAt: new DateTimeImmutable(),
+        ));
+        static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            status: PaymentStatus::FAILED,
+            provider: PaymentProvider::FAKE,
+            providerReference: 'failed-reference',
+            idempotencyKey: 'reconcile-failed',
+        ));
+
+        $application = new Application(self::$kernel);
+        $tester = new CommandTester($application->find('app:payment:reconcile-fulfillment'));
+        self::assertSame(0, $tester->execute([]));
+        self::assertStringContainsString('completed', $tester->getDisplay());
+        self::assertSame(PaymentFulfillmentStatus::COMPLETED, static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($pending->uuid)->fulfillmentStatus);
+        self::assertSame(PaymentFulfillmentStatus::COMPLETED, static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($completed->uuid)->fulfillmentStatus);
+        self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
+
+        $completedTester = new CommandTester($application->find('app:payment:reconcile-fulfillment'));
+        self::assertSame(0, $completedTester->execute(['--payment' => $completed->uuid]));
+        self::assertStringContainsString('already_completed', $completedTester->getDisplay());
+
+        $secondTester = new CommandTester($application->find('app:payment:reconcile-fulfillment'));
+        self::assertSame(0, $secondTester->execute([]));
+        self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
+    }
+
+    public function testIneligibleLearnerLeavesConfirmedPaymentPending(): void
+    {
+        $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $payment = static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            status: PaymentStatus::CONFIRMED,
+            provider: PaymentProvider::FAKE,
+            providerReference: 'ineligible-reference',
+            fulfillmentStatus: PaymentFulfillmentStatus::PENDING,
+        ));
+
+        $this->commandBus()->handle(new ConfirmPaymentCommand($payment->uuid, (string) $payment->providerReference));
+
+        $stored = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
+        self::assertSame(PaymentStatus::CONFIRMED, $stored->status);
+        self::assertSame(PaymentFulfillmentStatus::PENDING, $stored->fulfillmentStatus);
+        self::assertSame(0, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
     }
 
     private function saveOffer(TrainingEntity $training, int $amount): void

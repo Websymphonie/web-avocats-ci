@@ -580,8 +580,9 @@ PaidTrainingBuyerEligibilityInterface et PaidTrainingAccessGranterInterface
 connaître directement `ROLE_AVOCAT`. L’adaptateur Infrastructure Payment
 délègue l’éligibilité à `TrainingLearnerEligibility`. Les adaptateurs actuels
 utilisent Learning et FakePaymentGateway. La confirmation exige la référence
-fournisseur attendue, puis délègue l’activation à Learning ; le frontend ne
-constitue jamais une preuve de paiement.
+fournisseur attendue, persiste d’abord le fait financier et son
+`fulfillmentStatus=PENDING`, puis tente l’activation à Learning via le port ;
+le frontend ne constitue jamais une preuve de paiement.
 
 La devise appartient au référentiel existant d’AdminContext. Payment expose
 un port applicatif CurrencyCatalogInterface, alimenté par un adaptateur
@@ -628,6 +629,41 @@ La surface membre redirige vers une page de statut serveur. Le widget ne
 reçoit que KKIAPAY_PUBLIC_KEY, le montant snapshot et le partnerId; ses
 callbacks ne mutent jamais Payment. Les clés privées et le secret webhook
 restent côté serveur.
+
+### 12.10 PAY-003 — fulfillment Payment → Learning
+
+Payment sépare désormais le statut financier du traitement métier post-paiement :
+
+```text
+PaymentStatus
+    PENDING -> CONFIRMED
+    PENDING -> FAILED
+
+PaymentFulfillmentStatus
+    null avant confirmation ou après échec financier
+    PENDING après confirmation provider
+    COMPLETED après activation Learning réussie
+```
+
+Une confirmation provider est persistée dans Payment avant l’appel au port
+`PaidTrainingAccessGranterInterface`. Les deux contextes ne partagent pas de
+transaction Doctrine et Payment ne référence aucune entité Learning. Une erreur
+Learning laisse donc durablement `CONFIRMED/PENDING`, est journalisée avec un
+compteur de tentative et peut être rejouée sans modifier le fait financier.
+
+`FulfillConfirmedPaymentHandler` est utilisé par la confirmation et par la
+commande opérationnelle :
+
+```bash
+php bin/console app:payment:reconcile-fulfillment
+php bin/console app:payment:reconcile-fulfillment --payment=<uuid>
+```
+
+La commande ne contacte pas KkiaPay. Elle traite uniquement les paiements
+confirmés dont le fulfillment n’est pas terminé. Le grant Learning reste
+idempotent grâce à l’unicité Training/User existante. Une activation réussie
+produit l’événement Learning et sa notification selon les règles existantes.
+Une confirmation déjà complète est un no-op.
 
 ### 12.9 PAY-002A — certification Sandbox et exploitation
 

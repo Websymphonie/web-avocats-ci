@@ -6,6 +6,7 @@ namespace Websymphonie\SharedContext\Infrastructure\Security\Voters;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
@@ -19,6 +20,7 @@ class RoleGroupAccessVoter extends Voter
 
     public function __construct(
         private readonly PermissionsInterface $permissions,
+        private readonly RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 
@@ -49,7 +51,7 @@ class RoleGroupAccessVoter extends Voter
         $group = is_string($subject) ? RoleGroupEnum::from($subject) : $subject;
 
         $allowedRoles = $group->roles();
-        $userRoles = $token->getRoleNames();
+        $userRoles = $this->roleHierarchy->getReachableRoleNames($token->getRoleNames());
 
         return !empty(array_intersect($allowedRoles, $userRoles));
     }

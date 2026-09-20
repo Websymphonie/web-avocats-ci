@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Websymphonie\PaymentContext\Domain\Enum\PaymentFulfillmentStatus;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Domain\Exception\PaymentNotFoundException;
 use Websymphonie\PaymentContext\Domain\Model\Payment;
@@ -64,9 +65,33 @@ final class PaymentRepository extends ServiceEntityRepository implements Payment
         return $entity instanceof PaymentEntity ? $this->factory->fromEntity($entity) : null;
     }
 
-    public function list(int $page, int $limit): array
+    public function list(int $page, int $limit, bool $pendingFulfillmentOnly = false): array
     {
-        $entities = $this->createQueryBuilder('payment')->orderBy('payment.createdAt', 'DESC')->addOrderBy('payment.id', 'DESC')->setFirstResult(max(0, $page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
+        $queryBuilder = $this->createQueryBuilder('payment');
+        if ($pendingFulfillmentOnly) {
+            $queryBuilder
+                ->andWhere('payment.status = :confirmedStatus')
+                ->andWhere('(payment.fulfillmentStatus IS NULL OR payment.fulfillmentStatus = :pendingFulfillmentStatus)')
+                ->setParameter('confirmedStatus', PaymentStatus::CONFIRMED)
+                ->setParameter('pendingFulfillmentStatus', PaymentFulfillmentStatus::PENDING);
+        }
+        $entities = $queryBuilder->orderBy('payment.createdAt', 'DESC')->addOrderBy('payment.id', 'DESC')->setFirstResult(max(0, $page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
         return array_map(fn (PaymentEntity $entity): Payment => $this->factory->fromEntity($entity), $entities);
+    }
+
+    public function listPendingFulfillment(?string $paymentUuid = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('payment')
+            ->andWhere('payment.status = :confirmedStatus')
+            ->andWhere('(payment.fulfillmentStatus IS NULL OR payment.fulfillmentStatus = :pendingFulfillmentStatus)')
+            ->setParameter('confirmedStatus', PaymentStatus::CONFIRMED)
+            ->setParameter('pendingFulfillmentStatus', PaymentFulfillmentStatus::PENDING)
+            ->orderBy('payment.createdAt', 'ASC')
+            ->addOrderBy('payment.id', 'ASC');
+        if ($paymentUuid !== null) {
+            $queryBuilder->andWhere('payment.uuid = :paymentUuid')->setParameter('paymentUuid', Uuid::fromString($paymentUuid), UuidType::NAME);
+        }
+
+        return array_map(fn (PaymentEntity $entity): Payment => $this->factory->fromEntity($entity), $queryBuilder->getQuery()->getResult());
     }
 }

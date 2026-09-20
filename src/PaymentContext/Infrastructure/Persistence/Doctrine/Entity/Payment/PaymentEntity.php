@@ -9,6 +9,7 @@ use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Websymphonie\PaymentContext\Domain\Enum\PaymentFulfillmentStatus;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\TrainingOffer\TrainingOfferEntity;
@@ -24,6 +25,7 @@ use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\UuidT
 #[ORM\Index(columns: ['user_id'])]
 #[ORM\Index(columns: ['training_id'])]
 #[ORM\Index(columns: ['status'])]
+#[ORM\Index(columns: ['fulfillment_status'])]
 #[ORM\Index(columns: ['created_at'])]
 #[ORM\HasLifecycleCallbacks]
 class PaymentEntity
@@ -47,6 +49,8 @@ class PaymentEntity
     private string $currency = 'XOF';
     #[ORM\Column(enumType: PaymentStatus::class, length: 20)]
     private PaymentStatus $status = PaymentStatus::PENDING;
+    #[ORM\Column(name: 'fulfillment_status', enumType: PaymentFulfillmentStatus::class, length: 20, nullable: true)]
+    private ?PaymentFulfillmentStatus $fulfillmentStatus = null;
     #[ORM\Column(enumType: PaymentProvider::class, length: 20)]
     private PaymentProvider $provider = PaymentProvider::FAKE;
     #[ORM\Column(name: 'provider_reference', length: 255, nullable: true)]
@@ -57,6 +61,12 @@ class PaymentEntity
     private ?DateTimeImmutable $confirmedAt = null;
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $failedAt = null;
+    #[ORM\Column(name: 'fulfillment_completed_at', type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $fulfillmentCompletedAt = null;
+    #[ORM\Column(name: 'fulfillment_attempts', type: 'integer', options: ['default' => 0])]
+    private int $fulfillmentAttempts = 0;
+    #[ORM\Column(name: 'last_fulfillment_attempt_at', type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $lastFulfillmentAttemptAt = null;
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -79,6 +89,8 @@ class PaymentEntity
     public function setCurrency(string $value): self { $this->currency = strtoupper($value); return $this; }
     public function getStatus(): PaymentStatus { return $this->status; }
     public function setStatus(PaymentStatus $value): self { $this->status = $value; return $this; }
+    public function getFulfillmentStatus(): ?PaymentFulfillmentStatus { return $this->fulfillmentStatus; }
+    public function setFulfillmentStatus(?PaymentFulfillmentStatus $value): self { $this->fulfillmentStatus = $value; return $this; }
     public function getProvider(): PaymentProvider { return $this->provider; }
     public function setProvider(PaymentProvider $value): self { $this->provider = $value; return $this; }
     public function getProviderReference(): ?string { return $this->providerReference; }
@@ -90,4 +102,10 @@ class PaymentEntity
     public function setConfirmedAt(?DateTimeImmutable $value): self { $this->confirmedAt = $value; return $this; }
     public function getFailedAt(): ?DateTimeImmutable { return $this->failedAt; }
     public function setFailedAt(?DateTimeImmutable $value): self { $this->failedAt = $value; return $this; }
+    public function getFulfillmentCompletedAt(): ?DateTimeImmutable { return $this->fulfillmentCompletedAt; }
+    public function setFulfillmentCompletedAt(?DateTimeImmutable $value): self { $this->fulfillmentCompletedAt = $value; return $this; }
+    public function getFulfillmentAttempts(): int { return $this->fulfillmentAttempts; }
+    public function setFulfillmentAttempts(int $value): self { $this->fulfillmentAttempts = $value; return $this; }
+    public function getLastFulfillmentAttemptAt(): ?DateTimeImmutable { return $this->lastFulfillmentAttemptAt; }
+    public function setLastFulfillmentAttemptAt(?DateTimeImmutable $value): self { $this->lastFulfillmentAttemptAt = $value; return $this; }
 }

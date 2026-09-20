@@ -78,6 +78,9 @@ services:
   Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningTrainingCatalog
 
+  Websymphonie\PaymentContext\Application\Service\CurrencyCatalogInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\AdminCurrencyCatalog
+
   Websymphonie\PaymentContext\Application\Service\ActiveTrainingEnrollmentCheckerInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningActiveTrainingEnrollmentChecker
 

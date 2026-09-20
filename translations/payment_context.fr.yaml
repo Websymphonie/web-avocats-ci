@@ -4,4 +4,5 @@ exceptions:
     payment_denied: "Ce paiement n’est pas autorisé."
     payment_not_found: "Ce paiement est introuvable."
     training_offer_not_found: "Le tarif de cette formation est introuvable."
+    currency_not_found: "La devise sélectionnée n’est pas active dans le référentiel."
     invalid_payment_transition: "La transition de ce paiement n’est pas autorisée."

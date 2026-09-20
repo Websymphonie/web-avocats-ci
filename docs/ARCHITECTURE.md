@@ -474,6 +474,14 @@ Learning et FakePaymentGateway. La confirmation exige la référence fournisseur
 attendue, puis délègue l’activation à Learning ; le frontend ne constitue
 jamais une preuve de paiement.
 
+La devise appartient au référentiel existant d’AdminContext. Payment expose
+un port applicatif CurrencyCatalogInterface, alimenté par un adaptateur
+Infrastructure, afin que ses formulaires et handlers utilisent uniquement les
+devises actives. TrainingOffer conserve le code ISO scalaire validé, sans
+relation Doctrine vers l’entité Currencies; Payment snapshotte ce code au
+moment de l’initiation. Aucune table, migration ou médiathèque de devises
+n’est créée par PAY-001A.
+
 PAY-001 ne livre ni KkiaPay, ni SDK, ni webhook, ni checkout JavaScript. Ces
 éléments sont réservés à une future intégration fournisseur avec vérification
 serveur et idempotence.

@@ -67,4 +67,39 @@ class CurrenciesRepository extends ServiceEntityRepository implements CurrencyMo
 
         return CurrencyFactory::fromEntity($currency);
     }
+
+    /** @return list<CurrencyModel> */
+    public function listActive(): array
+    {
+        $currencies = $this->createQueryBuilder('c')
+            ->where('c.isActive = TRUE')
+            ->andWhere('c.currencyCode IS NOT NULL')
+            ->andWhere('c.currencyCode <> :empty')
+            ->setParameter('empty', '')
+            ->orderBy('c.currencyName', 'ASC')
+            ->addOrderBy('c.currencyCode', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        /** @var list<Currencies> $currencies */
+        return CurrencyFactory::fromEntityList($currencies);
+    }
+
+    public function findActiveByCode(string $code): ?CurrencyModel
+    {
+        $normalizedCode = strtoupper(trim($code));
+        if ($normalizedCode === '') {
+            return null;
+        }
+
+        $currency = $this->createQueryBuilder('c')
+            ->where('c.isActive = TRUE')
+            ->andWhere('UPPER(c.currencyCode) = :code')
+            ->setParameter('code', $normalizedCode)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        /** @var Currencies|null $currency */
+        return CurrencyFactory::fromEntity($currency);
+    }
 }

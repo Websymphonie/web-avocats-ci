@@ -222,8 +222,11 @@ l’entier et n’est jamais persisté. Les `LIVE` n’exposent pas de progressi
 ## 6. Payment — PAY-001 livré
 
 - une formation PAID publiée doit avoir une offre active pour être payable ;
-- l’offre porte un montant entier et une devise ISO, jamais fournis par le
-  navigateur au moment du paiement ;
+- l’offre porte un montant entier et une devise ISO issue d’une entrée active
+  du référentiel currencies d’AdminContext ; un code arbitraire ou inactif
+  est refusé côté serveur ;
+- le formulaire Backoffice propose uniquement les devises actives du
+  référentiel et n’utilise pas de liste de codes codée en dur ;
 - une initiation nécessite un compte actif, une clé d’idempotence et aucun
   accès actif existant ;
 - une même clé pour un utilisateur retourne le même paiement ; un autre
@@ -235,6 +238,11 @@ l’entier et n’est jamais persisté. Les `LIVE` n’exposent pas de progressi
 - seul un paiement confirmé transmet l’accès à Learning ; l’inscription ACTIVE
   est idempotente et porte la source PAYMENT ;
 - aucun retour navigateur ne suffit à confirmer un paiement.
+
+Payment conserve un code ISO scalaire : il ne possède aucune relation Doctrine
+vers AdminContext. La devise est résolue lors de l’enregistrement de l’offre,
+puis le code est snapshoté dans chaque Payment pour préserver l’historique,
+même si le référentiel change ultérieurement.
 
 PAY-001 utilise exclusivement un fournisseur Fake. KkiaPay, les webhooks, le
 checkout réel, les remboursements et les paiements partiels restent hors scope.

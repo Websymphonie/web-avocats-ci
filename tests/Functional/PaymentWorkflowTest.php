@@ -26,6 +26,7 @@ use Websymphonie\PaymentContext\Application\Usecase\Command\ConfirmPaymentComman
 use Websymphonie\PaymentContext\Application\Usecase\Command\InitiateTrainingPaymentCommand;
 use Websymphonie\PaymentContext\Application\Usecase\Command\SaveTrainingOfferCommand;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
+use Websymphonie\PaymentContext\Domain\Exception\CurrencyNotFoundException;
 use Websymphonie\PaymentContext\Domain\Exception\PaymentDeniedException;
 use Websymphonie\PaymentContext\Domain\Repository\PaymentRepositoryInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandBus;
@@ -170,6 +171,29 @@ final class PaymentWorkflowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $client->request('GET', '/admin/payment/payments', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
+    }
+
+    public function testOfferFormUsesOnlyActiveCurrenciesAndUnknownCurrencyIsRejected(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = $this->entityManager();
+        $entityManager->persist((new Currencies())
+            ->setCurrencyCode('EUR')
+            ->setCurrencyName('Euro')
+            ->setIsActive(false));
+        $entityManager->flush();
+
+        $admin = $this->createUser(['ROLE_SUPER_ADMIN']);
+        $client->loginUser($admin);
+        $client->request('GET', '/admin/payment/offers/new', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Franc CFA (XOF)', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('Euro (EUR)', (string) $client->getResponse()->getContent());
+
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $this->expectException(CurrencyNotFoundException::class);
+        $this->commandBus()->handle(new SaveTrainingOfferCommand($training->getId() ?? 0, 10000, 'EUR', true));
     }
 
     public function testAnonymousCannotInitiatePayment(): void

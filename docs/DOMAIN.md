@@ -299,6 +299,9 @@ Fake provider
 Les règles livrées sont :
 
 - le montant et la devise sont copiés dans Payment au moment de l’initiation ;
+- la devise d’une TrainingOffer est choisie dans le référentiel currencies
+  actif d’AdminContext ; Payment ne dépend pas de son entité Doctrine et
+  snapshotte uniquement son code ISO ;
 - l’éligibilité est vérifiée côté serveur (PUBLISHED + PAID, offre active,
   compte actif, absence d’accès actif) ;
 - l’initiation est idempotente par utilisateur et clé d’idempotence ;

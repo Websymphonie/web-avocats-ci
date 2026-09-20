@@ -13,4 +13,9 @@ interface CurrencyModelRepositoryInterface
     public function getByEntityId(int $id): ?Currencies;
 
     public function isActive(): ?CurrencyModel;
+
+    /** @return list<CurrencyModel> */
+    public function listActive(): array;
+
+    public function findActiveByCode(string $code): ?CurrencyModel;
 }

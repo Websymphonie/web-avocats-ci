@@ -91,6 +91,7 @@ Tickets :
 PAY-001 — PaymentContext + workflow Fake              DONE
 PAY-002 — KkiaPay + vérification serveur + Webhook    DONE
 PAY-003 — webhooks idempotents                        DONE — livré avec PAY-002
+PAY-002A — certification Sandbox et hardening         PENDING — recette externe requise
 ```
 
 ### PHASE 5 — Learning LIVE et YouTube

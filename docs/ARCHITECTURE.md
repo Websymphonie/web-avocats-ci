@@ -508,6 +508,43 @@ reçoit que KKIAPAY_PUBLIC_KEY, le montant snapshot et le partnerId; ses
 callbacks ne mutent jamais Payment. Les clés privées et le secret webhook
 restent côté serveur.
 
+### 12.9 PAY-002A — certification Sandbox et exploitation
+
+La certification Sandbox est une recette externe, sans secret dans Git. Pour
+l'activer, l'environnement doit fournir `KKIAPAY_PUBLIC_KEY`,
+`KKIAPAY_PRIVATE_KEY`, `KKIAPAY_SECRET_KEY`, `KKIAPAY_WEBHOOK_SECRET` et
+`KKIAPAY_SANDBOX=true`, avec `PAYMENT_PROVIDER=KKIAPAY`. Seule la clé publique
+est transmise au navigateur; les autres valeurs restent côté serveur et ne
+doivent pas apparaître dans les logs.
+
+Le webhook doit être configuré dans le dashboard KkiaPay sur une URL HTTPS
+accessible : `/webhook/kkiapay`, avec les événements
+`transaction.success` et `transaction.failed` et le même secret que
+`KKIAPAY_WEBHOOK_SECRET`. Le traitement actuel est synchrone : la route
+Symfony exécute le parseur puis le consumer; aucun routage
+`ConsumeRemoteEventMessage` vers un worker asynchrone n'est déclaré.
+
+`Payment.currency` reste le snapshot de `TrainingOffer.currency`. Le consumer
+compare la devise uniquement si la réponse de vérification KkiaPay fournit un
+champ `currency` non vide; sinon il ne prétend pas effectuer une vérification
+de devise absente du contrat provider.
+
+La mise en production exige au minimum :
+
+```text
+KKIAPAY_SANDBOX=false
+clés production configurées hors Git
+webhook production HTTPS configuré
+secret webhook synchronisé
+transaction.success et transaction.failed activés
+permissions RolePermissions synchronisées
+worker configuré uniquement si le webhook devient asynchrone
+```
+
+La recette réelle reste `NOT EXECUTED` tant que des clés Sandbox et une URL
+HTTPS publiquement accessible ne sont pas provisionnées dans l'environnement
+de recette.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

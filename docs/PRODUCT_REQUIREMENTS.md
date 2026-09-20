@@ -125,7 +125,7 @@ Aucun calcul ou statut définitif n’est introduit par ce document.
 | ID | Exigence | Statut |
 |---|---|---|
 | PAY-001 | initier et confirmer un paiement de formation avec offre et provider abstrait | `IMPLEMENTED` — Fake uniquement |
-| PAY-002 | intégrer KkiaPay et vérifier les transactions côté serveur | `IMPLEMENTED` — sandbox/configuration et webhook Symfony |
+| PAY-002 | intégrer KkiaPay et vérifier les transactions côté serveur | `IMPLEMENTED` — code, checkout et webhook; certification Sandbox externe requise |
 | PAY-003 | traiter les webhooks de manière idempotente | `IMPLEMENTED` — doublons sans double accès |
 | PAY-004 | ne jamais accorder un accès sur une réponse frontend seule | `IMPLEMENTED` — principe |
 | PAY-005 | transmettre un paiement confirmé au contexte propriétaire | `IMPLEMENTED` — port vers Learning |

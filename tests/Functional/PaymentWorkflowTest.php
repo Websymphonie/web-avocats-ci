@@ -16,6 +16,8 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Maintenance\Maintenances;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
+use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
+use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Role\RolePermissionsEntity;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
@@ -166,6 +168,26 @@ final class PaymentWorkflowTest extends WebTestCase
         $admin = $this->createUser(['ROLE_SUPER_ADMIN']);
         $training = $this->createTraining(TrainingAccessType::PAID);
         $this->saveOffer($training, 10000);
+        $client->loginUser($admin);
+        $client->disableReboot();
+
+        $client->request('GET', '/admin/payment/offers', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $client->request('GET', '/admin/payment/payments', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testPersistedAdminRoleCanAccessPaymentScreens(): void
+    {
+        $client = $this->clientWithSchema();
+        $rolePermissions = new RolePermissionsEntity('ROLE_ADMIN');
+        $rolePermissions->setPermissions([
+            PermissionEnum::PAYMENT_VIEW->value,
+            PermissionEnum::PAYMENT_OFFER_VIEW->value,
+        ]);
+        $this->entityManager()->persist($rolePermissions);
+        $this->entityManager()->flush();
+        $admin = $this->createUser(['ROLE_ADMIN']);
         $client->loginUser($admin);
         $client->disableReboot();
 

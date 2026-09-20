@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Websymphonie\LogContext\Infrastructure\Listener;
 
-use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
@@ -12,6 +11,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
+use Websymphonie\LogContext\Application\Service\SensitiveLogDataSanitizer;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\AuthLog\AuthLog;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\Log\Logs;
 use Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity\Notifications\Notifications;
@@ -21,25 +21,39 @@ use Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity\
 #[AsDoctrineListener(event: Events::postRemove)]
 class DbLogListener
 {
-    private static bool $enabled = true;
+    private static int $disabledDepth = 0;
 
-    public function __construct(private readonly LoggerInterface $dbLogger)
+    public function __construct(
+        private readonly LoggerInterface $dbLogger,
+        private readonly SensitiveLogDataSanitizer $sanitizer,
+    )
     {
     }
 
     public static function disable(): void
     {
-        self::$enabled = false;
+        ++self::$disabledDepth;
     }
 
     public static function enable(): void
     {
-        self::$enabled = true;
+        self::$disabledDepth = max(0, self::$disabledDepth - 1);
+    }
+
+    public static function withoutLogging(callable $operation): mixed
+    {
+        self::disable();
+
+        try {
+            return $operation();
+        } finally {
+            self::enable();
+        }
     }
 
     public function postPersist(PostPersistEventArgs $args): void
     {
-        if (!self::$enabled) return;
+        if (self::$disabledDepth > 0) return;
         $entity = $args->getObject();
         if ($entity instanceof Logs || $entity instanceof Notifications || $entity instanceof AuthLog) {
             return;
@@ -50,7 +64,7 @@ class DbLogListener
 
     public function postUpdate(PostUpdateEventArgs $args): void
     {
-        if (!self::$enabled) return;
+        if (self::$disabledDepth > 0) return;
         $entity = $args->getObject();
         if ($entity instanceof Logs || $entity instanceof Notifications || $entity instanceof AuthLog) {
             return;
@@ -69,12 +83,19 @@ class DbLogListener
                     continue;
                 }
                 [$oldValue, $newValue] = $values;
+                $change = $this->sanitizer->isSensitiveKey($field)
+                    ? sprintf('Champ "%s" modifié : %s', $field, SensitiveLogDataSanitizer::REDACTED)
+                    : sprintf(
+                        'Champ "%s" : "%s" => "%s"',
+                        $field,
+                        $this->valueToString($oldValue, $field),
+                        $this->valueToString($newValue, $field),
+                    );
+
                 $this->dbLogger->info(sprintf(
-                    'Donnée modifiée (%s) - Champ "%s" : "%s" => "%s"',
+                    'Donnée modifiée (%s) - %s',
                     (new ReflectionClass($entity))->getShortName(),
-                    $field,
-                    $this->valueToString($oldValue),
-                    $this->valueToString($newValue)
+                    $change,
                 ));
             }
         } else {
@@ -82,26 +103,14 @@ class DbLogListener
         }
     }
 
-    private function valueToString(mixed $value): string
+    private function valueToString(mixed $value, ?string $field = null): string
     {
-        if ($value instanceof DateTimeInterface) {
-            return $value->format('Y-m-d H:i:s');
-        }
-
-        if (is_object($value)) {
-            return method_exists($value, '__toString') ? (string)$value : '[object]';
-        }
-
-        if (is_array($value)) {
-            return json_encode($value);
-        }
-
-        return (string)$value;
+        return $this->sanitizer->stringify($value, $field);
     }
 
     public function postRemove(PostRemoveEventArgs $args): void
     {
-        if (!self::$enabled) return;
+        if (self::$disabledDepth > 0) return;
         $entity = $args->getObject();
         if ($entity instanceof Logs || $entity instanceof Notifications || $entity instanceof AuthLog) {
             return;

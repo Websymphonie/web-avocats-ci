@@ -35,6 +35,18 @@ action dans Twig ne constitue pas une autorisation.
 
 ## 3. Surfaces et sécurité — règles validées
 
+### Logging technique
+
+Les logs techniques et l’historique d’authentification ne constituent pas
+encore une piste d’audit métier append-only. Les valeurs suivantes ne doivent
+jamais être persistées dans `LogContext` : mots de passe ou hashes, tokens,
+secrets fournisseurs, clés privées, headers `Authorization`, cookies,
+identifiants de session et tokens CSRF.
+
+La persistence SQL des logs techniques est best-effort : une erreur de
+stockage du log ne doit pas invalider une mutation métier valide. Le contrat
+d’audit métier sera défini séparément dans `LOG-002`.
+
 ### Public Frontoffice
 
 Les routes publiques sont explicitement déclarées. Une ressource publique peut

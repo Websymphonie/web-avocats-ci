@@ -31,6 +31,18 @@ FND-002 — Stabiliser les quality gates               DONE
 FND-003 — Surfaces Public / Member / Backoffice     DONE
 ```
 
+Fondation logging :
+
+```text
+LOG-REV-001 — Audit complet de LogContext          DONE
+LOG-001      — Sécuriser la fondation de logging   DONE
+LOG-002      — Contrat d’audit métier              PLANNED
+LOG-003      — Audit Content/Learning/Payment      PLANNED
+```
+
+`LOG-001` sécurise uniquement le logging technique existant. Il n’ajoute pas
+d’événements d’audit métier et ne transforme pas `Logs` en journal append-only.
+
 ### PHASE 1 — Documentation et fondation Web
 
 **Statut : `IN PROGRESS`**

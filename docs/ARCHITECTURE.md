@@ -76,7 +76,31 @@ Business concepts must not be placed in SharedContext without a strong reason.
 
 ### LogContext
 
-Responsible for application/activity logging according to existing implementation.
+Responsible for technical application logging and the specialized authentication
+history according to the existing implementation.
+
+The current `Logs` persistence is not the canonical business audit trail:
+
+```text
+Monolog
+    -> technical operational logs
+LogContext::Logs
+    -> SQL persistence for selected technical logs
+AuthLog
+    -> authentication history
+```
+
+`DbLogListener` captures scalar, sanitized information from Doctrine lifecycle
+events. `DbLogHandler` persists through DBAL without recursively flushing the
+Doctrine entity manager. SQL logging is best-effort: a technical logging
+failure must not make an otherwise valid business mutation fail. Passwords,
+password hashes, tokens, provider secrets, authorization headers, cookies,
+sessions and CSRF values must never be persisted in `Logs` context or extra
+data.
+
+This is deliberately not yet the business audit contract. `LOG-002` must
+define the actor, action, target, metadata and immutability rules before
+Content, Learning, Payment or Notification events are added.
 
 ---
 

@@ -24,7 +24,7 @@ Les contextes suivants existent déjà et doivent être préservés :
 | `AuthContext` | login, logout, mot de passe et workflows d’authentification |
 | `IdentityContext` | utilisateurs, identité, rôles et autorisation existants |
 | `SharedContext` | services techniques réellement transverses |
-| `LogContext` | logs applicatifs et activité selon l’implémentation actuelle |
+| `LogContext` | logs techniques et historique d’authentification selon l’implémentation actuelle |
 | `NotificationContext` | mécanismes de notification existants |
 | `WebContext` | shell et capacités du site public existant |
 
@@ -387,6 +387,7 @@ Les éléments suivants restent volontairement ouverts :
 
 - frontière exacte de `MediaContext` ;
 - nécessité d’un `AuditContext` distinct de `LogContext` ;
+- contrat d’audit métier, distinct des `Logs` techniques actuels ;
 - modèle définitif des cotisations ;
 - fournisseur de paiement ;
 - stratégie de stockage des documents privés ;

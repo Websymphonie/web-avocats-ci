@@ -179,7 +179,9 @@ services:
   monolog.dbhandler:
     class: Websymphonie\LogContext\Infrastructure\Framework\Symfony\Handlers\DbLogHandler
     arguments:
-      - '@doctrine.orm.default_entity_manager'
+      $connection: '@doctrine.dbal.default_connection'
+      $sanitizer: '@Websymphonie\LogContext\Application\Service\SensitiveLogDataSanitizer'
+      $fallbackLogger: '@monolog.logger'
 
   Websymphonie\NotificationContext\Infrastructure\Service\Notification\NotificationDatabaseService:
     arguments:

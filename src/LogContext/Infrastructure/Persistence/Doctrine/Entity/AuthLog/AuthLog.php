@@ -25,7 +25,7 @@ class AuthLog
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private DateTimeImmutable $authAttemptAt;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(type: 'string', length: 45, nullable: true)]
     private ?string $userIP;
 
     #[ORM\Column(type: 'string', length: 255)]

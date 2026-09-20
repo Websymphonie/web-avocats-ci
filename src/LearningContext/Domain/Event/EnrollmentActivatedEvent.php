@@ -13,6 +13,7 @@ final readonly class EnrollmentActivatedEvent
         public string $source,
         public string $trainingTitle,
         public string $activationReference,
+        public ?int $actorUserId = null,
     ) {
     }
 }

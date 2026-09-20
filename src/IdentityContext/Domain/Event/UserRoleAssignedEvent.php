@@ -8,6 +8,7 @@ final class UserRoleAssignedEvent
     public function __construct(
         public int    $userId,
         public string $role,
+        public ?int   $actorUserId = null,
     )
     {
     }

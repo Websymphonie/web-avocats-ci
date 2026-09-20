@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
+use Websymphonie\ContentContext\Domain\Event\ContentLifecycleEvent;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Repository\Users\UserRepository;
 use Websymphonie\LogContext\Application\Usecase\Command\Audit\RecordAuditEntryCommand;
@@ -20,7 +21,9 @@ use Websymphonie\LogContext\Domain\Repository\Audit\AuditEntryRepository;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\AuthLog\AuthLog;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\Log\Logs;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
+use Websymphonie\PaymentContext\Domain\Event\PaymentConfirmedEvent;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandBus;
+use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class LogSecurityTest extends WebTestCase
@@ -173,6 +176,27 @@ final class LogSecurityTest extends WebTestCase
             metadata: ['providerReference' => 'provider-1'],
         ));
         self::assertSame('SYSTEM', $systemEntry->actor->type->value);
+    }
+
+    public function testBusinessEventsReachAuditAndReplayDoesNotDuplicateEntries(): void
+    {
+        $this->clientWithSchema();
+        /** @var EventDispatcher $dispatcher */
+        $dispatcher = static::getContainer()->get(EventDispatcher::class);
+        $occurredAt = new \DateTimeImmutable('2026-09-20T10:00:00+00:00');
+        $contentEvent = new ContentLifecycleEvent('NEWS', 'PUBLISHED', 'news-audit-1', 'Audit', 'audit', 42, $occurredAt);
+
+        $dispatcher->dispatch([$contentEvent, $contentEvent]);
+        $dispatcher->dispatch([new PaymentConfirmedEvent('payment-audit-1', 42, 10, 5000, 'XOF', 'KKIAPAY', 'transaction-audit-1', $occurredAt)]);
+
+        $rows = static::getContainer()->get('doctrine.dbal.default_connection')->fetchAllAssociative('SELECT action, actor_type, actor_id, target_type, target_id FROM audit_entry ORDER BY id ASC');
+        $actions = array_column($rows, 'action');
+        self::assertSame(['content.news.published', 'payment.payment.confirmed'], $actions);
+        self::assertSame('USER', $rows[0]['actor_type']);
+        self::assertSame('42', (string) $rows[0]['actor_id']);
+        self::assertSame('News', $rows[0]['target_type']);
+        self::assertSame('kkiapay_webhook', $rows[1]['actor_id']);
+        self::assertSame('payment-audit-1', $rows[1]['target_id']);
     }
 
     public function testLogBackofficeDeniesAnonymousAndNonSuperRoles(): void

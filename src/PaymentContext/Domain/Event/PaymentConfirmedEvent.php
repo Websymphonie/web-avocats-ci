@@ -6,7 +6,7 @@ namespace Websymphonie\PaymentContext\Domain\Event;
 
 use DateTimeImmutable;
 
-final readonly class PaymentFailedEvent
+final readonly class PaymentConfirmedEvent
 {
     public function __construct(
         public string $paymentUuid,
@@ -14,10 +14,9 @@ final readonly class PaymentFailedEvent
         public int $trainingId,
         public int $amount,
         public string $currency,
-        public string $trainingTitle,
-        public string $provider = 'UNKNOWN',
-        public ?string $providerReference = null,
-        public ?DateTimeImmutable $failedAt = null,
+        public string $provider,
+        public ?string $providerReference,
+        public DateTimeImmutable $confirmedAt,
     ) {
     }
 }

@@ -65,8 +65,38 @@ modification ou suppression n’est exposée. Une clé de déduplication fournie
 est unique et un replay est traité comme déjà enregistré. La date
 `occurredAt` décrit le fait métier ; `createdAt` décrit sa persistence.
 
-La rétention, l’Outbox, la garantie d’atomicité avec le producteur et les
-intégrations Content/Learning/Payment restent hors périmètre de LOG-002.
+La rétention, l’Outbox et la garantie d’atomicité avec le producteur restent
+hors périmètre de LOG-002.
+
+### Audit métier — LOG-003
+
+Les producteurs publient leurs propres événements scalaires sur le dispatcher
+partagé. `LogContext` les consomme par subscribers séparés et construit la
+commande `RecordAuditEntryCommand`; aucun producteur ne dépend directement de
+`LogContext`.
+
+| Contexte | Événement métier | Action d’audit | Acteur | Cible | Métadonnées importantes |
+|---|---|---|---|---|---|
+| Content | `ContentLifecycleEvent` NEWS/EVENT/DOCUMENT/EDITORIAL_VIDEO/PHOTO_GALLERY | `content.<type>.published/archived/cancelled/deleted` | utilisateur courant, sinon système | UUID du contenu | titre, slug, transition |
+| Learning | `TrainingLifecycleEvent` | `learning.training.published/archived` | utilisateur courant, sinon système | Training UUID | type, ancien/nouveau statut |
+| Learning | `EnrollmentActivatedEvent` | `learning.enrollment.self_enrolled/granted/payment_activated` | apprenant, administrateur ou `kkiapay_webhook` | Enrollment UUID | apprenant, formation, source |
+| Learning | `EnrollmentRevokedEvent` | `learning.enrollment.revoked` | administrateur | Enrollment UUID | apprenant, formation |
+| Payment | `PaymentConfirmedEvent` / `PaymentFailedEvent` | `payment.payment.confirmed/failed` | système fournisseur | Payment UUID | fournisseur, montant, devise, référence, formation |
+| Identity | `UserRoleAssignedEvent` / `PasswordChangedEvent` | `identity.user.role_assigned/password_changed` | administrateur ou utilisateur | User ID | rôle pour une attribution |
+
+La confirmation KkiaPay et l'activation Enrollment `PAYMENT` sont deux faits
+distincts et corrélables par leurs identifiants scalaires. Les replays
+réutilisent la même clé de déduplication; une transition légitime répétée,
+comme une nouvelle publication après archivage ou une réactivation
+Enrollment, reçoit une nouvelle référence d'occurrence.
+
+Le pipeline est actuellement synchrone post-commit et best-effort. Si
+`AuditEntry` échoue, la mutation métier reste réussie et l'erreur est visible
+dans Monolog avec le type d'événement, l'action et la référence métier. Ne
+sont pas audités dans LOG-003 : progression des leçons, jointures LIVE,
+lectures de notifications, téléchargements, pages vues, mises à jour
+champ-par-champ, login/logout (propriété de `AuthLog`) et événements
+d'authentification génériques.
 
 ### Public Frontoffice
 

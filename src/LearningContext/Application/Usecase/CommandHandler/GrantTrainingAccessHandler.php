@@ -13,12 +13,13 @@ use Websymphonie\LearningContext\Domain\Exception\TrainingEnrollmentDeniedExcept
 use Websymphonie\LearningContext\Domain\Model\Enrollment;
 use Websymphonie\LearningContext\Domain\Repository\EnrollmentRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
+use Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
 
 final readonly class GrantTrainingAccessHandler implements CommandHandler
 {
-    public function __construct(private TrainingRepositoryInterface $trainings, private EnrollmentRepositoryInterface $enrollments, private TrainingLearnerEligibilityInterface $eligibility, private EventDispatcher $eventDispatcher) {}
+    public function __construct(private TrainingRepositoryInterface $trainings, private EnrollmentRepositoryInterface $enrollments, private TrainingLearnerEligibilityInterface $eligibility, private EventDispatcher $eventDispatcher, private ?CurrentActorProvider $actorProvider = null) {}
     public function __invoke(GrantTrainingAccessCommand $command): void
     {
         $training = $this->trainings->getById($command->trainingId);
@@ -40,7 +41,7 @@ final readonly class GrantTrainingAccessHandler implements CommandHandler
 
     private function emitActivation(Enrollment $enrollment, string $trainingTitle): void
     {
-        $enrollment->emitEvent(new EnrollmentActivatedEvent($enrollment->uuid, $enrollment->userId, $enrollment->trainingId, $enrollment->source->value, $trainingTitle, $enrollment->activatedAt?->format('Y-m-d\\TH:i:s.uP') ?? $enrollment->uuid));
+        $enrollment->emitEvent(new EnrollmentActivatedEvent($enrollment->uuid, $enrollment->userId, $enrollment->trainingId, $enrollment->source->value, $trainingTitle, $enrollment->activatedAt?->format('Y-m-d\\TH:i:s.uP') ?? $enrollment->uuid, $this->actorProvider?->currentUserId()));
         $this->eventDispatcher->dispatch($enrollment->releaseEvents());
     }
 }

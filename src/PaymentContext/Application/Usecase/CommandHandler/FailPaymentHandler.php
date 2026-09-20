@@ -24,7 +24,7 @@ final readonly class FailPaymentHandler implements CommandHandler
         $payment->fail();
         $payment = $this->payments->save($payment);
         if (!$wasFailed) {
-            $payment->emitEvent(new PaymentFailedEvent($payment->uuid, $payment->userId, $payment->trainingId, $payment->amount, $payment->currency, $training->title));
+            $payment->emitEvent(new PaymentFailedEvent($payment->uuid, $payment->userId, $payment->trainingId, $payment->amount, $payment->currency, $training->title, $payment->provider->value, $payment->providerReference, $payment->failedAt));
             $this->eventDispatcher->dispatch($payment->releaseEvents());
         }
     }

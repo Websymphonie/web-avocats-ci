@@ -71,6 +71,9 @@ services:
   Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider:
     class: Websymphonie\IdentityContext\Infrastructure\Security\User\SymfonyCurrentUserProvider
 
+  Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider:
+    alias: Websymphonie\IdentityContext\Infrastructure\Security\User\CurrentActorProvider
+
   Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface:
     alias: Websymphonie\IdentityContext\Infrastructure\Service\User\DoctrineUserDirectory
 

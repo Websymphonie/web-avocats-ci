@@ -354,12 +354,18 @@ Le mécanisme événementiel reste synchrone. `EventEmitterFeature` tamponne
 temporairement des objets scalaires sur les agrégats, puis
 `SharedContext\Domain\Service\EventDispatcher\EventDispatcher` les transmet au
 dispatcher Symfony dans l'ordre ; `releaseEvents()` vide le tampon après
-lecture. Les événements Learning et Payment sont mappés par
-`NotificationSubscriber` dans l'Infrastructure vers des notifications privées
-in-app. Le commit métier précède ce dispatch : le consommateur est best-effort
-et journalise ses erreurs. Une clé de déduplication SHA-256, protégée par une
-contrainte unique en base, rend les replays sans effet ; aucun Outbox ni
-transport Messenger asynchrone n'est introduit par NOT-001.
+lecture. Les événements Learning et Payment sont consommés séparément par
+`NotificationSubscriber` pour les notifications et par les subscribers
+`LogContext` pour l'audit métier. Content publie ses faits de cycle de vie via
+`ContentLifecycleEvent`; Learning publie les transitions Training et réutilise
+les événements Enrollment existants; Payment publie la confirmation et réutilise
+son événement d'échec; Identity réutilise les faits de rôle et de mot de passe.
+Les payloads restent scalaires et les producteurs n'importent pas `LogContext`.
+
+Le commit métier précède le dispatch : les consommateurs sont best-effort et
+journalisent leurs erreurs. Une clé de déduplication SHA-256, protégée par une
+contrainte unique en base, rend les replays sans effet. La livraison n'est pas
+encore garantie par Outbox.
 
 La lecture globale des notifications publiques n'est pas redéfinie ici : la
 dette liée à leur état lu/non lu et à l'action « tout marquer comme lu » reste
@@ -388,7 +394,7 @@ Les éléments suivants restent volontairement ouverts :
 - frontière exacte de `MediaContext` ;
 - nécessité d’un `AuditContext` distinct de `LogContext` ;
 - contrat d’audit métier, distinct des `Logs` techniques actuels ;
-- intégration des producteurs d’événements métier au `AuditEntry` ;
+- garantie de livraison, rétention et éventuelle Outbox pour l’audit métier ;
 - politique de rétention et garanties transactionnelles de l’audit métier ;
 - modèle définitif des cotisations ;
 - fournisseur de paiement ;

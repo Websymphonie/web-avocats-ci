@@ -99,13 +99,14 @@ sessions and CSRF values must never be persisted in `Logs` context or extra
 data.
 
 This is deliberately distinct from the business audit contract. `LOG-002`
-defines the actor, action, target, metadata and immutability foundation before
-Content, Learning, Payment or Notification events are added.
+defines the actor, action, target, metadata and immutability foundation.
+`LOG-003` connects selected Content, Learning, Payment and Identity events
+without making those contexts depend on `LogContext`.
 
 The business audit trail is now a separate append-only capability:
 
 `BT`
-Business event producer (future LOG-003)
+Business context event producer
     -> RecordAuditEntryCommand
     -> LogContext::AuditEntry
 `BT`
@@ -118,9 +119,16 @@ Normal application workflows expose no update or delete operation for audit
 entries. The Backoffice audit screen is read-only and uses the current `LOGS`
 group, currently restricted to `ROLE_SUPER_ADMIN`.
 
-The audit persistence transaction is separate from the original future
-business transaction. There is no outbox, retention policy or producer
-integration yet; these decisions belong to LOG-003 and later work.
+The audit persistence transaction is separate from the producer business
+transaction. The current pipeline is synchronous post-commit and best-effort:
+an audit persistence failure is logged technically and does not turn an
+already-committed business mutation into a user-facing failure. There is no
+outbox, retention policy or compliance-grade guaranteed delivery.
+
+The current mapping is implemented by separate `ContentAuditSubscriber`,
+`LearningAuditSubscriber`, `PaymentAuditSubscriber` and
+`IdentityAuditSubscriber` classes. They consume scalar producer events and
+are the only place that builds the audit mapping.
 
 ---
 

@@ -12,6 +12,7 @@ final readonly class EnrollmentRevokedEvent
         public int $trainingId,
         public string $trainingTitle,
         public string $revocationReference,
+        public ?int $actorUserId = null,
     ) {
     }
 }

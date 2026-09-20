@@ -15,6 +15,7 @@ use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\User
 use Websymphonie\IdentityContext\Infrastructure\Validator\User\AddUserValidator;
 use Websymphonie\IdentityContext\Presenter\Service\EmailVerified;
 use Websymphonie\IdentityContext\Presenter\Tiwg\Extension\RolesExtension;
+use Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
 
@@ -29,6 +30,7 @@ final readonly class AddUserHandler implements CommandHandler
         private RolesExtension               $rolesExtension,
         private EventDispatcher              $dispatcher,
         private AccountActivationIssuer      $activationIssuer,
+        private ?CurrentActorProvider        $actorProvider = null,
     )
     {
     }
@@ -52,6 +54,7 @@ final readonly class AddUserHandler implements CommandHandler
         $resultUser->emitEvent(new UserRoleAssignedEvent(
             userId: $resultUser->getId(),
             role: $this->rolesExtension->mainRole($user)->value,
+            actorUserId: $this->actorProvider?->currentUserId(),
         ));
 
         if ($command->sendMail) {

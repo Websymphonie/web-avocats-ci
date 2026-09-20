@@ -37,13 +37,15 @@ Fondation logging :
 LOG-REV-001 — Audit complet de LogContext          DONE
 LOG-001      — Sécuriser la fondation de logging   DONE
 LOG-002      — Fondation Business Audit Trail     DONE
-LOG-003      — Intégrations Content/Learning/Pay. PLANNED
+LOG-003      — Intégrations Content/Learning/Pay. DONE
 ```
 
 `LOG-001` sécurise uniquement le logging technique existant. Il n’ajoute pas
 d’événements d’audit métier et ne transforme pas `Logs` en journal append-only.
-`LOG-002` fournit désormais `AuditEntry` et sa consultation Backoffice
-read-only, sans connecter encore de producteur métier.
+`LOG-002` fournit `AuditEntry` et sa consultation Backoffice read-only.
+`LOG-003` connecte les événements métier Content, Learning, Payment et
+Identity via des subscribers best-effort, sans import direct de `LogContext`
+dans les producteurs.
 
 ### PHASE 1 — Documentation et fondation Web
 

@@ -8,5 +8,5 @@ use Websymphonie\PaymentContext\Domain\Model\TrainingOffer;
 
 final readonly class TrainingOfferListItem
 {
-    public function __construct(public TrainingOffer $offer, public TrainingReference $training) {}
+    public function __construct(public TrainingOffer $offer, public ?TrainingReference $training) {}
 }

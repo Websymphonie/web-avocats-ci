@@ -23,6 +23,21 @@ final readonly class LearningTrainingCatalog implements TrainingCatalogInterface
         return self::map($this->trainings->getByUuid($uuid));
     }
 
+    /** @return list<TrainingReference> */
+    public function getByIds(array $trainingIds): array
+    {
+        return array_map(
+            static fn ($training): TrainingReference => new TrainingReference(
+                $training->id,
+                $training->uuid,
+                $training->title,
+                $training->status,
+                $training->accessType,
+            ),
+            $this->trainings->findSummariesByIds(array_values(array_unique($trainingIds))),
+        );
+    }
+
     public function list(int $page, int $limit): array
     {
         $result = $this->trainings->list(null, null, null, TrainingAccessType::PAID, null, null, null, $page, $limit);

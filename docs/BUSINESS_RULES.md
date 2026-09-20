@@ -413,10 +413,11 @@ Les décisions suivantes restent explicitement ouvertes :
 - disponibilité et protection des replays ;
 - remboursement et annulation de paiement ;
 - expiration d’une inscription ;
-- fournisseur de paiement ;
+- certification réelle Sandbox KkiaPay et conditions d’exploitation ;
 - modèle définitif des cotisations ;
 - source de vérité des données historiques ;
-- stratégie de stockage des documents privés ;
+- provisionnement de la racine persistante des documents privés selon chaque
+  environnement ;
 - contrat API mobile et authentification associée.
 
 ## 9. Règles d’intégrité transverses

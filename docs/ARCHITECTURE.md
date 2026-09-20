@@ -187,6 +187,17 @@ ciblées par utilisateur. Le modèle de lecture des notifications publiques et
 leur état lu/non lu global constituent une dette séparée, volontairement hors
 scope de NOT-REV-002.
 
+### Dettes techniques acceptées après CORE-FIX-001
+
+- `Logs` et `Notification` conservent encore des relations Doctrine vers
+  l’entité `IdentityContext\User`; leur découplage nécessite une migration et
+  des read models dédiés et reste hors de ce ticket ;
+- l’état lu/non lu global des notifications publiques reste à définir ;
+- aucune durée de rétention n’est inventée pour les logs techniques ou l’audit
+  métier ;
+- les noms historiques `isSuccessFulAuth` et `Logouth` d’`AuthLog` sont
+  conservés pour éviter une migration cosmétique.
+
 ---
 
 ### WebContext
@@ -592,17 +603,15 @@ relation Doctrine vers l’entité Currencies; Payment snapshotte ce code au
 moment de l’initiation. Aucune table, migration ou médiathèque de devises
 n’est créée par PAY-001A.
 
-PAY-001 ne livre ni KkiaPay, ni SDK, ni webhook, ni checkout JavaScript. Ces
-éléments sont réservés à une future intégration fournisseur avec vérification
-serveur et idempotence.
+PAY-001 conserve Fake pour les tests. KkiaPay, son SDK PHP officiel, le
+checkout membre minimal et le webhook Symfony sont livrés par PAY-002/PAY-002B.
+La certification réelle Sandbox reste une recette externe.
 
 ### 12.8 PaymentContext — KkiaPay et webhook PAY-002
 
 KkiaPay est sélectionné par configuration (PAYMENT_PROVIDER=KKIAPAY) et
 derrière PaymentGatewayInterface; PAYMENT_PROVIDER=FAKE reste la valeur de
-test. Le SDK PHP officiel actuel est volontairement écarté : sa version
-publique 0.0.4 est ancienne et peu typée, mais reste la dépendance imposée
-pour la vérification serveur PAY-002B. Le SDK est encapsulé dans
+test. Le SDK PHP officiel est encapsulé dans
 `KkiaPaySdkClient`, derrière `KkiaPaySdkClientInterface`, et n’est utilisé que
 par `KkiaPayTransactionVerifier`. La sélection sandbox/production est
 transmise au constructeur SDK depuis `KKIAPAY_SANDBOX`.
@@ -664,6 +673,12 @@ confirmés dont le fulfillment n’est pas terminé. Le grant Learning reste
 idempotent grâce à l’unicité Training/User existante. Une activation réussie
 produit l’événement Learning et sa notification selon les règles existantes.
 Une confirmation déjà complète est un no-op.
+
+Les listings Payment et TrainingOffer lisent les résumés Training via le port
+batch `TrainingCatalogInterface::getByIds()`. Le port retourne un read model
+scalaire et n’expose aucune entité Doctrine Learning à Payment. Une référence
+Training manquante n’interrompt pas le listing : l’interface affiche
+`Formation indisponible`.
 
 ### 12.9 PAY-002A — certification Sandbox et exploitation
 

@@ -24,7 +24,7 @@
                     <tbody class="divide-y divide-border">
                     {% for item in items %}
                         <tr class="transition-colors hover:bg-muted/40">
-                            <td class="px-5 py-4"><p class="font-medium">{{ item.training.title|default('Formation #' ~ item.offer.trainingId) }}</p><p class="mt-1 text-xs text-muted-foreground">ID {{ item.offer.trainingId }}</p></td>
+                            <td class="px-5 py-4"><p class="font-medium">{{ item.training ? item.training.title : 'Formation indisponible' }}</p><p class="mt-1 text-xs text-muted-foreground">ID {{ item.offer.trainingId }}</p></td>
                             <td class="px-5 py-4 font-medium">{{ item.offer.amount|number_format(0, ',', ' ') }}</td>
                             <td class="px-5 py-4">{{ item.offer.currency }}</td>
                             <td class="px-5 py-4"><twig:Badge variant="{{ item.offer.active ? 'success' : 'secondary' }}">{{ item.offer.active ? 'Actif' : 'Inactif' }}</twig:Badge></td>

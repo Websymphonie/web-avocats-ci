@@ -24,9 +24,14 @@ final readonly class GetPaymentListHandler implements QueryHandler
         foreach ($this->users->getByIds($userIds) as $user) {
             $users[$user->id] = $user;
         }
+        $trainingIds = array_values(array_unique(array_map(static fn ($payment): int => $payment->trainingId, $payments)));
+        $trainings = [];
+        foreach ($this->trainings->getByIds($trainingIds) as $training) {
+            $trainings[$training->id] = $training;
+        }
         $items = [];
         foreach ($payments as $payment) {
-            $items[] = new PaymentListItem($payment, $this->trainings->getById($payment->trainingId), $users[$payment->userId] ?? null);
+            $items[] = new PaymentListItem($payment, $trainings[$payment->trainingId] ?? null, $users[$payment->userId] ?? null);
         }
         return $items;
     }

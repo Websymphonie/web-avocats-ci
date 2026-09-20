@@ -10,6 +10,7 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\TrainingListResult;
+use Websymphonie\LearningContext\Domain\Model\TrainingSummary;
 
 interface TrainingRepositoryInterface
 {
@@ -25,6 +26,12 @@ interface TrainingRepositoryInterface
      * @return list<Training>
      */
     public function findByIds(array $ids): array;
+
+    /**
+     * @param list<int> $ids
+     * @return list<TrainingSummary>
+     */
+    public function findSummariesByIds(array $ids): array;
 
     public function list(
         ?string $search,

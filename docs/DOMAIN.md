@@ -36,9 +36,9 @@ porte sa règle.
 
 | Contexte candidat | Responsabilité cible | Statut |
 |---|---|---|
-| `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — première verticale News |
+| `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — backend/Backoffice livré, Frontoffice différé |
 | `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `IMPLEMENTED` — fondation Training COURSE + Backoffice |
-| `PaymentContext` | offres de formation, paiements et intégration des fournisseurs | `IMPLEMENTED` — PAY-001 Fake foundation |
+| `PaymentContext` | offres de formation, paiements et intégration des fournisseurs | `IMPLEMENTED` — KkiaPay + Fake de test, PAY-003 livré |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
 | `MediaContext` | images publiques et fichiers documentaires privés minimaux | `IMPLEMENTED` — capacités CNT-004/CNT-005 |
 | `AuditContext` | audit métier transverse si les besoins dépassent `LogContext` | `DISCOVERY` |
@@ -296,7 +296,8 @@ Les questions à résoudre couvrent notamment :
 
 `PaymentContext` est un contexte distinct des règles Learning et Contribution.
 La fondation PAY-001 porte les offres de formation, les paiements et un
-provider Fake :
+provider Fake de test. PAY-002/PAY-002B ajoutent KkiaPay et le SDK PHP officiel
+derrière les ports de paiement, avec vérification serveur et webhook Symfony.
 
 ```text
 Payment
@@ -323,7 +324,7 @@ Les règles livrées sont :
 - le fulfillment crée ou réutilise une inscription ACTIVE de source PAYMENT ;
 - Payment ne possède aucune relation Doctrine vers Identity ou Learning ;
   seuls userId, trainingId et l’offre interne sont stockés ;
-- aucun webhook, SDK ou fournisseur réel n’est livré dans PAY-001.
+- aucun fournisseur réel n’est requis pour les tests : Fake reste disponible.
 
 PAY-002 ajoute KkiaPay uniquement comme adaptateur Infrastructure. Le
 PaymentContext reste provider-agnostic : l’initiation crée un paiement
@@ -340,8 +341,9 @@ supervisé n’est présupposé par PAY-002. Les doublons restent idempotents et
 un événement FAILED ne rétrograde jamais un paiement CONFIRMED.
 
 Le Backoffice expose la gestion des tarifs et la consultation en lecture seule
-des paiements. Le parcours membre expose uniquement l’initiation POST protégée
-par authentification et CSRF ; aucun checkout fournisseur réel n’est inclus.
+des paiements. Le parcours membre expose l’initiation POST protégée par
+authentification et CSRF, avec checkout KkiaPay minimal côté navigateur ; les
+callbacks navigateur ne constituent jamais une preuve de paiement.
 
 PAY-002B remplace l’appel HTTP manuel de vérification par le SDK officiel
 `kkiapay/kkiapay-php`. Le SDK reste strictement dans l’Infrastructure,
@@ -356,6 +358,12 @@ la migration : elles sont diagnostiquées et réconciliées sans supposer
 l’existence d’un `Enrollment`. La commande
 `app:payment:reconcile-fulfillment` rejoue uniquement le traitement
 interne pour les paiements confirmés et ne rappelle jamais le provider.
+
+Les listings Payment et TrainingOffer utilisent le port batch
+`TrainingCatalogInterface::getByIds()`. Ils ne chargent pas un Training par
+ligne et tolèrent un Training historique devenu indisponible avec le libellé
+`Formation indisponible`. Ce port retourne uniquement des références de lecture
+et ne crée aucune relation Doctrine cross-context.
 
 ## 9. Services transverses
 
@@ -410,8 +418,8 @@ Les éléments suivants restent volontairement ouverts :
 - garantie de livraison, rétention et éventuelle Outbox pour l’audit métier ;
 - politique de rétention et garanties transactionnelles de l’audit métier ;
 - modèle définitif des cotisations ;
-- fournisseur de paiement ;
-- stratégie de stockage des documents privés ;
+- certification réelle Sandbox KkiaPay ;
+- provisionnement de la racine persistante de stockage selon l’environnement ;
 - détails de certification, quiz et replay ;
 - contrat API mobile.
 

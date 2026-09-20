@@ -17,9 +17,15 @@ final readonly class GetTrainingOfferListHandler implements QueryHandler
     /** @return list<TrainingOfferListItem> */
     public function __invoke(GetTrainingOfferListQuery $query): array
     {
+        $offers = $this->offers->list(max(1, $query->page), $query->limit);
+        $trainingIds = array_values(array_unique(array_map(static fn ($offer): int => $offer->trainingId, $offers)));
+        $trainings = [];
+        foreach ($this->trainings->getByIds($trainingIds) as $training) {
+            $trainings[$training->id] = $training;
+        }
         $items = [];
-        foreach ($this->offers->list(max(1, $query->page), $query->limit) as $offer) {
-            $items[] = new TrainingOfferListItem($offer, $this->trainings->getById($offer->trainingId));
+        foreach ($offers as $offer) {
+            $items[] = new TrainingOfferListItem($offer, $trainings[$offer->trainingId] ?? null);
         }
         return $items;
     }

@@ -87,7 +87,7 @@ propriétaire.
 | CNT-004 | publier les galeries photos | `IMPLEMENTED` — Backoffice uniquement; Media public minimal, sans médiathèque ni Frontoffice |
 | CNT-004A | ajouter couvertures et galeries liées à News/Event | `IMPLEMENTED` — Backoffice uniquement, sans Frontoffice |
 | CNT-005 | publier les documents et annonces | `IMPLEMENTED` — Backoffice + téléchargement contrôlé |
-| CNT-006 | séparer les contenus éditoriaux des contenus pédagogiques | `IMPLEMENTED` — principe |
+| CNT-006 | administrer les pages statiques institutionnelles publiques | `PLANNED` — prochain ticket fonctionnel |
 
 ## 7. Learning
 
@@ -125,7 +125,7 @@ Aucun calcul ou statut définitif n’est introduit par ce document.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| PAY-001 | initier et confirmer un paiement de formation avec offre et provider abstrait | `IMPLEMENTED` — Fake uniquement |
+| PAY-001 | initier et confirmer un paiement de formation avec offre et provider abstrait | `IMPLEMENTED` — Fake de test et port provider |
 | PAY-002 | intégrer KkiaPay et vérifier les transactions côté serveur | `IMPLEMENTED` — code, checkout et webhook; certification Sandbox externe requise |
 | PAY-002B | utiliser le SDK PHP officiel KkiaPay pour la vérification serveur | `IMPLEMENTED` — SDK encapsulé dans l’adaptateur Infrastructure; certification Sandbox réelle toujours externe |
 | PAY-003 | fiabiliser le traitement Payment confirmé vers Learning | `IMPLEMENTED` — fulfillment durable, retryable et réconciliable |
@@ -146,10 +146,10 @@ Web actuelles.
 
 ## 11. Hors périmètre courant
 
-- création immédiate de `ContentContext`, `LearningContext`, `PaymentContext` ou
-  `ContributionContext` ;
+- implémentation de `ContributionContext` avant la découverte et la validation
+  de ses règles métier ;
 - création d’une API, d’un système JWT/OAuth mobile ou de Flutter ;
-- choix d’un fournisseur de paiement ;
+- certification réelle Sandbox KkiaPay et son provisionnement opérationnel ;
 - gel du modèle métier des cotisations ;
 - ajout de règles de certification, remboursement, replay ou expiration non
   validées.

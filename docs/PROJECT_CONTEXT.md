@@ -159,27 +159,36 @@ Ces domaines cibles ne signifient pas que tous les Bounded Contexts doivent
 - `IdentityContext` pour les utilisateurs et l’autorisation ;
 - `AdminContext` pour l’administration technique existante ;
 - `SharedContext` pour les services techniques partagés ;
-- `LogContext` et `NotificationContext` selon l’implémentation actuelle ;
+- `LogContext` et `NotificationContext` — `COMPLETE` selon l’implémentation actuelle ;
+- `ContentContext` — `COMPLETE` pour le backend/Backoffice éditorial ;
+- `MediaContext` — `COMPLETE` pour les images publiques et documents privés minimaux ;
+- `LearningContext` — `COMPLETE` pour formations, Lives, inscriptions et progression ;
+- `PaymentContext` — `COMPLETE` pour offres, paiements et fulfillment Learning ;
+- IAM (`AuthContext` + `IdentityContext`) — `COMPLETE` pour le socle actuel ;
 - `WebContext` pour le shell public ;
 - surfaces Web Public, Member et Backoffice ;
 - quality gates et baseline Doctrine stabilisés.
 
 ### Non livré à ce stade
 
-- le catalogue Content complet ;
-- le domaine Learning ;
-- le modèle métier définitif des cotisations ;
-- le domaine Payment ;
+- les parcours Frontoffice Content et Learning ;
+- le modèle métier définitif des cotisations (`ContributionContext`) ;
 - l’API v1 ;
 - l’application Flutter.
 
+L’intégration KkiaPay est `COMPLETE` côté code (SDK officiel, vérification
+serveur et webhook), mais la certification réelle Sandbox reste `PARTIAL`.
+L’architecture du stockage persistant est définie via `APP_STORAGE_DIR` avec
+`/shared/storage` comme chemin canonique ; son provisionnement reste requis
+dans chaque environnement.
+
 ## 10. Évolutions futures
 
-L’ordre de progression recommandé est : documentation et shell Web, Content,
-Learning `COURSE`, inscription et services membres, Learning `LIVE`, Payment,
-progression/quiz/certificats, puis Contribution après découverte métier. Le
-branchement YouTube et les interfaces publiques restent à traiter. L’API et
-Flutter viennent après stabilisation des contrats métier.
+L’ordre de progression recommandé est désormais : `CNT-006` Static Pages,
+puis les parcours Frontoffice Content/Learning, avant les fonctionnalités
+encore planifiées comme les quiz/certificats. `ContributionContext` reste
+subordonné à une découverte métier. L’API et Flutter viennent après
+stabilisation des contrats métier.
 
 Les exigences détaillées et leur statut sont suivis dans
 [`docs/PRODUCT_REQUIREMENTS.md`](PRODUCT_REQUIREMENTS.md), et l’ordre des

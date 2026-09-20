@@ -153,7 +153,9 @@ expose.
 ## 3. Ordre immédiat
 
 ```text
-DOC-001  Documentation produit                     IN PROGRESS
+DOC-001  Documentation produit                     DONE
+CORE-FIX-001 Consolidation backend                 CURRENT
+CNT-006  Static Pages                               NEXT
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
@@ -180,6 +182,11 @@ NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```
+
+`CORE-FIX-001` traite les dettes techniques restantes de la revue backend :
+lecture batch des références Learning depuis Payment, échappement des titres
+UI et synchronisation documentaire. Une fois ses quality gates validés,
+`CNT-006 Static Pages` devient le prochain ticket fonctionnel.
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.
 

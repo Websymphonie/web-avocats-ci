@@ -15,6 +15,7 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
 use Websymphonie\LearningContext\Domain\Exception\TrainingNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\TrainingListResult;
+use Websymphonie\LearningContext\Domain\Model\TrainingSummary;
 use Websymphonie\LearningContext\Domain\Repository\LiveTrainingDetailsRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
@@ -134,6 +135,33 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         );
     }
 
+    /** @return list<TrainingSummary> */
+    public function findSummariesByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        $rows = $this->createQueryBuilder('training')
+            ->select('training.id AS id, training.uuid AS uuid, training.title AS title, training.type AS type, training.status AS status, training.accessType AS accessType')
+            ->andWhere('training.id IN (:ids)')
+            ->setParameter('ids', array_values(array_unique($ids)))
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(
+            static fn (array $row): TrainingSummary => new TrainingSummary(
+                id: (int) $row['id'],
+                uuid: (string) $row['uuid'],
+                title: (string) $row['title'],
+                type: self::scalarValue($row['type']),
+                status: self::scalarValue($row['status']),
+                accessType: self::scalarValue($row['accessType']),
+            ),
+            $rows,
+        );
+    }
+
     public function list(
         ?string $search,
         ?TrainingStatus $status,
@@ -182,5 +210,10 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             $model->replaceLiveDetails($this->liveDetailsRepository->findByTrainingId($model->id));
         }
         return $model;
+    }
+
+    private static function scalarValue(mixed $value): string
+    {
+        return $value instanceof \BackedEnum ? $value->value : (string) $value;
     }
 }

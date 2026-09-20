@@ -200,6 +200,14 @@ réordonnancement intra-module et les contrôles clavier Monter/Descendre.
 
 ### LRN-006 — Progression apprenant
 
+L’éligibilité apprenante actuelle est distincte de la visibilité, de
+`TrainingAccessType` et de l’existence d’un `Enrollment` : seul un utilisateur
+actif avec le rôle explicite `ROLE_AVOCAT` peut s’auto-inscrire, recevoir un
+accès administrateur, initier un paiement de formation ou consommer une
+formation. Un `ROLE_ADMIN` ou `ROLE_SUPER_ADMIN` n’est pas apprenant par défaut.
+La même policy protège les ressources, la progression et le join LIVE, y
+compris lorsqu’un `Enrollment` historique existe déjà.
+
 La progression persistée concerne uniquement les formations `COURSE`. Une
 absence de ligne `LessonProgress` signifie `NOT_STARTED`; seules les valeurs
 `IN_PROGRESS` et `COMPLETED` sont persistées. Une ligne est unique par couple

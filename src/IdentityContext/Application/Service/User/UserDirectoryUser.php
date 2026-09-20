@@ -12,6 +12,8 @@ final readonly class UserDirectoryUser
         public string $name,
         public string $email,
         public bool $enabled,
+        /** @var list<string> */
+        public array $roles = ['ROLE_USER'],
     ) {
     }
 }

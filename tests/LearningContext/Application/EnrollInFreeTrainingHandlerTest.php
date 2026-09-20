@@ -9,6 +9,7 @@ use Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface
 use Websymphonie\IdentityContext\Application\Service\User\UserDirectoryUser;
 use Websymphonie\LearningContext\Application\Usecase\Command\EnrollInFreeTrainingCommand;
 use Websymphonie\LearningContext\Application\Usecase\CommandHandler\EnrollInFreeTrainingHandler;
+use Websymphonie\LearningContext\Application\Service\TrainingLearnerEligibility;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -27,11 +28,11 @@ final class EnrollInFreeTrainingHandlerTest extends TestCase
         $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
         $users = $this->createMock(UserDirectoryInterface::class);
         $trainings->method('getById')->willReturn($this->live(TrainingAccessType::FREE));
-        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true, ['ROLE_AVOCAT']));
         $enrollments->method('findByTrainingAndUser')->willReturn(null);
         $enrollments->expects(self::once())->method('save')->with(self::isInstanceOf(Enrollment::class))->willReturnArgument(0);
 
-        (new EnrollInFreeTrainingHandler($trainings, $enrollments, $users))(new EnrollInFreeTrainingCommand(10, 2));
+        (new EnrollInFreeTrainingHandler($trainings, $enrollments, new TrainingLearnerEligibility($users)))(new EnrollInFreeTrainingCommand(10, 2));
     }
 
     public function testPublishedPaidLiveCannotBeSelfEnrolled(): void
@@ -40,11 +41,11 @@ final class EnrollInFreeTrainingHandlerTest extends TestCase
         $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
         $users = $this->createMock(UserDirectoryInterface::class);
         $trainings->method('getById')->willReturn($this->live(TrainingAccessType::PAID));
-        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true, ['ROLE_AVOCAT']));
         $enrollments->expects(self::never())->method('save');
 
         $this->expectException(TrainingEnrollmentDeniedException::class);
-        (new EnrollInFreeTrainingHandler($trainings, $enrollments, $users))(new EnrollInFreeTrainingCommand(10, 2));
+        (new EnrollInFreeTrainingHandler($trainings, $enrollments, new TrainingLearnerEligibility($users)))(new EnrollInFreeTrainingCommand(10, 2));
     }
 
     private function live(TrainingAccessType $accessType): Training

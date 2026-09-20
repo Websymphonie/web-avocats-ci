@@ -31,6 +31,6 @@ final readonly class DoctrineUserDirectory implements UserDirectoryInterface
 
     private function map(User $user): UserDirectoryUser
     {
-        return new UserDirectoryUser($user->getId() ?? 0, $user->getUuidAsString() ?? '', $user->getName() ?? '', $user->getUserIdentifier(), (bool) $user->getEnabled());
+        return new UserDirectoryUser($user->getId() ?? 0, $user->getUuidAsString() ?? '', $user->getName() ?? '', $user->getUserIdentifier(), (bool) $user->getEnabled(), array_values($user->getRoles()));
     }
 }

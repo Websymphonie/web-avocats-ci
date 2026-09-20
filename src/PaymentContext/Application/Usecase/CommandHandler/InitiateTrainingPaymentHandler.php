@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Websymphonie\PaymentContext\Application\Usecase\CommandHandler;
 
 use Symfony\Component\Uid\Uuid;
-use Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface;
 use Websymphonie\PaymentContext\Application\Service\ActiveTrainingEnrollmentCheckerInterface;
+use Websymphonie\PaymentContext\Application\Service\PaidTrainingBuyerEligibilityInterface;
 use Websymphonie\PaymentContext\Application\Service\PaymentGatewayInterface;
 use Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface;
 use Websymphonie\PaymentContext\Application\Usecase\Command\InitiateTrainingPaymentCommand;
@@ -18,15 +18,15 @@ use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class InitiateTrainingPaymentHandler implements CommandHandler
 {
-    public function __construct(private UserDirectoryInterface $users, private TrainingCatalogInterface $trainings, private TrainingOfferRepositoryInterface $offers, private PaymentRepositoryInterface $payments, private ActiveTrainingEnrollmentCheckerInterface $enrollments, private PaymentGatewayInterface $gateway) {}
+    public function __construct(private TrainingCatalogInterface $trainings, private TrainingOfferRepositoryInterface $offers, private PaymentRepositoryInterface $payments, private ActiveTrainingEnrollmentCheckerInterface $enrollments, private PaymentGatewayInterface $gateway, private PaidTrainingBuyerEligibilityInterface $buyerEligibility) {}
 
     public function __invoke(InitiateTrainingPaymentCommand $command): Payment
     {
         $key = trim($command->idempotencyKey);
         if ($key === '') { throw new PaymentDeniedException('Une clé d’idempotence est requise.'); }
+        if (!$this->buyerEligibility->isEligible($command->userId)) { throw new PaymentDeniedException('Les formations sont réservées aux avocats éligibles.'); }
         $existing = $this->payments->findByUserAndIdempotencyKey($command->userId, $key);
         if ($existing !== null) { return $existing; }
-        if ($this->users->getById($command->userId)?->enabled !== true) { throw new PaymentDeniedException('Votre compte ne peut pas initier ce paiement.'); }
         $training = $this->trainings->getById($command->trainingId);
         if (!$training->isPublishedPaid()) { throw new PaymentDeniedException(); }
         if ($this->enrollments->hasActiveEnrollment($command->userId, $training->id)) { throw new PaymentDeniedException('Vous disposez déjà d’un accès actif à cette formation.'); }

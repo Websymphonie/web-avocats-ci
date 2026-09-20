@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface;
 use Websymphonie\IdentityContext\Application\Service\User\UserDirectoryUser;
 use Websymphonie\LearningContext\Application\Service\TrainingAccessPolicy;
+use Websymphonie\LearningContext\Application\Service\TrainingLearnerEligibility;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
@@ -30,10 +31,10 @@ final class TrainingAccessPolicyTest extends TestCase
         $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
         /** @var UserDirectoryInterface&MockObject $users */
         $users = $this->createMock(UserDirectoryInterface::class);
-        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true, ['ROLE_AVOCAT']));
         $trainings->method('getById')->willReturn($this->training(TrainingStatus::PUBLISHED));
         $enrollments->method('findByTrainingAndUser')->willReturn(new Enrollment(1, 'e', 10, 2, EnrollmentStatus::ACTIVE, EnrollmentSource::SELF_SERVICE));
-        $policy = new TrainingAccessPolicy($trainings, $enrollments, $users);
+        $policy = new TrainingAccessPolicy($trainings, $enrollments, new TrainingLearnerEligibility($users));
         self::assertTrue($policy->canAccess(10, 2));
     }
 
@@ -42,10 +43,10 @@ final class TrainingAccessPolicyTest extends TestCase
         $trainings = $this->createMock(TrainingRepositoryInterface::class);
         $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
         $users = $this->createMock(UserDirectoryInterface::class);
-        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true, ['ROLE_AVOCAT']));
         $trainings->method('getById')->willReturn($this->training(TrainingStatus::PUBLISHED));
         $enrollments->method('findByTrainingAndUser')->willReturn(new Enrollment(1, 'e', 10, 2, EnrollmentStatus::REVOKED));
-        self::assertFalse((new TrainingAccessPolicy($trainings, $enrollments, $users))->canAccess(10, 2));
+        self::assertFalse((new TrainingAccessPolicy($trainings, $enrollments, new TrainingLearnerEligibility($users)))->canAccess(10, 2));
     }
 
     public function testPublishedLiveWithActiveEnrollmentIsAccessibleLikeACourse(): void
@@ -53,11 +54,11 @@ final class TrainingAccessPolicyTest extends TestCase
         $trainings = $this->createMock(TrainingRepositoryInterface::class);
         $enrollments = $this->createMock(EnrollmentRepositoryInterface::class);
         $users = $this->createMock(UserDirectoryInterface::class);
-        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true));
+        $users->method('getById')->willReturn(new UserDirectoryUser(2, 'u', 'Alice', 'alice@example.test', true, ['ROLE_AVOCAT']));
         $trainings->method('getById')->willReturn(new Training(10, 't', TrainingType::LIVE, 'Live', 'live', 'Résumé', 'Description', TrainingVisibility::PUBLIC, TrainingAccessType::FREE, TrainingStatus::PUBLISHED));
         $enrollments->method('findByTrainingAndUser')->willReturn(new Enrollment(1, 'e', 10, 2, EnrollmentStatus::ACTIVE, EnrollmentSource::SELF_SERVICE));
 
-        self::assertTrue((new TrainingAccessPolicy($trainings, $enrollments, $users))->canAccess(10, 2));
+        self::assertTrue((new TrainingAccessPolicy($trainings, $enrollments, new TrainingLearnerEligibility($users)))->canAccess(10, 2));
     }
 
     private function training(TrainingStatus $status): Training

@@ -71,7 +71,7 @@ final class PaymentWorkflowTest extends WebTestCase
     public function testFakePaymentConfirmationGrantsAccessAndIsIdempotent(): void
     {
         $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::PAID);
         $this->saveOffer($training, 15000);
 
@@ -95,7 +95,7 @@ final class PaymentWorkflowTest extends WebTestCase
     public function testSameIdempotencyKeyReturnsTheSamePaymentAndBrowserAmountIsIgnored(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::PAID);
         $this->saveOffer($training, 25000);
 
@@ -124,7 +124,7 @@ final class PaymentWorkflowTest extends WebTestCase
     public function testFailedPaymentDoesNotGrantAccessAndCannotBeConfirmed(): void
     {
         $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::PAID);
         $this->saveOffer($training, 10000);
         $payment = $this->commandBus()->handle(new InitiateTrainingPaymentCommand($user->getId() ?? 0, $training->getId() ?? 0, 'checkout-failed'));
@@ -138,11 +138,27 @@ final class PaymentWorkflowTest extends WebTestCase
         $this->commandBus()->handle(new ConfirmPaymentCommand($payment->uuid, (string) $payment->providerReference));
     }
 
+    public function testRoleUserCannotInitiatePaidPayment(): void
+    {
+        $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $this->saveOffer($training, 10000);
+
+        try {
+            $this->commandBus()->handle(new InitiateTrainingPaymentCommand($user->getId() ?? 0, $training->getId() ?? 0, 'ineligible-checkout'));
+            self::fail('Une formation payante doit refuser un utilisateur ROLE_USER.');
+        } catch (PaymentDeniedException) {
+            self::assertTrue(true);
+        }
+        self::assertNull(static::getContainer()->get(PaymentRepositoryInterface::class)->findByUserAndIdempotencyKey($user->getId() ?? 0, 'ineligible-checkout'));
+    }
+
     /** @dataProvider deniedTrainingCases */
     public function testPaymentRequiresPublishedPaidTrainingAndActiveOffer(TrainingAccessType $accessType, TrainingStatus $status, bool $withOffer): void
     {
         $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining($accessType, $status);
         if ($withOffer) {
             $this->saveOffer($training, 10000);

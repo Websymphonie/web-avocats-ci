@@ -154,6 +154,7 @@ LRN-004A Catégories et tags des formations           DONE — taxonomies Learni
 LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre au lien HTTPS
 LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des accès, CSRF, suppressions bulk et intégrité interne
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
+LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice

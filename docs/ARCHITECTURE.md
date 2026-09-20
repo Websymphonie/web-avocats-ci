@@ -371,8 +371,11 @@ relation Doctrine vers Identity. L’infrastructure porte uniquement la clé
 étrangère interne `training_id -> training.id`; `user_id` ne possède aucune
 contrainte cross-context.
 `UserDirectoryInterface` fournit uniquement un read model utilisateur pour le
-Backoffice. `TrainingAccessPolicy` centralise les contrôles utilisateur actif,
-formation publiée et inscription active. Les commandes d’auto-inscription,
+Backoffice et l’éligibilité. `TrainingLearnerEligibility` est l’autorité
+Learning unique : l’utilisateur doit être actif et porter explicitement
+`ROLE_AVOCAT`. `ROLE_ADMIN` et `ROLE_SUPER_ADMIN` ne sont pas apprenants par
+défaut. `TrainingAccessPolicy` réutilise cette décision avec les contrôles de
+formation publiée et d’inscription active. Les commandes d’auto-inscription,
 d’attribution admin et de révocation sont idempotentes et ne suppriment jamais
 physiquement une inscription.
 
@@ -467,12 +470,14 @@ devise ISO ; Payment conserve un snapshot du montant et de la devise, son
 fournisseur, sa référence, son statut et sa clé d’idempotence. La seule
 relation Doctrine interne est payment.training_offer_id vers training_offer.id.
 
-Les ports TrainingCatalogInterface, ActiveTrainingEnrollmentCheckerInterface et
-PaidTrainingAccessGranterInterface évitent à l’Application Payment de manipuler
-la persistence Learning. Les adaptateurs Infrastructure actuels utilisent
-Learning et FakePaymentGateway. La confirmation exige la référence fournisseur
-attendue, puis délègue l’activation à Learning ; le frontend ne constitue
-jamais une preuve de paiement.
+Les ports TrainingCatalogInterface, ActiveTrainingEnrollmentCheckerInterface,
+PaidTrainingBuyerEligibilityInterface et PaidTrainingAccessGranterInterface
+évitent à l’Application Payment de manipuler la persistence Learning ou de
+connaître directement `ROLE_AVOCAT`. L’adaptateur Infrastructure Payment
+délègue l’éligibilité à `TrainingLearnerEligibility`. Les adaptateurs actuels
+utilisent Learning et FakePaymentGateway. La confirmation exige la référence
+fournisseur attendue, puis délègue l’activation à Learning ; le frontend ne
+constitue jamais une preuve de paiement.
 
 La devise appartient au référentiel existant d’AdminContext. Payment expose
 un port applicatif CurrencyCatalogInterface, alimenté par un adaptateur

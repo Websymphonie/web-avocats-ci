@@ -80,7 +80,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testFreeSelfEnrollmentIsSuccessfulAndIdempotent(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::FREE);
         $client->loginUser($user);
         $client->disableReboot();
@@ -97,11 +97,31 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertSame(1, $count);
     }
 
+    public function testRoleUserCannotSelfEnrollInFreeTraining(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        $client->loginUser($user);
+        $client->disableReboot();
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        $client->request('POST', '/espace/learning/trainings/' . $training->getUuidAsString() . '/enroll', [
+            '_token' => $this->csrfToken($client, 'learning_member_training_enroll_' . $training->getUuidAsString()),
+        ], server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/espace');
+        self::assertSame(0, static::getContainer()->get('doctrine')->getManager()->getRepository(EnrollmentEntity::class)->count([
+            'trainingId' => $training->getId(),
+            'userId' => $user->getId(),
+        ]));
+    }
+
     /** @dataProvider nonSelfEnrollAccessTypes */
     public function testPaidAndRestrictedSelfEnrollmentAreDenied(TrainingAccessType $accessType): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining($accessType);
         $client->loginUser($user);
         $client->disableReboot();
@@ -166,7 +186,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testActiveEnrollmentCanDownloadAResourceAndMissingPhysicalFileReturns404(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::FREE);
         [$resource, $fileName] = $this->createResource($training, true);
         $this->createEnrollment($training, $user, EnrollmentStatus::ACTIVE);
@@ -182,10 +202,71 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testResourceDownloadIsDeniedWithoutEnrollmentAndAgainstAnotherTraining(): void
+    public function testRoleUserWithActiveEnrollmentCannotUseLearningSurfaces(): void
     {
         $client = $this->clientWithSchema();
         $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        [$resource] = $this->createResource($training, true);
+        $lesson = $this->entityManager()->getRepository(LessonEntity::class)->find($resource->getLessonId());
+        self::assertInstanceOf(LessonEntity::class, $lesson);
+        $this->createEnrollment($training, $user, EnrollmentStatus::ACTIVE);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $this->createEnrollment($live, $user, EnrollmentStatus::ACTIVE);
+        $client->loginUser($user);
+        $client->disableReboot();
+
+        $client->request('GET', '/espace/learning/resources/' . $resource->getUuidAsString() . '/download', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/');
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+        $client->request('POST', '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/start', [
+            '_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $lesson->getUuidAsString()),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+        self::assertSame(0, static::getContainer()->get('doctrine')->getManager()->getRepository(LessonProgressEntity::class)->count([]));
+
+        $client->request('GET', '/espace/learning/trainings/' . $live->getUuidAsString() . '/join', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        self::assertNotSame('https://meet.example.test/live', $client->getResponse()->headers->get('Location'));
+    }
+
+    public function testAdminGrantRequiresAnEligibleAvocat(): void
+    {
+        $client = $this->clientWithSchema();
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        $client->loginUser($admin);
+        $client->disableReboot();
+
+        $grantUrl = '/admin/learning/trainings/' . $training->getId() . '/enrollments/grant';
+        $client->request('POST', $grantUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
+            'userId' => $avocat->getId(),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+        self::assertSame(1, static::getContainer()->get('doctrine')->getManager()->getRepository(EnrollmentEntity::class)->count([
+            'trainingId' => $training->getId(),
+            'userId' => $avocat->getId(),
+        ]));
+
+        $client->request('POST', $grantUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
+            'userId' => $user->getId(),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+        self::assertSame(0, static::getContainer()->get('doctrine')->getManager()->getRepository(EnrollmentEntity::class)->count([
+            'trainingId' => $training->getId(),
+            'userId' => $user->getId(),
+        ]));
+    }
+
+    public function testResourceDownloadIsDeniedWithoutEnrollmentAndAgainstAnotherTraining(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $trainingA = $this->createTraining(TrainingAccessType::FREE);
         $trainingB = $this->createTraining(TrainingAccessType::FREE);
         [$resource] = $this->createResource($trainingB, true);
@@ -201,7 +282,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testRevokedDraftAndArchivedTrainingCannotExposeResources(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $client->loginUser($user);
         $client->disableReboot();
 
@@ -223,7 +304,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testOnlineLiveJoinRedirectsOnlyForActiveEnrollment(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
         $this->createEnrollment($live, $user, EnrollmentStatus::ACTIVE);
         $client->loginUser($user);
@@ -237,7 +318,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testLiveJoinIdorAndInactiveTrainingAreDenied(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $liveA = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/a');
         $liveB = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/b');
         $this->createEnrollment($liveA, $user, EnrollmentStatus::ACTIVE);
@@ -258,7 +339,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testInPersonJoinReturnsConflictWithoutRedirectLocation(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $live = $this->createLive(LiveDeliveryMode::IN_PERSON, TrainingStatus::PUBLISHED, null, 'Maison de l’Avocat');
         $this->createEnrollment($live, $user, EnrollmentStatus::ACTIVE);
         $client->loginUser($user);
@@ -273,7 +354,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testCourseLessonProgressStartCompleteAndReactivateAreIdempotent(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $training = $this->createTraining(TrainingAccessType::FREE);
         $lesson = $this->createCourseLesson($training, 1);
         $this->createEnrollment($training, $user, EnrollmentStatus::ACTIVE);
@@ -313,7 +394,7 @@ final class LearningMemberSecurityTest extends WebTestCase
     public function testLessonProgressRequiresPublishedCourseAndActiveEnrollment(): void
     {
         $client = $this->clientWithSchema();
-        $user = $this->createUser(['ROLE_USER']);
+        $user = $this->createUser(['ROLE_AVOCAT']);
         $client->loginUser($user);
         $client->disableReboot();
 

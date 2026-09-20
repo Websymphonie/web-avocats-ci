@@ -77,6 +77,12 @@ services:
   Websymphonie\PaymentContext\Application\Service\PaymentGatewayInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\ConfiguredPaymentGateway
 
+  Websymphonie\LearningContext\Application\Service\TrainingLearnerEligibilityInterface:
+    alias: Websymphonie\LearningContext\Application\Service\TrainingLearnerEligibility
+
+  Websymphonie\PaymentContext\Application\Service\PaidTrainingBuyerEligibilityInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningPaidTrainingBuyerEligibility
+
   Websymphonie\PaymentContext\Infrastructure\Service\ConfiguredPaymentGateway:
     arguments:
       $paymentProvider: '%payment.provider%'

@@ -236,6 +236,14 @@ Une catégorie ou un tag utilisé par une formation ne peut pas être supprimé.
 
 ### LRN-006 — Progression apprenant
 
+L'audience apprenante actuelle est limitée à un utilisateur actif portant le
+rôle explicite `ROLE_AVOCAT`. `ROLE_ADMIN` et `ROLE_SUPER_ADMIN` conservent
+leurs capacités Backoffice mais ne deviennent pas automatiquement apprenants.
+Cette éligibilité est centralisée par `TrainingLearnerEligibility` et
+réutilisée par `TrainingAccessPolicy`, les inscriptions et l'achat des
+formations payantes. Elle ne supprime pas les `Enrollment` historiques d'un
+utilisateur qui perd ensuite son éligibilité.
+
 `LessonProgress` représente la progression d’un utilisateur inscrit dans une
 `COURSE`. Son identité métier est le couple `enrollmentId`/`lessonId`; les
 états sont `IN_PROGRESS` et `COMPLETED`, tandis qu’une progression absente

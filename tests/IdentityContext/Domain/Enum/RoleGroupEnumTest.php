@@ -62,6 +62,28 @@ final class RoleGroupEnumTest extends TestCase
             UserRolesEnum::ADMIN->value,
         ]];
         yield 'maintenance' => [RoleGroupEnum::MAINTENANCE, [UserRolesEnum::SUPER_ADMIN->value]];
+        foreach ([
+            'news' => RoleGroupEnum::NEWS,
+            'news categories' => RoleGroupEnum::CATEGORY_NEWS,
+            'events' => RoleGroupEnum::EVENTS,
+            'event categories' => RoleGroupEnum::CATEGORY_EVENTS,
+            'videos' => RoleGroupEnum::VIDEOS,
+            'galleries' => RoleGroupEnum::GALLERIES,
+            'tags' => RoleGroupEnum::TAGS,
+            'documents' => RoleGroupEnum::DOCUMENTS,
+            'trainings' => RoleGroupEnum::TRAININGS,
+            'course modules' => RoleGroupEnum::COURSE_MODULES,
+            'enrollments' => RoleGroupEnum::ENROLLMENTS,
+            'training categories' => RoleGroupEnum::CATEGORY_TRAININGS,
+            'training tags' => RoleGroupEnum::TAG_TRAININGS,
+            'payments' => RoleGroupEnum::PAYMENTS,
+            'payment offers' => RoleGroupEnum::PAYMENT_OFFERS,
+        ] as $label => $group) {
+            yield $label => [$group, [
+                UserRolesEnum::SUPER_ADMIN->value,
+                UserRolesEnum::ADMIN->value,
+            ]];
+        }
         yield 'all' => [RoleGroupEnum::ALL, [
             UserRolesEnum::SUPER_ADMIN->value,
             UserRolesEnum::ADMIN->value,

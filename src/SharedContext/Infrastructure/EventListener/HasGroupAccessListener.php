@@ -10,9 +10,9 @@ use ReflectionFunction;
 use ReflectionMethod;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
-use Websymphonie\SharedContext\Domain\Exception\AccessDeniedException;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Infrastructure\Security\Voters\RoleGroupAccessVoter;
 

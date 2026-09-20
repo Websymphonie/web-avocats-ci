@@ -1,0 +1,7 @@
+exceptions:
+  payment:
+    payment_error: "Une erreur est survenue pendant le traitement du paiement."
+    payment_denied: "Ce paiement n’est pas autorisé."
+    payment_not_found: "Ce paiement est introuvable."
+    training_offer_not_found: "Le tarif de cette formation est introuvable."
+    invalid_payment_transition: "La transition de ce paiement n’est pas autorisée."

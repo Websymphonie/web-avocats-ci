@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\PhotoGallery;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/galleries', name: 'content_admin_gallery_')]
 #[IsGranted('CONTENT_GALLERY_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::GALLERIES)]
 final class GetPhotoGalleryListController extends AbstractController
 {
     public function __construct(private readonly MediaPublicUrlResolverInterface $urls) {}

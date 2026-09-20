@@ -99,6 +99,9 @@ final class DefaultRolePermissions
             PermissionEnum::LEARNING_TAG_VIEW->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_TAG_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::LEARNING_TAG_DELETE->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::PAYMENT_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::PAYMENT_OFFER_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::PAYMENT_OFFER_MANAGE->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

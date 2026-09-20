@@ -219,19 +219,25 @@ progression existante bloque la suppression de la leçon et de son module. Le
 pourcentage est calculé à la lecture sur les leçons de la `COURSE`, arrondi à
 l’entier et n’est jamais persisté. Les `LIVE` n’exposent pas de progression.
 
-## 6. Payment — principes validés
+## 6. Payment — PAY-001 livré
 
-Lorsqu’il sera introduit, le paiement devra respecter :
+- une formation PAID publiée doit avoir une offre active pour être payable ;
+- l’offre porte un montant entier et une devise ISO, jamais fournis par le
+  navigateur au moment du paiement ;
+- une initiation nécessite un compte actif, une clé d’idempotence et aucun
+  accès actif existant ;
+- une même clé pour un utilisateur retourne le même paiement ; un autre
+  paiement PENDING pour le même utilisateur et la même formation est refusé ;
+- un paiement conserve son montant et sa devise snapshot ;
+- les seules transitions sont PENDING -> CONFIRMED et PENDING -> FAILED, avec
+  confirmation et échec idempotents ;
+- une confirmation n’est acceptée qu’avec la référence fournisseur attendue ;
+- seul un paiement confirmé transmet l’accès à Learning ; l’inscription ACTIVE
+  est idempotente et porte la source PAYMENT ;
+- aucun retour navigateur ne suffit à confirmer un paiement.
 
-- validation serveur ;
-- idempotence des webhooks et transitions ;
-- traçabilité de la transaction et de son fournisseur ;
-- conservation des faits financiers ;
-- absence d’accès accordé sur la seule réponse du frontend ;
-- absence de manipulation directe de la persistence Learning par Payment.
-
-Le fournisseur, les statuts définitifs et les règles de remboursement ne sont
-pas encore arrêtés.
+PAY-001 utilise exclusivement un fournisseur Fake. KkiaPay, les webhooks, le
+checkout réel, les remboursements et les paiements partiels restent hors scope.
 
 ## 7. Contribution — statut de découverte
 

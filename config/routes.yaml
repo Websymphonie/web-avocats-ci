@@ -61,6 +61,20 @@ learning_member:
   type: attribute
   prefix: '/'
 
+payment:
+  resource:
+    path: ../src/PaymentContext/Presenter/Controller/
+    namespace: Websymphonie\PaymentContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/payment'
+
+payment_member:
+  resource:
+    path: ../src/PaymentContext/Presenter/Controller/Member/
+    namespace: Websymphonie\PaymentContext\Presenter\Controller\Member
+  type: attribute
+  prefix: '/'
+
 shared:
   resource:
     path: ../src/SharedContext/Presenter/Controller/

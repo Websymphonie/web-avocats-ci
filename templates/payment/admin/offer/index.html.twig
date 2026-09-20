@@ -1,0 +1,42 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Tarifs des formations{% endblock %}
+
+{% block body %}
+<main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div class="mx-auto max-w-7xl space-y-6">
+        <section class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm font-medium text-muted-foreground">Paiements</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Tarifs des formations</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Configurez le tarif actif utilisé au moment de l’initiation d’un paiement.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted" href="{{ path('payment_admin_payment_list') }}"><twig:ux:icon name="lucide:receipt" class="size-4"/>Paiements</a>
+                {% if is_granted('PAYMENT_OFFER_MANAGE') %}<a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" href="{{ path('payment_admin_offer_new') }}"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouveau tarif</a>{% endif %}
+            </div>
+        </section>
+
+        <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-5 py-3 font-medium">Formation</th><th class="px-5 py-3 font-medium">Montant</th><th class="px-5 py-3 font-medium">Devise</th><th class="px-5 py-3 font-medium">État</th><th class="px-5 py-3 text-right font-medium">Action</th></tr></thead>
+                    <tbody class="divide-y divide-border">
+                    {% for item in items %}
+                        <tr class="transition-colors hover:bg-muted/40">
+                            <td class="px-5 py-4"><p class="font-medium">{{ item.training.title|default('Formation #' ~ item.offer.trainingId) }}</p><p class="mt-1 text-xs text-muted-foreground">ID {{ item.offer.trainingId }}</p></td>
+                            <td class="px-5 py-4 font-medium">{{ item.offer.amount|number_format(0, ',', ' ') }}</td>
+                            <td class="px-5 py-4">{{ item.offer.currency }}</td>
+                            <td class="px-5 py-4"><twig:Badge variant="{{ item.offer.active ? 'success' : 'secondary' }}">{{ item.offer.active ? 'Actif' : 'Inactif' }}</twig:Badge></td>
+                            <td class="px-5 py-4 text-right">{% if is_granted('PAYMENT_OFFER_MANAGE') %}<a class="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm font-medium hover:bg-muted" href="{{ path('payment_admin_offer_edit', {trainingId: item.offer.trainingId}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>{% else %}<span class="text-muted-foreground">Lecture seule</span>{% endif %}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td class="px-6 py-14 text-center text-muted-foreground" colspan="5">Aucun tarif de formation n’est configuré.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

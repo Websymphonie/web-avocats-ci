@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 namespace Websymphonie\ContentContext\Presenter\Controller\NewsCategory;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,6 +12,7 @@ use Websymphonie\ContentContext\Presenter\Form\NewsCategory\NewsCategoryFilterTy
 use Websymphonie\SharedContext\Presenter\AbstractController;
 #[Route('/news-categories', name: 'content_admin_news_category_')]
 #[IsGranted('CONTENT_NEWS_CATEGORY_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::CATEGORY_NEWS)]
 final class GetNewsCategoryListController extends AbstractController
 {
     #[Route('', name: 'list', methods: ['GET'])]

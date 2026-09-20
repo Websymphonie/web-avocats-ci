@@ -8,9 +8,10 @@ enum EnrollmentSource: string
 {
     case SELF_SERVICE = 'SELF_SERVICE';
     case ADMIN_GRANT = 'ADMIN_GRANT';
+    case PAYMENT = 'PAYMENT';
 
     public function label(): string
     {
-        return match ($this) { self::SELF_SERVICE => 'Auto-inscription', self::ADMIN_GRANT => 'Accès administrateur' };
+        return match ($this) { self::SELF_SERVICE => 'Auto-inscription', self::ADMIN_GRANT => 'Accès administrateur', self::PAYMENT => 'Paiement' };
     }
 }

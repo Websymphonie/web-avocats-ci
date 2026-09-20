@@ -47,6 +47,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/MediaContext/Infrastructure/Persistence/Doctrine/Entity'
         prefix: 'Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity'
         alias: Media
+      Payment:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/PaymentContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Payment
       Content:
         is_bundle: false
         type: attribute

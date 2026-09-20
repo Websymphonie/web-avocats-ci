@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\CourseModule;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,6 +14,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/trainings', name: 'learning_admin_course_structure_')]
 #[IsGranted('LEARNING_TRAINING_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::COURSE_MODULES)]
 final class GetCourseStructureController extends AbstractController
 {
     #[Route('/{trainingId}/structure', name: 'show', requirements: ['trainingId' => '\\d+'], methods: ['GET'])]

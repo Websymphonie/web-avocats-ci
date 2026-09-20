@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\DocumentPublication;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -15,6 +17,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/documents', name: 'content_admin_document_')]
 #[IsGranted('CONTENT_DOCUMENT_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::DOCUMENTS)]
 final class DownloadDocumentPublicationController extends AbstractController
 {
     public function __construct(private readonly DocumentDownloadService $downloads) {}

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\PhotoGallery;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,7 @@ use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/galleries', name: 'content_admin_gallery_')]
+#[HasGroupAccess(RoleGroupEnum::GALLERIES)]
 final class PhotoGalleryActionController extends AbstractController
 {
     #[Route('/{id}/publish', name: 'publish', requirements: ['id' => '\\d+'], methods: ['POST'])]

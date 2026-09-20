@@ -72,6 +72,9 @@ final class PermissionCatalog
             PermissionEnum::LEARNING_TAG_VIEW,
             PermissionEnum::LEARNING_TAG_MANAGE,
             PermissionEnum::LEARNING_TAG_DELETE => 'Formations · Tags',
+            PermissionEnum::PAYMENT_VIEW,
+            PermissionEnum::PAYMENT_OFFER_VIEW,
+            PermissionEnum::PAYMENT_OFFER_MANAGE => 'Paiements',
         };
     }
 

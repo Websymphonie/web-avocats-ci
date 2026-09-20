@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\News;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +17,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/news', name: 'content_admin_news_')]
 #[IsGranted('CONTENT_NEWS_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::NEWS)]
 final class GetNewsListController extends AbstractController
 {
     #[Route('', name: 'list', methods: ['GET'])]

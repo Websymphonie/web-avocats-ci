@@ -294,6 +294,25 @@ persistée reste prioritaire et n’est pas migrée automatiquement.
 Les matrices de ce document sont des valeurs initiales configurables, et non des droits métier immuables. Les
 contrôleurs, les vues Twig et la navigation utilisent la même résolution persistée.
 
+### Paiements de formation — PAY-001
+
+Les permissions livrées sont :
+
+```text
+PAYMENT_VIEW
+PAYMENT_OFFER_VIEW
+PAYMENT_OFFER_MANAGE
+```
+
+ROLE_ADMIN reçoit ces trois permissions dans les defaults ; ROLE_SUPER_ADMIN
+conserve son accès global. ROLE_AVOCAT et ROLE_USER ne les reçoivent pas par
+défaut. Une configuration RolePermissions persistée reste prioritaire, comme
+pour les autres permissions configurables.
+
+PAY-001 ne fournit aucune permission de confirmation manuelle : les paiements
+Backoffice sont consultables en lecture seule et la confirmation passe par un
+flux serveur/provider futur.
+
 `EXPENSE_REFERENCE_MANAGE` autorise la gestion des catégories et fournisseurs du référentiel Finance. Par défaut, cette
 permission est accordée à `ROLE_SUPER_ADMIN`, `ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`. Les autres rôles ne la
 reçoivent pas automatiquement et les configurations `RolePermissions` persistées restent prioritaires.

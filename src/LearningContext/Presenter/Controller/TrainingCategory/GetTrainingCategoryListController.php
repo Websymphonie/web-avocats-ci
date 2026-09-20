@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\TrainingCategory;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -17,6 +19,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/categories', name: 'learning_admin_category_')]
 #[IsGranted('LEARNING_CATEGORY_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::CATEGORY_TRAININGS)]
 final class GetTrainingCategoryListController extends AbstractController
 {
     /**

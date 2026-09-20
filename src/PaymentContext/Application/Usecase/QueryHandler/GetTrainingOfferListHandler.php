@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Websymphonie\PaymentContext\Application\Usecase\QueryHandler;
+
+use Websymphonie\PaymentContext\Application\Model\TrainingOfferListItem;
+use Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface;
+use Websymphonie\PaymentContext\Application\Usecase\Query\GetTrainingOfferListQuery;
+use Websymphonie\PaymentContext\Domain\Repository\TrainingOfferRepositoryInterface;
+use Websymphonie\SharedContext\Application\Service\Messaging\QueryHandler;
+
+final readonly class GetTrainingOfferListHandler implements QueryHandler
+{
+    public function __construct(private TrainingOfferRepositoryInterface $offers, private TrainingCatalogInterface $trainings) {}
+
+    /** @return list<TrainingOfferListItem> */
+    public function __invoke(GetTrainingOfferListQuery $query): array
+    {
+        $items = [];
+        foreach ($this->offers->list(max(1, $query->page), $query->limit) as $offer) {
+            $items[] = new TrainingOfferListItem($offer, $this->trainings->getById($offer->trainingId));
+        }
+        return $items;
+    }
+}

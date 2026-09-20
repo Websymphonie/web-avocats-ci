@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\TrainingTag;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -17,6 +19,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/tags', name: 'learning_admin_tag_')]
 #[IsGranted('LEARNING_TAG_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::TAG_TRAININGS)]
 final class GetTrainingTagListController extends AbstractController
 {
     /**

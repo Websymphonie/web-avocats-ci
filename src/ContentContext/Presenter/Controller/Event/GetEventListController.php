@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\Event;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/events', name: 'content_admin_event_')]
 #[IsGranted('CONTENT_EVENT_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::EVENTS)]
 final class GetEventListController extends AbstractController
 {
     #[Route('', name: 'list', methods: ['GET'])]

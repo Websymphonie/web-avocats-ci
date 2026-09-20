@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\DocumentPublication;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/documents', name: 'content_admin_document_')]
 #[IsGranted('CONTENT_DOCUMENT_MANAGE')]
+#[HasGroupAccess(RoleGroupEnum::DOCUMENTS)]
 final class UpdateDocumentPublicationController extends AbstractController
 {
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]

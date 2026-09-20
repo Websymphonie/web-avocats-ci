@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\ContentContext\Presenter\Controller\EventCategory;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +17,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/event-categories', name: 'content_admin_event_category_')]
 #[IsGranted('CONTENT_EVENT_CATEGORY_MANAGE')]
+#[HasGroupAccess(RoleGroupEnum::CATEGORY_EVENTS)]
 final class CreateEventCategoryController extends AbstractController
 {
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]

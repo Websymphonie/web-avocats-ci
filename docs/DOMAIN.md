@@ -38,7 +38,7 @@ porte sa règle.
 |---|---|---|
 | `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — première verticale News |
 | `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `IMPLEMENTED` — fondation Training COURSE + Backoffice |
-| `PaymentContext` | commandes, transactions et intégration des paiements | `PLANNED` |
+| `PaymentContext` | offres de formation, paiements et intégration des fournisseurs | `IMPLEMENTED` — PAY-001 Fake foundation |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
 | `MediaContext` | images publiques et fichiers documentaires privés minimaux | `IMPLEMENTED` — capacités CNT-004/CNT-005 |
 | `AuditContext` | audit métier transverse si les besoins dépassent `LogContext` | `DISCOVERY` |
@@ -286,27 +286,32 @@ Les questions à résoudre couvrent notamment :
 
 ## 8. Payment domain
 
-`PaymentContext` est un contexte cible distinct des règles Learning et
-Contribution. Il pourra porter :
+`PaymentContext` est un contexte distinct des règles Learning et Contribution.
+La fondation PAY-001 porte les offres de formation, les paiements et un
+provider Fake :
 
 ```text
-Order
 Payment
-PaymentTransaction
-Provider
-Webhook
+TrainingOffer
+Fake provider
 ```
 
-Les principes déjà décidés sont :
+Les règles livrées sont :
 
-- validation côté serveur ;
-- idempotence des webhooks et confirmations ;
-- traçabilité des transactions ;
-- aucun accès accordé sur la seule réponse du frontend ;
-- aucun choix de fournisseur avant validation du besoin ;
-- `LearningContext` décide de l’activation d’une inscription ;
-- `PaymentContext` ne manipule pas directement la persistence de Learning ou
-  de Contribution.
+- le montant et la devise sont copiés dans Payment au moment de l’initiation ;
+- l’éligibilité est vérifiée côté serveur (PUBLISHED + PAID, offre active,
+  compte actif, absence d’accès actif) ;
+- l’initiation est idempotente par utilisateur et clé d’idempotence ;
+- les transitions sont PENDING -> CONFIRMED ou PENDING -> FAILED ;
+- la confirmation Fake validée transmet l’accès à Learning via un port
+  applicatif et crée une inscription ACTIVE de source PAYMENT ;
+- Payment ne possède aucune relation Doctrine vers Identity ou Learning ;
+  seuls userId, trainingId et l’offre interne sont stockés ;
+- aucun webhook, SDK ou fournisseur réel n’est livré dans PAY-001.
+
+Le Backoffice expose la gestion des tarifs et la consultation en lecture seule
+des paiements. Le parcours membre expose uniquement l’initiation POST protégée
+par authentification et CSRF ; aucun checkout fournisseur réel n’est inclus.
 
 ## 9. Services transverses
 

@@ -57,6 +57,9 @@ enum PermissionEnum: string
     case LEARNING_TAG_VIEW = 'LEARNING_TAG_VIEW';
     case LEARNING_TAG_MANAGE = 'LEARNING_TAG_MANAGE';
     case LEARNING_TAG_DELETE = 'LEARNING_TAG_DELETE';
+    case PAYMENT_VIEW = 'PAYMENT_VIEW';
+    case PAYMENT_OFFER_VIEW = 'PAYMENT_OFFER_VIEW';
+    case PAYMENT_OFFER_MANAGE = 'PAYMENT_OFFER_MANAGE';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -111,6 +114,9 @@ enum PermissionEnum: string
             self::LEARNING_TAG_VIEW,
             self::LEARNING_TAG_MANAGE,
             self::LEARNING_TAG_DELETE,
+            self::PAYMENT_VIEW,
+            self::PAYMENT_OFFER_VIEW,
+            self::PAYMENT_OFFER_MANAGE,
         ];
     }
 
@@ -167,6 +173,9 @@ enum PermissionEnum: string
             self::LEARNING_TAG_VIEW => 'Tags de formations : lecture',
             self::LEARNING_TAG_MANAGE => 'Tags de formations : création et édition',
             self::LEARNING_TAG_DELETE => 'Tags de formations : suppression',
+            self::PAYMENT_VIEW => 'Paiements : lecture',
+            self::PAYMENT_OFFER_VIEW => 'Tarifs de formations : lecture',
+            self::PAYMENT_OFFER_MANAGE => 'Tarifs de formations : gestion',
         };
     }
 
@@ -223,6 +232,9 @@ enum PermissionEnum: string
             self::LEARNING_TAG_VIEW => ColorEnum::INFO,
             self::LEARNING_TAG_MANAGE => ColorEnum::SUCCESS,
             self::LEARNING_TAG_DELETE => ColorEnum::DANGER,
+            self::PAYMENT_VIEW => ColorEnum::INFO,
+            self::PAYMENT_OFFER_VIEW => ColorEnum::INFO,
+            self::PAYMENT_OFFER_MANAGE => ColorEnum::SUCCESS,
         };
     }
 }

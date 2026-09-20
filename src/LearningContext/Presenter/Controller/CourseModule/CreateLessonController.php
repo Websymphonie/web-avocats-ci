@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\CourseModule;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/trainings/{trainingId}/modules/{moduleId}/lessons', name: 'learning_admin_lesson_')]
 #[IsGranted('LEARNING_TRAINING_MANAGE')]
+#[HasGroupAccess(RoleGroupEnum::COURSE_MODULES)]
 final class CreateLessonController extends AbstractController
 {
     #[Route('/new', name: 'new', requirements: ['trainingId' => '\\d+', 'moduleId' => '\\d+'], methods: ['GET', 'POST'])]

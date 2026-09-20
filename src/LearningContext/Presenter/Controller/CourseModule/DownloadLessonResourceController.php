@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\CourseModule;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -19,6 +21,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/trainings/{trainingId}/modules/{moduleId}/lessons/{lessonId}/resources', name: 'learning_admin_lesson_resource_')]
 #[IsGranted('LEARNING_TRAINING_MANAGE')]
+#[HasGroupAccess(RoleGroupEnum::COURSE_MODULES)]
 final class DownloadLessonResourceController extends AbstractController
 {
     #[Route('/{resourceId}/download', name: 'download', requirements: ['trainingId' => '\\d+', 'moduleId' => '\\d+', 'lessonId' => '\\d+', 'resourceId' => '\\d+'], methods: ['GET'])]

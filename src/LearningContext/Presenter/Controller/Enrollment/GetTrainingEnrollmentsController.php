@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\Enrollment;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/trainings/{trainingId}/enrollments', name: 'learning_admin_enrollment_')]
 #[IsGranted('LEARNING_ENROLLMENT_VIEW')]
+#[HasGroupAccess(RoleGroupEnum::ENROLLMENTS)]
 final class GetTrainingEnrollmentsController extends AbstractController
 {
     #[Route('', name: 'list', requirements: ['trainingId' => '\\d+'], methods: ['GET'])]

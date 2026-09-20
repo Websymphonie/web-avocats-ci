@@ -70,7 +70,7 @@ d’un `MemberContext`.
 | ADM-005 | gérer les cotisations dans `ContributionContext` après découverte | `DISCOVERY` |
 | ADM-006 | gérer les utilisateurs et permissions via `IdentityContext` | `IMPLEMENTED` |
 | ADM-007 | consulter les logs et capacités de notification existantes | `IMPLEMENTED` |
-| ADM-008 | administrer les paiements dans `PaymentContext` | `PLANNED` |
+| ADM-008 | administrer les paiements dans `PaymentContext` | `IMPLEMENTED` — offres et consultation Backoffice PAY-001 |
 
 Une route `/admin` ne change pas la propriété métier d’un écran. Les futurs
 contrôleurs, formulaires, use cases et modèles restent dans leur contexte
@@ -124,12 +124,12 @@ Aucun calcul ou statut définitif n’est introduit par ce document.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| PAY-001 | représenter une commande et ses lignes historisées | `PLANNED` |
+| PAY-001 | initier et confirmer un paiement de formation avec offre et provider abstrait | `IMPLEMENTED` — Fake uniquement |
 | PAY-002 | tracer les transactions et statuts | `PLANNED` |
 | PAY-003 | traiter les webhooks de manière idempotente | `PLANNED` |
 | PAY-004 | ne jamais accorder un accès sur une réponse frontend seule | `IMPLEMENTED` — principe |
-| PAY-005 | transmettre un paiement confirmé au contexte propriétaire | `PLANNED` |
-| PAY-006 | choisir un fournisseur après validation du besoin | `DISCOVERY` |
+| PAY-005 | transmettre un paiement confirmé au contexte propriétaire | `IMPLEMENTED` — port vers Learning |
+| PAY-006 | choisir un fournisseur après validation du besoin | `IMPLEMENTED` — Fake de fondation, fournisseur réel à décider |
 
 ## 10. API et mobile
 

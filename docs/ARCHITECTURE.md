@@ -268,6 +268,22 @@ publique future d’une fiche ou d’un catalogue ne vaut pas autorisation d’a
 
 ---
 
+## 10.1 Contrôle d’accès des contrôleurs Backoffice
+
+Chaque contrôleur d’un module métier exposé dans le Backoffice doit déclarer
+son périmètre de groupe métier au niveau de la classe, par exemple avec
+HasGroupAccess(RoleGroupEnum::NEWS).
+
+Les groupes dédiés livrés couvrent notamment NEWS, CATEGORY_NEWS, EVENTS,
+CATEGORY_EVENTS, VIDEOS, GALLERIES, DOCUMENTS, TRAININGS, COURSE_MODULES,
+ENROLLMENTS, CATEGORY_TRAININGS, TAG_TRAININGS, PAYMENTS et PAYMENT_OFFERS.
+Ces groupes sont réservés à SUPER_ADMIN et ADMIN. Ce contrôle de groupe
+constitue la barrière d’accès à la surface Backoffice.
+Le contrôle fin de l’opération reste ensuite porté par la permission métier
+appropriée (*_VIEW, *_MANAGE, *_PUBLISH, *_DELETE, etc.). Les contrôleurs
+Member ne reçoivent pas ces groupes : ils utilisent l’authentification membre
+et leurs règles d’accès propres.
+
 ## 11. Architecture decision principle
 
 When implementing a new feature:
@@ -442,6 +458,25 @@ Le Backoffice affiche une synthèse en lecture seule pour les `COURSE`, et
 qu’une progression existe. La progression est conservée pendant une révocation
 et restaurée à la réactivation. Le lecteur apprenant, l’auto-complétion par
 vidéo, les quiz et les certificats restent hors périmètre.
+
+## 12.7 PaymentContext — fondation PAY-001
+
+PaymentContext possède TrainingOffer et Payment dans sa propre persistence.
+TrainingOffer référence un trainingId scalaire et conserve le montant actif en
+devise ISO ; Payment conserve un snapshot du montant et de la devise, son
+fournisseur, sa référence, son statut et sa clé d’idempotence. La seule
+relation Doctrine interne est payment.training_offer_id vers training_offer.id.
+
+Les ports TrainingCatalogInterface, ActiveTrainingEnrollmentCheckerInterface et
+PaidTrainingAccessGranterInterface évitent à l’Application Payment de manipuler
+la persistence Learning. Les adaptateurs Infrastructure actuels utilisent
+Learning et FakePaymentGateway. La confirmation exige la référence fournisseur
+attendue, puis délègue l’activation à Learning ; le frontend ne constitue
+jamais une preuve de paiement.
+
+PAY-001 ne livre ni KkiaPay, ni SDK, ni webhook, ni checkout JavaScript. Ces
+éléments sont réservés à une future intégration fournisseur avec vérification
+serveur et idempotence.
 
 ## 13. Documents privés — CNT-005
 

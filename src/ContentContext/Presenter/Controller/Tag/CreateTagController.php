@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 namespace Websymphonie\ContentContext\Presenter\Controller\Tag;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,6 +13,7 @@ use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 #[Route('/tags', name: 'content_admin_tag_')]
 #[IsGranted('CONTENT_TAG_MANAGE')]
+#[HasGroupAccess(RoleGroupEnum::TAGS)]
 final class CreateTagController extends AbstractController
 {
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]

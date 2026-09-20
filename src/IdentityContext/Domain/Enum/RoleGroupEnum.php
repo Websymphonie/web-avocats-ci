@@ -17,6 +17,21 @@ enum RoleGroupEnum: string
     case IMAGES = 'IMAGES';
     case REGLAGES = 'REGLAGES';
     case MAINTENANCE = 'MAINTENANCE';
+    case NEWS = 'NEWS';
+    case CATEGORY_NEWS = 'CATEGORY_NEWS';
+    case EVENTS = 'EVENTS';
+    case CATEGORY_EVENTS = 'CATEGORY_EVENTS';
+    case VIDEOS = 'VIDEOS';
+    case GALLERIES = 'GALLERIES';
+    case TAGS = 'TAGS';
+    case DOCUMENTS = 'DOCUMENTS';
+    case TRAININGS = 'TRAININGS';
+    case COURSE_MODULES = 'COURSE_MODULES';
+    case ENROLLMENTS = 'ENROLLMENTS';
+    case CATEGORY_TRAININGS = 'CATEGORY_TRAININGS';
+    case TAG_TRAININGS = 'TAG_TRAININGS';
+    case PAYMENTS = 'PAYMENTS';
+    case PAYMENT_OFFERS = 'PAYMENT_OFFERS';
 
     case ALL = 'ALL';
 
@@ -62,6 +77,21 @@ enum RoleGroupEnum: string
             self::IMAGES => [self::SUPER],
             self::REGLAGES => [self::SUPER, self::ADMIN],
             self::MAINTENANCE => [self::SUPER],
+            self::NEWS,
+            self::CATEGORY_NEWS,
+            self::EVENTS,
+            self::CATEGORY_EVENTS,
+            self::VIDEOS,
+            self::GALLERIES,
+            self::TAGS,
+            self::DOCUMENTS,
+            self::TRAININGS,
+            self::COURSE_MODULES,
+            self::ENROLLMENTS,
+            self::CATEGORY_TRAININGS,
+            self::TAG_TRAININGS,
+            self::PAYMENTS,
+            self::PAYMENT_OFFERS => [self::SUPER, self::ADMIN],
 
             self::ALL => [
                 self::SUPER,

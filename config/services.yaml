@@ -72,6 +72,18 @@ services:
   Websymphonie\IdentityContext\Application\Service\User\UserDirectoryInterface:
     alias: Websymphonie\IdentityContext\Infrastructure\Service\User\DoctrineUserDirectory
 
+  Websymphonie\PaymentContext\Application\Service\PaymentGatewayInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\FakePaymentGateway
+
+  Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningTrainingCatalog
+
+  Websymphonie\PaymentContext\Application\Service\ActiveTrainingEnrollmentCheckerInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningActiveTrainingEnrollmentChecker
+
+  Websymphonie\PaymentContext\Application\Service\PaidTrainingAccessGranterInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningPaidTrainingAccessGranter
+
   Websymphonie\SharedContext\Application\Service\Sidebar\Service\SidebarMenuService:
     arguments:
       $modules: !tagged_iterator app.sidebar_module

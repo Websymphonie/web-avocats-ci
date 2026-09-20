@@ -350,6 +350,15 @@ Identity, Auth, Notification, Log, Shared et les services média éventuels sont
 des capacités transverses. Ils ne doivent pas absorber les règles des domaines
 métier.
 
+Le mécanisme événementiel existant reste synchrone. `EventEmitterFeature`
+tamponne temporairement des objets sur `User`/`UserModel`, puis
+`SharedContext\Domain\Service\EventDispatcher\EventDispatcher` les transmet au
+dispatcher Symfony ; `releaseEvents()` ne consomme pas le tampon. La
+notification in-app existante est ensuite créée par `NotificationSubscriber`
+et persistée dans la table `notifications`. Aucun identifiant d'événement,
+déduplication persistante ou transport Messenger n'est actuellement associé à
+ce pipeline.
+
 Le paiement est transverse par ses intégrations, mais conserve sa frontière
 propre lorsqu’il sera introduit.
 

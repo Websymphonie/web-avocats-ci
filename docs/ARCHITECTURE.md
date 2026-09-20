@@ -90,6 +90,39 @@ Prefer internal notifications before introducing external channels.
 
 ---
 
+### EventEmitterFeature et notifications — état actuel
+
+`EventEmitterFeature` appartient à
+`SharedContext\Domain\Service\EventDispatcher`. Il stocke en mémoire une liste
+d'objets via `emitEvent()` et `releaseEvents()` retourne cette liste sans la
+vider. Il est actuellement utilisé par `IdentityContext\UserModel` et
+l'entité Doctrine `IdentityContext\User`.
+
+Le contrat `SharedContext\Domain\Service\EventDispatcher\EventDispatcher` est
+adapté par `SymfonyEventDispatcher`, qui transmet chaque événement au
+`EventDispatcherInterface` Symfony immédiatement et séquentiellement. Ce
+pipeline n'utilise pas Messenger et ne possède pas d'outbox.
+
+Le chemin de notification interne actuel est :
+
+```text
+Identity password handler
+    -> NotificationEvent
+    -> NotificationSubscriber
+    -> SendNotificationUseCase
+    -> NotificationsService
+    -> notifications
+```
+
+La persistance des notifications est réalisée dans une transaction Doctrine
+propre à l'opération. Les événements sont dispatchés après la persistence du
+use case producteur ; un échec du listener ne peut donc pas annuler cette
+mutation déjà validée. Les emails d'activation et de réinitialisation suivent
+des listeners séparés et le `Mailer` synchrone ; ils ne sont pas produits par
+`NotificationContext`.
+
+---
+
 ### WebContext
 
 Public website.

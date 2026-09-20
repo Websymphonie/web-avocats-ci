@@ -1,0 +1,83 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <p class="text-sm font-medium text-muted-foreground">Traçabilité métier</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Audit métier</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Historique structuré des faits métier enregistrés par l’application.</p>
+            </section>
+
+            <form method="get" class="grid gap-4 rounded-2xl border border-border bg-card p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-3">
+                <label class="space-y-2 text-sm font-medium">Du
+                    <input type="date" name="from" value="{{ query.from }}" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium">Au
+                    <input type="date" name="to" value="{{ query.to }}" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium">Contexte
+                    <input type="text" name="context" value="{{ query.context }}" placeholder="LEARNING" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium">Action
+                    <input type="text" name="action" value="{{ query.action }}" placeholder="learning.training.published" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium">Acteur
+                    <input type="text" name="actorId" value="{{ query.actorId }}" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium">Type de cible
+                    <input type="text" name="targetType" value="{{ query.targetType }}" placeholder="Training" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <label class="space-y-2 text-sm font-medium lg:col-span-2">Identifiant cible
+                    <input type="text" name="targetId" value="{{ query.targetId }}" class="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm">
+                </label>
+                <div class="flex items-end gap-2">
+                    <button class="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground" type="submit">Filtrer</button>
+                    <a class="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground hover:bg-muted" href="{{ path('app_audit_index') }}">Effacer</a>
+                </div>
+            </form>
+
+            <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm" aria-labelledby="audit-list-title">
+                <div class="border-b border-border px-6 py-4">
+                    <h2 id="audit-list-title" class="text-sm font-semibold">Événements métier</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ auditPage.total }} événement{{ auditPage.total > 1 ? 's' : '' }}</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr><th class="px-6 py-3 font-medium">Date</th><th class="px-6 py-3 font-medium">Contexte</th><th class="px-6 py-3 font-medium">Action</th><th class="px-6 py-3 font-medium">Acteur</th><th class="px-6 py-3 font-medium">Cible</th><th class="px-6 py-3 text-right font-medium">Action</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                        {% for entry in auditPage.items %}
+                            <tr class="hover:bg-muted/40">
+                                <td class="whitespace-nowrap px-6 py-4 text-muted-foreground">{{ entry.occurredAt|date('d/m/Y H:i:s') }}</td>
+                                <td class="px-6 py-4 font-medium">{{ entry.context.value }}</td>
+                                <td class="px-6 py-4 font-mono text-xs">{{ entry.action.value }}</td>
+                                <td class="px-6 py-4">{{ entry.actor.type.value }}{% if entry.actor.id %}<span class="block text-xs text-muted-foreground">{{ entry.actor.id }}</span>{% endif %}</td>
+                                <td class="px-6 py-4">{{ entry.targetType ?? '—' }}{% if entry.targetId %}<span class="block text-xs text-muted-foreground">{{ entry.targetId }}</span>{% endif %}</td>
+                                <td class="px-6 py-4 text-right"><a class="inline-flex items-center rounded-lg px-3 py-2 font-medium hover:bg-muted" href="{{ path('app_audit_view', {id: entry.id}) }}">Voir</a></td>
+                            </tr>
+                        {% else %}
+                            <tr><td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucun audit métier ne correspond à vos critères.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% set lastPage = auditPage.total > 0 ? ((auditPage.total / auditPage.limit)|round(0, 'ceil')) : 1 %}
+                {% if lastPage > 1 %}
+                    <div class="flex items-center justify-between border-t border-border px-6 py-4 text-sm">
+                        <span class="text-muted-foreground">Page {{ auditPage.page }} sur {{ lastPage }}</span>
+                        <div class="flex gap-2">
+                            {% if auditPage.page > 1 %}<a class="rounded-lg border border-border px-3 py-2 hover:bg-muted" href="{{ path('app_audit_index', app.request.query.all|merge({page: auditPage.page - 1})) }}">Précédente</a>{% endif %}
+                            {% if auditPage.page < lastPage %}<a class="rounded-lg border border-border px-3 py-2 hover:bg-muted" href="{{ path('app_audit_index', app.request.query.all|merge({page: auditPage.page + 1})) }}">Suivante</a>{% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

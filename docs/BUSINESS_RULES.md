@@ -45,7 +45,28 @@ identifiants de session et tokens CSRF.
 
 La persistence SQL des logs techniques est best-effort : une erreur de
 stockage du log ne doit pas invalider une mutation métier valide. Le contrat
-d’audit métier sera défini séparément dans `LOG-002`.
+d’audit métier est défini séparément dans `LOG-002`.
+
+### Audit métier — LOG-002
+
+Le business audit trail est porté par `LogContext::AuditEntry`, dans une
+table dédiée distincte de `logs` et de `AuthLog`. Une entrée est un fait
+structuré identifié par un contexte métier, une action stable au format
+`context.subject.action`, un acteur `USER` ou `SYSTEM`, une cible scalaire
+optionnelle et des métadonnées intentionnelles.
+
+Les références d’acteur et de cible ne sont pas des relations Doctrine. Une
+entrée reste donc consultable si l’utilisateur ou la cible disparaît. Les
+métadonnées sont assainies par la politique LOG-001 et ne doivent contenir ni
+payload complet ni objet arbitraire.
+
+Les entrées sont append-only dans les workflows applicatifs : aucune
+modification ou suppression n’est exposée. Une clé de déduplication fournie
+est unique et un replay est traité comme déjà enregistré. La date
+`occurredAt` décrit le fait métier ; `createdAt` décrit sa persistence.
+
+La rétention, l’Outbox, la garantie d’atomicité avec le producteur et les
+intégrations Content/Learning/Payment restent hors périmètre de LOG-002.
 
 ### Public Frontoffice
 

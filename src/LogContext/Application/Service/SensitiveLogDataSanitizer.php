@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LogContext\Application\Service;
 
 use DateTimeInterface;
+use InvalidArgumentException;
 use JsonSerializable;
 
 final class SensitiveLogDataSanitizer
@@ -112,5 +113,57 @@ final class SensitiveLogDataSanitizer
         }
 
         return json_encode($sanitized, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     * @return array<string, mixed>
+     */
+    public function sanitizeMetadata(array $metadata): array
+    {
+        $this->assertMetadataInput($metadata);
+        $sanitized = $this->sanitize($metadata);
+
+        if (!is_array($sanitized)) {
+            return [];
+        }
+
+        $this->assertSimpleMetadata($sanitized);
+
+        return $sanitized;
+    }
+
+    private function assertMetadataInput(mixed $value): void
+    {
+        if ($value === null || is_scalar($value)) {
+            return;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $this->assertMetadataInput($item);
+            }
+
+            return;
+        }
+
+        throw new InvalidArgumentException('Les métadonnées doivent être composées de valeurs simples.');
+    }
+
+    private function assertSimpleMetadata(mixed $value): void
+    {
+        if ($value === null || is_scalar($value)) {
+            return;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $this->assertSimpleMetadata($item);
+            }
+
+            return;
+        }
+
+        throw new InvalidArgumentException('Les métadonnées doivent être composées de valeurs simples.');
     }
 }

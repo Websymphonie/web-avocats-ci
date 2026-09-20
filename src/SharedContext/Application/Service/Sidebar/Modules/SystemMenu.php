@@ -74,6 +74,7 @@ final class SystemMenu implements SidebarModuleInterface
                 routes: [
                     RouteEnum::AUTHLOG_INDEX->value,
                     RouteEnum::LOG_INDEX->value,
+                    RouteEnum::AUDIT_INDEX->value,
                 ],
                 roles: RoleGroupEnum::USER_ACCOUNT->roles(),
                 icon: 'heroicons:users',
@@ -93,6 +94,13 @@ final class SystemMenu implements SidebarModuleInterface
                         roles: RoleGroupEnum::LOGS->roles(),
                         link: RouteEnum::LOG_INDEX->value,
                         order: 2
+                    ),
+                    MenuFactory::item(
+                        label: 'Audit métier',
+                        routes: [RouteEnum::AUDIT_INDEX->value],
+                        roles: RoleGroupEnum::LOGS->roles(),
+                        link: RouteEnum::AUDIT_INDEX->value,
+                        order: 3
                     ),
                 ],
                 groupOrder: 4,

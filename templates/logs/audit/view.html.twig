@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-5xl space-y-6">
+            {{ component('Breadcrumbs', {'breadcrumbs': breadcrumbs}) }}
+            <article class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-start sm:justify-between">
+                    <div><p class="text-sm font-medium text-muted-foreground">Audit métier #{{ auditEntry.id }}</p><h1 class="mt-2 text-2xl font-semibold tracking-[-0.03em]">{{ auditEntry.action.value }}</h1><p class="mt-2 text-sm text-muted-foreground">{{ auditEntry.occurredAt|date('d/m/Y à H:i:s') }}</p></div>
+                    <span class="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">{{ auditEntry.context.value }}</span>
+                </div>
+                <dl class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">UUID</dt><dd class="mt-2 break-all font-mono text-xs">{{ auditEntry.uuid }}</dd></div>
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Acteur</dt><dd class="mt-2 text-sm font-medium">{{ auditEntry.actor.type.value }} — {{ auditEntry.actor.id ?? 'system' }}</dd></div>
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cible</dt><dd class="mt-2 text-sm font-medium">{{ auditEntry.targetType ?? 'Aucune' }}{% if auditEntry.targetId %}<span class="block break-all font-mono text-xs text-muted-foreground">{{ auditEntry.targetId }}</span>{% endif %}</dd></div>
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Produit</dt><dd class="mt-2 text-sm">{{ auditEntry.action.value }}</dd></div>
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Enregistré le</dt><dd class="mt-2 text-sm">{{ auditEntry.createdAt ? auditEntry.createdAt|date('d/m/Y à H:i:s') : '—' }}</dd></div>
+                    <div class="rounded-xl bg-muted/50 p-4"><dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Déduplication</dt><dd class="mt-2 break-all font-mono text-xs">{{ auditEntry.deduplicationKey ?? '—' }}</dd></div>
+                </dl>
+                <section class="mt-6"><h2 class="text-sm font-semibold">Métadonnées</h2><pre class="mt-3 max-h-[32rem] overflow-auto rounded-xl border border-border bg-zinc-950 p-4 text-xs leading-6 text-zinc-100">{{ auditEntry.metadata|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre></section>
+                <div class="mt-7 border-t border-border pt-6"><a class="inline-flex h-10 items-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted" href="{{ path('app_audit_index') }}">Retour à l’audit</a></div>
+            </article>
+        </div>
+    </main>
+{% endblock %}

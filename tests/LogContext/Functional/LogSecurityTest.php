@@ -14,9 +14,13 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Repository\Users\UserRepository;
+use Websymphonie\LogContext\Application\Usecase\Command\Audit\RecordAuditEntryCommand;
+use Websymphonie\LogContext\Domain\Enum\AuditActorType;
+use Websymphonie\LogContext\Domain\Repository\Audit\AuditEntryRepository;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\AuthLog\AuthLog;
 use Websymphonie\LogContext\Infrastructure\Persistence\Doctrine\Entity\Log\Logs;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
+use Websymphonie\SharedContext\Application\Service\Messaging\CommandBus;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class LogSecurityTest extends WebTestCase
@@ -131,10 +135,52 @@ final class LogSecurityTest extends WebTestCase
         self::assertNull($entityManager->find(Logs::class, $id));
     }
 
+    public function testBusinessAuditIsPersistedSanitizedAndDeduplicated(): void
+    {
+        $this->clientWithSchema();
+        $commandBus = static::getContainer()->get(CommandBus::class);
+        $deduplicationKey = hash('sha256', 'learning.training.published|training-1');
+        $command = new RecordAuditEntryCommand(
+            context: 'LEARNING',
+            action: 'learning.training.published',
+            actorType: AuditActorType::USER,
+            actorId: 'user-uuid',
+            targetType: 'Training',
+            targetId: 'training-1',
+            metadata: ['password' => 'secret', 'status' => 'PUBLISHED'],
+            deduplicationKey: $deduplicationKey,
+        );
+
+        $first = $commandBus->handle($command);
+        $second = $commandBus->handle($command);
+
+        self::assertNotNull($first->id);
+        self::assertSame($first->id, $second->id);
+        self::assertSame('[REDACTED]', $first->metadata['password']);
+
+        /** @var AuditEntryRepository $repository */
+        $repository = static::getContainer()->get(AuditEntryRepository::class);
+        $stored = $repository->findById($first->id);
+        self::assertNotNull($stored);
+        self::assertSame('PUBLISHED', $stored->metadata['status']);
+        self::assertSame('Training', $stored->targetType);
+
+        $systemEntry = $commandBus->handle(new RecordAuditEntryCommand(
+            context: 'PAYMENT',
+            action: 'payment.webhook.received',
+            actorType: AuditActorType::SYSTEM,
+            actorId: 'kkiapay_webhook',
+            metadata: ['providerReference' => 'provider-1'],
+        ));
+        self::assertSame('SYSTEM', $systemEntry->actor->type->value);
+    }
+
     public function testLogBackofficeDeniesAnonymousAndNonSuperRoles(): void
     {
         $client = $this->clientWithSchema();
         $client->request('GET', '/admin/log/list', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/auth/login');
+        $client->request('GET', '/admin/log/audit', server: ['HTTPS' => 'on']);
         self::assertResponseRedirects('/auth/login');
 
         foreach (['ROLE_ADMIN', 'ROLE_AVOCAT', 'ROLE_USER'] as $role) {
@@ -150,12 +196,24 @@ final class LogSecurityTest extends WebTestCase
             $client->loginUser($user);
             $client->request('GET', '/admin/log/list', server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, (string) $role);
+            $client->request('GET', '/admin/log/audit', server: ['HTTPS' => 'on']);
+            self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, (string) $role);
         }
     }
 
     public function testSuperAdminCanAccessLogBackoffice(): void
     {
         $client = $this->clientWithSchema();
+        $commandBus = static::getContainer()->get(CommandBus::class);
+        $commandBus->handle(new RecordAuditEntryCommand(
+            context: 'LEARNING',
+            action: 'learning.training.published',
+            actorType: AuditActorType::SYSTEM,
+            actorId: 'system',
+            targetType: 'Training',
+            targetId: 'training-1',
+            metadata: ['status' => 'PUBLISHED'],
+        ));
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $user = (new User())
             ->setEmail(sprintf('log-super-access-%d@example.test', ++self::$userSequence))
@@ -170,6 +228,9 @@ final class LogSecurityTest extends WebTestCase
         $client->request('GET', '/admin/log/list', server: ['HTTPS' => 'on']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        $client->request('GET', '/admin/log/audit', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertStringContainsString('learning.training.published', $client->getResponse()->getContent());
     }
 
     private function clientWithSchema(): KernelBrowser

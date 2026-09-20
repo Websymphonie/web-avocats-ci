@@ -98,9 +98,29 @@ password hashes, tokens, provider secrets, authorization headers, cookies,
 sessions and CSRF values must never be persisted in `Logs` context or extra
 data.
 
-This is deliberately not yet the business audit contract. `LOG-002` must
-define the actor, action, target, metadata and immutability rules before
+This is deliberately distinct from the business audit contract. `LOG-002`
+defines the actor, action, target, metadata and immutability foundation before
 Content, Learning, Payment or Notification events are added.
+
+The business audit trail is now a separate append-only capability:
+
+`BT`
+Business event producer (future LOG-003)
+    -> RecordAuditEntryCommand
+    -> LogContext::AuditEntry
+`BT`
+
+`AuditEntry` stores scalar actor and target references only. It has no Doctrine
+relation to `User` or to a business target, so it remains readable after those
+records are removed. Metadata is intentional, simple JSON sanitized by the
+LOG-001 policy, and deduplication is protected by a nullable unique key.
+Normal application workflows expose no update or delete operation for audit
+entries. The Backoffice audit screen is read-only and uses the current `LOGS`
+group, currently restricted to `ROLE_SUPER_ADMIN`.
+
+The audit persistence transaction is separate from the original future
+business transaction. There is no outbox, retention policy or producer
+integration yet; these decisions belong to LOG-003 and later work.
 
 ---
 

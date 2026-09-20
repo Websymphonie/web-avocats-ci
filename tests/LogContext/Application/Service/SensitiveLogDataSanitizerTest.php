@@ -47,4 +47,11 @@ final class SensitiveLogDataSanitizerTest extends TestCase
         self::assertStringNotContainsString('reset-secret', $message);
         self::assertStringContainsString('paymentUuid=payment-1', $message);
     }
+
+    public function testAuditMetadataRejectsObjects(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        (new SensitiveLogDataSanitizer())->sanitizeMetadata(['payload' => new \stdClass()]);
+    }
 }

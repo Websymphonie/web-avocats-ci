@@ -183,6 +183,16 @@ Les surfaces Web sont séparées du catalogue des rôles :
 Une ressource peut être publiquement visible sans que son contenu protégé soit
 accessible sans autorisation serveur.
 
+### Audit métier — LOG-002
+
+L’écran de consultation de l’audit métier réutilise le groupe historique
+`RoleGroupEnum::LOGS`. Selon la politique actuelle, il est donc accessible
+au `ROLE_SUPER_ADMIN` et refusé aux rôles `ROLE_ADMIN`,
+`ROLE_AVOCAT`, `ROLE_USER` ainsi qu’aux utilisateurs anonymes.
+
+Aucune permission de suppression ou de modification n’est créée pour
+`AuditEntry`.
+
 For Visits, `VISIT_MANAGE` is granted to Super Admin, Agency Manager, Commercial and Customer Relations. `VISIT_VIEW` is
 granted to Super Admin, Direction, Agency Manager, Commercial, Customer Relations and Executive Assistant. Technical
 Manager has no Visit access.

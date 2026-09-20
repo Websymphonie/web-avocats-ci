@@ -467,6 +467,19 @@ l’archivage sont des transitions explicites ; une vidéo YouTube n’est inté
 qu’à partir d’un identifiant extrait d’une URL validée. Aucun upload, appel API
 YouTube, live ou écran Frontoffice n’est livré.
 
+## CNT-006 — Pages statiques
+
+`Page` est un contenu institutionnel simple de `ContentContext`. Une page
+commence en `DRAFT` et passe explicitement à `PUBLISHED` via `publish()` ; elle
+peut revenir à `DRAFT` via `unpublish()`. La date `publishedAt` est renseignée
+à la première publication et conservée lors d’une republication.
+
+Le slug est normalisé et unique, mais reste éditable depuis le Backoffice. Le
+contenu est saisi avec le composant Tiptap existant et nettoyé par le sanitizer
+serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
+individuelles et bulk de suppression, ainsi que la query de lecture publique
+future ; il ne livre pas encore les routes Frontoffice.
+
 ## 12. Références
 
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;

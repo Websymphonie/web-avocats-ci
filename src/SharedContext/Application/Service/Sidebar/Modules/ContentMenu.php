@@ -128,6 +128,17 @@ final class ContentMenu implements SidebarModuleInterface
                 order: 4,
             ),
             MenuFactory::item(
+                label: 'Pages statiques',
+                routes: ['content_admin_page_list', 'content_admin_page_new', 'content_admin_page_show', 'content_admin_page_edit'],
+                roles: [],
+                icon: 'lucide:layout-template',
+                link: 'content_admin_page_list',
+                group: self::GROUP,
+                permission: 'CONTENT_PAGE_VIEW',
+                groupOrder: 2,
+                order: 5,
+            ),
+            MenuFactory::item(
                 label: 'Tags',
                 routes: [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'],
                 roles: [],
@@ -136,7 +147,7 @@ final class ContentMenu implements SidebarModuleInterface
                 group: self::GROUP,
                 permission: 'CONTENT_TAG_VIEW',
                 groupOrder: 2,
-                order: 5,
+                order: 6,
             ),
         ];
     }

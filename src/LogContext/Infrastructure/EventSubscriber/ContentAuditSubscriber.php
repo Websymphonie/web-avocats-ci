@@ -32,6 +32,7 @@ final readonly class ContentAuditSubscriber implements EventSubscriberInterface
             'DOCUMENT' => 'DocumentPublication',
             'EDITORIAL_VIDEO' => 'EditorialVideo',
             'PHOTO_GALLERY' => 'PhotoGallery',
+            'PAGE' => 'Page',
             default => 'Content',
         };
 

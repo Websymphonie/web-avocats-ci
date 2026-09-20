@@ -1,0 +1,8 @@
+{{ form_start(form) }}
+<div class="grid gap-5">
+    <div class="space-y-2">{{ form_label(form.title, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.title, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(form.title) }}</div>
+    <div class="space-y-2">{{ form_label(form.slug, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.slug, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_help(form.slug) }}{{ form_errors(form.slug) }}</div>
+    <div class="space-y-2">{{ form_label(form.content, null, {label_attr: {class: 'text-sm font-medium'}}) }}<div {{ react_component('Content/RichTextEditor', {inputId: form.content.vars.id, label: 'Contenu de la page', value: form.content.vars.value|default(''), placeholder: 'Rédigez le contenu de la page…', invalid: form.content.vars.errors|length > 0}) }}></div>{{ form_widget(form.content, {attr: {class: 'sr-only', tabindex: '-1', 'aria-hidden': 'true'}}) }}{{ form_errors(form.content) }}<p class="text-xs text-muted-foreground">Le contenu est nettoyé côté serveur. Les scripts et iframes sont retirés.</p></div>
+    <div class="flex justify-end gap-3"><a class="inline-flex h-10 items-center rounded-lg px-4 text-sm font-medium text-muted-foreground hover:bg-muted" href="{{ path('content_admin_page_list') }}">Annuler</a><button class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90" type="submit"><twig:ux:icon name="lucide:save" class="size-4"/>Enregistrer</button></div>
+</div>
+{{ form_end(form) }}

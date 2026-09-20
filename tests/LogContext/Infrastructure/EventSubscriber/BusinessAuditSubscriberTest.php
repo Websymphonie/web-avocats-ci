@@ -46,6 +46,20 @@ final class BusinessAuditSubscriberTest extends TestCase
         self::assertSame(hash('sha256', 'content.news.published|news-1|2026-09-20T10:00:00.000000+00:00'), $command->deduplicationKey);
     }
 
+    public function testStaticPageLifecycleUsesPageAuditTarget(): void
+    {
+        $commands = [];
+        $subscriber = new ContentAuditSubscriber($this->recorderFor($commands));
+        $subscriber->onContentLifecycle(new ContentLifecycleEvent('PAGE', 'UNPUBLISHED', 'page-1', 'À propos', 'a-propos', null));
+
+        /** @var RecordAuditEntryCommand $command */
+        $command = $commands[0];
+        self::assertSame('content.page.unpublished', $command->action);
+        self::assertSame('Page', $command->targetType);
+        self::assertSame('content_system', $command->actorId);
+        self::assertSame('page-1', $command->targetId);
+    }
+
     public function testEnrollmentActorsDistinguishSelfAdminAndPayment(): void
     {
         $commands = [];

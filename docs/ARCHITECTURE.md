@@ -776,3 +776,18 @@ atomique DB/filesystem.
 aucun document métier ni image persistante. Les sauvegardes doivent inclure
 `$APP_STORAGE_DIR` avec la base de données, et toute restauration doit
 reconstituer les deux sous-répertoires avant de rendre l’application active.
+
+## 14. Pages statiques — CNT-006
+
+`Page` appartient à `ContentContext` et est persistée dans la table `page`.
+Elle possède un titre, un slug unique, un contenu riche nettoyé côté serveur,
+un statut `DRAFT` ou `PUBLISHED` et les dates éditoriales. Les commandes et
+queries de page restent séparées du modèle Doctrine ; le Backoffice utilise
+`HasGroupAccess(RoleGroupEnum::PAGES)` et les permissions `CONTENT_PAGE_*`.
+
+La page ne porte ni catégorie, ni tag, ni média, ni type technique. Aucun écran
+Frontoffice final ni route publique n’est ajouté par CNT-006. La query
+`FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet de
+retourner qu’une page publiée. Les événements de cycle de vie réutilisent
+`ContentLifecycleEvent` et produisent les actions d’audit
+`content.page.published`, `content.page.unpublished` et `content.page.deleted`.

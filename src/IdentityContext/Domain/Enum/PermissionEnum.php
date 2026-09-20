@@ -45,6 +45,10 @@ enum PermissionEnum: string
     case CONTENT_DOCUMENT_PUBLISH = 'CONTENT_DOCUMENT_PUBLISH';
     case CONTENT_DOCUMENT_DELETE = 'CONTENT_DOCUMENT_DELETE';
     case CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD = 'CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD';
+    case CONTENT_PAGE_VIEW = 'CONTENT_PAGE_VIEW';
+    case CONTENT_PAGE_MANAGE = 'CONTENT_PAGE_MANAGE';
+    case CONTENT_PAGE_PUBLISH = 'CONTENT_PAGE_PUBLISH';
+    case CONTENT_PAGE_DELETE = 'CONTENT_PAGE_DELETE';
     case LEARNING_TRAINING_VIEW = 'LEARNING_TRAINING_VIEW';
     case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
     case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
@@ -102,6 +106,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH,
             self::CONTENT_DOCUMENT_DELETE,
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD,
+            self::CONTENT_PAGE_VIEW,
+            self::CONTENT_PAGE_MANAGE,
+            self::CONTENT_PAGE_PUBLISH,
+            self::CONTENT_PAGE_DELETE,
             self::LEARNING_TRAINING_VIEW,
             self::LEARNING_TRAINING_MANAGE,
             self::LEARNING_TRAINING_PUBLISH,
@@ -161,6 +169,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH => 'Documents : publication et archivage',
             self::CONTENT_DOCUMENT_DELETE => 'Documents : suppression',
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => 'Documents : téléchargement restreint',
+            self::CONTENT_PAGE_VIEW => 'Pages statiques : lecture',
+            self::CONTENT_PAGE_MANAGE => 'Pages statiques : création et édition',
+            self::CONTENT_PAGE_PUBLISH => 'Pages statiques : publication et dépublication',
+            self::CONTENT_PAGE_DELETE => 'Pages statiques : suppression',
             self::LEARNING_TRAINING_VIEW => 'Formations : lecture',
             self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
             self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',
@@ -220,6 +232,10 @@ enum PermissionEnum: string
             self::CONTENT_DOCUMENT_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_DOCUMENT_DELETE => ColorEnum::DANGER,
             self::CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD => ColorEnum::WARNING,
+            self::CONTENT_PAGE_VIEW => ColorEnum::INFO,
+            self::CONTENT_PAGE_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_PAGE_PUBLISH => ColorEnum::WARNING,
+            self::CONTENT_PAGE_DELETE => ColorEnum::DANGER,
             self::LEARNING_TRAINING_VIEW => ColorEnum::INFO,
             self::LEARNING_TRAINING_MANAGE => ColorEnum::SUCCESS,
             self::LEARNING_TRAINING_PUBLISH => ColorEnum::WARNING,

@@ -418,6 +418,15 @@ Les permissions `CONTENT_DOCUMENT_VIEW`, `CONTENT_DOCUMENT_MANAGE`,
 reçoivent pas par défaut. Le téléchargement `PUBLIC` ne dépend pas de ces
 permissions ; les autres niveaux restent contrôlés côté serveur.
 
+### Pages statiques — CNT-006
+
+Les permissions `CONTENT_PAGE_VIEW`, `CONTENT_PAGE_MANAGE`,
+`CONTENT_PAGE_PUBLISH` et `CONTENT_PAGE_DELETE` sont accordées par défaut à
+`ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global. Elles ne sont
+pas accordées par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs
+ajoutent également `HasGroupAccess(RoleGroupEnum::PAGES)` ; les configurations
+persistées de la matrice de rôles restent prioritaires.
+
 ### Formations COURSE — LRN-001
 
 Les permissions `LEARNING_TRAINING_VIEW`, `LEARNING_TRAINING_MANAGE`,

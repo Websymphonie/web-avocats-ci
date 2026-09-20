@@ -73,6 +73,7 @@ CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
 CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
+CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice uniquement ; Frontoffice différé
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -155,7 +156,7 @@ expose.
 ```text
 DOC-001  Documentation produit                     DONE
 CORE-FIX-001 Consolidation backend                 CURRENT
-CNT-006  Static Pages                               NEXT
+CNT-006  Static Pages                               DONE — Backoffice uniquement
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
@@ -186,7 +187,8 @@ Public Training catalogue                       DEFERRED — à concevoir avec l
 `CORE-FIX-001` traite les dettes techniques restantes de la revue backend :
 lecture batch des références Learning depuis Payment, échappement des titres
 UI et synchronisation documentaire. Une fois ses quality gates validés,
-`CNT-006 Static Pages` devient le prochain ticket fonctionnel.
+`CNT-006 Static Pages` est livré côté Backoffice ; sa lecture publique finale
+reste différée avec la conception Frontoffice.
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.
 

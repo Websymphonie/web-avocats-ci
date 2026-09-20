@@ -491,6 +491,17 @@ Les décisions suivantes restent explicitement ouvertes :
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;
 - [`docs/specifications_techniques_plateforme_avocats_ci_v3.md`](specifications_techniques_plateforme_avocats_ci_v3.md).
 
+## CNT-006 — Pages statiques
+
+- une page commence en `DRAFT` ; son statut n’est jamais modifié par un select de formulaire ;
+- `publish()` exige un titre, un slug et un contenu riche non vide après nettoyage ; il renseigne `publishedAt` une seule fois ;
+- `unpublish()` est une transition explicite `PUBLISHED` vers `DRAFT` et conserve la date historique de première publication ;
+- le slug est normalisé, unique et éditable dans le Backoffice ;
+- le HTML est nettoyé côté serveur avec le sanitizer Tiptap existant ; les scripts, iframes et attributs non autorisés ne sont pas conservés ;
+- la suppression bulk valide l’existence de toutes les cibles avant de commencer les suppressions afin d’éviter une suppression partielle liée à une sélection invalide ;
+- une page ne possède pas de catégorie, de tag, de média ou de page builder dans cette verticale ;
+- les actions de cycle de vie sont auditées sans stocker le contenu HTML dans les métadonnées d’audit.
+
 ## LRN-003 — Contenu pédagogique des leçons
 
 Une leçon est publiable lorsqu’elle possède un contenu riche significatif, une

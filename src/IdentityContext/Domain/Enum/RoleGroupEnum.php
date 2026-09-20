@@ -25,6 +25,7 @@ enum RoleGroupEnum: string
     case GALLERIES = 'GALLERIES';
     case TAGS = 'TAGS';
     case DOCUMENTS = 'DOCUMENTS';
+    case PAGES = 'PAGES';
     case TRAININGS = 'TRAININGS';
     case COURSE_MODULES = 'COURSE_MODULES';
     case ENROLLMENTS = 'ENROLLMENTS';
@@ -85,6 +86,7 @@ enum RoleGroupEnum: string
             self::GALLERIES,
             self::TAGS,
             self::DOCUMENTS,
+            self::PAGES,
             self::TRAININGS,
             self::COURSE_MODULES,
             self::ENROLLMENTS,

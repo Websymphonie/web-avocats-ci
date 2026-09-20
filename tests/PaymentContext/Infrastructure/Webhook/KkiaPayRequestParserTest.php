@@ -126,6 +126,21 @@ final class KkiaPayRequestParserTest extends TestCase
         self::assertSame(PaymentStatus::PENDING, $payment->status);
     }
 
+    public function testPartnerMismatchDoesNotDispatchConfirmation(): void
+    {
+        $payment = $this->payment();
+        $payments = $this->createMock(PaymentRepositoryInterface::class);
+        $payments->method('getByUuid')->willReturn($payment);
+        $verifier = $this->createMock(PaymentTransactionVerifierInterface::class);
+        $verifier->method('verify')->willReturn(new VerifiedPaymentTransaction('transaction-success', true, 25000, 'another-payment-uuid'));
+        $bus = $this->createMock(CommandBus::class);
+        $bus->expects(self::never())->method('handle');
+
+        (new KkiaPayWebhookConsumer($payments, $verifier, $bus, new NullLogger()))->consume($this->successEvent($payment->uuid));
+
+        self::assertSame(PaymentStatus::PENDING, $payment->status);
+    }
+
     private function request(array $payload, string $secret = 'webhook-secret'): Request
     {
         return Request::create(

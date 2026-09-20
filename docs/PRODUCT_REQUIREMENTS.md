@@ -127,6 +127,7 @@ Aucun calcul ou statut définitif n’est introduit par ce document.
 |---|---|---|
 | PAY-001 | initier et confirmer un paiement de formation avec offre et provider abstrait | `IMPLEMENTED` — Fake uniquement |
 | PAY-002 | intégrer KkiaPay et vérifier les transactions côté serveur | `IMPLEMENTED` — code, checkout et webhook; certification Sandbox externe requise |
+| PAY-002B | utiliser le SDK PHP officiel KkiaPay pour la vérification serveur | `IMPLEMENTED` — SDK encapsulé dans l’adaptateur Infrastructure; certification Sandbox réelle toujours externe |
 | PAY-003 | traiter les webhooks de manière idempotente | `IMPLEMENTED` — doublons sans double accès |
 | PAY-004 | ne jamais accorder un accès sur une réponse frontend seule | `IMPLEMENTED` — principe |
 | PAY-005 | transmettre un paiement confirmé au contexte propriétaire | `IMPLEMENTED` — port vers Learning |

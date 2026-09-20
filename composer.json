@@ -20,6 +20,7 @@
     "google/cloud-vision": "^2.1",
     "intervention/image": "^3.7",
     "jms/serializer-bundle": "^5.5",
+    "kkiapay/kkiapay-php": "dev-master",
     "knplabs/doctrine-behaviors": "^3.1",
     "knplabs/knp-paginator-bundle": "^6.3",
     "knplabs/knp-time-bundle": "^2.4",

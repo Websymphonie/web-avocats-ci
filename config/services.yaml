@@ -90,6 +90,9 @@ services:
   Websymphonie\PaymentContext\Application\Service\PaymentTransactionVerifierInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\KkiaPayTransactionVerifier
 
+  Websymphonie\PaymentContext\Infrastructure\Service\KkiaPaySdkClientInterface:
+    alias: Websymphonie\PaymentContext\Infrastructure\Service\KkiaPaySdkClient
+
   Websymphonie\PaymentContext\Application\Service\TrainingCatalogInterface:
     alias: Websymphonie\PaymentContext\Infrastructure\Service\LearningTrainingCatalog
 

@@ -338,6 +338,12 @@ Le Backoffice expose la gestion des tarifs et la consultation en lecture seule
 des paiements. Le parcours membre expose uniquement l’initiation POST protégée
 par authentification et CSRF ; aucun checkout fournisseur réel n’est inclus.
 
+PAY-002B remplace l’appel HTTP manuel de vérification par le SDK officiel
+`kkiapay/kkiapay-php`. Le SDK reste strictement dans l’Infrastructure,
+encapsulé par `KkiaPaySdkClient`; sa réponse est transformée en DTO interne
+avant d’atteindre le consumer et les commandes Payment. Les erreurs techniques
+ou les statuts non terminaux laissent le paiement rejouable en `PENDING`.
+
 ## 9. Services transverses
 
 Identity, Auth, Notification, Log, Shared et les services média éventuels sont

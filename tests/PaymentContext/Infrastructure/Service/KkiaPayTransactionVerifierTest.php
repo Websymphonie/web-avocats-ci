@@ -5,33 +5,28 @@ declare(strict_types=1);
 namespace Websymphonie\Tests\PaymentContext\Infrastructure\Service;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\HttpClient\Response\MockResponse;
+use RuntimeException;
 use Websymphonie\PaymentContext\Application\Exception\PaymentVerificationException;
+use Websymphonie\PaymentContext\Infrastructure\Service\KkiaPaySdkClientInterface;
 use Websymphonie\PaymentContext\Infrastructure\Service\KkiaPayTransactionVerifier;
 
 final class KkiaPayTransactionVerifierTest extends TestCase
 {
-    public function testItUsesTheKkiaPayServerVerificationContract(): void
+    public function testItMapsAnSdkSuccessResponseToTheInternalDto(): void
     {
-        $client = new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
-            self::assertSame('POST', $method);
-            self::assertSame('https://api-sandbox.kkiapay.me/api/v1/transactions/status', $url);
-            self::assertSame(['transactionId' => 'transaction-success'], json_decode((string) $options['body'], true, flags: JSON_THROW_ON_ERROR));
-            self::assertSame(['X-API-KEY: public-key'], $options['normalized_headers']['x-api-key']);
-            self::assertSame(['X-PRIVATE-KEY: private-key'], $options['normalized_headers']['x-private-key']);
-            self::assertSame(['X-SECRET-KEY: secret-key'], $options['normalized_headers']['x-secret-key']);
-
-            return new MockResponse(json_encode([
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->expects(self::once())
+            ->method('verifyTransaction')
+            ->with('transaction-success')
+            ->willReturn((object) [
                 'transactionId' => 'transaction-success',
-                'isPaymentSucces' => true,
+                'status' => 'SUCCESS',
                 'amount' => 25000,
                 'partnerId' => 'payment-uuid',
-                'currency' => 'XOF',
-            ], JSON_THROW_ON_ERROR));
-        });
+                'currency' => 'xof',
+            ]);
 
-        $transaction = (new KkiaPayTransactionVerifier($client, 'public-key', 'private-key', 'secret-key', true))->verify('transaction-success');
+        $transaction = (new KkiaPayTransactionVerifier($client))->verify('transaction-success');
 
         self::assertTrue($transaction->successful);
         self::assertSame(25000, $transaction->amount);
@@ -39,16 +34,99 @@ final class KkiaPayTransactionVerifierTest extends TestCase
         self::assertSame('XOF', $transaction->currency);
     }
 
-    public function testMalformedVerificationResponseIsNotRetryable(): void
+    public function testItMapsAnSdkFailedResponseWithoutConfirmingIt(): void
     {
-        $client = new MockHttpClient(new MockResponse('{"transactionId":"transaction-success"}'));
-        $verifier = new KkiaPayTransactionVerifier($client, 'public-key', 'private-key', 'secret-key', true);
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willReturn((object) [
+            'transactionId' => 'transaction-failed',
+            'status' => 'FAILED',
+            'amount' => '1000',
+            'partnerId' => 'payment-uuid',
+        ]);
+
+        $transaction = (new KkiaPayTransactionVerifier($client))->verify('transaction-failed');
+
+        self::assertFalse($transaction->successful);
+        self::assertSame(1000, $transaction->amount);
+        self::assertNull($transaction->currency);
+    }
+
+    public function testPendingProviderStatusIsRetryableAndDoesNotBecomeFailed(): void
+    {
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willReturn((object) [
+            'transactionId' => 'transaction-pending',
+            'status' => 'PENDING',
+            'amount' => 1000,
+            'partnerId' => 'payment-uuid',
+        ]);
 
         try {
-            $verifier->verify('transaction-success');
+            (new KkiaPayTransactionVerifier($client))->verify('transaction-pending');
+            self::fail('Expected a pending provider status to be rejected.');
+        } catch (PaymentVerificationException $exception) {
+            self::assertTrue($exception->retryable);
+            self::assertSame('KkiaPay transaction is not in a terminal state.', $exception->getMessage());
+        }
+    }
+
+    public function testSdkTransportFailureIsUnavailableAndRetryable(): void
+    {
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willThrowException(new RuntimeException('network down'));
+
+        try {
+            (new KkiaPayTransactionVerifier($client))->verify('transaction-unavailable');
+            self::fail('Expected provider unavailability to be rejected.');
+        } catch (PaymentVerificationException $exception) {
+            self::assertTrue($exception->retryable);
+            self::assertSame('KkiaPay verification is temporarily unavailable.', $exception->getMessage());
+        }
+    }
+
+    public function testSdkReturnedHttpStatusIsUnavailableAndRetryable(): void
+    {
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willReturn(503);
+
+        try {
+            (new KkiaPayTransactionVerifier($client))->verify('transaction-unavailable');
+            self::fail('Expected provider unavailability to be rejected.');
+        } catch (PaymentVerificationException $exception) {
+            self::assertTrue($exception->retryable);
+            self::assertSame('KkiaPay verification returned HTTP 503.', $exception->getMessage());
+        }
+    }
+
+    public function testMalformedVerificationResponseIsNotRetryable(): void
+    {
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willReturn((object) ['transactionId' => 'transaction-success']);
+
+        try {
+            (new KkiaPayTransactionVerifier($client))->verify('transaction-success');
             self::fail('Expected the malformed response to be rejected.');
         } catch (PaymentVerificationException $exception) {
             self::assertFalse($exception->retryable);
         }
+    }
+
+    public function testNestedSdkDataIsMappedWithoutLeakingTheSdkObject(): void
+    {
+        $client = self::createMock(KkiaPaySdkClientInterface::class);
+        $client->method('verifyTransaction')->willReturn((object) [
+            'data' => (object) [
+                'transactionId' => 'transaction-success',
+                'status' => 'SUCCESS',
+                'amount' => 1000,
+                'partnerId' => 'payment-uuid',
+            ],
+        ]);
+
+        $transaction = (new KkiaPayTransactionVerifier($client))->verify('transaction-success');
+
+        self::assertTrue($transaction->successful);
+        self::assertSame('transaction-success', $transaction->transactionId);
+        self::assertNull($transaction->currency);
     }
 }

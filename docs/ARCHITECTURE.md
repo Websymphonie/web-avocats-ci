@@ -496,9 +496,21 @@ serveur et idempotence.
 KkiaPay est sélectionné par configuration (PAYMENT_PROVIDER=KKIAPAY) et
 derrière PaymentGatewayInterface; PAYMENT_PROVIDER=FAKE reste la valeur de
 test. Le SDK PHP officiel actuel est volontairement écarté : sa version
-publique 0.0.4 est ancienne, peu typée et encapsule Guzzle. L’adaptateur
-utilise donc Symfony HttpClient pour appeler l’endpoint serveur de statut
-KkiaPay, avec la sélection sandbox/production dans l’Infrastructure.
+publique 0.0.4 est ancienne et peu typée, mais reste la dépendance imposée
+pour la vérification serveur PAY-002B. Le SDK est encapsulé dans
+`KkiaPaySdkClient`, derrière `KkiaPaySdkClientInterface`, et n’est utilisé que
+par `KkiaPayTransactionVerifier`. La sélection sandbox/production est
+transmise au constructeur SDK depuis `KKIAPAY_SANDBOX`.
+
+`KkiaPayTransactionVerifier` transforme immédiatement la réponse SDK en
+`VerifiedPaymentTransaction`. Il mappe explicitement les statuts provider
+`SUCCESS` et `FAILED`; un statut `PENDING` reste rejouable et les autres
+statuts techniques ne sont jamais convertis silencieusement en échec métier.
+Le SDK expose réellement `transactionId`, `partnerId`, `amount` et `status`;
+la réponse vérifiée ne fournit pas systématiquement `currency`, qui reste donc
+optionnelle et n’est comparée que lorsqu’elle est effectivement présente.
+PAY-002B utilise `kkiapay/kkiapay-php` depuis `dev-master`, dont la révision
+exacte est figée dans `composer.lock`.
 
 Symfony Webhook expose /webhook/kkiapay. KkiaPayRequestParser exige POST,
 JSON, x-kkiapay-secret valide et les champs minimaux avant de produire un

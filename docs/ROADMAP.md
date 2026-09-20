@@ -90,6 +90,7 @@ Tickets :
 ```text
 PAY-001 — PaymentContext + workflow Fake              DONE
 PAY-002 — KkiaPay + vérification serveur + Webhook    DONE
+PAY-002B — SDK PHP officiel KkiaPay                   DONE — adaptateur SDK et mapping DTO
 PAY-003 — webhooks idempotents                        DONE — livré avec PAY-002
 PAY-002A — certification Sandbox et hardening         PENDING — recette externe requise
 ```

@@ -361,6 +361,10 @@ et journalise ses erreurs. Une clé de déduplication SHA-256, protégée par un
 contrainte unique en base, rend les replays sans effet ; aucun Outbox ni
 transport Messenger asynchrone n'est introduit par NOT-001.
 
+La lecture globale des notifications publiques n'est pas redéfinie ici : la
+dette liée à leur état lu/non lu et à l'action « tout marquer comme lu » reste
+à traiter séparément.
+
 Le paiement est transverse par ses intégrations, mais conserve sa frontière
 propre lorsqu’il sera introduit.
 

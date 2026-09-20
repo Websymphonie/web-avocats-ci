@@ -159,6 +159,7 @@ LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centra
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
 NOT-001  Notifications Learning/Payment                DONE — événements in-app scalaires et déduplication persistée
+NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay et best-effort vérifiés
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```

@@ -130,6 +130,11 @@ mutation déjà validée. Les emails d'activation et de réinitialisation suiven
 des listeners séparés et le `Mailer` synchrone ; ils ne sont pas produits par
 `NotificationContext`.
 
+La commande « tout marquer comme lu » reste limitée aux notifications privées
+ciblées par utilisateur. Le modèle de lecture des notifications publiques et
+leur état lu/non lu global constituent une dette séparée, volontairement hors
+scope de NOT-REV-002.
+
 ---
 
 ### WebContext

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Websymphonie\Tests\NotificationContext\Infrastructure\Service;
 
 use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use ReflectionClass;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Factory\UserFactory;
 use Websymphonie\NotificationContext\Domain\Enum\Notification\NotificationAccessEnum;
@@ -51,5 +53,32 @@ final class NotificationsServiceTest extends TestCase
         ];
         $service->send(...$arguments);
         $service->send(...$arguments);
+    }
+
+    public function testAConcurrentUniqueConstraintCollisionIsHandledAsAnAlreadyProcessedReplay(): void
+    {
+        $collision = (new ReflectionClass(UniqueConstraintViolationException::class))->newInstanceWithoutConstructor();
+        $manager = $this->createMock(ManagersInterface::class);
+        $manager->expects(self::once())->method('execute')->willThrowException($collision);
+        $repository = $this->createMock(NotificationModelRepository::class);
+        $repository->expects(self::once())->method('findByDeduplicationKey')->willReturn(null);
+
+        $service = new NotificationsService(
+            new NotificationDatabaseService($manager),
+            new NotificationFactory(new UserFactory()),
+            $repository,
+        );
+
+        $service->send(
+            title: 'Titre',
+            message: 'Message',
+            type: NotificationTypeEnum::NOTIF_INFO,
+            action: NotificationActionEnum::NOTIF_ADD,
+            access: NotificationAccessEnum::NOTIF_PRIVATE,
+            user: new User(),
+            deduplicationKey: 'b' . str_repeat('0', 63),
+        );
+
+        self::assertTrue(true);
     }
 }

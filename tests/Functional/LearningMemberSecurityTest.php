@@ -31,6 +31,7 @@ use Websymphonie\LearningContext\Domain\Repository\LessonProgressRepositoryInter
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails\LiveTrainingDetailsEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
+use Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity\Notifications\Notifications;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class LearningMemberSecurityTest extends WebTestCase
@@ -95,6 +96,7 @@ final class LearningMemberSecurityTest extends WebTestCase
 
         $count = static::getContainer()->get('doctrine')->getManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]);
         self::assertSame(1, $count);
+        self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
     }
 
     public function testRoleUserCannotSelfEnrollInFreeTraining(): void
@@ -115,6 +117,7 @@ final class LearningMemberSecurityTest extends WebTestCase
             'trainingId' => $training->getId(),
             'userId' => $user->getId(),
         ]));
+        self::assertSame(0, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
     }
 
     /** @dataProvider nonSelfEnrollAccessTypes */
@@ -251,6 +254,7 @@ final class LearningMemberSecurityTest extends WebTestCase
             'trainingId' => $training->getId(),
             'userId' => $avocat->getId(),
         ]));
+        self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $avocat]));
 
         $client->request('POST', $grantUrl, [
             '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
@@ -261,6 +265,53 @@ final class LearningMemberSecurityTest extends WebTestCase
             'trainingId' => $training->getId(),
             'userId' => $user->getId(),
         ]));
+        self::assertSame(0, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
+    }
+
+    public function testRevokeAndReactivateCreateDistinctNotifications(): void
+    {
+        $client = $this->clientWithSchema();
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        $client->loginUser($admin);
+        $client->disableReboot();
+
+        $grantUrl = '/admin/learning/trainings/' . $training->getId() . '/enrollments/grant';
+        $client->request('POST', $grantUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
+            'userId' => $avocat->getId(),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+
+        $enrollment = $this->entityManager()->getRepository(EnrollmentEntity::class)->findOneBy([
+            'trainingId' => $training->getId(),
+            'userId' => $avocat->getId(),
+        ]);
+        self::assertInstanceOf(EnrollmentEntity::class, $enrollment);
+
+        $revokeUrl = '/admin/learning/trainings/' . $training->getId() . '/enrollments/' . $enrollment->getId() . '/revoke';
+        $client->request('POST', $revokeUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_revoke_' . $enrollment->getId()),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+        $client->request('POST', $revokeUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_revoke_' . $enrollment->getId()),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+
+        $client->request('POST', $grantUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
+            'userId' => $avocat->getId(),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+        $client->request('POST', $grantUrl, [
+            '_token' => $this->csrfToken($client, 'learning_enrollment_grant_' . $training->getId()),
+            'userId' => $avocat->getId(),
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId() . '/enrollments');
+
+        self::assertSame(3, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $avocat]));
     }
 
     public function testResourceDownloadIsDeniedWithoutEnrollmentAndAgainstAnotherTraining(): void

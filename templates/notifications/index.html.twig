@@ -59,7 +59,7 @@
                     </div>
                     {% if form.access is defined %}
                         <div class="space-y-2">
-                            <label class="text-sm font-medium" for="{{ form.access.vars.id }}">Canal</label>
+                            <label class="text-sm font-medium" for="{{ form.access.vars.id }}">Visibilité</label>
                             {{ form_widget(form.access, {'attr': {'class': 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
                         </div>
                     {% endif %}

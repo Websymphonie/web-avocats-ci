@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\RemoteEvent\RemoteEvent;
+use Psr\Log\NullLogger;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Maintenance\Maintenances;
@@ -24,13 +26,20 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Enrollment\EnrollmentEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
+use Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\Entity\Notifications\Notifications;
+use Websymphonie\PaymentContext\Application\Model\VerifiedPaymentTransaction;
+use Websymphonie\PaymentContext\Application\Service\PaymentTransactionVerifierInterface;
 use Websymphonie\PaymentContext\Application\Usecase\Command\ConfirmPaymentCommand;
+use Websymphonie\PaymentContext\Application\Usecase\Command\FailPaymentCommand;
 use Websymphonie\PaymentContext\Application\Usecase\Command\InitiateTrainingPaymentCommand;
 use Websymphonie\PaymentContext\Application\Usecase\Command\SaveTrainingOfferCommand;
+use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Domain\Exception\CurrencyNotFoundException;
 use Websymphonie\PaymentContext\Domain\Exception\PaymentDeniedException;
+use Websymphonie\PaymentContext\Domain\Model\Payment;
 use Websymphonie\PaymentContext\Domain\Repository\PaymentRepositoryInterface;
+use Websymphonie\PaymentContext\Infrastructure\Webhook\KkiaPayWebhookConsumer;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandBus;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -90,6 +99,7 @@ final class PaymentWorkflowTest extends WebTestCase
         $enrollment = $this->entityManager()->getRepository(EnrollmentEntity::class)->findOneBy(['trainingId' => $training->getId(), 'userId' => $user->getId()]);
         self::assertSame(EnrollmentStatus::ACTIVE, $enrollment->getStatus());
         self::assertSame(EnrollmentSource::PAYMENT, $enrollment->getSource());
+        self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
     }
 
     public function testSameIdempotencyKeyReturnsTheSamePaymentAndBrowserAmountIsIgnored(): void
@@ -129,10 +139,12 @@ final class PaymentWorkflowTest extends WebTestCase
         $this->saveOffer($training, 10000);
         $payment = $this->commandBus()->handle(new InitiateTrainingPaymentCommand($user->getId() ?? 0, $training->getId() ?? 0, 'checkout-failed'));
 
-        $this->commandBus()->handle(new \Websymphonie\PaymentContext\Application\Usecase\Command\FailPaymentCommand($payment->uuid));
+        $this->commandBus()->handle(new FailPaymentCommand($payment->uuid));
+        $this->commandBus()->handle(new FailPaymentCommand($payment->uuid));
         $failed = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
         self::assertSame(PaymentStatus::FAILED, $failed->status);
         self::assertSame(0, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
+        self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
 
         $this->expectException(\Websymphonie\PaymentContext\Domain\Exception\InvalidPaymentTransitionException::class);
         $this->commandBus()->handle(new ConfirmPaymentCommand($payment->uuid, (string) $payment->providerReference));
@@ -152,6 +164,7 @@ final class PaymentWorkflowTest extends WebTestCase
             self::assertTrue(true);
         }
         self::assertNull(static::getContainer()->get(PaymentRepositoryInterface::class)->findByUserAndIdempotencyKey($user->getId() ?? 0, 'ineligible-checkout'));
+        self::assertSame(0, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
     }
 
     /** @dataProvider deniedTrainingCases */
@@ -264,6 +277,47 @@ final class PaymentWorkflowTest extends WebTestCase
         self::assertResponseStatusCodeSame(401);
         self::assertNotSame(301, $client->getResponse()->getStatusCode());
         self::assertNotSame(302, $client->getResponse()->getStatusCode());
+    }
+
+    public function testDuplicateKkiaPaySuccessConfirmsOnceAndNotifiesOnce(): void
+    {
+        $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_AVOCAT']);
+        $training = $this->createTraining(TrainingAccessType::PAID);
+        $payment = static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $training->getId() ?? 0,
+            trainingOfferId: null,
+            amount: 25000,
+            currency: 'XOF',
+            provider: PaymentProvider::KKIAPAY,
+            idempotencyKey: 'kkiapay-notification-test',
+        ));
+        $verifier = $this->createMock(PaymentTransactionVerifierInterface::class);
+        $verifier->expects(self::exactly(2))->method('verify')->willReturn(new VerifiedPaymentTransaction('transaction-success', true, 25000, $payment->uuid));
+        $consumer = new KkiaPayWebhookConsumer(
+            static::getContainer()->get(PaymentRepositoryInterface::class),
+            $verifier,
+            $this->commandBus(),
+            new NullLogger(),
+        );
+        $event = new RemoteEvent('transaction.success', 'transaction.success:transaction-success', [
+            'event' => 'transaction.success',
+            'transactionId' => 'transaction-success',
+            'isPaymentSucces' => true,
+            'amount' => 25000,
+            'partnerId' => $payment->uuid,
+        ]);
+
+        $consumer->consume($event);
+        $consumer->consume($event);
+
+        $stored = static::getContainer()->get(PaymentRepositoryInterface::class)->getByUuid($payment->uuid);
+        self::assertSame(PaymentStatus::CONFIRMED, $stored->status);
+        self::assertSame(1, $this->entityManager()->getRepository(EnrollmentEntity::class)->count(['trainingId' => $training->getId(), 'userId' => $user->getId()]));
+        self::assertSame(1, $this->entityManager()->getRepository(Notifications::class)->count(['user' => $user]));
     }
 
     private function saveOffer(TrainingEntity $training, int $amount): void

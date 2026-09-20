@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action', 'inputs', 'confirmation', 'confirmationDescription'];
+    static targets = ['master', 'row', 'toolbar', 'summary', 'status', 'action', 'clear', 'inputs', 'confirmation', 'confirmationDescription'];
 
     static values = {
         selectionLabelSingular: { type: String, default: 'élément' },
@@ -48,6 +48,14 @@ export default class extends Controller {
         this.update();
     }
 
+    clear(event) {
+        event?.preventDefault();
+        this.rowTargets.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+        this.update();
+    }
+
     update() {
         const selectedIds = this.selectedIds();
         const totalCount = new Set(this.rowTargets.map((checkbox) => checkbox.value)).size;
@@ -61,6 +69,17 @@ export default class extends Controller {
             this.masterTarget.setAttribute('aria-checked', this.masterTarget.indeterminate ? 'mixed' : String(this.masterTarget.checked));
         }
 
+        this.rowTargets.forEach((checkbox) => {
+            const row = checkbox.closest('tr, article');
+            if (row) {
+                row.toggleAttribute('data-selected', checkbox.checked);
+                row.classList.toggle('bg-primary/5', checkbox.checked);
+                row.classList.toggle('ring-1', checkbox.checked);
+                row.classList.toggle('ring-inset', checkbox.checked);
+                row.classList.toggle('ring-primary/20', checkbox.checked);
+            }
+        });
+
         this.toolbarTargets.forEach((toolbar) => {
             toolbar.hidden = !hasSelection;
             toolbar.setAttribute('aria-hidden', String(!hasSelection));
@@ -68,6 +87,10 @@ export default class extends Controller {
 
         this.summaryTargets.forEach((summary) => {
             summary.textContent = this.selectionSummary(selectedCount);
+        });
+
+        this.clearTargets.forEach((clear) => {
+            clear.disabled = !hasSelection;
         });
 
         this.actionTargets.forEach((action) => {
@@ -84,11 +107,11 @@ export default class extends Controller {
         }
 
         this.confirmationTargets.forEach((confirmation) => {
-            confirmation.textContent = this.confirmationTemplateValue.replace('{count}', String(selectedCount));
+            confirmation.textContent = this.replaceCount(this.confirmationTemplateValue, selectedCount);
         });
 
         this.confirmationDescriptionTargets.forEach((description) => {
-            description.textContent = this.confirmationDescriptionTemplateValue.replace('{count}', String(selectedCount));
+            description.textContent = this.replaceCount(this.confirmationDescriptionTemplateValue, selectedCount);
         });
 
         this.syncInputs(selectedIds);
@@ -134,5 +157,9 @@ export default class extends Controller {
         const label = selectedCount === 1 ? this.selectionLabelSingularValue : this.selectionLabelPluralValue;
 
         return `${selectedCount} ${label} sélectionné${selectedCount === 1 ? '' : 's'}.`;
+    }
+
+    replaceCount(template, count) {
+        return template.split('{count}').join(String(count));
     }
 }

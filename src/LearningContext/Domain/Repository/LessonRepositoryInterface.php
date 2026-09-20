@@ -11,6 +11,7 @@ interface LessonRepositoryInterface
     public function save(Lesson $lesson): Lesson;
     public function getById(int $id): Lesson;
     public function getByIdForModule(int $id, int $moduleId): Lesson;
+    public function getByUuid(string $uuid): Lesson;
     public function delete(Lesson $lesson): void;
 
     /** @return list<Lesson> */
@@ -20,4 +21,5 @@ interface LessonRepositoryInterface
     public function reorder(int $moduleId, array $lessonIds): void;
 
     public function countByModule(int $moduleId): int;
+    public function countByTraining(int $trainingId): int;
 }

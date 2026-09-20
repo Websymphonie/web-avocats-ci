@@ -28,24 +28,34 @@
     data-bulk-selection-confirmation-description-template-value="{{ confirmationDescriptionTemplate ?? '' }}"
     {{ attributes }}
 >
-    {% if block('actions') is defined %}
-        {% set actionContent = block('actions') %}
-        {% if actionContent|trim is not empty %}
             <div
-                class="mb-4 flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                class="mb-4 flex flex-col gap-3 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/[0.08] via-card to-card px-4 py-3 shadow-sm ring-1 ring-primary/5 sm:flex-row sm:items-center sm:justify-between sm:px-5"
                 data-bulk-selection-target="toolbar"
                 aria-hidden="true"
                 hidden
             >
-                <p class="text-sm font-medium text-foreground" data-bulk-selection-target="summary">
-                    Aucun élément sélectionné.
-                </p>
-                <div class="flex flex-wrap gap-2" aria-label="Actions sur la sélection">
-                    {{ actionContent|raw }}
+                <div class="flex min-w-0 items-center gap-3">
+                    <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary" aria-hidden="true">
+                        <twig:ux:icon name="lucide:check-check" class="size-4"/>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-[0.12em] text-primary">Sélection active</p>
+                        <p class="truncate text-sm font-medium text-foreground" data-bulk-selection-target="summary">Aucun élément sélectionné.</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 sm:justify-end" aria-label="Actions sur la sélection">
+                    <button
+                        type="button"
+                        class="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-medium text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        data-bulk-selection-target="clear"
+                        data-action="bulk-selection#clear"
+                    >
+                        <twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true"/>
+                        Effacer
+                    </button>
+                    {% block actions %}{% endblock %}
                 </div>
             </div>
-        {% endif %}
-    {% endif %}
 
     {% block content %}{% endblock %}
 

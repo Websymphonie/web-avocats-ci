@@ -234,6 +234,21 @@ chaque taxonomie. Les slugs sont uniques dans leur propre type et sont
 regénérés lors d’un renommage tant qu’aucune URL publique Learning n’existe.
 Une catégorie ou un tag utilisé par une formation ne peut pas être supprimé.
 
+### LRN-006 — Progression apprenant
+
+`LessonProgress` représente la progression d’un utilisateur inscrit dans une
+`COURSE`. Son identité métier est le couple `enrollmentId`/`lessonId`; les
+états sont `IN_PROGRESS` et `COMPLETED`, tandis qu’une progression absente
+représente l’état initial non commencé. `startedAt`, `lastAccessedAt` et
+`completedAt` sont pilotés par les commandes membre idempotentes et restent
+indépendants du statut `Enrollment`.
+
+Le contrôle d’accès exige une `COURSE` publiée et une inscription active. La
+révocation ne supprime pas les lignes; les opérations sont simplement refusées
+jusqu’à réactivation. Une leçon ou un module ayant une progression ne peut pas
+être supprimé. Le résumé est calculé à la lecture et n’introduit aucun statut
+`Enrollment::COMPLETED`.
+
 ## 6. Visibilité et accès Learning
 
 La visibilité et l’accès sont indépendants :

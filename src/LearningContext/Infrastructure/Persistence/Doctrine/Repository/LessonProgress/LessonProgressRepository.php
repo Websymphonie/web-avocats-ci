@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repository\LessonProgress;
+
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\Persistence\ManagerRegistry;
+use Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus;
+use Websymphonie\LearningContext\Domain\Model\CourseProgress;
+use Websymphonie\LearningContext\Domain\Model\LessonProgress;
+use Websymphonie\LearningContext\Domain\Repository\LessonProgressRepositoryInterface;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LessonProgress\LessonProgressEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Factory\LessonProgressFactory;
+use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
+use Websymphonie\SharedContext\Application\Service\Manager\ManagersInterface;
+use Websymphonie\SharedContext\Domain\Enum\DbActionEnum;
+
+/** @extends ServiceEntityRepository<LessonProgressEntity> */
+final class LessonProgressRepository extends ServiceEntityRepository implements LessonProgressRepositoryInterface
+{
+    public function __construct(ManagerRegistry $registry, private readonly ManagersInterface $manager, private readonly LessonProgressFactory $factory)
+    {
+        parent::__construct($registry, LessonProgressEntity::class);
+    }
+
+    public function save(LessonProgress $progress): LessonProgress
+    {
+        $entity = $progress->id > 0 ? $this->find($progress->id) : null;
+        $entity = $this->factory->toEntity($progress, $entity instanceof LessonProgressEntity ? $entity : null);
+        DbLogListener::disable();
+        try { $this->manager->execute($entity, $progress->id > 0 ? DbActionEnum::EDIT : DbActionEnum::NEW); } finally { DbLogListener::enable(); }
+        return $this->factory->fromEntity($entity);
+    }
+
+    public function findByEnrollmentAndLesson(int $enrollmentId, int $lessonId): ?LessonProgress
+    {
+        $entity = $this->findOneBy(['enrollmentId' => $enrollmentId, 'lessonId' => $lessonId]);
+        return $entity instanceof LessonProgressEntity ? $this->factory->fromEntity($entity) : null;
+    }
+
+    public function listByEnrollment(int $enrollmentId): array
+    {
+        $entities = $this->createQueryBuilder('progress')->where('progress.enrollmentId = :enrollmentId')->setParameter('enrollmentId', $enrollmentId)->orderBy('progress.lessonId', 'ASC')->getQuery()->getResult();
+        return array_map(fn (LessonProgressEntity $entity): LessonProgress => $this->factory->fromEntity($entity), $entities);
+    }
+
+    public function countByLesson(int $lessonId): int
+    {
+        return (int) $this->createQueryBuilder('progress')->select('COUNT(progress.id)')->where('progress.lessonId = :lessonId')->setParameter('lessonId', $lessonId)->getQuery()->getSingleScalarResult();
+    }
+
+    /** @param list<int> $enrollmentIds @return array<int, CourseProgress> */
+    public function summarizeByEnrollmentIds(array $enrollmentIds, int $totalLessons): array
+    {
+        if ($enrollmentIds === []) { return []; }
+        $rows = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT enrollment_id, COUNT(id) AS started_lessons, SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS completed_lessons, MAX(last_accessed_at) AS last_activity_at FROM lesson_progress WHERE enrollment_id IN (?) GROUP BY enrollment_id',
+            [LessonProgressStatus::COMPLETED->value, $enrollmentIds],
+            ['string', ArrayParameterType::INTEGER],
+        )->fetchAllAssociative();
+        $result = [];
+        foreach ($rows as $row) {
+            $completed = (int) $row['completed_lessons'];
+            $result[(int) $row['enrollment_id']] = new CourseProgress((int) $row['enrollment_id'], $totalLessons, (int) $row['started_lessons'], $completed, $totalLessons > 0 ? (int) round($completed / $totalLessons * 100) : 0, $row['last_activity_at'] !== null ? new \DateTimeImmutable((string) $row['last_activity_at']) : null);
+        }
+        return $result;
+    }
+}

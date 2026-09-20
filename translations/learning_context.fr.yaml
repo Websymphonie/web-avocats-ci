@@ -1,5 +1,6 @@
 exceptions:
   learning:
+    lesson_has_progress: 'Cette leçon ne peut pas être supprimée car des apprenants ont déjà commencé leur progression.'
     training_not_found: "Cette formation est introuvable."
     invalid_training_details: "Cette formation doit comporter un titre, un résumé et une description valides. Pour publier un cours, ajoutez au moins un module contenant une leçon."
     invalid_training_transition: "Cette transition de formation n’est pas autorisée."

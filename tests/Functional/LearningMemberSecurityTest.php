@@ -26,6 +26,8 @@ use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Cour
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Enrollment\EnrollmentEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Lesson\LessonEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LessonResource\LessonResourceEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LessonProgress\LessonProgressEntity;
+use Websymphonie\LearningContext\Domain\Repository\LessonProgressRepositoryInterface;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails\LiveTrainingDetailsEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
@@ -268,6 +270,73 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertNull($client->getResponse()->headers->get('Location'));
     }
 
+    public function testCourseLessonProgressStartCompleteAndReactivateAreIdempotent(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($training, 1);
+        $this->createEnrollment($training, $user, EnrollmentStatus::ACTIVE);
+        $client->loginUser($user);
+        $client->disableReboot();
+
+        $startUrl = '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/start';
+        $completeUrl = '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/complete';
+        $client->request('POST', $startUrl, ['_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $lesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+        $client->request('POST', $completeUrl, ['_token' => $this->csrfToken($client, 'learning_member_lesson_complete_' . $lesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+        $client->request('POST', $completeUrl, ['_token' => $this->csrfToken($client, 'learning_member_lesson_complete_' . $lesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+
+        $progress = $this->entityManager()->getRepository(LessonProgressEntity::class)->findOneBy(['enrollmentId' => 1, 'lessonId' => $lesson->getId()]);
+        self::assertInstanceOf(LessonProgressEntity::class, $progress);
+        self::assertSame('COMPLETED', $progress->getStatus()->value);
+        self::assertNotNull($progress->getCompletedAt());
+        self::assertNotSame($progress->getCompletedAt(), $progress->getStartedAt());
+        $summary = static::getContainer()->get(LessonProgressRepositoryInterface::class)->summarizeByEnrollmentIds([$progress->getEnrollmentId()], 1)[$progress->getEnrollmentId()];
+        self::assertSame(1, $summary->startedLessons);
+        self::assertSame(1, $summary->completedLessons);
+        self::assertSame(100, $summary->progressPercentage);
+        self::assertNotNull($summary->lastActivityAt);
+
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $client->loginUser($admin);
+        $client->request('DELETE', '/admin/learning/trainings/' . $training->getId() . '/modules/' . $lesson->getModuleId() . '/lessons/' . $lesson->getId() . '/delete', ['_token' => $this->csrfToken($client, 'learning_lesson_delete_' . $training->getId() . '_' . $lesson->getId())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+        self::assertNotNull($this->entityManager()->getRepository(LessonEntity::class)->find($lesson->getId()));
+        $client->request('DELETE', '/admin/learning/trainings/' . $training->getId() . '/modules/' . $lesson->getModuleId() . '/delete', ['_token' => $this->csrfToken($client, 'learning_course_module_delete_' . $training->getId() . '_' . $lesson->getModuleId())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+        self::assertNotNull($this->entityManager()->getRepository(CourseModuleEntity::class)->find($lesson->getModuleId()));
+    }
+
+    public function testLessonProgressRequiresPublishedCourseAndActiveEnrollment(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $client->loginUser($user);
+        $client->disableReboot();
+
+        $draft = $this->createTraining(TrainingAccessType::FREE, TrainingStatus::DRAFT);
+        $draftLesson = $this->createCourseLesson($draft, 1);
+        $this->createEnrollment($draft, $user, EnrollmentStatus::ACTIVE);
+        $client->request('POST', '/espace/learning/lessons/' . $draftLesson->getUuidAsString() . '/start', ['_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $draftLesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+
+        $published = $this->createTraining(TrainingAccessType::FREE);
+        $publishedLesson = $this->createCourseLesson($published, 1);
+        $this->createEnrollment($published, $user, EnrollmentStatus::REVOKED);
+        $client->request('POST', '/espace/learning/lessons/' . $publishedLesson->getUuidAsString() . '/start', ['_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $publishedLesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $liveLesson = $this->createCourseLesson($live, 1);
+        $this->createEnrollment($live, $user, EnrollmentStatus::ACTIVE);
+        $client->request('POST', '/espace/learning/lessons/' . $liveLesson->getUuidAsString() . '/start', ['_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $liveLesson->getUuidAsString())], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/espace');
+        self::assertSame(0, $this->entityManager()->getRepository(LessonProgressEntity::class)->count([]));
+    }
+
     public function testRepresentativeInvalidCsrfTokensDoNotExecuteMutations(): void
     {
         $client = $this->authenticatedClient(['ROLE_ADMIN']);
@@ -335,6 +404,17 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->persist($training);
         $this->entityManager()->flush();
         return $training;
+    }
+
+    private function createCourseLesson(TrainingEntity $training, int $position): LessonEntity
+    {
+        $module = (new CourseModuleEntity())->setTrainingId($training->getId() ?? 0)->setTitle('Module ' . $position)->setPosition($position);
+        $this->entityManager()->persist($module);
+        $this->entityManager()->flush();
+        $lesson = (new LessonEntity())->setModuleId($module->getId() ?? 0)->setTitle('Leçon ' . $position)->setContent('<p>Contenu</p>')->setPosition(1);
+        $this->entityManager()->persist($lesson);
+        $this->entityManager()->flush();
+        return $lesson;
     }
 
     private function createLive(LiveDeliveryMode $mode, TrainingStatus $status, ?string $joinUrl = 'https://meet.example.test/live', ?string $location = null): TrainingEntity

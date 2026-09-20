@@ -421,6 +421,28 @@ Le formulaire HTML sérialise les modes avec leurs valeurs métier
 la validation. Une session `IN_PERSON` répond de manière contrôlée sans
 redirection externe.
 
+## 12.6 LearningContext — progression apprenant LRN-006
+
+`LessonProgress` appartient à `LearningContext` et conserve uniquement les
+identifiants scalaires `enrollmentId` et `lessonId`. La table
+`lesson_progress` possède une unicité sur `(enrollment_id, lesson_id)` et des
+clés étrangères internes vers `enrollment` et `lesson`; aucune relation vers
+Identity n’est créée. Les entités Doctrine restent confinées à
+l’infrastructure et sont converties en modèles de domaine.
+
+Les mutations membre sont `POST /espace/learning/lessons/{uuid}/start` et
+`/complete`, protégées par authentification, CSRF et `TrainingAccessPolicy`.
+La résolution UUID → leçon → module → formation précède le contrôle de
+l’inscription, ce qui protège contre l’IDOR. Les lectures de structure peuvent
+exposer l’état de chaque leçon; le résumé de cours et le listing des
+inscriptions utilisent un agrégat SQL groupé pour éviter le N+1.
+
+Le Backoffice affiche une synthèse en lecture seule pour les `COURSE`, et
+`—` pour les `LIVE`. Les suppressions de leçon ou module sont refusées dès
+qu’une progression existe. La progression est conservée pendant une révocation
+et restaurée à la réactivation. Le lecteur apprenant, l’auto-complétion par
+vidéo, les quiz et les certificats restent hors périmètre.
+
 ## 13. Documents privés — CNT-005
 
 `ContentContext` ne stocke qu’un `storedFileId` scalaire et ne référence pas

@@ -6,6 +6,8 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repos
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 use Websymphonie\LearningContext\Domain\Exception\LessonNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\Lesson;
 use Websymphonie\LearningContext\Domain\Repository\LessonRepositoryInterface;
@@ -46,6 +48,16 @@ final class LessonRepository extends ServiceEntityRepository implements LessonRe
         return $this->factory->fromEntity($entity);
     }
 
+    public function getByUuid(string $uuid): Lesson
+    {
+        $entity = $this->createQueryBuilder('lesson')
+            ->andWhere('lesson.uuid = :uuid')
+            ->setParameter('uuid', Uuid::fromString($uuid), UuidType::NAME)
+            ->getQuery()->getOneOrNullResult();
+        if (!$entity instanceof LessonEntity) { throw LessonNotFoundException::withUuid($uuid); }
+        return $this->factory->fromEntity($entity);
+    }
+
     public function delete(Lesson $lesson): void
     {
         $entity = $this->find($lesson->id);
@@ -82,5 +94,13 @@ final class LessonRepository extends ServiceEntityRepository implements LessonRe
     public function countByModule(int $moduleId): int
     {
         return (int) $this->createQueryBuilder('lesson')->select('COUNT(lesson.id)')->where('lesson.moduleId = :moduleId')->setParameter('moduleId', $moduleId)->getQuery()->getSingleScalarResult();
+    }
+
+    public function countByTraining(int $trainingId): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne(
+            'SELECT COUNT(lesson.id) FROM lesson INNER JOIN course_module ON course_module.id = lesson.module_id WHERE course_module.training_id = :trainingId',
+            ['trainingId' => $trainingId],
+        );
     }
 }

@@ -164,8 +164,9 @@ utilisés sans provoquer d’erreur serveur.
 
 Les modules et leçons ont un ordre persistant `1..N`, normalisé après chaque
 création, suppression ou réordonnancement. Un module supprimé avec confirmation
-supprime ses leçons ; les médias, contenus et progressions ne sont pas encore
-concernés. Une COURSE publiée reste éditable structurellement sans versioning.
+supprime ses leçons ; une leçon ou un module ayant une progression est protégé
+contre la suppression. Une COURSE publiée reste éditable structurellement sans
+versioning.
 
 ### LRN-005 — Training LIVE
 
@@ -196,6 +197,27 @@ formation et du fichier ; il ne redirige pas avec une erreur générique. Une
 session `IN_PERSON` répond de manière contrôlée sans redirection externe.
 Le déplacement inter-module est explicitement différé ; le builder fournit le
 réordonnancement intra-module et les contrôles clavier Monter/Descendre.
+
+### LRN-006 — Progression apprenant
+
+La progression persistée concerne uniquement les formations `COURSE`. Une
+absence de ligne `LessonProgress` signifie `NOT_STARTED`; seules les valeurs
+`IN_PROGRESS` et `COMPLETED` sont persistées. Une ligne est unique par couple
+`Enrollment`/`Lesson` et une leçon ne peut être suivie que si elle appartient
+à la `COURSE` de l’inscription.
+
+Les commandes membre de démarrage et de complétion réutilisent
+`TrainingAccessPolicy`: la formation doit être publiée et l’inscription active.
+Le démarrage est idempotent et actualise `lastAccessedAt`; la complétion peut
+être appelée directement, renseigne `startedAt` si nécessaire et conserve la
+première valeur de `completedAt`. Il n’existe pas de remise à zéro ni de
+déduction automatique depuis l’ouverture d’une vidéo ou d’une ressource.
+
+Une révocation conserve la progression mais interdit ses mutations et l’accès
+aux ressources; une réactivation la rend de nouveau accessible. Une
+progression existante bloque la suppression de la leçon et de son module. Le
+pourcentage est calculé à la lecture sur les leçons de la `COURSE`, arrondi à
+l’entier et n’est jamais persisté. Les `LIVE` n’exposent pas de progression.
 
 ## 6. Payment — principes validés
 

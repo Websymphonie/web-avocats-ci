@@ -95,10 +95,11 @@ aucune API de fournisseur externe n’est appelée.
 
 ### PHASE 6 — Progression, quiz et certificats
 
-**Statut : `PLANNED`**
+**Statut : `IN PROGRESS`**
 
-Cette phase couvrira `LearningProgress`, les quiz et les certificats après
-validation de leurs règles précises.
+LRN-006 est livré pour la progression COURSE côté domaine, membre et
+Backoffice. Les quiz, certificats et le lecteur apprenant restent à planifier
+après validation de leurs règles précises.
 
 ### PHASE 7 — Contribution
 
@@ -143,6 +144,7 @@ LRN-004  Enrollment et contrôle d’accès              DONE — inscription gr
 LRN-004A Catégories et tags des formations           DONE — taxonomies Learning, associations et filtres Backoffice
 LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre au lien HTTPS
 LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des accès, CSRF, suppressions bulk et intégrité interne
+LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```

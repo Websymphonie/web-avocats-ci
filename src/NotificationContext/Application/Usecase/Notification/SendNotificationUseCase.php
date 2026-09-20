@@ -32,7 +32,8 @@ readonly class SendNotificationUseCase
         NotificationAccessEnum $access,
         array                  $roles = [],
         array                  $userIds = [],
-        array                  $context = []
+        array                  $context = [],
+        ?string                $deduplicationKey = null
     ): void
     {
         $users = [];
@@ -57,7 +58,10 @@ readonly class SendNotificationUseCase
                 action: $action,
                 access: $access,
                 user: $user,
-                context: $context
+                context: $context,
+                deduplicationKey: $deduplicationKey === null
+                    ? null
+                    : hash('sha256', $deduplicationKey . '|' . (int) $user->getId()),
             );
         }
     }

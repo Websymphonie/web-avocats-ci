@@ -58,7 +58,8 @@ final readonly class NotificationFactory
         NotificationAccessEnum $access,
         ?User                  $user,
         array                  $context = [],
-        ?DateTimeImmutable     $readAt = null
+        ?DateTimeImmutable     $readAt = null,
+        ?string                $deduplicationKey = null
     ): Notifications
     {
         $notification = new Notifications();
@@ -70,6 +71,7 @@ final readonly class NotificationFactory
         $notification->setContext($context);
         $notification->setUser($user);
         $notification->setReadAt($readAt);
+        $notification->setDeduplicationKey($deduplicationKey);
 
         return $notification;
     }

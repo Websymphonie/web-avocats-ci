@@ -9,29 +9,31 @@ use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventEmitterFeatur
 
 final class EventEmitterFeatureTest extends TestCase
 {
-    public function testItStoresEventsInEmissionOrder(): void
+    public function testReleaseReturnsEventsInOrderAndClearsTheBuffer(): void
     {
         $emitter = new class {
             use EventEmitterFeature;
         };
         $first = new \stdClass();
         $second = new \stdClass();
-
         $emitter->emitEvent($first);
         $emitter->emitEvent($second);
 
         self::assertSame([$first, $second], $emitter->releaseEvents());
+        self::assertSame([], $emitter->releaseEvents());
     }
 
-    public function testReleaseDoesNotClearTheStoredEvents(): void
+    public function testEventsEmittedAfterReleaseAreAvailableInTheNextRelease(): void
     {
         $emitter = new class {
             use EventEmitterFeature;
         };
-        $event = new \stdClass();
-        $emitter->emitEvent($event);
+        $first = new \stdClass();
+        $second = new \stdClass();
+        $emitter->emitEvent($first);
+        $emitter->releaseEvents();
+        $emitter->emitEvent($second);
 
-        self::assertSame([$event], $emitter->releaseEvents());
-        self::assertSame([$event], $emitter->releaseEvents());
+        self::assertSame([$second], $emitter->releaseEvents());
     }
 }

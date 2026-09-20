@@ -94,25 +94,34 @@ Prefer internal notifications before introducing external channels.
 
 `EventEmitterFeature` appartient à
 `SharedContext\Domain\Service\EventDispatcher`. Il stocke en mémoire une liste
-d'objets via `emitEvent()` et `releaseEvents()` retourne cette liste sans la
-vider. Il est actuellement utilisé par `IdentityContext\UserModel` et
-l'entité Doctrine `IdentityContext\User`.
+d'objets via `emitEvent()` ; `releaseEvents()` retourne les événements dans
+l'ordre d'émission puis vide le tampon. Il est utilisé par les agrégats qui
+doivent publier un fait métier, notamment Identity, Learning et Payment.
 
 Le contrat `SharedContext\Domain\Service\EventDispatcher\EventDispatcher` est
 adapté par `SymfonyEventDispatcher`, qui transmet chaque événement au
 `EventDispatcherInterface` Symfony immédiatement et séquentiellement. Ce
 pipeline n'utilise pas Messenger et ne possède pas d'outbox.
 
-Le chemin de notification interne actuel est :
+Le pipeline de notification transactionnelle est synchrone et best-effort :
 
 ```text
-Identity password handler
-    -> NotificationEvent
-    -> NotificationSubscriber
+Learning/Payment/Identity event
+    -> NotificationSubscriber (Infrastructure)
     -> SendNotificationUseCase
     -> NotificationsService
     -> notifications
 ```
+
+Les événements producteurs restent propriétaires de leur contexte et ne
+transportent que des scalaires. Le commit métier intervient avant le dispatch
+du fait ; le listener de notification journalise une panne et ne transforme
+pas une réussite Learning/Payment déjà enregistrée en erreur utilisateur.
+Les notifications transactionnelles privées utilisent une clé de
+déduplication SHA-256 persistée et protégée par une contrainte unique. Aucun
+Outbox, event store ou transport Messenger asynchrone n'est introduit par
+NOT-001. Une Outbox pourra être étudiée si une garantie de livraison devient
+un besoin métier.
 
 La persistance des notifications est réalisée dans une transaction Doctrine
 propre à l'opération. Les événements sont dispatchés après la persistence du

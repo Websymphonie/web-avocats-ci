@@ -19,6 +19,7 @@ interface NotificationsServiceInterface
         NotificationAccessEnum $access,
         ?User                  $user = null,
         array                  $context = [],
-        ?DateTimeImmutable     $readAt = null
+        ?DateTimeImmutable     $readAt = null,
+        ?string                $deduplicationKey = null
     ): void;
 }

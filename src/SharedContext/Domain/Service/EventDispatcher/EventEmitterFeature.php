@@ -16,6 +16,9 @@ trait EventEmitterFeature
     /** @return list<object> */
     public function releaseEvents(): array
     {
-        return $this->emittedEvents;
+        $events = $this->emittedEvents;
+        $this->emittedEvents = [];
+
+        return $events;
     }
 }

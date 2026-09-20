@@ -5,6 +5,7 @@ namespace Websymphonie\NotificationContext\Infrastructure\Persistence\Doctrine\E
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\NotificationContext\Application\Usecase\Command\Notification\AddNotificationCommand;
@@ -46,6 +47,9 @@ class Notifications
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $readAt = null;
 
+    #[ORM\Column(name: 'deduplication_key', type: 'string', length: 64, nullable: true, unique: true)]
+    private ?string $deduplicationKey = null;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', nullable: true, onDelete: 'CASCADE')]
     private ?User $user = null;
@@ -63,7 +67,8 @@ class Notifications
             ->setReadAt($command->readAt)
             ->setContext($command->context)
             ->setAction($command->action)
-            ->setAccess($command->access);
+            ->setAccess($command->access)
+            ->setDeduplicationKey($command->deduplicationKey);
     }
 
     public function getTitle(): ?string
@@ -142,6 +147,22 @@ class Notifications
     public function setReadAt(?DateTimeImmutable $readAt): Notifications
     {
         $this->readAt = $readAt;
+        return $this;
+    }
+
+    public function getDeduplicationKey(): ?string
+    {
+        return $this->deduplicationKey;
+    }
+
+    public function setDeduplicationKey(?string $deduplicationKey): self
+    {
+        if ($deduplicationKey !== null && (strlen($deduplicationKey) !== 64 || !ctype_xdigit($deduplicationKey))) {
+            throw new InvalidArgumentException('La clé de déduplication doit être un hash SHA-256 hexadécimal.');
+        }
+
+        $this->deduplicationKey = $deduplicationKey;
+
         return $this;
     }
 

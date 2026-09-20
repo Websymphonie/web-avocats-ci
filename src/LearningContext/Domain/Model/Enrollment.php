@@ -7,9 +7,12 @@ namespace Websymphonie\LearningContext\Domain\Model;
 use DateTimeImmutable;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
+use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventEmitterFeature;
 
 final class Enrollment
 {
+    use EventEmitterFeature;
+
     public function __construct(
         public readonly int $id,
         public readonly string $uuid,

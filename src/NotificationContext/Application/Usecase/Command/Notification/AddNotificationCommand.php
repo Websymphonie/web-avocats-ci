@@ -19,6 +19,7 @@ final readonly class AddNotificationCommand
         public ?array                  $context = null,
         public ?DateTimeImmutable      $readAt = null,
         public ?int                    $userId = null,
+        public ?string                 $deduplicationKey = null,
     )
     {
     }

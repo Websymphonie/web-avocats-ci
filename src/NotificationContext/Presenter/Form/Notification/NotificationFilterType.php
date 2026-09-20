@@ -49,7 +49,7 @@ class NotificationFilterType extends AbstractType
         if ($this->extension->isRole($user, UserRolesEnum::SUPER_ADMIN)) {
             $builder
                 ->add('access', EnumType::class, [
-                    'label' => 'Canal',
+                    'label' => 'Visibilité',
                     'class' => NotificationAccessEnum::class,
                     'choices' => NotificationAccessEnum::cases(),
                     'choice_label' => fn(NotificationAccessEnum $choice) => $choice->label(),

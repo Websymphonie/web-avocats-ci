@@ -350,14 +350,16 @@ Identity, Auth, Notification, Log, Shared et les services média éventuels sont
 des capacités transverses. Ils ne doivent pas absorber les règles des domaines
 métier.
 
-Le mécanisme événementiel existant reste synchrone. `EventEmitterFeature`
-tamponne temporairement des objets sur `User`/`UserModel`, puis
+Le mécanisme événementiel reste synchrone. `EventEmitterFeature` tamponne
+temporairement des objets scalaires sur les agrégats, puis
 `SharedContext\Domain\Service\EventDispatcher\EventDispatcher` les transmet au
-dispatcher Symfony ; `releaseEvents()` ne consomme pas le tampon. La
-notification in-app existante est ensuite créée par `NotificationSubscriber`
-et persistée dans la table `notifications`. Aucun identifiant d'événement,
-déduplication persistante ou transport Messenger n'est actuellement associé à
-ce pipeline.
+dispatcher Symfony dans l'ordre ; `releaseEvents()` vide le tampon après
+lecture. Les événements Learning et Payment sont mappés par
+`NotificationSubscriber` dans l'Infrastructure vers des notifications privées
+in-app. Le commit métier précède ce dispatch : le consommateur est best-effort
+et journalise ses erreurs. Une clé de déduplication SHA-256, protégée par une
+contrainte unique en base, rend les replays sans effet ; aucun Outbox ni
+transport Messenger asynchrone n'est introduit par NOT-001.
 
 Le paiement est transverse par ses intégrations, mais conserve sa frontière
 propre lorsqu’il sera introduit.

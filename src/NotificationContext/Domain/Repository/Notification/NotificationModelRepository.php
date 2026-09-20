@@ -12,6 +12,8 @@ interface NotificationModelRepository
 {
     public function create(Notifications $entity): Notifications;
 
+    public function findByDeduplicationKey(string $deduplicationKey): ?Notifications;
+
     public function update(Notifications $entity): Notifications;
 
     public function remove(Notifications $entity): void;

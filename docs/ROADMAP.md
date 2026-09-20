@@ -157,6 +157,8 @@ LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
+NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
+NOT-001  Notifications Learning/Payment                DONE — événements in-app scalaires et déduplication persistée
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```

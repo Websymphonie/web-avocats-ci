@@ -8,9 +8,12 @@ use DateTimeImmutable;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentProvider;
 use Websymphonie\PaymentContext\Domain\Enum\PaymentStatus;
 use Websymphonie\PaymentContext\Domain\Exception\InvalidPaymentTransitionException;
+use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventEmitterFeature;
 
 final class Payment
 {
+    use EventEmitterFeature;
+
     public function __construct(
         public readonly int $id,
         public readonly string $uuid,

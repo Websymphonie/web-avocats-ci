@@ -39,6 +39,13 @@ class NotificationsRepository extends ServiceEntityRepository implements Notific
         return $entity;
     }
 
+    public function findByDeduplicationKey(string $deduplicationKey): ?Notifications
+    {
+        $notification = $this->findOneBy(['deduplicationKey' => $deduplicationKey]);
+
+        return $notification instanceof Notifications ? $notification : null;
+    }
+
     public function remove(Notifications $entity): void
     {
         DbLogListener::disable();

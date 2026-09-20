@@ -227,6 +227,26 @@ progression existante bloque la suppression de la leçon et de son module. Le
 pourcentage est calculé à la lecture sur les leçons de la `COURSE`, arrondi à
 l’entier et n’est jamais persisté. Les `LIVE` n’exposent pas de progression.
 
+### NOT-001 — Notifications Learning et Payment
+
+Les notifications transactionnelles Learning et Payment sont privées et
+ciblées par `userId`; un rôle n’est pas utilisé comme destinataire. Elles sont
+créées après le commit métier, de façon synchrone et best-effort. Une panne de
+persistance est journalisée sans annuler une inscription ou un paiement déjà
+validé.
+
+Les activations produisent une seule notification selon leur source :
+`SELF_SERVICE` (« Inscription confirmée »), `ADMIN_GRANT` (« Accès à une
+formation ») ou `PAYMENT` (« Paiement confirmé »). Une révocation produit une
+notification « Accès à la formation révoqué ». Un paiement échoué produit une
+notification « Paiement non confirmé » et ne crée aucune inscription.
+
+Les replays d’un même fait sont ignorés par une clé de déduplication persistée.
+Une réactivation après révocation constitue une nouvelle occurrence légitime et
+utilise une référence d’activation distincte. Le flux `CONFIRMED` Payment ne
+produit pas une notification Payment séparée : l’activation Learning de source
+`PAYMENT` est l’unique notification de confirmation.
+
 ## 6. Payment — PAY-001 livré
 
 - une formation PAID publiée doit avoir une offre active pour être payable ;

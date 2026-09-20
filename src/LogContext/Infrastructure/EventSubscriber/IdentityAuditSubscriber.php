@@ -7,6 +7,7 @@ namespace Websymphonie\LogContext\Infrastructure\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Websymphonie\IdentityContext\Domain\Event\PasswordChangedEvent;
 use Websymphonie\IdentityContext\Domain\Event\UserRoleAssignedEvent;
+use Websymphonie\IdentityContext\Domain\Event\UserRoleRemovedEvent;
 use Websymphonie\LogContext\Domain\Enum\AuditActorType;
 
 final readonly class IdentityAuditSubscriber implements EventSubscriberInterface
@@ -19,6 +20,7 @@ final readonly class IdentityAuditSubscriber implements EventSubscriberInterface
     {
         return [
             UserRoleAssignedEvent::class => 'onRoleAssigned',
+            UserRoleRemovedEvent::class => 'onRoleRemoved',
             PasswordChangedEvent::class => 'onPasswordChanged',
         ];
     }
@@ -33,5 +35,25 @@ final readonly class IdentityAuditSubscriber implements EventSubscriberInterface
     public function onPasswordChanged(PasswordChangedEvent $event): void
     {
         $this->recorder->record(PasswordChangedEvent::class, 'IDENTITY', 'identity.user.password_changed', AuditActorType::USER, (string) $event->actorUserId, 'User', (string) $event->userId, [], new \DateTimeImmutable(), hash('sha256', implode('|', ['identity.user.password_changed', $event->userId, $event->actorUserId])), (string) $event->userId);
+    }
+
+    public function onRoleRemoved(UserRoleRemovedEvent $event): void
+    {
+        $actorType = $event->actorUserId !== null ? AuditActorType::USER : AuditActorType::SYSTEM;
+        $actorId = $event->actorUserId !== null ? (string) $event->actorUserId : 'identity_system';
+        $action = 'identity.user.role_removed';
+        $this->recorder->record(
+            UserRoleRemovedEvent::class,
+            'IDENTITY',
+            $action,
+            $actorType,
+            $actorId,
+            'User',
+            (string) $event->userId,
+            ['role' => $event->role],
+            new \DateTimeImmutable(),
+            hash('sha256', implode('|', [$action, $event->userId, $event->role])),
+            (string) $event->userId,
+        );
     }
 }

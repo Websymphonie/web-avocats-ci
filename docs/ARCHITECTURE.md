@@ -383,6 +383,11 @@ appropriée (*_VIEW, *_MANAGE, *_PUBLISH, *_DELETE, etc.). Les contrôleurs
 Member ne reçoivent pas ces groupes : ils utilisent l’authentification membre
 et leurs règles d’accès propres.
 
+Lorsqu’un contrôleur porte aussi un `HasGroupAccess` au niveau d’une méthode,
+cet attribut est prioritaire sur celui de la classe. En l’absence d’attribut
+sur la méthode, celui de la classe est appliqué. Les groupes ne sont pas
+combinés implicitement.
+
 ## 11. Architecture decision principle
 
 When implementing a new feature:

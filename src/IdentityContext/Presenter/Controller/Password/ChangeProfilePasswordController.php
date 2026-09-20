@@ -30,6 +30,10 @@ final class ChangeProfilePasswordController extends AbstractController
     public function __invoke(Request $request, int $id, LoggerInterface $logger): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->getUser() instanceof User || $this->getUser()->getId() !== $id) {
+            throw $this->createAccessDeniedException();
+        }
+
         $command = new ChangeProfilePasswordCommand(id: $id);
         $form = $this->createForm(ProfileChangePasswordType::class, $command);
         $form->handleRequest($request);
@@ -37,11 +41,8 @@ final class ChangeProfilePasswordController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $this->handleCommand($command);
-                if ($this->getUser() instanceof User && $this->getUser()->getId() === $id) {
-                    $request->getSession()->invalidate();
-                    return $this->redirectToRoute('app_login');
-                }
-                $this->flash()->success('Mot de passe modifié avec succès.');
+                $request->getSession()->invalidate();
+                return $this->redirectToRoute('app_login');
             } catch (UserFacingError $e) {
                 $this->flash()->errorFromException($e);
                 $logger->error('ERROR DOMAIN USER PASSWORD UPDATE', ['exception' => $e]);

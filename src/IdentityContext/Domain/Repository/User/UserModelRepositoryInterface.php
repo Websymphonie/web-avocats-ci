@@ -53,4 +53,6 @@ interface UserModelRepositoryInterface
 
     public function countAll(bool $onlyDisabled = false): int;
 
+    public function countActiveSuperAdmins(): int;
+
 }

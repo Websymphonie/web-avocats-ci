@@ -47,6 +47,7 @@ class ProfileChangePasswordType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ChangeProfilePasswordCommand::class,
+            'csrf_token_id' => 'profile_change_password',
         ]);
     }
 }

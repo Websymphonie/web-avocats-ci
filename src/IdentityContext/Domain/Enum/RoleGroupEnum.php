@@ -73,7 +73,7 @@ enum RoleGroupEnum: string
     {
         return match ($this) {
             self::LOGS => [self::SUPER],
-            self::USER_ACCOUNT => [self::SUPER, self::ADMIN, self::AVOCAT],
+            self::USER_ACCOUNT => [self::SUPER, self::ADMIN],
             self::IMAGES => [self::SUPER],
             self::REGLAGES => [self::SUPER, self::ADMIN],
             self::MAINTENANCE => [self::SUPER],

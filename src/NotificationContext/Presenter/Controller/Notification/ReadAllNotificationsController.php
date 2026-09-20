@@ -31,6 +31,15 @@ class ReadAllNotificationsController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (!$this->isCsrfTokenValid('notification_read_all', $request->request->getString('_token'))) {
+            $this->flash()->danger('Votre session a expiré. Rechargez la page puis réessayez.');
+
+            return new RedirectResponse(SafeRedirectUrlResolver::resolve(
+                $request,
+                $this->generateUrl('app_notifications_index')
+            ));
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 

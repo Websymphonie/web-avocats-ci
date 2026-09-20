@@ -23,6 +23,21 @@ final class LearningAccessTest extends WebTestCase
         return Kernel::class;
     }
 
+    public static function setUpBeforeClass(): void
+    {
+        foreach ([
+            'DATABASE_URL' => 'sqlite:///:memory:',
+            'MYSQL_VERSION' => '8.0.40',
+            'SECURE_SCHEME' => 'https',
+        ] as $name => $value) {
+            putenv($name . '=' . $value);
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
+
+        parent::setUpBeforeClass();
+    }
+
     public function testAdminCanAccessTrainingBackoffice(): void
     {
         $client = $this->authenticatedClient(['ROLE_ADMIN']);

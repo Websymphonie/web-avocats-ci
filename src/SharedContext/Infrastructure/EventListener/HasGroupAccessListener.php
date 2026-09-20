@@ -31,28 +31,24 @@ final readonly class HasGroupAccessListener
     public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
+        $classReflection = null;
 
         // ✅ Cas 1 : contrôleur classique [objet, méthode]
         if (is_array($controller)) {
             $reflection = new ReflectionMethod($controller[0], $controller[1]);
+            $classReflection = new ReflectionClass($controller[0]);
         } // ✅ Cas 2 : contrôleur défini comme closure ou nom de fonction
         elseif ($controller instanceof Closure || is_string($controller)) {
             $reflection = new ReflectionFunction($controller);
+            $classReflection = null;
         } // ✅ Cas 3 : contrôleur invocable (ex: __invoke())
         elseif (is_object($controller)) {
             $class = new ReflectionClass($controller);
 
-            // On essaie de trouver un attribut #[HasGroupAccess] au niveau de la classe
-            $classAttributes = $class->getAttributes(HasGroupAccess::class);
-            foreach ($classAttributes as $attr) {
-                /** @var HasGroupAccess $instance */
-                $instance = $attr->newInstance();
-                $this->checkAccess($instance);
-            }
-
-            // Si la classe a une méthode __invoke(), on la vérifie aussi
+            // Si la classe a une méthode __invoke(), on la vérifie aussi.
             if ($class->hasMethod('__invoke')) {
                 $reflection = $class->getMethod('__invoke');
+                $classReflection = $class;
             } else {
                 return; // rien à faire
             }
@@ -61,8 +57,14 @@ final readonly class HasGroupAccessListener
             return;
         }
 
-        // ✅ Vérifie les attributs sur la méthode elle-même
+        // La méthode est prioritaire. Si elle ne porte pas l'attribut,
+        // on applique celui de la classe. Cela évite de combiner
+        // implicitement deux groupes différents.
         $attributes = $reflection->getAttributes(HasGroupAccess::class);
+        if ($attributes === [] && $classReflection !== null) {
+            $attributes = $classReflection->getAttributes(HasGroupAccess::class);
+        }
+
         foreach ($attributes as $attribute) {
             /** @var HasGroupAccess $instance */
             $instance = $attribute->newInstance();

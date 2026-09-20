@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Websymphonie\IdentityContext\Application\Usecase\CommandHandler\User;
 
 use Exception;
+use Websymphonie\IdentityContext\Application\Service\User\AdministrativeAccountProtection;
 use Websymphonie\IdentityContext\Application\Usecase\Command\User\AddUserCommand;
 use Websymphonie\IdentityContext\Application\Service\Activation\AccountActivationIssuer;
 use Websymphonie\IdentityContext\Domain\Event\AccountActivationRequestedEvent;
@@ -14,7 +15,6 @@ use Websymphonie\IdentityContext\Domain\Service\User\UserServiceInterface;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Validator\User\AddUserValidator;
 use Websymphonie\IdentityContext\Presenter\Service\EmailVerified;
-use Websymphonie\IdentityContext\Presenter\Tiwg\Extension\RolesExtension;
 use Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
@@ -27,7 +27,7 @@ final readonly class AddUserHandler implements CommandHandler
         private PasswordHashInterface        $hash,
         private EmailVerified                $emailVerified,
         private UserServiceInterface         $userService,
-        private RolesExtension               $rolesExtension,
+        private AdministrativeAccountProtection $accountProtection,
         private EventDispatcher              $dispatcher,
         private AccountActivationIssuer      $activationIssuer,
         private ?CurrentActorProvider        $actorProvider = null,
@@ -42,6 +42,7 @@ final readonly class AddUserHandler implements CommandHandler
     {
         // On valide les données ici
         $this->validator->validate($command);
+        $this->accountProtection->assertCanCreateWithRoles($command->roles);
         $this->emailVerified->assertNotUsed($command->email);
         $user = new User();
         $user = $this->userService->addUser($user, $command);
@@ -51,11 +52,13 @@ final readonly class AddUserHandler implements CommandHandler
         $issued = $this->activationIssuer->issue($resultUser);
         $this->repository->update($resultUser);
 
-        $resultUser->emitEvent(new UserRoleAssignedEvent(
-            userId: $resultUser->getId(),
-            role: $this->rolesExtension->mainRole($user)->value,
-            actorUserId: $this->actorProvider?->currentUserId(),
-        ));
+        foreach ($resultUser->getRoles() as $role) {
+            $resultUser->emitEvent(new UserRoleAssignedEvent(
+                userId: (int) $resultUser->getId(),
+                role: $role,
+                actorUserId: $this->actorProvider?->currentUserId(),
+            ));
+        }
 
         if ($command->sendMail) {
             $resultUser->emitEvent(new AccountActivationRequestedEvent(

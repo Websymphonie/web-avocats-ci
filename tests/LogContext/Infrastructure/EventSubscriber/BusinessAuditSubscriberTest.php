@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Websymphonie\ContentContext\Domain\Event\ContentLifecycleEvent;
 use Websymphonie\IdentityContext\Domain\Event\PasswordChangedEvent;
 use Websymphonie\IdentityContext\Domain\Event\UserRoleAssignedEvent;
+use Websymphonie\IdentityContext\Domain\Event\UserRoleRemovedEvent;
 use Websymphonie\LearningContext\Domain\Event\EnrollmentActivatedEvent;
 use Websymphonie\LearningContext\Domain\Event\EnrollmentRevokedEvent;
 use Websymphonie\LogContext\Application\Usecase\Command\Audit\RecordAuditEntryCommand;
@@ -92,12 +93,15 @@ final class BusinessAuditSubscriberTest extends TestCase
         $commands = [];
         $subscriber = new IdentityAuditSubscriber($this->recorderFor($commands));
         $subscriber->onRoleAssigned(new UserRoleAssignedEvent(12, 'ROLE_AVOCAT', 99));
+        $subscriber->onRoleRemoved(new UserRoleRemovedEvent(12, 'ROLE_USER', 99));
         $subscriber->onPasswordChanged(new PasswordChangedEvent(12, 12));
 
         self::assertSame('identity.user.role_assigned', $commands[0]->action);
         self::assertSame('99', $commands[0]->actorId);
-        self::assertSame('identity.user.password_changed', $commands[1]->action);
-        self::assertSame([], $commands[1]->metadata);
+        self::assertSame('identity.user.role_removed', $commands[1]->action);
+        self::assertSame('ROLE_USER', $commands[1]->metadata['role']);
+        self::assertSame('identity.user.password_changed', $commands[2]->action);
+        self::assertSame([], $commands[2]->metadata);
 
         $handler = new TestHandler();
         $logger = new Logger('audit-test', [$handler]);

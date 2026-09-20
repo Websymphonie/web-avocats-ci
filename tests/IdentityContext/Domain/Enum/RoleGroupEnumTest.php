@@ -22,12 +22,12 @@ final class RoleGroupEnumTest extends TestCase
         }
     }
 
-    public function testUserAccountGroupIncludesOnlyTheRelevantKleProfiles(): void
+    public function testUserAccountGroupIncludesOnlyBackofficeProfiles(): void
     {
         $roles = RoleGroupEnum::USER_ACCOUNT->roles();
 
         self::assertContains(UserRolesEnum::ADMIN->value, $roles);
-        self::assertContains(UserRolesEnum::AVOCAT->value, $roles);
+        self::assertNotContains(UserRolesEnum::AVOCAT->value, $roles);
         self::assertNotContains(UserRolesEnum::USER->value, $roles);
     }
 
@@ -53,7 +53,6 @@ final class RoleGroupEnumTest extends TestCase
         yield 'user account' => [RoleGroupEnum::USER_ACCOUNT, [
             UserRolesEnum::SUPER_ADMIN->value,
             UserRolesEnum::ADMIN->value,
-            UserRolesEnum::AVOCAT->value,
         ]];
         yield 'logs' => [RoleGroupEnum::LOGS, [UserRolesEnum::SUPER_ADMIN->value]];
         yield 'images' => [RoleGroupEnum::IMAGES, [UserRolesEnum::SUPER_ADMIN->value]];

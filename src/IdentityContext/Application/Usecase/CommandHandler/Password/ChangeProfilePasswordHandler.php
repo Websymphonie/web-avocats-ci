@@ -12,6 +12,7 @@ use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\User
 use Websymphonie\IdentityContext\Infrastructure\Validator\User\ChangeProfilePasswordValidator;
 use Websymphonie\IdentityContext\Presenter\Service\Password\PasswordChange;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
+use Websymphonie\SharedContext\Domain\Exception\AccessDeniedException;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
 
 final readonly class ChangeProfilePasswordHandler implements CommandHandler
@@ -29,6 +30,10 @@ final readonly class ChangeProfilePasswordHandler implements CommandHandler
     public function __invoke(ChangeProfilePasswordCommand $command): User
     {
         $author = $this->currentUserProvider->getUser();
+        if ($author === null || $author->getId() !== $command->id) {
+            throw new AccessDeniedException('USER_PROFILE');
+        }
+
         $this->validator->validate($command);
 
         $user = $this->repository->getById($command->id);

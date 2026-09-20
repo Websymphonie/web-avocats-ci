@@ -33,6 +33,14 @@ ROLE_SUPER_ADMIN -> ROLE_ADMIN
 Les décisions d’autorisation sont toujours vérifiées côté serveur. Masquer une
 action dans Twig ne constitue pas une autorisation.
 
+Les workflows standards de gestion des comptes ne peuvent pas attribuer
+`ROLE_SUPER_ADMIN`. Un acteur `ROLE_ADMIN` ne peut pas modifier ou supprimer
+un compte `ROLE_SUPER_ADMIN`. Le dernier compte `ROLE_SUPER_ADMIN` actif ne
+peut pas être supprimé, désactivé ou dégradé.
+
+`ROLE_AVOCAT` est éligible aux parcours membre et Learning, mais n'appartient
+pas aux groupes Backoffice et ne peut pas gérer les comptes utilisateurs.
+
 ## 3. Surfaces et sécurité — règles validées
 
 ### Logging technique
@@ -82,7 +90,7 @@ commande `RecordAuditEntryCommand`; aucun producteur ne dépend directement de
 | Learning | `EnrollmentActivatedEvent` | `learning.enrollment.self_enrolled/granted/payment_activated` | apprenant, administrateur ou `kkiapay_webhook` | Enrollment UUID | apprenant, formation, source |
 | Learning | `EnrollmentRevokedEvent` | `learning.enrollment.revoked` | administrateur | Enrollment UUID | apprenant, formation |
 | Payment | `PaymentConfirmedEvent` / `PaymentFailedEvent` | `payment.payment.confirmed/failed` | système fournisseur | Payment UUID | fournisseur, montant, devise, référence, formation |
-| Identity | `UserRoleAssignedEvent` / `PasswordChangedEvent` | `identity.user.role_assigned/password_changed` | administrateur ou utilisateur | User ID | rôle pour une attribution |
+| Identity | `UserRoleAssignedEvent` / `UserRoleRemovedEvent` / `PasswordChangedEvent` | `identity.user.role_assigned/role_removed/password_changed` | administrateur ou utilisateur | User ID | rôle pour une attribution ou un retrait |
 
 La confirmation KkiaPay et l'activation Enrollment `PAYMENT` sont deux faits
 distincts et corrélables par leurs identifiants scalaires. Les replays

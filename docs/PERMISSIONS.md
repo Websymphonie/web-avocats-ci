@@ -51,10 +51,8 @@ Historical roles are retained only when required to read existing accounts or
 legacy data. They are not offered for new assignments or permission
 configuration.
 
-`ROLE_COMPTABLE` couvre les fonctions financières actuellement disponibles (échéances, encaissements et quittances). Ses
-droits effectifs restent
-configurables par le Super Admin ; il ne reçoit pas `PAYMENT_REVERSE` par
-défaut.
+Les rôles historiques absents du catalogue actif ne sont pas proposés pour
+les nouvelles affectations ni pour la configuration des permissions.
 
 ---
 
@@ -182,6 +180,18 @@ Les surfaces Web sont séparées du catalogue des rôles :
 
 Une ressource peut être publiquement visible sans que son contenu protégé soit
 accessible sans autorisation serveur.
+
+`ROLE_AVOCAT` appartient à la surface membre et apprenant. Il peut utiliser
+`/espace` selon les règles Learning, mais n'accède pas au Backoffice `/admin`
+ni au groupe `USER_ACCOUNT`.
+
+Les workflows standards de gestion des utilisateurs ne peuvent pas attribuer
+`ROLE_SUPER_ADMIN`. Le dernier `ROLE_SUPER_ADMIN` actif ne peut pas être
+supprimé, désactivé ou dégradé par ces workflows.
+
+Pour les contrôleurs portant `HasGroupAccess`, l'attribut de méthode est
+prioritaire. En son absence, l'attribut de classe est appliqué. Les deux
+groupes ne sont pas combinés implicitement.
 
 ### Audit métier — LOG-002
 
@@ -330,20 +340,20 @@ d’environnement et ne sont jamais exposées au Backoffice ou au navigateur,
 à l’exception de la clé publique destinée au widget.
 
 `EXPENSE_REFERENCE_MANAGE` autorise la gestion des catégories et fournisseurs du référentiel Finance. Par défaut, cette
-permission est accordée à `ROLE_SUPER_ADMIN`, `ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`. Les autres rôles ne la
+permission est accordée à `ROLE_SUPER_ADMIN` et `ROLE_AGENCY_MANAGER`. Les autres rôles ne la
 reçoivent pas automatiquement et les configurations `RolePermissions` persistées restent prioritaires.
 
 `EXPENSE_PAY` et `EXPENSE_CANCEL` sont distinctes de la gestion courante des
 dépenses. Elles sont accordées par défaut à `ROLE_SUPER_ADMIN`,
-`ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`. Elles ne sont pas accordées par
+`ROLE_AGENCY_MANAGER`. Elles ne sont pas accordées par
 défaut aux autres rôles. Les configurations persistées restent autoritaires.
 
 Les permissions `RENT_NOTICE_VIEW` et `RENT_NOTICE_ISSUE` concernent respectivement la consultation et l’émission des
-avis d’échéance. Elles sont distinctes des permissions d’échéances, de paiements et de quittances. Par défaut,
-`ROLE_COMPTABLE` possède les deux permissions.
+avis d’échéance. Elles sont distinctes des permissions d’échéances, de paiements et de quittances. Les règles historiques
+du rôle financier retiré ne sont plus actives.
 
 Les permissions `RENT_REMINDER_VIEW` et `RENT_REMINDER_ISSUE` concernent respectivement la consultation de l’historique
-et l’enregistrement manuel des relances de loyer. Par défaut, `ROLE_COMPTABLE` et `ROLE_CUSTOMER_RELATIONS` possèdent
+et l’enregistrement manuel des relances de loyer. Par défaut, `ROLE_CUSTOMER_RELATIONS` possède
 les deux permissions ; `ROLE_DIRECTION` possède uniquement la consultation. Elles restent configurables et autoritaires
 lorsqu’une configuration persistée existe.
 
@@ -351,7 +361,7 @@ L’automatisation des relances est une politique système sans permission utili
 restent applicables à la consultation, à l’enregistrement manuel et à l’envoi manuel.
 
 `RENT_REMINDER_SEND` autorise la transmission email d’une relance existante. Par défaut, cette permission est accordée à
-`ROLE_SUPER_ADMIN`, `ROLE_AGENCY_MANAGER`, `ROLE_CUSTOMER_RELATIONS`, `ROLE_EXECUTIVE_ASSISTANT` et `ROLE_COMPTABLE`,
+`ROLE_SUPER_ADMIN`, `ROLE_AGENCY_MANAGER`, `ROLE_CUSTOMER_RELATIONS` et `ROLE_EXECUTIVE_ASSISTANT`,
 mais pas à `ROLE_DIRECTION`, `ROLE_TECHNICAL_MANAGER` ni `ROLE_COMMERCIAL`. Elle n’est pas ajoutée automatiquement aux
 configurations persistées existantes.
 
@@ -361,26 +371,26 @@ Les marqueurs legacy de `ROLE_USER` et `ROLE_COURIER` restent stockés et ignor�
 depuis `/admin/roles` devient pleinement autoritaire.
 
 `EXPENSE_REIMBURSE` autorise l’enregistrement des remboursements d’avances
-employés. Par défaut, elle est accordée à `ROLE_SUPER_ADMIN`,
-`ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`.
+employés. Par défaut, elle est accordée à `ROLE_SUPER_ADMIN` et
+`ROLE_AGENCY_MANAGER`.
 
 `AGENCY_COMMISSION_VIEW` autorise la consultation des règles historisées de
 commission d’agence et `AGENCY_COMMISSION_MANAGE` leur configuration. Par
-défaut, la consultation est accordée à `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`,
-`ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`; la modification est limitée à
+défaut, la consultation est accordée à `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`
+et `ROLE_AGENCY_MANAGER`; la modification est limitée à
 `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION` et `ROLE_AGENCY_MANAGER`. Les permissions
 persistées restent prioritaires.
 
 `FINANCE_DASHBOARD_VIEW` autorise l’accès aux agrégats du tableau de bord Finance (encaissements, dépenses agence,
 commissions, relevés et reversements). Par
-défaut, cette permission est accordée à `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`,
-`ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`. Les liens vers les écrans détaillés
+défaut, cette permission est accordée à `ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`
+et `ROLE_AGENCY_MANAGER`. Les liens vers les écrans détaillés
 restent soumis à leurs permissions métier propres. Une configuration persistée,
 y compris `[]`, demeure entièrement prioritaire.
 
 `FINANCE_REPORT_VIEW` autorise l’accès aux rapports financiers opérationnels,
 dont le rapport détaillé des encaissements. Par défaut, elle est accordée à
-`ROLE_SUPER_ADMIN`, `ROLE_DIRECTION`, `ROLE_AGENCY_MANAGER` et `ROLE_COMPTABLE`.
+`ROLE_SUPER_ADMIN`, `ROLE_DIRECTION` et `ROLE_AGENCY_MANAGER`.
 Les actions et liens vers les paiements restent soumis à `PAYMENT_VIEW` ; une
 configuration persistée, y compris `[]`, demeure entièrement prioritaire.
 

@@ -284,4 +284,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return (int)$qb->getQuery()->getSingleScalarResult();
     }
+
+    public function countActiveSuperAdmins(): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('JSON_CONTAINS(u.roles, :roleSuperAdmin) = 1')
+            ->andWhere('u.enabled = :enabled')
+            ->setParameter('roleSuperAdmin', json_encode('ROLE_SUPER_ADMIN'))
+            ->setParameter('enabled', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

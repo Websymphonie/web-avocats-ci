@@ -6,6 +6,7 @@ namespace Websymphonie\Tests\Functional;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
@@ -76,6 +77,26 @@ final class SurfaceAccessTest extends WebTestCase
         $client->catchExceptions(false);
         $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $client->followRedirect();
+    }
+
+    public function testAvocatIsDeniedFromBackofficeDashboard(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/admin', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/admin/dashboard/');
+
+        $client->catchExceptions(false);
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $client->followRedirect();
+    }
+
+    public function testAvocatIsDeniedFromUserAccountBackoffice(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/admin/identity/users/list', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testAdminCanEnterBackoffice(): void

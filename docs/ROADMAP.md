@@ -74,6 +74,7 @@ CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
 CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
 CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice uniquement ; Frontoffice différé
+CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice uniquement
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -157,6 +158,7 @@ expose.
 DOC-001  Documentation produit                     DONE
 CORE-FIX-001 Consolidation backend                 CURRENT
 CNT-006  Static Pages                               DONE — Backoffice uniquement
+CNT-006A Optional static page cover                 DONE — Backoffice uniquement
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement

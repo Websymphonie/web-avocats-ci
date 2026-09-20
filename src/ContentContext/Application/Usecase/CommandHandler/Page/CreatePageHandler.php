@@ -10,6 +10,7 @@ use Websymphonie\ContentContext\Application\Usecase\Command\Page\CreatePageComma
 use Websymphonie\ContentContext\Domain\Exception\PageSlugAlreadyExistsException;
 use Websymphonie\ContentContext\Domain\Model\Page;
 use Websymphonie\ContentContext\Domain\Repository\PageRepositoryInterface;
+use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class CreatePageHandler implements CommandHandler
@@ -18,6 +19,7 @@ final readonly class CreatePageHandler implements CommandHandler
         private PageRepositoryInterface $repository,
         private RichTextSanitizerInterface $sanitizer,
         private SluggerInterface $slugger,
+        private MediaUploadServiceInterface $mediaUpload,
     ) {
     }
 
@@ -28,7 +30,16 @@ final readonly class CreatePageHandler implements CommandHandler
             throw new PageSlugAlreadyExistsException(sprintf('Le slug « %s » est déjà utilisé.', $slug));
         }
 
-        return $this->repository->save(new Page(0, '', trim($command->title), $slug, $this->sanitizer->sanitize($command->content)));
+        $media = null;
+        try {
+            $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'content/covers') : null;
+            return $this->repository->save(new Page(0, '', trim($command->title), $slug, $this->sanitizer->sanitize($command->content), coverMediaId: $media?->id));
+        } catch (\Throwable $exception) {
+            if ($media !== null) {
+                try { $this->mediaUpload->delete($media); } catch (\Throwable) {}
+            }
+            throw $exception;
+        }
     }
 
     private function normalizeSlug(string $value): string

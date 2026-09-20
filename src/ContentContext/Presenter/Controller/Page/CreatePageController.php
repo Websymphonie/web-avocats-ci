@@ -35,6 +35,6 @@ final class CreatePageController extends AbstractController
                 $this->flash()->errorFromException($exception);
             }
         }
-        return $this->render('content/admin/page/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('content/admin/page/create.html.twig', ['form' => $form->createView(), 'coverUrl' => null]);
     }
 }

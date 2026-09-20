@@ -480,6 +480,21 @@ serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
 individuelles et bulk de suppression, ainsi que la query de lecture publique
 future ; il ne livre pas encore les routes Frontoffice.
 
+### CNT-006A — Couverture facultative des pages
+
+Une `Page` peut référencer une couverture image publique via le seul identifiant
+scalaire nullable `coverMediaId`. La couverture n'est jamais requise pour créer
+ou publier une page. Le formulaire Backoffice réutilise le composant de cover
+existant pour l'upload, l'aperçu, le remplacement et le retrait ; les fichiers
+sont stockés sous `public/content/covers` avec les validations et le nom serveur
+du `MediaContext`. `Media` ne porte aucune relation Doctrine vers `Page`.
+
+Le vérificateur d'usage Content bloque la suppression physique d'un média encore
+référencé par une page, une actualité, un événement ou une galerie. Le retrait et
+le remplacement d'une cover tentent le nettoyage du média devenu orphelin sans
+modifier les audits Page existants. La query `FindPublishedPageBySlug` restitue
+`coverMediaId` lorsque la page publiée en possède une.
+
 ## 12. Références
 
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;

@@ -7,8 +7,11 @@ namespace Websymphonie\ContentContext\Presenter\Form\Page;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Websymphonie\ContentContext\Application\Usecase\Command\Page\CreatePageCommand;
 use Websymphonie\ContentContext\Application\Usecase\Command\Page\UpdatePageCommand;
 
@@ -20,7 +23,11 @@ final class PageFormType extends AbstractType
         $builder
             ->add('title', TextType::class, ['label' => 'Titre', 'attr' => ['placeholder' => 'Titre de la page']])
             ->add('slug', TextType::class, ['label' => 'Slug', 'required' => false, 'help' => 'Laissez vide pour le générer depuis le titre.'])
-            ->add('content', TextareaType::class, ['label' => 'Contenu', 'required' => false, 'attr' => ['rows' => 18, 'data-rich-text-editor-target' => 'input']]);
+            ->add('content', TextareaType::class, ['label' => 'Contenu', 'required' => false, 'attr' => ['rows' => 18, 'data-rich-text-editor-target' => 'input']])
+            ->add('cover', FileType::class, ['label' => 'Image de couverture', 'required' => false, 'mapped' => true, 'attr' => ['accept' => 'image/jpeg,image/png,image/webp'], 'constraints' => [new File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Seules les images JPEG, PNG et WebP sont acceptées.')]]);
+        if ($options['data'] instanceof UpdatePageCommand) {
+            $builder->add('removeCover', CheckboxType::class, ['label' => 'Retirer la couverture actuelle', 'required' => false]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

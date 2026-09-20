@@ -14,6 +14,7 @@ final readonly class PublishedPage
         public string $slug,
         public string $content,
         public ?DateTimeImmutable $publishedAt,
+        public ?int $coverMediaId,
     ) {
     }
 }

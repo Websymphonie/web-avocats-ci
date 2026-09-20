@@ -10,6 +10,9 @@ use Websymphonie\ContentContext\Application\Usecase\Command\Page\UpdatePageComma
 use Websymphonie\ContentContext\Domain\Exception\PageSlugAlreadyExistsException;
 use Websymphonie\ContentContext\Domain\Model\Page;
 use Websymphonie\ContentContext\Domain\Repository\PageRepositoryInterface;
+use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
+use Websymphonie\MediaContext\Domain\Exception\MediaInUseException;
+use Websymphonie\MediaContext\Domain\Repository\MediaRepositoryInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
 final readonly class UpdatePageHandler implements CommandHandler
@@ -18,6 +21,8 @@ final readonly class UpdatePageHandler implements CommandHandler
         private PageRepositoryInterface $repository,
         private RichTextSanitizerInterface $sanitizer,
         private SluggerInterface $slugger,
+        private MediaUploadServiceInterface $mediaUpload,
+        private MediaRepositoryInterface $mediaRepository,
     ) {
     }
 
@@ -29,7 +34,31 @@ final readonly class UpdatePageHandler implements CommandHandler
             throw new PageSlugAlreadyExistsException(sprintf('Le slug « %s » est déjà utilisé.', $slug));
         }
 
-        $page->update(trim($command->title), $slug, $this->sanitizer->sanitize($command->content));
-        return $this->repository->save($page);
+        $oldCoverId = $page->coverMediaId;
+        $media = null;
+        try {
+            $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'content/covers') : null;
+            $page->update(trim($command->title), $slug, $this->sanitizer->sanitize($command->content));
+            if ($media !== null) {
+                $page->setCoverMedia($media->id);
+            } elseif ($command->removeCover) {
+                $page->setCoverMedia(null);
+            }
+            $saved = $this->repository->save($page);
+            if ($oldCoverId !== null && (($media !== null) || $command->removeCover)) {
+                $this->removeIfOrphaned($oldCoverId);
+            }
+            return $saved;
+        } catch (\Throwable $exception) {
+            if ($media !== null) {
+                try { $this->mediaUpload->delete($media); } catch (\Throwable) {}
+            }
+            throw $exception;
+        }
+    }
+
+    private function removeIfOrphaned(int $mediaId): void
+    {
+        try { $this->mediaUpload->delete($this->mediaRepository->getById($mediaId)); } catch (MediaInUseException) {}
     }
 }

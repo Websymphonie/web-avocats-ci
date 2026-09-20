@@ -17,6 +17,15 @@ final class PageTest extends TestCase
         $page = new Page(1, 'page-uuid', 'À propos', 'a-propos', '');
         self::assertSame(PageStatus::DRAFT, $page->status);
         self::assertNull($page->publishedAt);
+        self::assertNull($page->coverMediaId);
+    }
+
+    public function testCoverIsOptionalScalarReference(): void
+    {
+        $page = new Page(1, 'page-uuid', 'À propos', 'a-propos', '<p>Contenu</p>', coverMediaId: 12);
+        self::assertSame(12, $page->coverMediaId);
+        $page->setCoverMedia(null);
+        self::assertNull($page->coverMediaId);
     }
 
     public function testCannotPublishWithoutContent(): void

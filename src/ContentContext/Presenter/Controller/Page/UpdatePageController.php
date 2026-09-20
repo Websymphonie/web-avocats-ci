@@ -12,6 +12,7 @@ use Websymphonie\ContentContext\Application\Usecase\Command\Page\UpdatePageComma
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\GetPageQuery;
 use Websymphonie\ContentContext\Presenter\Form\Page\PageFormType;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -21,6 +22,8 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::PAGES)]
 final class UpdatePageController extends AbstractController
 {
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls) {}
+
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
     public function __invoke(Request $request, int $id): Response
     {
@@ -37,6 +40,7 @@ final class UpdatePageController extends AbstractController
                 $this->flash()->errorFromException($exception);
             }
         }
-        return $this->render('content/admin/page/edit.html.twig', ['page' => $page, 'form' => $form->createView()]);
+        $coverUrls = $page->coverMediaId !== null ? $this->mediaUrls->resolveMany([$page->coverMediaId]) : [];
+        return $this->render('content/admin/page/edit.html.twig', ['page' => $page, 'form' => $form->createView(), 'coverUrl' => $coverUrls[$page->coverMediaId] ?? null]);
     }
 }

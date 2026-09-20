@@ -12,6 +12,7 @@ use Websymphonie\ContentContext\Application\Usecase\Query\Page\GetPageListQuery;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Presenter\Form\Page\PageFilterType;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -20,6 +21,8 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::PAGES)]
 final class GetPageListController extends AbstractController
 {
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls) {}
+
     #[Route('', name: 'list', methods: ['GET'])]
     public function __invoke(Request $request): Response
     {
@@ -27,6 +30,6 @@ final class GetPageListController extends AbstractController
         $form = $this->createForm(PageFilterType::class, $query, ['method' => 'GET', 'action' => $this->generateUrl('content_admin_page_list')]);
         $form->handleRequest($request);
         $pages = $this->handleQuery(new GetPageListQuery($query->search ?: null, $query->status instanceof PageStatus ? $query->status : null, $query->page, 20));
-        return $this->render('content/admin/page/index.html.twig', ['pages' => $pages, 'filterForm' => $form->createView()]);
+        return $this->render('content/admin/page/index.html.twig', ['pages' => $pages, 'filterForm' => $form->createView(), 'mediaUrls' => $this->mediaUrls->resolveMany(array_values(array_filter(array_map(static fn ($page): ?int => $page->coverMediaId, $pages->items))))]);
     }
 }

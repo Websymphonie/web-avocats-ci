@@ -88,6 +88,7 @@ propriétaire.
 | CNT-004A | ajouter couvertures et galeries liées à News/Event | `IMPLEMENTED` — Backoffice uniquement, sans Frontoffice |
 | CNT-005 | publier les documents et annonces | `IMPLEMENTED` — Backoffice + téléchargement contrôlé |
 | CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice uniquement ; routes Frontoffice différées |
+| CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice uniquement ; upload image réutilisé, sans galerie ni Frontoffice |
 
 ## 7. Learning
 

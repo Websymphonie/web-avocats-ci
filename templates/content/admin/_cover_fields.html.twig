@@ -3,7 +3,7 @@
         <h2 id="media-section-title" class="text-sm font-semibold">Médias</h2>
         <p class="mt-1 text-xs text-muted-foreground">Image publique JPEG, PNG ou WebP · 5 Mio maximum.</p>
     </div>
-    <div class="grid gap-5 md:grid-cols-2">
+    <div class="grid gap-5 {{ showGallery is not defined or showGallery ? 'md:grid-cols-2' : '' }}">
         <div class="space-y-3" data-controller="cover-upload">
             <div class="flex items-center justify-between gap-3">
                 {{ form_label(form.cover, null, {label_attr: {class: 'text-sm font-medium'}}) }}
@@ -19,7 +19,7 @@
             <button type="button" class="text-sm font-medium text-destructive hover:underline" data-action="cover-upload#remove">Retirer</button>
             {{ form_errors(form.cover) }}
         </div>
-        <div class="space-y-3">
+        {% if showGallery is not defined or showGallery %}<div class="space-y-3">
             {{ form_label(form.photoGalleryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}
             {{ form_widget(form.photoGalleryId, {attr: {class: 'form-multi-select min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}
             {{ form_errors(form.photoGalleryId) }}
@@ -28,6 +28,6 @@
                     <div class="flex items-start justify-between gap-3"><div><p class="font-medium">{{ photoGallery.title }}</p><p class="mt-1 text-xs text-muted-foreground">{{ photoGallery.items|length }} photo(s) · {{ photoGallery.status.value }}</p></div><a class="text-primary hover:underline" href="{{ path('content_admin_gallery_edit', {id: photoGallery.id}) }}">Gérer la galerie</a></div>
                 </div>
             {% else %}<a class="inline-flex text-sm font-medium text-primary hover:underline" href="{{ path('content_admin_gallery_new') }}" target="_blank" rel="noopener">Créer une galerie</a>{% endif %}
-        </div>
+        </div>{% endif %}
     </div>
 </section>

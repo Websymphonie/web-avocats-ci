@@ -16,6 +16,7 @@ interface PageRepositoryInterface
 
     /** @param list<Page> $pages */
     public function deleteMany(array $pages): void;
+    public function countMediaUsage(int $mediaId): int;
     public function slugExists(string $slug, ?int $exceptId = null): bool;
 
     /**

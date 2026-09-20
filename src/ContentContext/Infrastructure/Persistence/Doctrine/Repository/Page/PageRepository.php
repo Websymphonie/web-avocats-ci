@@ -86,6 +86,15 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
         }
     }
 
+    public function countMediaUsage(int $mediaId): int
+    {
+        return (int) $this->createQueryBuilder('page')
+            ->select('COUNT(page.id)')
+            ->where('page.coverMediaId = :mediaId')
+            ->setParameter('mediaId', $mediaId)
+            ->getQuery()->getSingleScalarResult();
+    }
+
     public function slugExists(string $slug, ?int $exceptId = null): bool
     {
         $query = $this->createQueryBuilder('page')

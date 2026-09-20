@@ -21,6 +21,7 @@ final class Page
         public ?DateTimeImmutable $publishedAt = null,
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
+        public ?int $coverMediaId = null,
     ) {
         $this->assertRequiredIdentity($title, $slug);
         $this->title = trim($title);
@@ -33,6 +34,11 @@ final class Page
         $this->title = trim($title);
         $this->slug = trim($slug);
         $this->content = $content;
+    }
+
+    public function setCoverMedia(?int $mediaId): void
+    {
+        $this->coverMediaId = $mediaId;
     }
 
     public function publish(): void

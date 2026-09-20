@@ -785,9 +785,18 @@ un statut `DRAFT` ou `PUBLISHED` et les dates éditoriales. Les commandes et
 queries de page restent séparées du modèle Doctrine ; le Backoffice utilise
 `HasGroupAccess(RoleGroupEnum::PAGES)` et les permissions `CONTENT_PAGE_*`.
 
-La page ne porte ni catégorie, ni tag, ni média, ni type technique. Aucun écran
-Frontoffice final ni route publique n’est ajouté par CNT-006. La query
+Depuis CNT-006A, la page peut aussi porter `coverMediaId`, une référence
+scalaire nullable vers un média public. Il n'existe aucune relation Doctrine
+cross-context ; le stockage, la validation serveur, les noms générés et les
+URLs réutilisent les capacités existantes de `MediaContext` sous
+`/shared/storage/public/content/covers`. La couverture est facultative pour la
+création et la publication, et le composant Backoffice existant gère son upload,
+aperçu, remplacement et retrait. Le vérificateur d'usage Content empêche la
+suppression d'un média encore utilisé par une Page.
+
+Aucun écran Frontoffice final ni route publique n’est ajouté par CNT-006/A. La query
 `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet de
-retourner qu’une page publiée. Les événements de cycle de vie réutilisent
+retourner qu’une page publiée ; son DTO restitue la couverture lorsqu'elle existe.
+Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.

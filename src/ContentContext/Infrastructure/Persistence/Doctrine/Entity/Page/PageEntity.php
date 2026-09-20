@@ -36,6 +36,9 @@ class PageEntity
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $publishedAt = null;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $coverMediaId = null;
+
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getSlug(): string { return $this->slug; }
@@ -46,4 +49,6 @@ class PageEntity
     public function setStatus(PageStatus $value): self { $this->status = $value; return $this; }
     public function getPublishedAt(): ?DateTimeImmutable { return $this->publishedAt; }
     public function setPublishedAt(?DateTimeImmutable $value): self { $this->publishedAt = $value; return $this; }
+    public function getCoverMediaId(): ?int { return $this->coverMediaId; }
+    public function setCoverMediaId(?int $value): self { $this->coverMediaId = $value; return $this; }
 }

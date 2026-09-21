@@ -30,6 +30,9 @@ final class ImageFactory
             return null;
         }
         $defaultFile = $imageHelper->getDefaultImagePath();
+        if ($image->getName() === 'app_logo') {
+            $defaultFile = $imageHelper->getDefaultImagePath(param: 'app.logo_default');
+        }
         if ($image->getName() === 'app_favicon') {
             $defaultFile = $imageHelper->getDefaultImagePath(param: 'app.favicon');
         }

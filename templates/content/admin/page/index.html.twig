@@ -87,8 +87,9 @@
                 <td class="px-5 py-4">{% if mediaUrls[page.coverMediaId] is defined %}<img
                         class="size-12 rounded-lg border border-border object-cover"
                         src="{{ mediaUrls[page.coverMediaId]|imagine_filter('thumbnail') }}"
-                        alt="Couverture de {{ page.title }}">{% else %}<span
-                            class="text-muted-foreground">—</span>{% endif %}</td>
+                        alt="Couverture de {{ page.title }}">{% else %}<img
+                            class="size-12 rounded-lg border border-border object-cover"
+                            src="{{ default_image_url }}" alt="">{% endif %}</td>
                 <td class="px-5 py-4"><p class="font-medium">{{ page.title }}</p></td>
                 <td class="px-5 py-4 text-muted-foreground">/{{ page.slug }}</td>
                 <td class="px-5 py-4">

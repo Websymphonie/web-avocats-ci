@@ -14,6 +14,7 @@ use Websymphonie\ContentContext\Application\Usecase\Query\News\GetNewsListQuery;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Presenter\Form\News\NewsFilterType;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Service\Context\ContextServiceInterface;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -23,6 +24,10 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::NEWS)]
 final class GetNewsListController extends AbstractController
 {
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    {
+    }
+
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -36,6 +41,12 @@ final class GetNewsListController extends AbstractController
         $limit = $context->getPaginatorPageSize();
         $result = $this->handleQuery(new GetNewsListQuery($query->search ?: null, $query->status instanceof NewsStatus ? $query->status : null, $query->page, $limit, $query->categoryId ?: null, $query->tagId ?: null));
 
-        return $this->render('content/admin/news/index.html.twig', ['news' => $result, 'filterForm' => $form->createView()]);
+        $mediaIds = array_values(array_filter(array_map(static fn ($item): ?int => $item->coverMediaId, $result->items)));
+
+        return $this->render('content/admin/news/index.html.twig', [
+            'news' => $result,
+            'filterForm' => $form->createView(),
+            'mediaUrls' => $this->mediaUrls->resolveMany($mediaIds),
+        ]);
     }
 }

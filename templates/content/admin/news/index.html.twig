@@ -63,6 +63,7 @@
                                                 class="size-4 rounded border-input accent-primary"
                                                 data-bulk-selection-target="row"
                                                 aria-label="Sélectionner l’actualité : {{ item.title }}"></label>
+                                    <img class="size-12 shrink-0 rounded-lg border border-border object-cover" src="{{ mediaUrls[item.coverMediaId]|default(default_image_url) }}" alt="">
                                     <div class="min-w-0 flex-1"><h3 class="font-medium">{{ item.title }}</h3>
                                         <p class="mt-1 text-sm text-muted-foreground">{{ item.slug }}</p></div>
                                 </div>
@@ -85,6 +86,7 @@
                                 <tr>
                                     <th class="px-5 py-3 font-medium sm:px-6"><span class="sr-only">Sélection</span>
                                     </th>
+                                    <th class="px-5 py-3 font-medium">Image</th>
                                     <th class="px-5 py-3 font-medium">Titre</th>
                                     <th class="px-5 py-3 font-medium">Statut</th>
                                     <th class="px-5 py-3 font-medium">Publication</th>
@@ -101,6 +103,7 @@
                                                     data-bulk-selection-target="row"
                                                     aria-label="Sélectionner l’actualité : {{ item.title }}"></label>
                                     </td>
+                                    <td class="px-5 py-4"><img class="size-12 rounded-lg border border-border object-cover" src="{{ mediaUrls[item.coverMediaId]|default(default_image_url) }}" alt=""></td>
                                     <td class="px-5 py-4">
                                         <div class="min-w-0">
                                             <p class="truncate font-medium">{{ item.title }}</p>
@@ -117,7 +120,7 @@
                                         <div class="flex justify-end">{{ component('NewsTableDropdown', {news: item, instanceId: 'desktop-' ~ item.id}) }}</div>
                                     </td></tr>{% else %}
                                     <tr>
-                                        <td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucune
+                                        <td class="px-6 py-14 text-center text-muted-foreground" colspan="7">Aucune
                                             actualité ne correspond à vos critères.
                                         </td>
                                     </tr>{% endfor %}</tbody>

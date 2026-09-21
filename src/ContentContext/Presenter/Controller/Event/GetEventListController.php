@@ -15,6 +15,7 @@ use Websymphonie\ContentContext\Domain\Enum\EventFormat;
 use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Presenter\Form\Event\EventFilterType;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
+use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Service\Context\ContextServiceInterface;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -24,6 +25,10 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::EVENTS)]
 final class GetEventListController extends AbstractController
 {
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    {
+    }
+
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -36,6 +41,12 @@ final class GetEventListController extends AbstractController
         $form->handleRequest($request);
         $limit = $context->getPaginatorPageSize();
         $result = $this->handleQuery(new GetEventListQuery($query->search ?: null, $query->status instanceof EventStatus ? $query->status : null, $query->format instanceof EventFormat ? $query->format : null, $query->categoryId ?: null, $query->tagId ?: null, $query->page, $limit));
-        return $this->render('content/admin/event/index.html.twig', ['events' => $result, 'filterForm' => $form->createView()]);
+        $mediaIds = array_values(array_filter(array_map(static fn ($item): ?int => $item->coverMediaId, $result->items)));
+
+        return $this->render('content/admin/event/index.html.twig', [
+            'events' => $result,
+            'filterForm' => $form->createView(),
+            'mediaUrls' => $this->mediaUrls->resolveMany($mediaIds),
+        ]);
     }
 }

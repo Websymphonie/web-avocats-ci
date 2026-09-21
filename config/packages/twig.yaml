@@ -1,5 +1,7 @@
 twig:
   file_name_pattern: '*.twig'
+  globals:
+    default_image_url: '%app.image_default%'
   form_themes:
     - tailwind_2_layout.html.twig
     - shared/resources/form/form_theme.html.twig

@@ -3,15 +3,11 @@
 {% set liveDetails = training.liveDetails %}
 {% set isUpcoming = isLive and liveDetails and liveDetails.startsAt > now %}
 {% set isPast = isLive and liveDetails and liveDetails.endsAt <= now %}
+{% set trainingImageUrl = coverUrl|default(default_image_url) %}
 <article class="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
     <div class="relative aspect-[16/7] overflow-hidden bg-gradient-to-br from-[#10233f] via-[#183b63] to-[#d8b878]/70">
-        {% if coverUrl %}
-            <img src="{{ coverUrl }}" alt="" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#10233f]/85 via-[#10233f]/10 to-transparent" aria-hidden="true"></div>
-        {% else %}
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(216,184,120,0.38),transparent_38%)]" aria-hidden="true"></div>
-            <twig:ux:icon name="lucide:graduation-cap" class="absolute bottom-5 left-5 size-10 text-white/75" aria-hidden="true"/>
-        {% endif %}
+        <img src="{{ trainingImageUrl }}" alt="" class="size-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#10233f]/85 via-[#10233f]/10 to-transparent" aria-hidden="true"></div>
         <div class="absolute inset-x-4 top-4 flex items-start justify-between gap-3">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
                 <twig:ux:icon name="{{ isLive ? 'lucide:radio-tower' : 'lucide:book-open' }}" class="size-3.5" aria-hidden="true"/>

@@ -61,6 +61,7 @@
                                             class="size-4 rounded border-input accent-primary"
                                             data-bulk-selection-target="row"
                                             aria-label="Sélectionner l’événement : {{ item.title }}"></label>
+                                <img class="size-12 shrink-0 rounded-lg border border-border object-cover" src="{{ mediaUrls[item.coverMediaId]|default(default_image_url) }}" alt="">
                                 <div class="min-w-0 flex-1"><h3 class="font-medium">{{ item.title }}</h3>
                                     <p class="mt-1 text-sm text-muted-foreground">{{ item.startsAt|date('d/m/Y H:i') }}</p>
                                 </div>
@@ -83,6 +84,7 @@
                         <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
                         <tr>
                             <th class="px-5 py-3 font-medium sm:px-6"><span class="sr-only">Sélection</span></th>
+                            <th class="px-5 py-3 font-medium">Image</th>
                             <th class="px-5 py-3 font-medium">Titre</th>
                             <th class="px-5 py-3 font-medium">Début</th>
                             <th class="px-5 py-3 font-medium">Format</th>
@@ -98,6 +100,7 @@
                                             class="size-4 rounded border-input accent-primary"
                                             data-bulk-selection-target="row"
                                             aria-label="Sélectionner l’événement : {{ item.title }}"></label></td>
+                            <td class="px-5 py-4"><img class="size-12 rounded-lg border border-border object-cover" src="{{ mediaUrls[item.coverMediaId]|default(default_image_url) }}" alt=""></td>
                             <td class="px-5 py-4">
                                 <div class="min-w-0">
                                     <p class="truncate font-medium">{{ item.title }}</p>
@@ -119,7 +122,7 @@
                                 <div class="flex justify-end">{{ component('EventTableDropdown', {event: item, instanceId: 'desktop-' ~ item.id}) }}</div>
                             </td></tr>{% else %}
                             <tr>
-                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucun événement ne
+                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="7">Aucun événement ne
                                     correspond à vos critères.
                                 </td>
                             </tr>{% endfor %}</tbody>

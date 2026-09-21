@@ -40,7 +40,7 @@ readonly class ImageHelper implements ImageHelperInterface
         return $this->publicPath($this->uploaderHelper->asset($entity, $fileName)) ?? $fileDefault;
     }
 
-    public function getDefaultImagePath(?string $param = 'app.logo_default'): string
+    public function getDefaultImagePath(?string $param = 'app.image_default'): string
     {
         return $this->publicPath((string)$this->container->getParameter($param)) ?? '/assets/logo.svg';
     }

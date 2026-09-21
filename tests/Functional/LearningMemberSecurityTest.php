@@ -116,6 +116,61 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringNotContainsString($other->getTitle(), $content);
     }
 
+    public function testAvocatDashboardShowsUpcomingLivesInChronologicalOrderAndExcludesOtherUsers(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $otherUser = $this->createUser(['ROLE_AVOCAT']);
+        $latest = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, startsAt: new DateTimeImmutable('+3 days 10:00'));
+        $soonest = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, startsAt: new DateTimeImmutable('+1 day 10:00'));
+        $otherLive = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, startsAt: new DateTimeImmutable('+2 days 10:00'));
+        $this->createEnrollment($latest, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($soonest, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($otherLive, $otherUser, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($soonest->getTitle(), $content);
+        self::assertStringContainsString($latest->getTitle(), $content);
+        self::assertStringNotContainsString($otherLive->getTitle(), $content);
+        self::assertLessThan(strpos($content, $latest->getTitle()), strpos($content, $soonest->getTitle()));
+        self::assertStringContainsString('/espace/learning/trainings/' . $soonest->getUuidAsString() . '/join', $content);
+        self::assertStringNotContainsString('https://meet.example.test/live', $content);
+    }
+
+    public function testRoleUserDashboardDoesNotExposeUpcomingLives(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $this->createEnrollment($live, $user, EnrollmentStatus::ACTIVE);
+        $client->loginUser($user);
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Aucun rendez-vous à afficher', $content);
+        self::assertStringNotContainsString($live->getTitle(), $content);
+    }
+
+    public function testAvocatDashboardKeepsEmptyStateWithoutUpcomingLive(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $pastLive = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, startsAt: new DateTimeImmutable('-2 days 10:00'));
+        $this->createEnrollment($pastLive, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Aucun rendez-vous à afficher', (string) $client->getResponse()->getContent());
+    }
+
     public function testRoleUserWithActiveEnrollmentSeesEmptyMemberTrainingState(): void
     {
         $client = $this->clientWithSchema();
@@ -627,7 +682,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         return $lesson;
     }
 
-    private function createLive(LiveDeliveryMode $mode, TrainingStatus $status, ?string $joinUrl = 'https://meet.example.test/live', ?string $location = null): TrainingEntity
+    private function createLive(LiveDeliveryMode $mode, TrainingStatus $status, ?string $joinUrl = 'https://meet.example.test/live', ?string $location = null, ?DateTimeImmutable $startsAt = null): TrainingEntity
     {
         $training = (new TrainingEntity(TrainingType::LIVE))
             ->setTitle('Live ' . bin2hex(random_bytes(4)))
@@ -641,8 +696,8 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->flush();
         $details = (new LiveTrainingDetailsEntity())
             ->setTrainingId($training->getId() ?? 0)
-            ->setStartsAt(new DateTimeImmutable('+1 day 10:00'))
-            ->setEndsAt(new DateTimeImmutable('+1 day 11:00'))
+            ->setStartsAt($startsAt ?? new DateTimeImmutable('+1 day 10:00'))
+            ->setEndsAt(($startsAt ?? new DateTimeImmutable('+1 day 10:00'))->modify('+1 hour'))
             ->setDeliveryMode($mode)
             ->setLocation($location)
             ->setJoinUrl($joinUrl);

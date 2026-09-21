@@ -5,7 +5,11 @@
 
 {% block body %}
     {% set userName = app.user.name ?? app.user.userIdentifier %}
-    {% set firstName = userName|split(' ')|first %}
+    {% set nameParts = userName|split(' ') %}
+    {% set firstName = nameParts|first %}
+    {% if firstName|lower == 'maître' and nameParts|length > 1 %}
+        {% set firstName = nameParts[1] %}
+    {% endif %}
     {% set greeting = isAvocat(app.user) ? 'Bonjour Maître ' ~ firstName : 'Bonjour ' ~ firstName %}
 
     <div class="space-y-8">
@@ -76,7 +80,29 @@
                     </div>
                     <h3 class="mt-5 text-base font-semibold text-card-foreground">Prochains LIVE</h3>
                     <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Les rendez-vous accessibles seront affichés ici.</p>
-                    <span class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground">Aucun rendez-vous à afficher</span>
+                    {% if upcomingLives is not empty %}
+                        <div class="mt-4 space-y-3">
+                            {% for summary in upcomingLives %}
+                                {% set live = summary.training %}
+                                {% set liveDetails = live.liveDetails %}
+                                <div class="flex items-center gap-3 rounded-xl border border-border p-3">
+                                    <img class="size-12 shrink-0 rounded-lg object-cover" src="{{ liveCoverUrls[live.coverMediaId]|default(default_image_url) }}" alt="">
+                                    <div class="min-w-0 flex-1">
+                                        <h4 class="truncate text-sm font-semibold text-card-foreground">{{ live.title }}</h4>
+                                        <p class="mt-1 text-xs text-muted-foreground">{{ liveDetails.startsAt|format_datetime('short', 'short', locale='fr_FR') }}</p>
+                                        <p class="mt-1 text-xs text-muted-foreground">{{ liveDetails.deliveryMode.label() }}{% if liveDetails.location %} · {{ liveDetails.location }}{% endif %}</p>
+                                    </div>
+                                    {% if liveDetails.hasJoinUrl() %}
+                                        <a href="{{ path('learning_member_live_join', {uuid: live.uuid}) }}" class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-primary transition hover:bg-primary/10" aria-label="Accéder au live {{ live.title }}">
+                                            <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <span class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground">Aucun rendez-vous à afficher</span>
+                    {% endif %}
                 </article>
             </div>
         </section>

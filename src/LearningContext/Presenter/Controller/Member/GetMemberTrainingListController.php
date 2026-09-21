@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Presenter\Controller\Member;
 
 use DateTimeImmutable;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +25,10 @@ final class GetMemberTrainingListController extends AbstractController
     {
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(Request $request, CurrentUserProvider $currentUser): Response
     {
         $user = $currentUser->user();
@@ -63,7 +69,7 @@ final class GetMemberTrainingListController extends AbstractController
             $view = 'all';
         }
         $visibleSummaries = $view === 'all' ? $summaries : $groups[$view];
-        $mediaIds = array_values(array_filter(array_map(static fn ($summary): ?int => $summary->training->coverMediaId, $summaries)));
+        $mediaIds = array_values(array_filter(array_map(static fn($summary): ?int => $summary->training->coverMediaId, $summaries)));
 
         return $this->render('member/trainings/index.html.twig', [
             'title' => 'Mes formations',

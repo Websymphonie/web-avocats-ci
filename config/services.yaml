@@ -22,6 +22,7 @@ parameters:
   app.logo_default: '/assets/logo.png'
   app.favicon: '/assets/favicon.ico'
   app.avatar_default: '/assets/avatar.png'
+  app.image_default: '/assets/default.jpg'
   account_activation_ttl: '%env(ACCOUNT_ACTIVATION_TTL)%'
   password_reset_ttl: '%env(PASSWORD_RESET_TTL)%'
   isLocked: false

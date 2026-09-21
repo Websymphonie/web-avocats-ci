@@ -11,7 +11,7 @@
             </div>
             {% if is_granted('CONTENT_PAGE_MANAGE') %}<a class="inline-flex h-10 items-center gap-2 rounded-lg border border-input bg-background px-4 text-sm font-medium hover:bg-muted" href="{{ path('content_admin_page_edit', {id: page.id}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>{% endif %}
         </div>
-        {% if coverUrl %}<img class="aspect-[21/9] w-full rounded-2xl border border-border object-cover shadow-sm" src="{{ coverUrl|imagine_filter('large') }}" alt="Couverture de {{ page.title }}">{% endif %}
+        <img class="aspect-[21/9] w-full rounded-2xl border border-border object-cover shadow-sm" src="{{ coverUrl|default(default_image_url)|imagine_filter('large') }}" alt="Couverture de {{ page.title }}">
         <article class="prose max-w-none rounded-2xl border border-border bg-card p-6 shadow-sm dark:prose-invert">{{ safeContent|raw }}</article>
     </div>
 </main>

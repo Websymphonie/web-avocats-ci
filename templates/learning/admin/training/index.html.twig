@@ -88,9 +88,9 @@
                                                     aria-label="Sélectionner la formation : {{ item.title }}"></label>
                                         {% if item.coverMediaId and mediaUrls[item.coverMediaId]|default(null) %}<img
                                             src="{{ mediaUrls[item.coverMediaId] }}" alt=""
-                                            class="size-12 shrink-0 rounded-lg object-cover">{% else %}<span
-                                                class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"><twig:ux:icon
-                                                    name="lucide:graduation-cap" class="size-5"/></span>{% endif %}
+                                            class="size-12 shrink-0 rounded-lg object-cover">{% else %}<img
+                                                src="{{ default_image_url }}" alt=""
+                                                class="size-12 shrink-0 rounded-lg object-cover">{% endif %}
                                         <div class="min-w-0 flex-1"><h3 class="font-medium">{{ item.title }}</h3>
                                             <p class="mt-1 text-sm text-muted-foreground">{{ item.type.label }}
                                                 · {{ item.visibility.label }}</p></div>
@@ -133,9 +133,9 @@
                                         </td>
                                         <td class="px-5 py-4">{% if item.coverMediaId and mediaUrls[item.coverMediaId]|default(null) %}
                                                 <img src="{{ mediaUrls[item.coverMediaId] }}" alt=""
-                                                     class="size-12 rounded-lg object-cover">{% else %}<span
-                                                    class="flex size-12 items-center justify-center rounded-lg bg-muted text-muted-foreground"><twig:ux:icon
-                                                        name="lucide:graduation-cap" class="size-5"/></span>{% endif %}
+                                                     class="size-12 rounded-lg object-cover">{% else %}<img
+                                                    src="{{ default_image_url }}" alt=""
+                                                    class="size-12 rounded-lg object-cover">{% endif %}
                                         </td>
                                         <td class="px-5 py-4">
                                             <p class="truncate font-medium">{{ item.title }}</p>

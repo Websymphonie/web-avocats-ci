@@ -89,6 +89,25 @@ Répartition principale :
 Les offres PAID utilisent uniquement `XOF` lorsque cette devise existe et est
 active dans le catalogue Admin. Aucune devise n'est créée par DATA-001.
 
+## Scénario membre avocat
+
+Le groupe `demo` ajoute également un compte fictif distinct, actif et limité à
+`ROLE_AVOCAT`, avec cinq enrollments actifs : trois COURSE et deux LIVE. Les
+COURSE couvrent les états non commencé, en cours et terminé ; les LIVE sont
+programmés dans le futur et utilisent les données de `DemoLearningFixtures`.
+
+Le mot de passe de ce compte n'est jamais stocké dans le dépôt. Il doit être
+fourni uniquement par variable d'environnement lors d'un chargement local :
+
+```bash
+APP_DEMO_MEMBER_PASSWORD='valeur-locale-unique' \
+php bin/console doctrine:fixtures:load --env=dev --group=demo --append
+```
+
+La fixture `DemoMemberLearningFixtures` dépend de `DemoLearningFixtures`, est
+idempotente sur l'adresse `avocat.demo@example.test` et ne crée ni paiement,
+notification, audit ni donnée de production.
+
 ## Assets et stockage
 
 Les assets déjà présents dans le dépôt sont réutilisés :
@@ -127,4 +146,5 @@ Cette validation n'utilise pas la base locale actuelle du projet.
 
 DATA-001 ne crée pas de données de production, personnes réelles, textes
 juridiques validés, écrans Frontoffice, dashboard membre, fixtures Contribution,
-transactions Payment/KkiaPay, enrollments en masse ou API v1.
+transactions Payment/KkiaPay, enrollments en masse ou API v1. DATA-002 crée
+uniquement le scénario membre avocat fictif décrit ci-dessus.

@@ -35,6 +35,7 @@ use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 final class DemoFixturesIntegrityTest extends WebTestCase
 {
     private static string $storageDirectory;
+    private static string $demoPassword;
 
     protected static function getKernelClass(): string
     {
@@ -44,10 +45,12 @@ final class DemoFixturesIntegrityTest extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         self::$storageDirectory = sys_get_temp_dir() . '/avocat-data-fixtures-' . bin2hex(random_bytes(4));
+        self::$demoPassword = bin2hex(random_bytes(16));
         mkdir(self::$storageDirectory, 0775, true);
         foreach ([
             'DATABASE_URL' => 'sqlite:///:memory:',
             'APP_STORAGE_DIR' => self::$storageDirectory,
+            'APP_DEMO_MEMBER_PASSWORD' => self::$demoPassword,
             'MYSQL_VERSION' => '8.0.40',
             'SECURE_SCHEME' => 'https',
         ] as $name => $value) {
@@ -62,6 +65,8 @@ final class DemoFixturesIntegrityTest extends WebTestCase
     public static function tearDownAfterClass(): void
     {
         (new Filesystem())->remove(self::$storageDirectory);
+        putenv('APP_DEMO_MEMBER_PASSWORD');
+        unset($_ENV['APP_DEMO_MEMBER_PASSWORD'], $_SERVER['APP_DEMO_MEMBER_PASSWORD']);
         parent::tearDownAfterClass();
     }
 

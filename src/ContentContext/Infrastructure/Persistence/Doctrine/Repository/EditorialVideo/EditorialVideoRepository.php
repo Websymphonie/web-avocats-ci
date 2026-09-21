@@ -52,4 +52,46 @@ final class EditorialVideoRepository extends ServiceEntityRepository implements 
         $entities = $qb->orderBy('video.updatedAt', 'DESC')->addOrderBy('video.id', 'DESC')->setFirstResult(($page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
         return new EditorialVideoListResult(array_map(fn (EditorialVideoEntity $entity): EditorialVideo => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
+
+    public function listPublished(int $page, int $limit): EditorialVideoListResult
+    {
+        $query = $this->createQueryBuilder('video')
+            ->where('video.status = :status')
+            ->andWhere('video.publishedAt IS NOT NULL')
+            ->setParameter('status', EditorialVideoStatus::PUBLISHED);
+
+        $total = (int) (clone $query)
+            ->select('COUNT(video.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $entities = $query
+            ->orderBy('video.publishedAt', 'DESC')
+            ->addOrderBy('video.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return new EditorialVideoListResult(array_map(fn (EditorialVideoEntity $entity): EditorialVideo => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
+    }
+
+    public function getPublishedBySlug(string $slug): EditorialVideo
+    {
+        $entity = $this->createQueryBuilder('video')
+            ->leftJoin('video.tags', 'tag')->addSelect('tag')
+            ->where('video.slug = :slug')
+            ->andWhere('video.status = :status')
+            ->andWhere('video.publishedAt IS NOT NULL')
+            ->setParameter('slug', $slug)
+            ->setParameter('status', EditorialVideoStatus::PUBLISHED)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$entity instanceof EditorialVideoEntity) {
+            throw EditorialVideoNotFoundException::withSlug($slug);
+        }
+
+        return $this->factory->fromEntity($entity);
+    }
 }

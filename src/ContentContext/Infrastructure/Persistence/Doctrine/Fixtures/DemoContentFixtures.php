@@ -15,6 +15,9 @@ use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Domain\Enum\EditorialVideoStatus;
+use Websymphonie\ContentContext\Domain\Enum\VideoProvider;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EventCategory\EventCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
@@ -45,6 +48,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
         DbLogListener::withoutLogging(function () use ($manager): void {
             $this->loadNews($manager);
             $this->loadEvents($manager);
+            $this->loadEditorialVideos($manager);
             $this->loadPages($manager);
             $manager->flush();
         });
@@ -195,6 +199,34 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setSortOrder($sortOrder);
             $manager->persist($page);
             $this->addReference('demo_page_' . $slug, $page);
+        }
+    }
+
+    private function loadEditorialVideos(ObjectManager $manager): void
+    {
+        $videos = [
+            ['Regards croisés sur la pratique de la profession', 'regards-croises-sur-la-pratique-de-la-profession', EditorialVideoStatus::PUBLISHED, 1],
+            ['Les rendez-vous du Barreau en vidéo', 'les-rendez-vous-du-barreau-en-video', EditorialVideoStatus::PUBLISHED, 4],
+            ['Vidéo éditoriale en préparation', 'video-editoriale-en-preparation', EditorialVideoStatus::DRAFT, null],
+        ];
+        $now = new DateTimeImmutable();
+
+        foreach ($videos as [$title, $slug, $status, $daysAgo]) {
+            $video = $manager->getRepository(EditorialVideoEntity::class)->findOneBy(['slug' => $slug]);
+            if (!$video instanceof EditorialVideoEntity) {
+                $video = new EditorialVideoEntity();
+            }
+            $video->setTitle($title)
+                ->setSlug($slug)
+                ->setExcerpt('Un éclairage vidéo de démonstration sur la vie et les pratiques de la profession.')
+                ->setDescription($this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>Cette publication vidéo de démonstration présente un contenu éditorial public du Barreau de Côte d’Ivoire.</p>', $title)))
+                ->setProvider(VideoProvider::YOUTUBE)
+                ->setVideoUrl('https://www.youtube.com/watch?v=M7lc1UVf-VE')
+                ->setExternalVideoId('M7lc1UVf-VE')
+                ->setStatus($status)
+                ->setPublishedAt($daysAgo === null ? null : $now->modify(sprintf('-%d days', $daysAgo)));
+            $manager->persist($video);
+            $this->addReference('demo_editorial_video_' . $slug, $video);
         }
     }
 

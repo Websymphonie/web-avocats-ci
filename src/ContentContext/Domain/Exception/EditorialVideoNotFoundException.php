@@ -13,6 +13,11 @@ final class EditorialVideoNotFoundException extends RuntimeException implements 
     {
         return new self(sprintf('La vidéo éditoriale #%d est introuvable.', $id));
     }
+
+    public static function withSlug(string $slug): self
+    {
+        return new self(sprintf('La vidéo éditoriale « %s » est introuvable.', $slug));
+    }
     public function translationId(): string { return 'exceptions.content.editorial_video_not_found'; }
     public function translationDomain(): string { return 'content_context'; }
     public function translationParameters(): array { return []; }

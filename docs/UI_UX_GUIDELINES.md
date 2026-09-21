@@ -299,3 +299,9 @@ d’actions, sélection multiple et `AlertDialog`. Le formulaire utilise Tiptap,
 les tags génériques et un fournisseur explicite. L’aperçu n’affiche un iframe
 que pour un identifiant YouTube extrait d’une URL validée ; une URL externe
 reste un lien sortant contrôlé.
+
+Le Frontoffice `/videos` reprend le registre éditorial public des Actualités et
+Événements avec une mise en avant média, des miniatures, une action de lecture
+claire et une page détail. Le player YouTube reste responsive en 16:9, utilise
+`youtube-nocookie.com`, possède un titre accessible et ne déclenche pas de
+lecture automatique. Les vidéos brouillon ou archivées ne sont jamais rendues.

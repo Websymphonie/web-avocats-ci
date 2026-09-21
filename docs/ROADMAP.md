@@ -63,8 +63,8 @@ dans les producteurs.
 
 La fondation Content Backoffice est terminée et vérifiable (`DONE`) pour les
 actualités, événements, vidéos éditoriales, galeries, couvertures et documents.
-Les parcours Content Frontoffice restent différés dans la phase Manus et ne
-doivent pas retarder le démarrage de Learning.
+Les parcours Content Frontoffice sont livrés progressivement : Actualités,
+Événements et Vidéos éditoriales sont publics ; les galeries restent différées.
 
 Tickets immédiats :
 
@@ -72,7 +72,7 @@ Tickets immédiats :
 CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
-CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
+CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice + Frontoffice `/videos`
 CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + détail public `/informations/{slug}`
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
@@ -174,7 +174,7 @@ CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice u
 CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 Content Backoffice foundation                     DONE
-Content Frontoffice                              PARTIAL — Actualités et Événements publiques, recherche globale et catalogue Formations livrés ; autres verticales différées
+Content Frontoffice                              PARTIAL — Actualités, Événements, Vidéos, recherche globale et catalogue Formations livrés ; galeries et autres verticales différées
 LRN-001  Training COURSE                           DONE — Backoffice uniquement
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice

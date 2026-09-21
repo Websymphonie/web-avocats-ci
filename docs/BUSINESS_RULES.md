@@ -444,8 +444,12 @@ Les décisions suivantes restent explicitement ouvertes :
   seule une vidéo publiée peut être archivée ;
 - le slug peut évoluer en brouillon et reste stable après publication ;
 - un tag utilisé par une vidéo éditoriale ne peut pas être supprimé ;
+- seules les vidéos `PUBLISHED` avec `publishedAt` non nul sont exposées sous
+  `/videos` ; les brouillons et vidéos archivées ne sont pas accessibles ;
+- le Frontoffice utilise `youtube-nocookie.com` uniquement pour les identifiants
+  YouTube extraits par le Domain ; une URL externe reste un lien sortant contrôlé ;
 - les iframes arbitraires, uploads, synchronisation API YouTube, vidéos Live et
-  surfaces Learning ou Frontoffice restent hors scope.
+  surfaces Learning restent hors scope.
 
 ## 10. Références
 

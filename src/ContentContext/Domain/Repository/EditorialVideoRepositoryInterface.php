@@ -21,4 +21,6 @@ interface EditorialVideoRepositoryInterface
      */
     public function findByIds(array $ids): array;
     public function list(?string $search, ?EditorialVideoStatus $status, ?VideoProvider $provider, ?int $tagId, int $page, int $limit): EditorialVideoListResult;
+    public function listPublished(int $page, int $limit): EditorialVideoListResult;
+    public function getPublishedBySlug(string $slug): EditorialVideo;
 }

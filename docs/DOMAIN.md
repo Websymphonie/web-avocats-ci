@@ -460,13 +460,14 @@ indépendant et sa suppression est refusée tant qu’une actualité ou un
 ## CNT-003 — EditorialVideo livré
 
 `EditorialVideo` est le modèle de référence des vidéos éditoriales administrées
-sous `/admin/content/videos`. Il est distinct de `Training` et porte un titre,
-un slug, un résumé, une description Tiptap nettoyée, un fournisseur (`YOUTUBE`
-ou `EXTERNAL_URL`), une URL externe, un statut `DRAFT`, `PUBLISHED` ou
-`ARCHIVED`, ses dates et les tags génériques `Tag`. La publication et
-l’archivage sont des transitions explicites ; une vidéo YouTube n’est intégrée
-qu’à partir d’un identifiant extrait d’une URL validée. Aucun upload, appel API
-YouTube, live ou écran Frontoffice n’est livré.
+sous `/admin/content/videos` et publiées sous `/videos`. Il est distinct de
+`Training` et porte un titre, un slug, un résumé, une description Tiptap
+nettoyée, un fournisseur (`YOUTUBE` ou `EXTERNAL_URL`), une URL externe, un
+statut `DRAFT`, `PUBLISHED` ou `ARCHIVED`, ses dates et les tags génériques
+`Tag`. La publication et l’archivage sont des transitions explicites ; une
+vidéo YouTube n’est intégrée qu’à partir d’un identifiant extrait d’une URL
+validée. Le Frontoffice expose uniquement les vidéos `PUBLISHED` possédant une
+date de publication ; les galeries publiques restent hors de cette livraison.
 
 ## CNT-006 — Pages statiques
 

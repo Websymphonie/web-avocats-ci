@@ -32,7 +32,7 @@ fonctionnalité disponible dans l’interface.
 | PUB-001 | afficher une page d’accueil publique | `IMPLEMENTED` |
 | PUB-002 | consulter les actualités publiées | `IMPLEMENTED` — liste publique, détail, pagination, catégories et tags |
 | PUB-003 | consulter les événements et leurs détails | `PLANNED` |
-| PUB-004 | consulter les vidéos éditoriales et galeries | `PLANNED` |
+| PUB-004 | consulter les vidéos éditoriales publiées | `IMPLEMENTED` — liste, détail YouTube sécurisé, miniatures et accès depuis la homepage ; les galeries publiques restent planifiées |
 | PUB-005 | consulter les documents explicitement publics | `PLANNED` |
 | PUB-006 | parcourir le catalogue des formations | `IMPLEMENTED` — catalogue public, catégories, filtres COURSE/LIVE et accès |
 | PUB-007 | consulter une fiche de formation ou de Live publiée | `IMPLEMENTED` — détails publics, covers et données LIVE non sensibles |

@@ -133,6 +133,12 @@ final class PublicSearchTest extends WebTestCase
     {
         $client = $this->clientWithSchema();
 
+        $client->request('GET', '/', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('button[aria-label="Rechercher"][aria-controls="public-search-dialog"]');
+        self::assertSelectorExists('button[data-controller="theme-toggle"]');
+
         $client->request('GET', '/formations', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();

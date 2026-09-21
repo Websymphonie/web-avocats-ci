@@ -49,6 +49,10 @@ final class PublicEventsTest extends WebTestCase
         $client->request('GET', '/evenements', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
+        self::assertSelectorExists('button[aria-controls="public-mobile-menu"][aria-expanded="false"]');
+        self::assertSelectorExists('nav[aria-label="Navigation mobile"] a[href="/evenements"]');
+        self::assertSelectorTextContains('nav[aria-label="Navigation mobile"] a[aria-current="page"]', 'Événements');
+        self::assertSelectorExists('button[aria-controls="public-search-dialog"]');
         self::assertSelectorTextContains('h1', 'Événements');
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('Événement à venir', $content);

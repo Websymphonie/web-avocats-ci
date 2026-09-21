@@ -1,4 +1,4 @@
-<nav class="border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale">
+<nav class="border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale" data-controller="public-navbar">
     <div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a href="{{ path('app_home') }}" class="group inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <span class="flex size-9 items-center justify-center rounded-lg bg-primary text-xs font-semibold tracking-[0.14em] text-primary-foreground">AC</span>
@@ -6,10 +6,12 @@
         </a>
 
         <div class="flex items-center gap-1 sm:gap-2">
-            <a href="{{ path('app_home') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
-            <a href="{{ path('web_news_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
-            <a href="{{ path('web_events_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_events_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_events_' %}aria-current="page"{% endif %}>Événements</a>
-            <a href="{{ path('web_trainings_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_trainings_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_trainings_' %}aria-current="page"{% endif %}>Formations</a>
+            <div class="hidden items-center gap-1 sm:gap-2 lg:flex">
+                <a href="{{ path('app_home') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
+                <a href="{{ path('web_news_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
+                <a href="{{ path('web_events_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_events_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_events_' %}aria-current="page"{% endif %}>Événements</a>
+                <a href="{{ path('web_trainings_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_trainings_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_trainings_' %}aria-current="page"{% endif %}>Formations</a>
+            </div>
             <button type="button" data-action="click->global-search#open" class="inline-flex size-9 items-center justify-center rounded-lg border border-transparent text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Rechercher" aria-haspopup="dialog" aria-controls="public-search-dialog">
                 <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/>
                 <span class="sr-only">Rechercher</span>
@@ -19,7 +21,22 @@
                 <twig:ux:icon name="lucide:moon" class="hidden size-4 dark:block" aria-hidden="true"/>
                 <span class="sr-only">Changer de thème</span>
             </button>
-            <a href="{{ path('app_login') }}" class="hidden rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">Espace avocat</a>
+            <a href="{{ path('app_login') }}" class="hidden rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:inline-flex">Espace avocat</a>
+            <button type="button" data-public-navbar-target="toggle" data-action="click->public-navbar#toggle" class="inline-flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="public-mobile-menu">
+                <twig:ux:icon name="lucide:menu" class="size-5" data-public-navbar-target="menuIcon" aria-hidden="true"/>
+                <twig:ux:icon name="lucide:x" class="hidden size-5" data-public-navbar-target="closeIcon" aria-hidden="true"/>
+                <span class="sr-only">Menu</span>
+            </button>
         </div>
+    </div>
+
+    <div id="public-mobile-menu" data-public-navbar-target="menu" class="border-t border-border bg-background lg:hidden" hidden>
+        <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 sm:px-6" aria-label="Navigation mobile">
+            <a href="{{ path('app_home') }}" data-public-navbar-target="firstLink" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
+            <a href="{{ path('web_news_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
+            <a href="{{ path('web_events_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_events_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_events_' %}aria-current="page"{% endif %}>Événements</a>
+            <a href="{{ path('web_trainings_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_trainings_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_trainings_' %}aria-current="page"{% endif %}>Formations</a>
+            <a href="{{ path('app_login') }}" data-action="click->public-navbar#close" class="mt-1 inline-flex items-center justify-center rounded-lg border border-border px-3 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Espace avocat</a>
+        </nav>
     </div>
 </nav>

@@ -41,6 +41,15 @@
                         <span class="hidden text-[0.65rem] font-medium uppercase tracking-[0.22em] text-white/45 md:inline">Ordre professionnel</span>
                         <button class="inline-flex size-9 items-center justify-center rounded-full border border-white/20 bg-black/10 text-white/80 transition hover:border-[#d8b878] hover:bg-white/10 hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:size-10"
                                 type="button"
+                                data-action="click->global-search#open"
+                                aria-label="Rechercher"
+                                aria-haspopup="dialog"
+                                aria-controls="public-search-dialog">
+                            <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/>
+                            <span class="sr-only">Rechercher</span>
+                        </button>
+                        <button class="inline-flex size-9 items-center justify-center rounded-full border border-white/20 bg-black/10 text-white/80 transition hover:border-[#d8b878] hover:bg-white/10 hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:size-10"
+                                type="button"
                                 data-controller="theme-toggle"
                                 data-action="theme-toggle#toggle"
                                 aria-label="Activer le mode sombre"

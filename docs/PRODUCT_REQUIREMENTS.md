@@ -47,17 +47,18 @@ son lecteur ou ses documents.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| MEM-001 | protéger `/espace` par authentification | `IMPLEMENTED` |
-| MEM-002 | fournir une page d’accueil Member minimale | `IMPLEMENTED` |
-| MEM-003 | consulter et modifier son profil selon autorisation | `PLANNED` |
-| MEM-004 | consulter ses formations et Lives | `IMPLEMENTED` — liste membre, détail LIVE sécurisé et accès protégé |
-| MEM-005 | consulter sa progression | `PLANNED` |
-| MEM-006 | consulter ses certificats | `PLANNED` |
-| MEM-007 | consulter ses cotisations et paiements | `DISCOVERY` |
-| MEM-008 | consulter ses notifications | `PLANNED` |
+| MEM-001 | fournir le dashboard et le shell Member protégés | `IMPLEMENTED` |
+| MEM-002 | consulter ses formations et sa progression synthétique | `IMPLEMENTED` — liste membre COURSE/LIVE et filtres |
+| MEM-003 | utiliser le player COURSE membre protégé | `IMPLEMENTED` |
+| MEM-004 | accéder à ses expériences LIVE protégées | `IMPLEMENTED` — détail LIVE, contrôle d’accès et lien sécurisé |
+| MEM-005 | consulter ses paiements de formation | `IMPLEMENTED` — historique membre en lecture seule et états de fulfillment |
+| MEM-006 | consulter une vue détaillée de sa progression | `PLANNED` |
+| MEM-007 | consulter ses certificats | `PLANNED` |
 
 La Member Area est une surface de présentation et ne justifie pas la création
-d’un `MemberContext`.
+d’un `MemberContext`. Le profil membre et les notifications membre sont déjà
+livrés dans le socle Member ; ils ne constituent pas des tickets futurs
+distincts dans cette séquence.
 
 ## 5. Surface Backoffice
 

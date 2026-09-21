@@ -44,6 +44,8 @@ use Websymphonie\PaymentContext\Domain\Model\Payment;
 use Websymphonie\PaymentContext\Domain\Repository\PaymentRepositoryInterface;
 use Websymphonie\PaymentContext\Infrastructure\Webhook\KkiaPayWebhookConsumer;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandBus;
+use Websymphonie\SharedContext\Domain\Enum\CacheEnum;
+use Websymphonie\SharedContext\Domain\Service\Cache\CacheServiceInterface;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class PaymentWorkflowTest extends WebTestCase
@@ -224,10 +226,17 @@ final class PaymentWorkflowTest extends WebTestCase
         $client->loginUser($admin);
         $client->disableReboot();
 
-        $client->request('GET', '/admin/payment/offers', server: ['HTTPS' => 'on']);
-        self::assertResponseIsSuccessful();
-        $client->request('GET', '/admin/payment/payments', server: ['HTTPS' => 'on']);
-        self::assertResponseIsSuccessful();
+        $cacheService = static::getContainer()->get(CacheServiceInterface::class);
+        $cacheService->invalidateTag(CacheEnum::TAG_ROLE_PERMISSIONS->value);
+
+        try {
+            $client->request('GET', '/admin/payment/offers', server: ['HTTPS' => 'on']);
+            self::assertResponseIsSuccessful();
+            $client->request('GET', '/admin/payment/payments', server: ['HTTPS' => 'on']);
+            self::assertResponseIsSuccessful();
+        } finally {
+            $cacheService->invalidateTag(CacheEnum::TAG_ROLE_PERMISSIONS->value);
+        }
     }
 
     public function testOfferFormUsesOnlyActiveCurrenciesAndUnknownCurrencyIsRejected(): void

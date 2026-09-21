@@ -97,6 +97,22 @@ final class PublicEventsTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    public function testEventsNavigationIsAvailableFromHomepageAndActiveInPublicMenu(): void
+    {
+        $client = $this->clientWithSchema();
+        [$nearest] = $this->createEventDataset();
+
+        $client->request('GET', '/', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('href="/evenements"', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/evenements', server: ['HTTPS' => 'on']);
+        self::assertSelectorTextContains('nav[aria-label="Navigation principale"] a[aria-current="page"]', 'Événements');
+
+        $client->request('GET', '/evenements/' . $nearest->getSlug(), server: ['HTTPS' => 'on']);
+        self::assertSelectorTextContains('nav[aria-label="Navigation principale"] a[aria-current="page"]', 'Événements');
+    }
+
     private function clientWithSchema(): KernelBrowser
     {
         self::ensureKernelShutdown();

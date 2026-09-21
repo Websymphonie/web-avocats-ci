@@ -64,6 +64,16 @@ body {
   transform: translateY(-3px);
 }
 
+.homepage-primary-card {
+  border: 1px solid rgba(216, 184, 120, 0.6);
+  background: linear-gradient(145deg, rgba(29, 66, 102, 0.98), rgba(23, 50, 82, 0.98));
+  box-shadow: 0 18px 40px rgba(4, 16, 32, 0.24);
+}
+
+.homepage-primary-card h3 {
+  color: #fffaf0;
+}
+
 .homepage-image-card {
   background-image:
     linear-gradient(135deg, rgba(16, 35, 63, 0.88) 0%, rgba(16, 35, 63, 0.62) 62%, rgba(16, 35, 63, 0.35) 100%),
@@ -99,6 +109,11 @@ body {
 .homepage-event-carousel__slide > * {
   position: relative;
   z-index: 1;
+}
+
+.homepage-image-card h3,
+.homepage-event-carousel__title {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.42);
 }
 
 .homepage-event-carousel__control {
@@ -152,8 +167,10 @@ body {
   .homepage-event-carousel__slide h3 {
     margin-top: 0.25rem;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.25;
   }
 
   .homepage-event-carousel__controls {

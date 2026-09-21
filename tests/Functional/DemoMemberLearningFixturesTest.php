@@ -144,6 +144,8 @@ final class DemoMemberLearningFixturesTest extends WebTestCase
         self::assertInstanceOf(LiveTrainingDetailsEntity::class, $liveDetails);
         self::assertGreaterThan(new \DateTimeImmutable(), $liveDetails->getStartsAt());
         self::assertNotNull($liveDetails->getJoinUrl());
+        self::assertSame('YOUTUBE', $liveDetails->getStreamProvider()?->value);
+        self::assertSame('M7lc1UVf-VE', $liveDetails->getExternalStreamId());
         self::assertCount(5, array_filter($enrollments, static fn (EnrollmentEntity $enrollment): bool =>
             in_array($enrollment->getTrainingId(), [
                 $course01->getId(),

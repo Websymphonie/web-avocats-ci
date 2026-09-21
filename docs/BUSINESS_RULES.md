@@ -247,8 +247,11 @@ et sans module ni leçon. Ses informations sont portées par un unique
 optionnel. Les dates doivent respecter `startsAt < endsAt`.
 
 Les modes `ONLINE`, `IN_PERSON` et `HYBRID` exigent respectivement un lien
-HTTPS, un lieu, ou les deux. Le serveur valide l’URL ; aucun fournisseur
-externe n’est appelé et Learning ne prétend pas empêcher le partage d’un lien
+HTTPS ou une référence YouTube valide, un lieu, ou les deux. Une référence
+YouTube normalisée peut donc remplacer le `joinUrl` pour une session en ligne,
+mais les deux peuvent coexister pour proposer un accès secondaire. Le serveur
+valide l’URL ; aucun fournisseur externe n’est appelé et Learning ne prétend
+pas empêcher le partage d’un lien
 externe par un membre autorisé.
 
 La publication d’un LIVE exige des détails valides, mais pas de modules ni de

@@ -469,6 +469,14 @@ pour l’embed, sans appel API ni hébergement vidéo privé. `LessonResource`
 conserve un `storedFileId` scalaire et ne crée aucune relation Doctrine vers
 `MediaContext`.
 
+Les sessions `LIVE` peuvent également porter une référence externe YouTube
+facultative (`streamProvider` et `externalStreamId`) sans relation Doctrine
+vers un fournisseur ou vers `MediaContext`. La référence est normalisée côté
+Learning et rendue dans l’espace membre via `youtube-nocookie.com/embed`; elle
+ne déclenche aucune API YouTube. Le `joinUrl` reste une destination HTTPS
+générique, résolue exclusivement par une route membre autorisée et jamais
+injectée directement dans Twig.
+
 Les ressources privées utilisent la racine persistante configurée
 `APP_STORAGE_DIR`, sous `private/learning/resources`; elles ne sont pas
 placées sous `var/` et ne possèdent aucun alias public. Les formats autorisés

@@ -32,5 +32,6 @@ final class UpdateTrainingCommand
         public LiveDeliveryMode $deliveryMode = LiveDeliveryMode::ONLINE,
         public ?string $location = null,
         public ?string $joinUrl = null,
+        public ?string $youtubeStreamUrl = null,
     ) {}
 }

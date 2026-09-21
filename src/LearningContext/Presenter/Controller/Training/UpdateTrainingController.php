@@ -54,6 +54,9 @@ final class UpdateTrainingController extends AbstractController
             deliveryMode: $training->liveDetails !== null ? $training->liveDetails->deliveryMode : LiveDeliveryMode::ONLINE,
             location: $training->liveDetails?->location,
             joinUrl: $training->liveDetails?->joinUrl,
+            youtubeStreamUrl: $training->liveDetails?->externalStreamId !== null
+                ? 'https://www.youtube.com/watch?v=' . $training->liveDetails->externalStreamId
+                : null,
         );
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);

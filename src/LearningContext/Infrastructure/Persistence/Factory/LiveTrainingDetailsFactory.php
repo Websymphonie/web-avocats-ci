@@ -22,6 +22,8 @@ final class LiveTrainingDetailsFactory
             joinUrl: $entity->getJoinUrl(),
             createdAt: $entity->getCreatedAt(),
             updatedAt: $entity->getUpdatedAt(),
+            streamProvider: $entity->getStreamProvider(),
+            externalStreamId: $entity->getExternalStreamId(),
         );
     }
 
@@ -33,6 +35,8 @@ final class LiveTrainingDetailsFactory
             ->setEndsAt($model->endsAt)
             ->setDeliveryMode($model->deliveryMode)
             ->setLocation($model->location)
-            ->setJoinUrl($model->joinUrl);
+            ->setJoinUrl($model->joinUrl)
+            ->setStreamProvider($model->streamProvider)
+            ->setExternalStreamId($model->externalStreamId);
     }
 }

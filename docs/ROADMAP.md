@@ -119,7 +119,9 @@ PAY-002A — certification Sandbox et hardening         PENDING — recette exte
 
 Le `LIVE` est un `Training` autonome avec `LiveTrainingDetails`, programmation
 et contrôle d’accès serveur. Le `joinUrl` HTTPS est administré dans Avocat CI ;
-aucune API de fournisseur externe n’est appelée.
+une référence YouTube facultative peut être intégrée dans l’espace membre via
+`youtube-nocookie`, sans appel à l’API YouTube. Aucun fournisseur externe ne
+devient l’autorité des droits d’accès.
 
 ### PHASE 6 — Progression, quiz et certificats
 

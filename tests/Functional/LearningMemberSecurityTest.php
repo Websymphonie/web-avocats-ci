@@ -19,6 +19,7 @@ use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\User
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -349,6 +350,70 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('À venir', $content);
         self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
+    }
+
+    public function testAvocatCanRenderYoutubeLiveWithoutExposingJoinUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/live');
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $this->entityManager()->flush();
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+        self::assertStringContainsString('Diffusion en direct — ' . $live->getTitle(), $content);
+        self::assertStringContainsString('allowfullscreen', $content);
+        self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+        self::assertStringNotContainsString('https://meet.example.test/live', $content);
+    }
+
+    public function testAvocatCanRenderYoutubeOnlyLiveWithoutJoinUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, null);
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $this->entityManager()->flush();
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', (string) $client->getResponse()->getContent());
+    }
+
+    public function testHybridYoutubeLiveKeepsLocationAndSecureJoinFallback(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::HYBRID, TrainingStatus::PUBLISHED, 'https://meet.example.test/hybrid', 'Maison de l’Avocat');
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $this->entityManager()->flush();
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Maison de l’Avocat', $content);
+        self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+        self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+        self::assertStringNotContainsString('https://meet.example.test/hybrid', $content);
     }
 
     public function testLiveDetailsShowHybridLocationAndDenyUnauthorizedMembers(): void

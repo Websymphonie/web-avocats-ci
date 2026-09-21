@@ -97,7 +97,8 @@ final class TrainingFormType extends AbstractType
                     'choice_value' => static fn (?LiveDeliveryMode $value): ?string => $value?->value,
                 ])
                 ->add('location', TextType::class, ['label' => 'Lieu', 'required' => false, 'attr' => ['placeholder' => 'Adresse ou localisation']])
-                ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL HTTPS valide.')]]);
+                ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL HTTPS valide.')]])
+                ->add('youtubeStreamUrl', TextType::class, ['label' => 'URL YouTube Live / vidéo', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'help' => 'Optionnel. Une URL YouTube HTTPS de type watch, youtu.be ou embed.']);
         }
 
         if ($options['data'] instanceof UpdateTrainingCommand) {

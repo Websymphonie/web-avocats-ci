@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Domain\Model;
 
 use DateTimeImmutable;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
 
@@ -21,6 +22,8 @@ final class LiveTrainingDetails
         public ?string $joinUrl = null,
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
+        public ?LiveStreamProvider $streamProvider = null,
+        public ?string $externalStreamId = null,
     ) {
         $this->assertValid();
     }
@@ -31,13 +34,17 @@ final class LiveTrainingDetails
         LiveDeliveryMode $deliveryMode,
         ?string $location,
         ?string $joinUrl,
+        ?LiveStreamProvider $streamProvider = null,
+        ?string $externalStreamId = null,
     ): void {
-        self::assertValues($startsAt, $endsAt, $deliveryMode, $location, $joinUrl);
+        self::assertValues($startsAt, $endsAt, $deliveryMode, $location, $joinUrl, $streamProvider, $externalStreamId);
         $this->startsAt = $startsAt;
         $this->endsAt = $endsAt;
         $this->deliveryMode = $deliveryMode;
         $this->location = self::clean($location);
         $this->joinUrl = self::clean($joinUrl);
+        $this->streamProvider = $streamProvider;
+        $this->externalStreamId = self::clean($externalStreamId);
     }
 
     public function attachToTraining(int $trainingId): void
@@ -50,9 +57,35 @@ final class LiveTrainingDetails
         return $this->joinUrl !== null;
     }
 
+    public function hasStream(): bool
+    {
+        return $this->streamProvider !== null && $this->externalStreamId !== null;
+    }
+
+    public function streamEmbedUrl(): ?string
+    {
+        return $this->streamProvider === LiveStreamProvider::YOUTUBE && $this->externalStreamId !== null
+            ? 'https://www.youtube-nocookie.com/embed/' . rawurlencode($this->externalStreamId)
+            : null;
+    }
+
+    public function setYouTubeStream(?string $url): void
+    {
+        $reference = YouTubeReference::fromHttpsUrl($url);
+        if (self::clean($url) !== null && $reference === null) {
+            throw new InvalidLiveTrainingDetailsException('Utilisez une URL YouTube HTTPS valide de type watch, youtu.be ou embed.');
+        }
+
+        $streamProvider = $reference === null ? null : LiveStreamProvider::YOUTUBE;
+        $externalStreamId = $reference?->externalId;
+        self::assertValues($this->startsAt, $this->endsAt, $this->deliveryMode, $this->location, $this->joinUrl, $streamProvider, $externalStreamId);
+        $this->streamProvider = $streamProvider;
+        $this->externalStreamId = $externalStreamId;
+    }
+
     public function assertValid(): void
     {
-        self::assertValues($this->startsAt, $this->endsAt, $this->deliveryMode, $this->location, $this->joinUrl);
+        self::assertValues($this->startsAt, $this->endsAt, $this->deliveryMode, $this->location, $this->joinUrl, $this->streamProvider, $this->externalStreamId);
     }
 
     private static function assertValues(
@@ -61,6 +94,8 @@ final class LiveTrainingDetails
         LiveDeliveryMode $deliveryMode,
         ?string $location,
         ?string $joinUrl,
+        ?LiveStreamProvider $streamProvider,
+        ?string $externalStreamId,
     ): void {
         if ($startsAt >= $endsAt) {
             throw new InvalidLiveTrainingDetailsException('La date de fin doit être postérieure à la date de début.');
@@ -70,13 +105,29 @@ final class LiveTrainingDetails
             throw new InvalidLiveTrainingDetailsException('Le lieu est requis pour ce mode de diffusion.');
         }
 
-        if ($deliveryMode->requiresJoinUrl() && !self::isHttpsUrl($joinUrl)) {
+        $externalStreamId = self::clean($externalStreamId);
+        if ($streamProvider === null && $externalStreamId !== null) {
+            throw new InvalidLiveTrainingDetailsException('Un identifiant de diffusion ne peut pas exister sans fournisseur.');
+        }
+
+        if ($streamProvider === LiveStreamProvider::YOUTUBE && ($externalStreamId === null || preg_match('/^[A-Za-z0-9_-]{6,}$/', $externalStreamId) !== 1)) {
+            throw new InvalidLiveTrainingDetailsException('L’identifiant de diffusion YouTube est invalide.');
+        }
+
+        if ($deliveryMode->requiresJoinUrl() && !self::hasValidStream($streamProvider, $externalStreamId) && !self::isHttpsUrl($joinUrl)) {
             throw new InvalidLiveTrainingDetailsException('Une URL HTTPS valide est requise pour ce mode de diffusion.');
         }
 
         if ($joinUrl !== null && self::clean($joinUrl) !== null && !self::isHttpsUrl($joinUrl)) {
             throw new InvalidLiveTrainingDetailsException('Le lien de connexion doit être une URL HTTPS valide.');
         }
+    }
+
+    private static function hasValidStream(?LiveStreamProvider $streamProvider, ?string $externalStreamId): bool
+    {
+        return $streamProvider === LiveStreamProvider::YOUTUBE
+            && $externalStreamId !== null
+            && preg_match('/^[A-Za-z0-9_-]{6,}$/', $externalStreamId) === 1;
     }
 
     private static function isHttpsUrl(?string $url): bool

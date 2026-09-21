@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails;
 
 use DateTimeImmutable;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -47,6 +48,12 @@ class LiveTrainingDetailsEntity
     #[ORM\Column(type: 'string', length: 2048, nullable: true)]
     private ?string $joinUrl = null;
 
+    #[ORM\Column(enumType: LiveStreamProvider::class, nullable: true)]
+    private ?LiveStreamProvider $streamProvider = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    private ?string $externalStreamId = null;
+
     public function getTrainingId(): int { return $this->trainingId; }
     public function setTrainingId(int $value): self { $this->trainingId = $value; return $this; }
     #[ORM\PrePersist]
@@ -67,4 +74,8 @@ class LiveTrainingDetailsEntity
     public function setLocation(?string $value): self { $this->location = $value; return $this; }
     public function getJoinUrl(): ?string { return $this->joinUrl; }
     public function setJoinUrl(?string $value): self { $this->joinUrl = $value; return $this; }
+    public function getStreamProvider(): ?LiveStreamProvider { return $this->streamProvider; }
+    public function setStreamProvider(?LiveStreamProvider $value): self { $this->streamProvider = $value; return $this; }
+    public function getExternalStreamId(): ?string { return $this->externalStreamId; }
+    public function setExternalStreamId(?string $value): self { $this->externalStreamId = $value; return $this; }
 }

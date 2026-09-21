@@ -13,6 +13,8 @@ use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsExcep
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
 use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
+use Websymphonie\LearningContext\Domain\Model\YouTubeReference;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
@@ -40,6 +42,7 @@ final readonly class CreateTrainingHandler implements CommandHandler
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'training/covers') : null;
             $liveDetails = null;
             if ($command->type === TrainingType::LIVE) {
+                [$streamProvider, $externalStreamId] = self::streamValues($command->youtubeStreamUrl);
                 $liveDetails = new LiveTrainingDetails(
                     id: 0,
                     uuid: '',
@@ -49,6 +52,8 @@ final readonly class CreateTrainingHandler implements CommandHandler
                     deliveryMode: $command->deliveryMode,
                     location: self::clean($command->location),
                     joinUrl: self::clean($command->joinUrl),
+                    streamProvider: $streamProvider,
+                    externalStreamId: $externalStreamId,
                 );
             }
             $training = new Training(
@@ -80,5 +85,21 @@ final readonly class CreateTrainingHandler implements CommandHandler
     {
         $value = $value !== null ? trim($value) : null;
         return $value === '' ? null : $value;
+    }
+
+    /** @return array{0: ?LiveStreamProvider, 1: ?string} */
+    private static function streamValues(?string $url): array
+    {
+        $url = self::clean($url);
+        if ($url === null) {
+            return [null, null];
+        }
+
+        $reference = YouTubeReference::fromHttpsUrl($url);
+        if ($reference === null) {
+            throw new InvalidLiveTrainingDetailsException('Utilisez une URL YouTube HTTPS valide de type watch, youtu.be ou embed.');
+        }
+
+        return [LiveStreamProvider::YOUTUBE, $reference->externalId];
     }
 }

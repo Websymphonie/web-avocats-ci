@@ -100,12 +100,12 @@ propriétaire.
 | LRN-003 | administrer une `COURSE`, ses modules, leçons et contenu pédagogique | `IMPLEMENTED` — éditeur riche, YouTube externe et ressources privées Backoffice |
 | LRN-004 | gérer `Enrollment` et l’accès pédagogique | `IMPLEMENTED` — inscription gratuite, attribution/révocation admin et policy serveur |
 | LRN-004A | classer les formations par catégories et tags Learning | `IMPLEMENTED` — taxonomies Backoffice et filtres Training |
-| LRN-005 | gérer les détails d’un `LIVE` autonome | `IMPLEMENTED` — Backoffice, publication et accès membre au lien HTTPS |
+| LRN-005 | gérer les détails d’un `LIVE` autonome | `IMPLEMENTED` — Backoffice, publication et accès membre sécurisé |
 | LRN-REV-001A | durcir les flux Learning existants | `IMPLEMENTED` — valeurs LIVE stables, invariants de type, accès membre, CSRF, bulk et intégrité interne |
 | LRN-006 | suivre la progression | `IMPLEMENTED` — progression COURSE, endpoints membre sécurisés et résumé Backoffice |
 | LRN-006A | réserver l’éligibilité apprenante aux avocats actifs | `IMPLEMENTED` — policy Learning réutilisée par Enrollment, accès et Payment |
 | LRN-007 | gérer quiz et certificats | `PLANNED` |
-| LRN-008 | intégrer YouTube comme fournisseur, sans lui déléguer l’autorisation | `PLANNED` |
+| LRN-008 | intégrer YouTube comme fournisseur, sans lui déléguer l’autorisation | `IMPLEMENTED` — embed YouTube Live membre, sans API YouTube |
 
 Les règles de durée d’accès, de certificat, de score, de replay et de
 remboursement restent à décider.

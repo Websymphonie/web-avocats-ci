@@ -6,6 +6,7 @@ namespace Websymphonie\LearningContext\Domain\Model;
 
 use DateTimeImmutable;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
 
 final readonly class MemberLiveSession
 {
@@ -19,6 +20,9 @@ final readonly class MemberLiveSession
         public LiveDeliveryMode $deliveryMode,
         public ?string $location,
         public bool $canJoin,
+        public ?LiveStreamProvider $streamProvider = null,
+        public ?string $externalStreamId = null,
+        public ?string $videoEmbedUrl = null,
     ) {
     }
 }

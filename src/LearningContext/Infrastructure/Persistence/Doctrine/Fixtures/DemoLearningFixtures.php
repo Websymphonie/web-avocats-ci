@@ -11,6 +11,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Enum\LearningVideoProvider;
+use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -122,7 +123,9 @@ final class DemoLearningFixtures extends Fixture implements FixtureGroupInterfac
                 ->setEndsAt($startsAt->modify('+2 hours'))
                 ->setDeliveryMode($mode)
                 ->setLocation($mode === LiveDeliveryMode::ONLINE ? null : 'Lieu fictif de démonstration — Abidjan')
-                ->setJoinUrl($mode === LiveDeliveryMode::IN_PERSON ? null : 'https://example.test/learning/live/' . $ordinal);
+                ->setJoinUrl($mode === LiveDeliveryMode::IN_PERSON ? null : 'https://example.test/learning/live/' . $ordinal)
+                ->setStreamProvider($ordinal === 1 ? LiveStreamProvider::YOUTUBE : null)
+                ->setExternalStreamId($ordinal === 1 ? self::DEMO_YOUTUBE_VIDEO_ID : null);
             $manager->persist($details);
         }
     }

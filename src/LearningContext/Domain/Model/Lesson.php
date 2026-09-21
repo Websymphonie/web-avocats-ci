@@ -76,23 +76,7 @@ final class Lesson
 
     public static function youtubeIdFromUrl(string $url): ?string
     {
-        $parts = parse_url(trim($url));
-        if (!is_array($parts)) {
-            return null;
-        }
-        $host = strtolower((string) ($parts['host'] ?? ''));
-        $path = trim((string) ($parts['path'] ?? ''), '/');
-        if (in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com'], true) && $path === 'watch') {
-            parse_str((string) ($parts['query'] ?? ''), $query);
-            return isset($query['v']) && is_string($query['v']) && preg_match('/^[A-Za-z0-9_-]{6,}$/', $query['v']) === 1 ? $query['v'] : null;
-        }
-        if (in_array($host, ['youtu.be', 'www.youtu.be'], true) && preg_match('/^([A-Za-z0-9_-]{6,})/', $path, $match) === 1) {
-            return $match[1];
-        }
-        if (in_array($host, ['youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'], true) && preg_match('#^(?:embed|shorts)/([A-Za-z0-9_-]{6,})#', $path, $match) === 1) {
-            return $match[1];
-        }
-        return null;
+        return YouTubeReference::fromUrl($url)?->externalId;
     }
 
     public static function hasMeaningfulContent(string $html): bool

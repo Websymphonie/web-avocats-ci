@@ -46,6 +46,9 @@ final readonly class GetMemberLiveSessionHandler implements QueryHandler
             location: $training->liveDetails->location,
             canJoin: $training->liveDetails->deliveryMode->requiresJoinUrl()
                 && $training->liveDetails->hasJoinUrl(),
+            streamProvider: $training->liveDetails->streamProvider,
+            externalStreamId: $training->liveDetails->externalStreamId,
+            videoEmbedUrl: $training->liveDetails->streamEmbedUrl(),
         );
     }
 }

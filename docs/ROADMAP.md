@@ -175,10 +175,11 @@ LRN-002  Structure COURSE                          DONE — modules/leçons Back
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
 LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
 LRN-004A Catégories et tags des formations           DONE — taxonomies Learning, associations et filtres Backoffice
-LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre au lien HTTPS
+LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre sécurisé
 LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des accès, CSRF, suppressions bulk et intégrité interne
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
+LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube protégé, sans API YouTube
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
@@ -187,6 +188,12 @@ NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay
 Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
 Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
 ```
+
+La spécification technique V3 conserve un backlog cible historique dont la
+numérotation Learning est différente (`LRN-007` Enrollment, `LRN-008` espace
+Mes formations, `LRN-011` Training LIVE). Cette numérotation ne décrit pas la
+séquence d’implémentation suivie dans ce dépôt ; la roadmap et les exigences
+produit ci-dessus font foi pour l’historique réel, où YouTube Live est `LRN-007`.
 
 `CORE-FIX-001` traite les dettes techniques restantes de la revue backend :
 lecture batch des références Learning depuis Payment, échappement des titres

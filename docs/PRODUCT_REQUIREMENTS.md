@@ -104,8 +104,8 @@ propriétaire.
 | LRN-REV-001A | durcir les flux Learning existants | `IMPLEMENTED` — valeurs LIVE stables, invariants de type, accès membre, CSRF, bulk et intégrité interne |
 | LRN-006 | suivre la progression | `IMPLEMENTED` — progression COURSE, endpoints membre sécurisés et résumé Backoffice |
 | LRN-006A | réserver l’éligibilité apprenante aux avocats actifs | `IMPLEMENTED` — policy Learning réutilisée par Enrollment, accès et Payment |
-| LRN-007 | gérer quiz et certificats | `PLANNED` |
-| LRN-008 | intégrer YouTube comme fournisseur, sans lui déléguer l’autorisation | `IMPLEMENTED` — embed YouTube Live membre, sans API YouTube |
+| LRN-007 | intégrer YouTube Live dans l’espace avocat sans lui déléguer l’autorisation | `IMPLEMENTED` — embed YouTube Live membre, sans API YouTube |
+| LRN-008 | gérer quiz et certificats | `PLANNED` |
 
 Les règles de durée d’accès, de certificat, de score, de replay et de
 remboursement restent à décider.

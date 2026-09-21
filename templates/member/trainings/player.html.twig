@@ -80,14 +80,14 @@
                 </div>
 
                 <div class="space-y-7 px-5 py-6 sm:px-7 sm:py-8">
-                    {% if activeLesson.lesson.content is not empty %}
-                        <div class="rich-content max-w-none text-sm leading-7 text-card-foreground sm:text-base">{{ activeLesson.lesson.content|raw }}</div>
-                    {% endif %}
-
                     {% if activeLesson.lesson.videoEmbedUrl %}
                         <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
                             <iframe class="size-full" src="{{ activeLesson.lesson.videoEmbedUrl }}" title="Vidéo de la leçon {{ activeLesson.lesson.title }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
+                    {% endif %}
+
+                    {% if activeLesson.lesson.content is not empty %}
+                        <div class="rich-content max-w-none text-sm leading-7 text-card-foreground sm:text-base">{{ activeLesson.lesson.content|raw }}</div>
                     {% endif %}
 
                     {% if activeLesson.resources is not empty %}

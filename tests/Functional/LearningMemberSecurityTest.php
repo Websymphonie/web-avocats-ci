@@ -308,6 +308,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $activeLesson->getUuidAsString(), $content);
         self::assertStringNotContainsString('meet.example.test', $content);
         self::assertStringNotContainsString('youtube-nocookie.com', $content);
+        self::assertStringNotContainsString('aspect-video', $content);
     }
 
     public function testAvocatCanRenderAYouTubeLessonInTheProtectedCoursePlayer(): void
@@ -331,6 +332,12 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('title="Vidéo de la leçon ' . $lesson->getTitle() . '"', $content);
         self::assertStringContainsString('allowfullscreen', $content);
         self::assertStringNotContainsString('autoplay=1', $content);
+
+        $videoPosition = strpos($content, 'https://www.youtube-nocookie.com/embed/M7lc1UVf-VE');
+        $contentPosition = strpos($content, 'Contenu');
+        self::assertNotFalse($videoPosition);
+        self::assertNotFalse($contentPosition);
+        self::assertLessThan($contentPosition, $videoPosition);
     }
 
     public function testAvocatCanOpenOwnLiveDetailsWithoutExposingJoinUrl(): void

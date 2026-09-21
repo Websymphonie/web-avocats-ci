@@ -13,4 +13,10 @@ final class UserRolesEnumTest extends TestCase
     {
         self::assertSame('app_member', UserRolesEnum::AVOCAT->route());
     }
+
+    public function testAdministrativeRolesUseTheBackofficeDashboardRoute(): void
+    {
+        self::assertSame('app_admin', UserRolesEnum::SUPER_ADMIN->route());
+        self::assertSame('app_admin', UserRolesEnum::ADMIN->route());
+    }
 }

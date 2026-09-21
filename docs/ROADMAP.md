@@ -162,14 +162,15 @@ CORE-FIX-001 Consolidation backend                 CURRENT
 CNT-006  Static Pages                               DONE — Backoffice uniquement
 CNT-006A Optional static page cover                 DONE — Backoffice uniquement
 WEB-001  Shell Frontoffice                         PLANNED
-CNT-001  Actualités                                IMPLEMENTED
+CNT-001  Actualités                                IMPLEMENTED — Backoffice + première verticale publique FO-002
+FO-002   Actualités publiques dynamiques             DONE — liste, détail, pagination, catégories, tags et covers
 CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
 CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice uniquement
 CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice uniquement
 CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 Content Backoffice foundation                     DONE
-Content Frontoffice                              OUT_OF_SCOPE — différé phase Manus
+Content Frontoffice                              PARTIAL — Actualités publiques livrées par FO-002 ; autres verticales différées
 LRN-001  Training COURSE                           DONE — Backoffice uniquement
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice

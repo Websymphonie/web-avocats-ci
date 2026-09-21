@@ -24,4 +24,8 @@ interface NewsRepositoryInterface
     public function countPhotoGalleryUsage(int $galleryId): int;
 
     public function list(?string $search, ?NewsStatus $status, int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult;
+
+    public function listPublished(int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult;
+
+    public function getPublishedBySlug(string $slug): News;
 }

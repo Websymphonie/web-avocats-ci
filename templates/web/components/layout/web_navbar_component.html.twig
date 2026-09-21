@@ -1,1 +1,19 @@
-<h4>Menu du site web</h4>
+<nav class="border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale">
+    <div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <a href="{{ path('app_home') }}" class="group inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <span class="flex size-9 items-center justify-center rounded-lg bg-primary text-xs font-semibold tracking-[0.14em] text-primary-foreground">AC</span>
+            <span class="hidden text-sm font-semibold tracking-tight text-foreground sm:inline">Avocat CI</span>
+        </a>
+
+        <div class="flex items-center gap-1 sm:gap-2">
+            <a href="{{ path('app_home') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
+            <a href="{{ path('web_news_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
+            <button type="button" data-controller="theme-toggle" data-action="theme-toggle#toggle" class="inline-flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Activer le mode sombre" aria-pressed="false">
+                <twig:ux:icon name="lucide:sun" class="size-4 dark:hidden" aria-hidden="true"/>
+                <twig:ux:icon name="lucide:moon" class="hidden size-4 dark:block" aria-hidden="true"/>
+                <span class="sr-only">Changer de thème</span>
+            </button>
+            <a href="{{ path('app_login') }}" class="hidden rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">Espace avocat</a>
+        </div>
+    </div>
+</nav>

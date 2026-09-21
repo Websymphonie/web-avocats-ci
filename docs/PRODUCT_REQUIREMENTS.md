@@ -30,7 +30,7 @@ fonctionnalité disponible dans l’interface.
 | ID | Exigence | Statut |
 |---|---|---|
 | PUB-001 | afficher une page d’accueil publique | `IMPLEMENTED` |
-| PUB-002 | consulter les actualités publiées | `PLANNED` |
+| PUB-002 | consulter les actualités publiées | `IMPLEMENTED` — liste publique, détail, pagination, catégories et tags |
 | PUB-003 | consulter les événements et leurs détails | `PLANNED` |
 | PUB-004 | consulter les vidéos éditoriales et galeries | `PLANNED` |
 | PUB-005 | consulter les documents explicitement publics | `PLANNED` |

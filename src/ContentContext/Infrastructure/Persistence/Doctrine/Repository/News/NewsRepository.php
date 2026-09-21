@@ -125,4 +125,82 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
 
         return new NewsListResult(array_map(fn (NewsEntity $entity): News => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
+
+    public function listPublished(int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult
+    {
+        $baseQuery = $this->createQueryBuilder('news')
+            ->where('news.status = :status')
+            ->andWhere('news.publishedAt IS NOT NULL')
+            ->setParameter('status', NewsStatus::PUBLISHED);
+
+        $this->applyPublicFilters($baseQuery, $categoryId, $tagId);
+
+        $total = (int) (clone $baseQuery)
+            ->select('COUNT(DISTINCT news.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $ids = (clone $baseQuery)
+            ->select('news.id')
+            ->orderBy('news.publishedAt', 'DESC')
+            ->addOrderBy('news.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        if ($ids === []) {
+            return new NewsListResult([], $total, $page, $limit);
+        }
+
+        $entities = $this->createQueryBuilder('news')
+            ->leftJoin('news.categories', 'category')->addSelect('category')
+            ->leftJoin('news.tags', 'tag')->addSelect('tag')
+            ->where('news.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('news.publishedAt', 'DESC')
+            ->addOrderBy('news.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return new NewsListResult(array_map(fn (NewsEntity $entity): News => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
+    }
+
+    public function getPublishedBySlug(string $slug): News
+    {
+        $entity = $this->createQueryBuilder('news')
+            ->leftJoin('news.categories', 'category')->addSelect('category')
+            ->leftJoin('news.tags', 'tag')->addSelect('tag')
+            ->where('news.slug = :slug')
+            ->andWhere('news.status = :status')
+            ->andWhere('news.publishedAt IS NOT NULL')
+            ->setParameter('slug', $slug)
+            ->setParameter('status', NewsStatus::PUBLISHED)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$entity instanceof NewsEntity) {
+            throw NewsNotFoundException::withSlug($slug);
+        }
+
+        return $this->factory->fromEntity($entity);
+    }
+
+    private function applyPublicFilters(
+        \Doctrine\ORM\QueryBuilder $query,
+        ?int $categoryId,
+        ?int $tagId,
+    ): void {
+        if ($categoryId !== null) {
+            $query->join('news.categories', 'category_filter')
+                ->andWhere('category_filter.id = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        if ($tagId !== null) {
+            $query->join('news.tags', 'tag_filter')
+                ->andWhere('tag_filter.id = :tagId')
+                ->setParameter('tagId', $tagId);
+        }
+    }
 }

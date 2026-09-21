@@ -28,6 +28,20 @@ final class MediaRepository extends ServiceEntityRepository implements MediaRepo
         return $this->factory->fromEntity($entity);
     }
     public function getById(int $id): Media { $entity = $this->find($id); if (!$entity instanceof MediaEntity) { throw MediaNotFoundException::withId($id); } return $this->factory->fromEntity($entity); }
+
+    /** @param list<int> $ids @return list<Media> */
+    public function findByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_map(
+            fn (MediaEntity $entity): Media => $this->factory->fromEntity($entity),
+            $this->createQueryBuilder('media')->andWhere('media.id IN (:ids)')->setParameter('ids', array_values(array_unique($ids)))->getQuery()->getResult(),
+        );
+    }
+
     public function delete(Media $media): void
     {
         $entity = $this->find($media->id);

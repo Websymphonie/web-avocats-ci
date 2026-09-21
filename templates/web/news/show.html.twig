@@ -1,0 +1,63 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block body %}
+    {% set heroImage = coverUrl|default(default_image_url) %}
+
+    <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
+        <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="news-detail-title">
+            <img src="{{ heroImage }}" alt="" class="absolute inset-0 -z-20 size-full object-cover opacity-35" aria-hidden="true">
+            <div class="absolute inset-0 -z-10 bg-[linear-gradient(115deg,rgba(16,35,63,0.98)_0%,rgba(16,35,63,0.86)_42%,rgba(16,35,63,0.54)_100%)]"></div>
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+                <div class="max-w-5xl">
+                    <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
+                        <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <a href="{{ path('web_news_list') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Actualités</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ news.title }}</span>
+                    </nav>
+                    <p class="mt-6 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Le Barreau de Côte d'Ivoire</p>
+                    <h1 id="news-detail-title" class="mt-3 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{{ news.title }}</h1>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% include 'web/news/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+
+                <article aria-labelledby="news-detail-title">
+                    <header class="border-b border-border pb-8 sm:pb-10">
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                            {% if news.categories|first %}<span class="text-primary">{{ news.categories|first.name }}</span><span class="h-px w-5 bg-border" aria-hidden="true"></span>{% endif %}
+                            <time datetime="{{ news.publishedAt ? news.publishedAt|date('Y-m-d') : '' }}">{{ news.publishedAt ? news.publishedAt|format_datetime(pattern='d MMMM Y') : '—' }}</time>
+                        </div>
+                        {% if news.excerpt %}<p class="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{{ news.excerpt }}</p>{% endif %}
+                    </header>
+
+                    <figure class="mt-8 overflow-hidden rounded-2xl bg-muted sm:mt-10">
+                        <img src="{{ coverUrl|default(default_image_url) }}" alt="Couverture de {{ news.title }}" class="aspect-[2/1] w-full object-cover">
+                    </figure>
+
+                    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,44rem)_14rem] lg:gap-16">
+                        <div class="rich-content max-w-3xl text-base leading-8 text-foreground sm:text-lg">{{ safeBody|raw }}</div>
+                        <aside class="h-fit border-t border-border pt-5 lg:border-l lg:border-t-0 lg:pl-6" aria-label="Informations sur l’actualité">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Mots-clés</p>
+                            {% if news.tags is not empty %}
+                                <div class="mt-3 flex flex-wrap gap-x-3 gap-y-2 lg:block">
+                                    {% for tag in news.tags %}<span class="mr-3 inline-block text-sm text-muted-foreground">#{{ tag.name }}</span>{% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="mt-3 text-sm text-muted-foreground">Aucun mot-clé</p>
+                            {% endif %}
+                        </aside>
+                    </div>
+
+                    <div class="mt-12 border-t border-border pt-6"><a href="{{ path('web_news_list') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Toutes les actualités</a></div>
+                </article>
+            </div>
+        </div>
+    </main>
+{% endblock %}

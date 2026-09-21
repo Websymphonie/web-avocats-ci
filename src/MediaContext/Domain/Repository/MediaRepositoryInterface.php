@@ -12,5 +12,11 @@ interface MediaRepositoryInterface
 
     public function getById(int $id): Media;
 
+    /**
+     * @param list<int> $ids
+     * @return list<Media>
+     */
+    public function findByIds(array $ids): array;
+
     public function delete(Media $media): void;
 }

@@ -28,7 +28,7 @@ final class UpdatePageController extends AbstractController
     public function __invoke(Request $request, int $id): Response
     {
         $page = $this->handleQuery(new GetPageQuery($id));
-        $command = new UpdatePageCommand($page->id, $page->title, $page->slug, $page->content, group: $page->group);
+        $command = new UpdatePageCommand($page->id, $page->title, $page->slug, $page->content, group: $page->group, sortOrder: $page->sortOrder);
         $form = $this->createForm(PageFormType::class, $command);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -24,8 +24,10 @@ final class Page
         public ?DateTimeImmutable $updatedAt = null,
         public ?int $coverMediaId = null,
         public ?PageGroup $group = null,
+        public int $sortOrder = 0,
     ) {
         $this->assertRequiredIdentity($title, $slug);
+        $this->assertValidSortOrder($sortOrder);
         $this->title = trim($title);
         $this->slug = trim($slug);
     }
@@ -46,6 +48,12 @@ final class Page
     public function setGroup(?PageGroup $group): void
     {
         $this->group = $group;
+    }
+
+    public function setSortOrder(int $sortOrder): void
+    {
+        $this->assertValidSortOrder($sortOrder);
+        $this->sortOrder = $sortOrder;
     }
 
     public function publish(): void
@@ -80,6 +88,13 @@ final class Page
 
         if (trim($slug) === '') {
             throw new InvalidPageException('Le slug de la page est obligatoire.');
+        }
+    }
+
+    private function assertValidSortOrder(int $sortOrder): void
+    {
+        if ($sortOrder < 0) {
+            throw new InvalidPageException('L’ordre d’affichage doit être un entier positif ou nul.');
         }
     }
 }

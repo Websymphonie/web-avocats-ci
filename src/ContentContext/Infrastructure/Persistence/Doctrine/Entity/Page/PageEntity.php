@@ -43,6 +43,9 @@ class PageEntity
     #[ORM\Column(name: 'editorial_group', enumType: PageGroup::class, nullable: true)]
     private ?PageGroup $editorialGroup = null;
 
+    #[ORM\Column(name: 'sort_order', type: 'integer', options: ['default' => 0])]
+    private int $sortOrder = 0;
+
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getSlug(): string { return $this->slug; }
@@ -57,4 +60,6 @@ class PageEntity
     public function setCoverMediaId(?int $value): self { $this->coverMediaId = $value; return $this; }
     public function getGroup(): ?PageGroup { return $this->editorialGroup; }
     public function setGroup(?PageGroup $value): self { $this->editorialGroup = $value; return $this; }
+    public function getSortOrder(): int { return $this->sortOrder; }
+    public function setSortOrder(int $value): self { $this->sortOrder = $value; return $this; }
 }

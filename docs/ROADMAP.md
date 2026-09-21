@@ -76,6 +76,7 @@ CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uni
 CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + détail public `/informations/{slug}`
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
+CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -163,6 +164,7 @@ CORE-FIX-001 Consolidation backend                 CURRENT
 CNT-006  Static Pages                               DONE — Backoffice + détail public
 CNT-006A Optional static page cover                 DONE — Backoffice + rendu public
 CNT-006B Editorial page groups                      DONE — classification + sidebar publique dynamique
+CNT-006C Editorial page ordering                    DONE — ordre Backoffice + tri public
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED — Backoffice + première verticale publique FO-002
 FO-002   Actualités publiques dynamiques             DONE — liste, détail, pagination, catégories, tags et covers

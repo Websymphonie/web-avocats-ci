@@ -33,7 +33,7 @@ final readonly class CreatePageHandler implements CommandHandler
         $media = null;
         try {
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'content/covers') : null;
-            return $this->repository->save(new Page(0, '', trim($command->title), $slug, $this->sanitizer->sanitize($command->content), coverMediaId: $media?->id, group: $command->group));
+            return $this->repository->save(new Page(0, '', trim($command->title), $slug, $this->sanitizer->sanitize($command->content), coverMediaId: $media?->id, group: $command->group, sortOrder: $command->sortOrder));
         } catch (\Throwable $exception) {
             if ($media !== null) {
                 try { $this->mediaUpload->delete($media); } catch (\Throwable) {}

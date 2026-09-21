@@ -23,6 +23,7 @@ final class PageFactory
             $entity->getUpdatedAt(),
             $entity->getCoverMediaId(),
             $entity->getGroup(),
+            $entity->getSortOrder(),
         );
     }
 
@@ -36,6 +37,7 @@ final class PageFactory
             ->setStatus($page->status)
             ->setPublishedAt($page->publishedAt)
             ->setCoverMediaId($page->coverMediaId)
-            ->setGroup($page->group);
+            ->setGroup($page->group)
+            ->setSortOrder($page->sortOrder);
     }
 }

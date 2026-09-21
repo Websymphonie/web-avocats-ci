@@ -25,6 +25,8 @@ final class PageFormTypeTest extends TypeTestCase
         self::assertTrue($form->has('group'));
         self::assertFalse($form->get('group')->getConfig()->getRequired());
         self::assertSame(PageGroup::cases(), $form->get('group')->getConfig()->getOption('choices'));
+        self::assertTrue($form->has('sortOrder'));
+        self::assertFalse($form->get('sortOrder')->getConfig()->getRequired());
     }
 
     public function testEditorialGroupCanBeCleared(): void
@@ -41,5 +43,21 @@ final class PageFormTypeTest extends TypeTestCase
         ]);
 
         self::assertNull($command->group);
+    }
+
+    public function testNegativeEditorialOrderIsInvalid(): void
+    {
+        $form = $this->factory->create(PageFormType::class, new CreatePageCommand());
+
+        $form->submit([
+            'title' => 'Page institutionnelle',
+            'slug' => 'page-institutionnelle',
+            'content' => '<p>Contenu</p>',
+            'group' => '',
+            'sortOrder' => '-1',
+            'cover' => null,
+        ]);
+
+        self::assertFalse($form->isValid());
     }
 }

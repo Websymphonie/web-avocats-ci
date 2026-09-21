@@ -115,6 +115,9 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
+        self::assertSame(10, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'mentions-legales'])->getSortOrder());
+        self::assertSame(20, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite'])->getSortOrder());
+        self::assertSame(30, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation'])->getSortOrder());
 
         foreach ($entityManager->getRepository(NewsEntity::class)->findAll() as $news) {
             self::assertTrue($news->getCategories()->count() > 0);

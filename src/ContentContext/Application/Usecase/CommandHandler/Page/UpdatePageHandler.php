@@ -40,6 +40,7 @@ final readonly class UpdatePageHandler implements CommandHandler
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'content/covers') : null;
             $page->update(trim($command->title), $slug, $this->sanitizer->sanitize($command->content));
             $page->setGroup($command->group);
+            $page->setSortOrder($command->sortOrder);
             if ($media !== null) {
                 $page->setCoverMedia($media->id);
             } elseif ($command->removeCover) {

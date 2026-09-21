@@ -15,6 +15,7 @@ final class CreatePageCommand
         public string $content = '',
         public ?UploadedFile $cover = null,
         public ?PageGroup $group = null,
+        public int $sortOrder = 0,
     ) {
     }
 }

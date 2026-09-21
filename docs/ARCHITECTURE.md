@@ -808,6 +808,11 @@ nullable `PageGroup` (`LEGAL`, `BAR` ou `ACCOUNT`). Cette classification est
 persistée sans relation Doctrine supplémentaire et ne modifie aucune règle de
 publication ou d'autorisation.
 
+Depuis CNT-006C, `Page` possède également un `sortOrder` entier non négatif,
+initialisé à `0`. La query de navigation trie les Pages d’un même groupe par
+`sortOrder ASC`, puis par titre pour départager les égalités ; aucun ordre ne
+dépend de l’identifiant Doctrine.
+
 Depuis CNT-006A, la page peut aussi porter `coverMediaId`, une référence
 scalaire nullable vers un média public. Il n'existe aucune relation Doctrine
 cross-context ; le stockage, la validation serveur, les noms générés et les

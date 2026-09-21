@@ -17,6 +17,7 @@ final class UpdatePageCommand
         public ?UploadedFile $cover = null,
         public bool $removeCover = false,
         public ?PageGroup $group = null,
+        public int $sortOrder = 0,
     ) {
     }
 }

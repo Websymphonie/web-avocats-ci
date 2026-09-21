@@ -160,8 +160,8 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
             ->andWhere('page.publishedAt IS NOT NULL')
             ->setParameter('group', $group)
             ->setParameter('status', PageStatus::PUBLISHED)
-            ->orderBy('page.publishedAt', 'ASC')
-            ->addOrderBy('page.id', 'ASC')
+            ->orderBy('page.sortOrder', 'ASC')
+            ->addOrderBy('LOWER(page.title)', 'ASC')
             ->getQuery()
             ->getResult();
 

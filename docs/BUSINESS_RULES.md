@@ -502,6 +502,7 @@ Les décisions suivantes restent explicitement ouvertes :
 - le slug est normalisé, unique et éditable dans le Backoffice ;
 - le HTML est nettoyé côté serveur avec le sanitizer Tiptap existant ; les scripts, iframes et attributs non autorisés ne sont pas conservés ;
 - une Page peut recevoir facultativement un groupe éditorial `LEGAL`, `BAR` ou `ACCOUNT` ; ce classement n'influence ni la publication, ni les permissions, ni le slug, ni la couverture ;
+- `sortOrder` est un entier non négatif, initialisé à `0`, utilisé uniquement pour l’ordre de navigation à l’intérieur du groupe ; à ordre égal, le titre sert de repli déterministe ;
 - la suppression bulk valide l’existence de toutes les cibles avant de commencer les suppressions afin d’éviter une suppression partielle liée à une sélection invalide ;
 - une page ne possède pas de catégorie, de tag, de média ou de page builder dans cette verticale ;
 - les actions de cycle de vie sont auditées sans stocker le contenu HTML dans les métadonnées d’audit.

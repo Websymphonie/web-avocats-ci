@@ -105,6 +105,12 @@ final class PublicPagesTest extends WebTestCase
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Politique de confidentialité');
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Conditions générales d’utilisation');
         self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"] a[aria-current="page"]');
+        self::assertSame([
+            'Mentions légales',
+            'Aide juridique',
+            'Politique de confidentialité',
+            'Conditions générales d’utilisation',
+        ], $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"] a')->each(static fn ($node): string => trim($node->text())));
         self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
         self::assertStringNotContainsString('/informations/politique-suppression-compte', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
     }
@@ -163,19 +169,17 @@ final class PublicPagesTest extends WebTestCase
         $entityManager->persist($cover);
         $entityManager->flush();
 
-        $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId());
-        $confidentiality = $this->page('Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'));
-        $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'));
-        $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'), $cover->getId(), PageGroup::ACCOUNT);
-        $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId(), PageGroup::LEGAL);
-        $barDraft = $this->page('À propos du Barreau', 'a-propos', PageStatus::DRAFT, null, null, PageGroup::BAR);
+        $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId(), PageGroup::LEGAL, 30);
+        $confidentiality = $this->page('Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::LEGAL, 20);
+        $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::LEGAL, 10);
+        $sameOrder = $this->page('Aide juridique', 'aide-juridique', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'), null, PageGroup::LEGAL, 20);
+        $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'), $cover->getId(), PageGroup::ACCOUNT, 10);
+        $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId(), PageGroup::LEGAL, 40);
+        $barDraft = $this->page('À propos du Barreau', 'a-propos', PageStatus::DRAFT, null, null, PageGroup::BAR, 10);
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
         $withoutGroup = $this->page('Page sans groupe', 'page-sans-groupe', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'));
 
-        $publishedWithCover->setGroup(PageGroup::LEGAL);
-        $confidentiality->setGroup(PageGroup::LEGAL);
-        $legalNotice->setGroup(PageGroup::LEGAL);
-        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $accountPolicy, $draft, $barDraft, $withoutPublicationDate, $withoutGroup] as $page) {
+        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $sameOrder, $accountPolicy, $draft, $barDraft, $withoutPublicationDate, $withoutGroup] as $page) {
             $entityManager->persist($page);
         }
         $entityManager->flush();
@@ -183,7 +187,7 @@ final class PublicPagesTest extends WebTestCase
         return [$publishedWithCover, $confidentiality];
     }
 
-    private function page(string $title, string $slug, PageStatus $status, ?DateTimeImmutable $publishedAt, ?int $coverMediaId = null, ?PageGroup $group = null): PageEntity
+    private function page(string $title, string $slug, PageStatus $status, ?DateTimeImmutable $publishedAt, ?int $coverMediaId = null, ?PageGroup $group = null, int $sortOrder = 0): PageEntity
     {
         return (new PageEntity())
             ->setTitle($title)
@@ -192,6 +196,7 @@ final class PublicPagesTest extends WebTestCase
             ->setStatus($status)
             ->setPublishedAt($publishedAt)
             ->setCoverMediaId($coverMediaId)
-            ->setGroup($group);
+            ->setGroup($group)
+            ->setSortOrder($sortOrder);
     }
 }

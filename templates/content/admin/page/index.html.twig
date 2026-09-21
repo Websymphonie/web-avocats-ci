@@ -55,6 +55,7 @@
                     <div class="min-w-0 flex-1"><h3 class="font-medium">{{ page.title }}</h3>
                         <p class="mt-1 text-sm text-muted-foreground">/{{ page.slug }}</p></div>
                 </div>
+                <div class="grid grid-cols-2 gap-3 border-y border-border py-3 text-sm"><div><span class="block text-xs text-muted-foreground">Groupe</span><span>{{ page.group ? page.group.label : 'Aucun' }}</span></div><div><span class="block text-xs text-muted-foreground">Ordre</span><span>{{ page.sortOrder }}</span></div></div>
                 <div class="flex items-center justify-between border-y border-border py-3 text-sm"><span
                             class="text-muted-foreground">Statut</span>
                     <twig:Badge
@@ -72,6 +73,8 @@
                 <th class="px-5 py-3 font-medium">Couverture</th>
                 <th class="px-5 py-3 font-medium">Titre</th>
                 <th class="px-5 py-3 font-medium">Slug</th>
+                <th class="px-5 py-3 font-medium">Groupe</th>
+                <th class="px-5 py-3 font-medium">Ordre</th>
                 <th class="px-5 py-3 font-medium">Statut</th>
                 <th class="px-5 py-3 font-medium">Publication</th>
                 <th class="px-5 py-3 text-right font-medium">Actions</th>
@@ -92,6 +95,8 @@
                             src="{{ default_image_url }}" alt="">{% endif %}</td>
                 <td class="px-5 py-4"><p class="font-medium">{{ page.title }}</p></td>
                 <td class="px-5 py-4 text-muted-foreground">/{{ page.slug }}</td>
+                <td class="px-5 py-4 text-muted-foreground">{{ page.group ? page.group.label : '—' }}</td>
+                <td class="px-5 py-4 text-muted-foreground">{{ page.sortOrder }}</td>
                 <td class="px-5 py-4">
                     <twig:Badge variant="{{ page.status.badge() }}">
                         {{ page.status.label() }}
@@ -102,7 +107,7 @@
                     <div class="flex justify-end">{{ component('PageTableDropdown', {page: page, instanceId: 'desktop-' ~ page.id}) }}</div>
                 </td></tr>{% else %}
                 <tr>
-                    <td class="px-6 py-14 text-center text-muted-foreground" colspan="7">Aucune page ne correspond à vos
+                    <td class="px-6 py-14 text-center text-muted-foreground" colspan="9">Aucune page ne correspond à vos
                         critères.
                     </td>
                 </tr>{% endfor %}</tbody>

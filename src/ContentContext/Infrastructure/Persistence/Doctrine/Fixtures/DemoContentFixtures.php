@@ -170,16 +170,16 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
     private function loadPages(ObjectManager $manager): void
     {
         $pages = [
-            ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL],
-            ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL],
-            ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT],
-            ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL],
-            ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL],
-            ['À propos du Barreau', 'a-propos', PageStatus::DRAFT, false, PageGroup::BAR],
+            ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
+            ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 20],
+            ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT, 10],
+            ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 10],
+            ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
+            ['À propos du Barreau', 'a-propos', PageStatus::DRAFT, false, PageGroup::BAR, 10],
         ];
         $now = new DateTimeImmutable();
 
-        foreach ($pages as $index => [$title, $slug, $status, $hasCover, $group]) {
+        foreach ($pages as $index => [$title, $slug, $status, $hasCover, $group, $sortOrder]) {
             $page = $manager->getRepository(PageEntity::class)->findOneBy(['slug' => $slug]);
             if (!$page instanceof PageEntity) {
                 $page = new PageEntity();
@@ -191,7 +191,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setStatus($status)
                 ->setPublishedAt($status === PageStatus::PUBLISHED ? $now->modify(sprintf('-%d days', 15 + $index)) : null)
                 ->setCoverMediaId($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null)
-                ->setGroup($group);
+                ->setGroup($group)
+                ->setSortOrder($sortOrder);
             $manager->persist($page);
             $this->addReference('demo_page_' . $slug, $page);
         }

@@ -20,6 +20,7 @@ final class PageTest extends TestCase
         self::assertNull($page->publishedAt);
         self::assertNull($page->coverMediaId);
         self::assertNull($page->group);
+        self::assertSame(0, $page->sortOrder);
     }
 
     public function testCoverIsOptionalScalarReference(): void
@@ -38,6 +39,23 @@ final class PageTest extends TestCase
         self::assertSame(PageGroup::BAR, $page->group);
         $page->setGroup(null);
         self::assertNull($page->group);
+    }
+
+    public function testSortOrderIsMutableAndCannotBeNegative(): void
+    {
+        $page = new Page(1, 'page-uuid', 'À propos', 'a-propos', '<p>Contenu</p>', sortOrder: 10);
+        self::assertSame(10, $page->sortOrder);
+        $page->setSortOrder(20);
+        self::assertSame(20, $page->sortOrder);
+
+        $this->expectException(InvalidPageException::class);
+        $page->setSortOrder(-1);
+    }
+
+    public function testNegativeSortOrderIsRejectedAtConstruction(): void
+    {
+        $this->expectException(InvalidPageException::class);
+        new Page(1, 'page-uuid', 'À propos', 'a-propos', '<p>Contenu</p>', sortOrder: -1);
     }
 
     public function testCannotPublishWithoutContent(): void

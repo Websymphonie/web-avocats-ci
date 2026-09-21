@@ -10,6 +10,7 @@ use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 final class EventNotFoundException extends RuntimeException implements UserFacingError
 {
     public static function withId(int $id): self { return new self(sprintf('L’événement #%d est introuvable.', $id)); }
+    public static function withSlug(string $slug): self { return new self(sprintf('L’événement « %s » est introuvable.', $slug)); }
     public function translationId(): string { return 'exceptions.content.event_not_found'; }
     public function translationDomain(): string { return 'content_context'; }
     public function translationParameters(): array { return []; }

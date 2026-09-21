@@ -1,0 +1,76 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block body %}
+    {% set heroImage = coverUrl|default(default_image_url) %}
+    {% set now = date() %}
+    {% set isCurrent = event.endsAt and event.startsAt <= now and event.endsAt >= now %}
+    {% set isUpcoming = event.startsAt > now or isCurrent %}
+
+    <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
+        <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="event-detail-title">
+            <img src="{{ heroImage }}" alt="" class="absolute inset-0 -z-20 size-full object-cover opacity-35" aria-hidden="true">
+            <div class="absolute inset-0 -z-10 bg-[linear-gradient(115deg,rgba(16,35,63,0.98)_0%,rgba(16,35,63,0.86)_42%,rgba(16,35,63,0.54)_100%)]"></div>
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+                <div class="max-w-5xl">
+                    <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
+                        <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <a href="{{ path('web_events_list') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Événements</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ event.title }}</span>
+                    </nav>
+                    <p class="mt-6 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Le Barreau de Côte d'Ivoire</p>
+                    <h1 id="event-detail-title" class="mt-3 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{{ event.title }}</h1>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% include 'web/events/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+
+                <article aria-labelledby="event-detail-title">
+                    <header class="border-b border-border pb-8 sm:pb-10">
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                            {% if event.categories|first %}<span class="text-primary">{{ event.categories|first.name }}</span><span class="h-px w-5 bg-border" aria-hidden="true"></span>{% endif %}
+                            <span>{{ isCurrent ? 'En cours' : (isUpcoming ? 'À venir' : 'Terminé') }}</span>
+                            <span class="h-px w-5 bg-border" aria-hidden="true"></span><span>{{ event.format.label }}</span>
+                        </div>
+                        <div class="mt-6 grid gap-5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:items-start">
+                            <div class="border-l-2 border-primary pl-4">
+                                <p class="text-4xl font-semibold leading-none tracking-[-0.06em] text-primary">{{ event.startsAt|date('d') }}</p>
+                                <p class="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{{ event.startsAt|format_datetime(pattern='MMMM')|capitalize }}</p>
+                                <p class="mt-1 text-sm text-muted-foreground">{{ event.startsAt|date('Y') }}</p>
+                            </div>
+                            <div class="space-y-2 text-sm leading-6 text-muted-foreground">
+                                <p class="flex items-start gap-2"><twig:ux:icon name="lucide:clock-3" class="mt-1 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ event.startsAt|format_datetime(pattern='EEEE d MMMM Y à HH:mm') }}{% if event.endsAt %} — {{ event.endsAt|format_datetime(pattern='HH:mm') }}{% endif %}</span></p>
+                                {% if event.venueName %}<p class="flex items-start gap-2"><twig:ux:icon name="lucide:map-pin" class="mt-1 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ event.venueName }}{% if event.address %}, {{ event.address }}{% endif %}</span></p>{% endif %}
+                            </div>
+                        </div>
+                        {% if event.excerpt %}<p class="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{{ event.excerpt }}</p>{% endif %}
+                    </header>
+
+                    <figure class="mt-8 overflow-hidden rounded-2xl bg-muted sm:mt-10">
+                        <img src="{{ heroImage }}" alt="Couverture de {{ event.title }}" class="aspect-[2/1] w-full object-cover">
+                    </figure>
+
+                    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,44rem)_14rem] lg:gap-16">
+                        <div class="rich-content max-w-3xl text-base leading-8 text-foreground sm:text-lg">{{ safeBody|raw }}</div>
+                        <aside class="h-fit border-t border-border pt-5 lg:border-l lg:border-t-0 lg:pl-6" aria-label="Informations sur l’événement">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Format</p>
+                            <p class="mt-3 text-sm font-medium text-card-foreground">{{ event.format.label }}</p>
+                            {% if event.tags is not empty %}
+                                <p class="mt-7 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Mots-clés</p>
+                                <div class="mt-3 flex flex-wrap gap-x-3 gap-y-2 lg:block">{% for tag in event.tags %}<span class="mr-3 inline-block text-sm text-muted-foreground">#{{ tag.name }}</span>{% endfor %}</div>
+                            {% endif %}
+                        </aside>
+                    </div>
+
+                    <div class="mt-12 border-t border-border pt-6"><a href="{{ path('web_events_list') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Tous les événements</a></div>
+                </article>
+            </div>
+        </div>
+    </main>
+{% endblock %}

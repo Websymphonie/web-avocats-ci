@@ -13,7 +13,7 @@ final class MemberHomeController extends AbstractController
     public function __invoke(): Response
     {
         return $this->render('member/home/index.html.twig', [
-            'title' => 'Espace Avocat',
+            'title' => 'Tableau de bord',
         ]);
     }
 }

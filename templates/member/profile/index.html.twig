@@ -1,0 +1,67 @@
+{% extends 'layouts/member.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block member_page_title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="space-y-8">
+        <section class="flex flex-col justify-between gap-5 border-b border-border pb-7 sm:flex-row sm:items-end">
+            <div>
+                <p class="mb-2 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#a77d2e] dark:text-[#e0bf7d]">
+                    <span class="h-px w-7 bg-[#c49b52] dark:bg-[#d8b878]"></span>
+                    Mon espace
+                </p>
+                <h1 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Mon profil</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Gérez les informations utilisées pour votre espace avocat.</p>
+            </div>
+            <a href="{{ path('app_member') }}" class="inline-flex min-h-10 w-fit items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>
+                Retour au tableau de bord
+            </a>
+        </section>
+
+        <section class="grid gap-5 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
+            <article class="rounded-2xl border border-border bg-[#10233f] p-6 text-white shadow-sm dark:bg-[#142b4b] sm:p-7">
+                <span class="flex size-14 items-center justify-center rounded-2xl bg-[#d8b878] text-xl font-semibold text-[#10233f]">{{ command.email|slice(0, 1)|upper }}</span>
+                <p class="mt-7 text-xs font-semibold uppercase tracking-[0.18em] text-[#f1d59b]">Compte professionnel</p>
+                <h2 class="mt-2 text-xl font-semibold">{{ command.name }}</h2>
+                <p class="mt-1 break-all text-sm text-white/60">{{ command.email }}</p>
+                <div class="mt-8 flex items-center gap-2 text-xs text-emerald-200">
+                    <span class="size-2 rounded-full bg-emerald-400"></span>
+                    Accès membre actif
+                </div>
+            </article>
+
+            <article class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex items-start gap-3 border-b border-border pb-5">
+                    <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <twig:ux:icon name="lucide:user-round-pen" class="size-5" aria-hidden="true"/>
+                    </span>
+                    <div>
+                        <h2 class="text-lg font-semibold text-card-foreground">Informations personnelles</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">Ces informations servent à personnaliser votre espace.</p>
+                    </div>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'mt-7 space-y-6', 'data-loading-label': 'Enregistrement…'}}) }}
+                    <div class="space-y-2">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30', 'autocomplete': 'name'}}) }}
+                        <div class="text-sm text-destructive">{{ form_errors(form.name) }}</div>
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30', 'autocomplete': 'email'}}) }}
+                        <div class="text-sm text-destructive">{{ form_errors(form.email) }}</div>
+                    </div>
+                    <div class="flex justify-end border-t border-border pt-6">
+                        <button class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" type="submit">
+                            <twig:ux:icon name="lucide:save" class="size-4" aria-hidden="true"/>
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </article>
+        </section>
+    </div>
+{% endblock %}

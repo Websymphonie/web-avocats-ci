@@ -1,7 +1,143 @@
-{% extends 'layouts/web.html.twig' %}
+{% extends 'layouts/member.html.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
+{% block member_page_title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <h1>Espace membre</h1>
+    {% set userName = app.user.name ?? app.user.userIdentifier %}
+    {% set firstName = userName|split(' ')|first %}
+    {% set greeting = isAvocat(app.user) ? 'Bonjour Maître ' ~ firstName : 'Bonjour ' ~ firstName %}
+
+    <div class="space-y-8">
+        <section class="flex flex-col justify-between gap-5 border-b border-border pb-7 sm:flex-row sm:items-end">
+            <div>
+                <p class="mb-2 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#a77d2e] dark:text-[#e0bf7d]">
+                    <span class="h-px w-7 bg-[#c49b52] dark:bg-[#d8b878]"></span>
+                    Espace avocat
+                </p>
+                <h1 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{{ greeting }}</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Voici l’essentiel de votre espace professionnel.</p>
+            </div>
+            <div class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <span class="size-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                Compte actif
+            </div>
+        </section>
+
+        <section aria-labelledby="attention-title">
+            <div class="mb-4 flex items-end justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">À suivre</p>
+                    <h2 id="attention-title" class="mt-1 text-lg font-semibold tracking-tight text-foreground">Les points importants de votre espace</h2>
+                </div>
+                <a href="{{ path('member_notifications_index') }}" class="hidden items-center gap-1.5 text-sm font-medium text-primary transition hover:underline sm:inline-flex">
+                    Voir les notifications
+                    <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/>
+                </a>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-3">
+                <article class="rounded-2xl border border-border bg-card p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <span class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <twig:ux:icon name="lucide:bell" class="size-5" aria-hidden="true"/>
+                        </span>
+                        <span class="rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">À consulter</span>
+                    </div>
+                    <h3 class="mt-5 text-base font-semibold text-card-foreground">Notifications</h3>
+                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Retrouvez vos informations et messages importants.</p>
+                    <a href="{{ path('member_notifications_index') }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        Consulter
+                        <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                    </a>
+                </article>
+
+                <article class="rounded-2xl border border-border bg-card p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <span class="flex size-10 items-center justify-center rounded-xl bg-[#d8b878]/15 text-[#a77d2e] dark:text-[#e0bf7d]">
+                            <twig:ux:icon name="lucide:graduation-cap" class="size-5" aria-hidden="true"/>
+                        </span>
+                        <span class="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Learning</span>
+                    </div>
+                    <h3 class="mt-5 text-base font-semibold text-card-foreground">Formations</h3>
+                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Votre parcours et votre progression apparaîtront ici.</p>
+                    <span class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground">Espace en préparation</span>
+                </article>
+
+                <article class="rounded-2xl border border-border bg-card p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <span class="flex size-10 items-center justify-center rounded-xl bg-[#10233f]/10 text-[#10233f] dark:bg-[#d8b878]/15 dark:text-[#e0bf7d]">
+                            <twig:ux:icon name="lucide:calendar-clock" class="size-5" aria-hidden="true"/>
+                        </span>
+                        <span class="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">À venir</span>
+                    </div>
+                    <h3 class="mt-5 text-base font-semibold text-card-foreground">Prochains LIVE</h3>
+                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Les rendez-vous accessibles seront affichés ici.</p>
+                    <span class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground">Aucun rendez-vous à afficher</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]" aria-label="Votre activité et vos accès">
+            <article class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <div class="flex items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Apprentissage</p>
+                        <h2 class="mt-1.5 text-xl font-semibold tracking-tight text-card-foreground">Continuer ma formation</h2>
+                    </div>
+                    <span class="hidden rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground sm:inline-flex">À venir</span>
+                </div>
+                <div class="flex min-h-52 flex-col items-center justify-center px-6 py-10 text-center">
+                    <span class="flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                        <twig:ux:icon name="lucide:book-open" class="size-6" aria-hidden="true"/>
+                    </span>
+                    <h3 class="mt-4 text-base font-semibold text-card-foreground">Votre parcours apparaîtra ici</h3>
+                    <p class="mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les formations auxquelles vous aurez accès, votre progression et votre prochaine leçon seront regroupées dans cet espace.</p>
+                </div>
+            </article>
+
+            <article class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+                <div class="flex items-center gap-3">
+                    <span class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <twig:ux:icon name="lucide:command" class="size-5" aria-hidden="true"/>
+                    </span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Navigation</p>
+                        <h2 class="mt-1 text-lg font-semibold tracking-tight text-card-foreground">Actions rapides</h2>
+                    </div>
+                </div>
+                <div class="mt-5 space-y-2">
+                    <a href="{{ path('member_notifications_index') }}" class="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-border px-3.5 text-sm font-medium text-card-foreground transition hover:border-primary/40 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <span class="flex items-center gap-3"><twig:ux:icon name="lucide:bell" class="size-4 text-muted-foreground" aria-hidden="true"/>Mes notifications</span>
+                        <twig:ux:icon name="lucide:arrow-up-right" class="size-4 text-muted-foreground" aria-hidden="true"/>
+                    </a>
+                    <a href="{{ path('member_profile') }}" class="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-border px-3.5 text-sm font-medium text-card-foreground transition hover:border-primary/40 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <span class="flex items-center gap-3"><twig:ux:icon name="lucide:user-round" class="size-4 text-muted-foreground" aria-hidden="true"/>Mon profil</span>
+                        <twig:ux:icon name="lucide:arrow-up-right" class="size-4 text-muted-foreground" aria-hidden="true"/>
+                    </a>
+                    <a href="{{ path('app_home') }}" class="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-border px-3.5 text-sm font-medium text-card-foreground transition hover:border-primary/40 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <span class="flex items-center gap-3"><twig:ux:icon name="lucide:globe-2" class="size-4 text-muted-foreground" aria-hidden="true"/>Revenir au site</span>
+                        <twig:ux:icon name="lucide:arrow-up-right" class="size-4 text-muted-foreground" aria-hidden="true"/>
+                    </a>
+                </div>
+            </article>
+        </section>
+
+        <section class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6" aria-labelledby="profile-summary-title">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="flex size-12 items-center justify-center rounded-full bg-[#10233f] text-base font-semibold text-[#f1d59b] dark:bg-[#d8b878] dark:text-[#10233f]">{{ userName|slice(0, 1)|upper }}</span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Votre identité</p>
+                        <h2 id="profile-summary-title" class="mt-1 text-base font-semibold text-card-foreground">{{ userName }}</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">{{ app.user.userIdentifier }}</p>
+                    </div>
+                </div>
+                <a href="{{ path('member_profile') }}" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    Gérer mon profil
+                    <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/>
+                </a>
+            </div>
+        </section>
+    </div>
 {% endblock %}

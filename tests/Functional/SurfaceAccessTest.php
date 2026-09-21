@@ -57,7 +57,36 @@ final class SurfaceAccessTest extends WebTestCase
         $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Espace membre');
+        self::assertSelectorTextContains('h1', 'Bonjour Surface');
+    }
+
+    public function testAvocatSeesProfessionalDashboardGreeting(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Bonjour Maître Surface');
+    }
+
+    public function testAuthenticatedUserCanOpenMemberNotificationsWithoutBackofficeRoute(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/espace/notifications', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Restez informé');
+        self::assertStringNotContainsString('/admin/notification', $client->getResponse()->getContent() ?: '');
+    }
+
+    public function testAuthenticatedUserCanOpenMemberProfileWithoutBackofficeRoute(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/espace/profil', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Mon profil');
+        self::assertStringNotContainsString('/admin/identity/users', $client->getResponse()->getContent() ?: '');
     }
 
     public function testBackofficeRedirectsAnonymousVisitorsToLogin(): void
@@ -151,6 +180,7 @@ final class SurfaceAccessTest extends WebTestCase
         $schemaTool->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
 
         $entityManager->persist(new Reglages('app_title', 'Application title', 'Avocat CI', 'text'));
+        $entityManager->persist(new Reglages('app_paginate_limit', 'Pagination', '15', 'number'));
         $entityManager->persist(
             (new Images())
                 ->setName('app_favicon')

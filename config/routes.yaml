@@ -40,6 +40,13 @@ notification:
   type: attribute
   prefix: '/admin/notification'
 
+notification_member:
+  resource:
+    path: ../src/NotificationContext/Presenter/Controller/Member/
+    namespace: Websymphonie\NotificationContext\Presenter\Controller\Member
+  type: attribute
+  prefix: '/'
+
 content:
   resource:
     path: ../src/ContentContext/Presenter/Controller/

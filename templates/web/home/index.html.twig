@@ -39,6 +39,16 @@
 
                     <div class="flex items-center gap-3 text-right sm:gap-4">
                         <span class="hidden text-[0.65rem] font-medium uppercase tracking-[0.22em] text-white/45 md:inline">Ordre professionnel</span>
+                        <button class="inline-flex size-9 items-center justify-center rounded-full border border-white/20 bg-black/10 text-white/80 transition hover:border-[#d8b878] hover:bg-white/10 hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:size-10"
+                                type="button"
+                                data-controller="theme-toggle"
+                                data-action="theme-toggle#toggle"
+                                aria-label="Activer le mode sombre"
+                                aria-pressed="false">
+                            <twig:ux:icon name="lucide:sun" class="size-4 dark:hidden" aria-hidden="true"/>
+                            <twig:ux:icon name="lucide:moon" class="hidden size-4 dark:block" aria-hidden="true"/>
+                            <span class="sr-only">Changer de thème</span>
+                        </button>
                         <a href="{{ path('app_login') }}" class="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/20 px-3.5 text-xs font-medium text-white transition hover:border-[#d8b878] hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:min-h-10 sm:px-4">
                             Espace avocat
                             <twig:ux:icon name="lucide:arrow-up-right" class="size-3.5" aria-hidden="true"/>

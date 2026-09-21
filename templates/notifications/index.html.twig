@@ -1,4 +1,9 @@
-{% extends 'layouts/base.html.twig' %}
+{% extends layout|default('layouts/base.html.twig') %}
+
+{% set listRoute = list_route|default('app_notifications_index') %}
+{% set viewRoute = view_route|default('app_notifications_view') %}
+{% set readAllRoute = read_all_route|default('app_notifications_read_all') %}
+{% set bulkDeleteRoute = bulk_delete_route|default('app_notifications_bulk_delete') %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -17,7 +22,7 @@
                     </div>
 
                     {% if is_granted('ROLE_EDIT') %}
-                        <form method="post" action="{{ path('app_notifications_read_all') }}" data-loading-label="Mise à jour…">
+                        <form method="post" action="{{ path(readAllRoute) }}" data-loading-label="Mise à jour…">
                             <input type="hidden" name="_token" value="{{ csrf_token('notification_read_all') }}">
                             <button class="inline-flex h-10 items-center justify-center rounded-lg border border-border bg-background px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                     type="submit">
@@ -69,13 +74,13 @@
                                 type="submit">Appliquer
                         </button>
                         <a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                           href="{{ path('app_notifications_index') }}">Réinitialiser</a>
+                           href="{{ path(listRoute) }}">Réinitialiser</a>
                     </div>
                     {{ form_end(form) }}
                 </div>
             </details>
 
-            <form id="notification-bulk-delete" method="post" action="{{ path('app_notifications_bulk_delete') }}">
+            <form id="notification-bulk-delete" method="post" action="{{ path(bulkDeleteRoute) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_notifications') }}">
             </form>
             <twig:BulkSelection
@@ -123,7 +128,7 @@
                                                    aria-label="Sélectionner la notification : {{ notification.title ?? 'Information' }}">
                                         </label>
                                         <a class="flex min-w-0 flex-1 gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                                           href="{{ path('app_notifications_view', {id: notification.id}) }}">
+                                           href="{{ path(viewRoute, {id: notification.id}) }}">
                                             <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl {{ notification.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground' }}">
                                                 {% if notification.context.resource is defined and notification.context.resource == 'follow_up' %}
                                                     <twig:ux:icon name="lucide:list-checks" class="size-4"/>
@@ -156,7 +161,7 @@
                                 {% endfor %}
                             </div>
 
-                            {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: 'app_notifications_index'} only %}
+                            {% include 'shared/views/_list_pagination.html.twig' with {pager: notifications, route: listRoute} only %}
                         </section>
                     {% endblock %}
             </twig:BulkSelection>

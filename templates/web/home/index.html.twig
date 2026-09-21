@@ -6,22 +6,6 @@
 
 {% block web_footer %}{% endblock %}
 
-{% set homepageEvents = [
-    {slug: 'rentree-solennelle-du-barreau', date: '18/09', format: 'Présentiel', title: 'Rentrée solennelle du Barreau', image: 'images/events/rentree-solennelle.webp'},
-    {slug: 'conference-evolutions-du-droit', date: '26/09', format: 'Hybride', title: 'Conférence sur les évolutions du droit', image: 'images/events/conference-droit.webp'},
-    {slug: 'justice-numerique', date: '04/10', format: 'En ligne', title: 'Regards croisés sur la justice numérique', image: 'images/events/justice-numerique.webp'},
-    {slug: 'atelier-pratique-avocats', date: '12/10', format: 'Présentiel', title: 'Atelier pratique pour les avocats', image: 'images/events/atelier-avocats.webp'},
-    {slug: 'rencontre-professionnelle-barreau', date: '21/10', format: 'Hybride', title: 'Rencontre professionnelle du Barreau', image: 'images/events/rencontre-barreau.webp'}
-] %}
-
-{% set homepageNews = [
-    {slug: 'barreau-evolutions-justice', date: '12/09', format: 'Institution', title: 'Le Barreau au cœur des évolutions de la justice', image: 'images/news-editorial.webp'},
-    {slug: 'rencontre-professionnelle', date: '08/09', format: 'Profession', title: 'Une rencontre pour faire avancer la profession', image: 'images/news-barreau.webp'},
-    {slug: 'nouvelle-procedure-civile', date: '02/09', format: 'Droit', title: 'Les nouvelles pratiques de la procédure civile', image: 'images/news-procedure.webp'},
-    {slug: 'justice-et-transformation-numerique', date: '28/08', format: 'Innovation', title: 'Justice et transformation numérique : les enjeux', image: 'images/news-justice.webp'},
-    {slug: 'barreau-engagements', date: '21/08', format: 'Engagement', title: 'Les engagements du Barreau auprès de la communauté', image: 'images/news-community.webp'}
-] %}
-
 {% block body %}
     <main class="h-svh overflow-hidden bg-[#10233f] text-[#f7f4ee]" data-controller="pointer-wave">
         <section class="relative isolate h-full overflow-hidden">
@@ -110,25 +94,30 @@
                             </div>
                         </a>
 
-                        <div id="actualites" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#f1d59b] hover:bg-white/[0.13] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les cinq dernières actualités">
+                        <div id="actualites" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#f1d59b] hover:bg-white/[0.13] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les dernières actualités">
                             <div class="flex items-start justify-between">
                                 <a href="{{ path('web_news_list') }}" class="inline-flex items-center gap-2 rounded-xl bg-[#d8b878]/20 px-2 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#f1d59b] transition hover:bg-[#d8b878]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b] sm:text-xs" aria-label="Voir toutes les actualités"><twig:ux:icon name="lucide:newspaper" class="size-4" aria-hidden="true"/>Actualités</a>
                                 <div class="flex items-center gap-2 text-[0.6rem] font-medium text-white/45 sm:text-xs">
-                                    <span data-homepage-event-carousel-target="current">01</span>/<span data-homepage-event-carousel-target="total">05</span>
+                                    <span data-homepage-event-carousel-target="current">{{ homepageNews is not empty ? '01' : '00' }}</span>/<span data-homepage-event-carousel-target="total">{{ '%02d'|format(homepageNews|length) }}</span>
                                 </div>
                             </div>
 
                             <div class="homepage-event-carousel__viewport" aria-live="polite">
-                                {% for news in homepageNews %}
-                                    <article id="actualite-{{ news.slug }}" data-homepage-event-carousel-target="slide" data-image="{{ asset(news.image) }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Actualité {{ loop.index }} sur {{ homepageNews|length }}" {% if not loop.first %}hidden{% endif %}>
-                                        <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
-                                            <span>{{ news.date }}</span>
-                                            <span class="h-px w-4 bg-[#d8b878]/60"></span>
-                                            <span>{{ news.format }}</span>
-                                        </div>
-                                        <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('app_home') }}#actualite-{{ news.slug }}" data-index="{{ loop.index0 }}" data-action="click->homepage-event-carousel#followLink" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ news.title }}</a></h3>
-                                    </article>
-                                {% endfor %}
+                                {% if homepageNews is empty %}
+                                    <p class="homepage-event-carousel__slide text-sm text-white/65">Aucune actualité publiée pour le moment.</p>
+                                {% else %}
+                                    {% for news in homepageNews %}
+                                        {% set newsImage = news.coverMediaId ? mediaUrls[news.coverMediaId]|default(default_image_url) : default_image_url %}
+                                        <article data-homepage-event-carousel-target="slide" data-image="{{ newsImage }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Actualité {{ loop.index }} sur {{ homepageNews|length }}" {% if not loop.first %}hidden{% endif %}>
+                                            <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
+                                                <span>{{ news.publishedAt|date('d/m') }}</span>
+                                                <span class="h-px w-4 bg-[#d8b878]/60"></span>
+                                                <span>{{ news.categories|first ? news.categories|first.name : 'Actualité' }}</span>
+                                            </div>
+                                            <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('web_news_detail', {slug: news.slug}) }}" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ news.title }}</a></h3>
+                                        </article>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
                             <div class="flex items-center justify-between gap-2">
@@ -141,25 +130,30 @@
                             </div>
                         </div>
 
-                        <div id="evenements" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-[#d8b878]/35 bg-[#d8b878]/[0.14] p-3.5 hover:border-[#f1d59b] hover:bg-[#d8b878]/[0.22] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les cinq derniers événements">
+                        <div id="evenements" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-[#d8b878]/35 bg-[#d8b878]/[0.14] p-3.5 hover:border-[#f1d59b] hover:bg-[#d8b878]/[0.22] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les derniers événements">
                             <div class="flex items-start justify-between">
                                 <a href="{{ path('web_events_list') }}" class="inline-flex items-center gap-2 rounded-xl bg-[#d8b878]/20 px-2 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#f1d59b] transition hover:bg-[#d8b878]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b] sm:text-xs" aria-label="Voir tous les événements"><twig:ux:icon name="lucide:calendar-days" class="size-4" aria-hidden="true"/>Événements</a>
                                 <div class="flex items-center gap-2 text-[0.6rem] font-medium text-white/45 sm:text-xs">
-                                    <span data-homepage-event-carousel-target="current">01</span>/<span data-homepage-event-carousel-target="total">05</span>
+                                    <span data-homepage-event-carousel-target="current">{{ homepageEvents is not empty ? '01' : '00' }}</span>/<span data-homepage-event-carousel-target="total">{{ '%02d'|format(homepageEvents|length) }}</span>
                                 </div>
                             </div>
 
                             <div class="homepage-event-carousel__viewport" aria-live="polite">
-                                {% for event in homepageEvents %}
-                                    <article id="evenement-{{ event.slug }}" data-homepage-event-carousel-target="slide" data-image="{{ asset(event.image) }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Événement {{ loop.index }} sur {{ homepageEvents|length }}" {% if not loop.first %}hidden{% endif %}>
-                                        <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
-                                            <span>{{ event.date }}</span>
-                                            <span class="h-px w-4 bg-[#d8b878]/60"></span>
-                                            <span>{{ event.format }}</span>
-                                        </div>
-                                        <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('app_home') }}#evenement-{{ event.slug }}" data-index="{{ loop.index0 }}" data-action="click->homepage-event-carousel#followLink" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ event.title }}</a></h3>
-                                    </article>
-                                {% endfor %}
+                                {% if homepageEvents is empty %}
+                                    <p class="homepage-event-carousel__slide text-sm text-white/65">Aucun événement à venir pour le moment.</p>
+                                {% else %}
+                                    {% for event in homepageEvents %}
+                                        {% set eventImage = event.coverMediaId ? mediaUrls[event.coverMediaId]|default(default_image_url) : default_image_url %}
+                                        <article data-homepage-event-carousel-target="slide" data-image="{{ eventImage }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Événement {{ loop.index }} sur {{ homepageEvents|length }}" {% if not loop.first %}hidden{% endif %}>
+                                            <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
+                                                <span>{{ event.startsAt|date('d/m') }}</span>
+                                                <span class="h-px w-4 bg-[#d8b878]/60"></span>
+                                                <span>{{ event.format.label }}</span>
+                                            </div>
+                                            <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('web_events_detail', {slug: event.slug}) }}" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ event.title }}</a></h3>
+                                        </article>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
                             <div class="flex items-center justify-between gap-2">

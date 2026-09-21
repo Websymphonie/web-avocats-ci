@@ -170,7 +170,7 @@ CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice u
 CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 Content Backoffice foundation                     DONE
-Content Frontoffice                              PARTIAL — Actualités publiques livrées par FO-002 ; autres verticales différées
+Content Frontoffice                              PARTIAL — Actualités et Événements publiques, recherche globale et catalogue Formations livrés ; autres verticales différées
 LRN-001  Training COURSE                           DONE — Backoffice uniquement
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
@@ -181,13 +181,15 @@ LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube protégé, sans API YouTube
+FO-004   Catalogue public des formations               DONE — liste, filtres, détails COURSE/LIVE et confidentialité LIVE
+FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
 NOT-001  Notifications Learning/Payment                DONE — événements in-app scalaires et déduplication persistée
 NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay et best-effort vérifiés
-Learner Frontoffice                              DEFERRED — catalogue et parcours apprenant
-Public Training catalogue                       DEFERRED — à concevoir avec la surface Frontoffice
+Learner Frontoffice                              DEFERRED — parcours apprenant public, inscription et paiement
+Public Training catalogue                       DONE — livré par FO-004 ; player et accès consommateur restent protégés
 ```
 
 La spécification technique V3 conserve un backlog cible historique dont la

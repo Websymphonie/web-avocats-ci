@@ -24,5 +24,11 @@ interface EventRepositoryInterface
     public function countPhotoGalleryUsage(int $galleryId): int;
     public function list(?string $search, ?EventStatus $status, ?EventFormat $format, ?int $categoryId, ?int $tagId, int $page, int $limit): EventListResult;
     public function listPublished(int $page, int $limit, ?int $categoryId = null): EventListResult;
+
+    /**
+     * @return list<Event>
+     */
+    public function searchPublished(string $term, int $limit): array;
+
     public function getPublishedBySlug(string $slug): Event;
 }

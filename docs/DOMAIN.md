@@ -26,7 +26,7 @@ Les contextes suivants existent déjà et doivent être préservés :
 | `SharedContext` | services techniques réellement transverses |
 | `LogContext` | logs techniques, authentification et audit métier structuré |
 | `NotificationContext` | mécanismes de notification existants |
-| `WebContext` | shell et capacités du site public existant |
+| `WebContext` | shell, recherche et capacités du site public existant |
 
 `AdminContext` n’est pas le propriétaire automatique de toutes les fonctions
 accessibles sous `/admin`. Une fonction métier future reste dans le contexte qui
@@ -129,8 +129,9 @@ Un `LIVE` est une formation autonome. Il ne constitue pas automatiquement un
 module d’une formation `COURSE`.
 
 Le type est immuable après création, y compris lors du remapping Doctrine.
-Les flux Backoffice Learning sont livrés ; les surfaces Learner Frontoffice et
-le catalogue public restent différés.
+Les flux Backoffice Learning et le catalogue public Frontoffice sont livrés.
+La consommation apprenante reste protégée dans l’espace membre ; les parcours
+publics d’inscription, de paiement et de découverte apprenante restent différés.
 
 Les concepts cibles sont :
 

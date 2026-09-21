@@ -76,6 +76,28 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
         return $this->withLiveDetails($entity);
     }
 
+    public function getPublicBySlug(string $slug): Training
+    {
+        $entity = $this->createQueryBuilder('training')
+            ->leftJoin('training.categories', 'category')->addSelect('category')
+            ->leftJoin('training.tags', 'tag')->addSelect('tag')
+            ->where('training.slug = :slug')
+            ->andWhere('training.status = :status')
+            ->andWhere('training.visibility = :visibility')
+            ->andWhere('training.publishedAt IS NOT NULL')
+            ->setParameter('slug', $slug)
+            ->setParameter('status', TrainingStatus::PUBLISHED)
+            ->setParameter('visibility', TrainingVisibility::PUBLIC)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$entity instanceof TrainingEntity) {
+            throw TrainingNotFoundException::withSlug($slug);
+        }
+
+        return $this->withLiveDetails($entity);
+    }
+
     public function delete(Training $training): void
     {
         $entity = $this->find($training->id);
@@ -223,7 +245,59 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             ->getQuery()
             ->getResult();
 
-        return new TrainingListResult(array_map(fn (TrainingEntity $entity): Training => $this->withLiveDetails($entity), $entities), $total, $page, $limit);
+        $models = array_map(fn (TrainingEntity $entity): Training => $this->factory->fromEntity($entity), $entities);
+        $liveIds = array_values(array_map(
+            static fn (Training $training): int => $training->id,
+            array_filter($models, static fn (Training $training): bool => $training->type === TrainingType::LIVE),
+        ));
+        $liveDetails = $this->liveDetailsRepository->findByTrainingIds($liveIds);
+        foreach ($models as $model) {
+            if ($model->type === TrainingType::LIVE) {
+                $model->replaceLiveDetails($liveDetails[$model->id] ?? null);
+            }
+        }
+
+        return new TrainingListResult($models, $total, $page, $limit);
+    }
+
+    /** @return list<Training> */
+    public function searchPublic(string $term, int $limit): array
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return [];
+        }
+
+        $entities = $this->createQueryBuilder('training')
+            ->leftJoin('training.categories', 'category')->addSelect('category')
+            ->leftJoin('training.tags', 'tag')->addSelect('tag')
+            ->distinct()
+            ->where('training.status = :status')
+            ->andWhere('training.visibility = :visibility')
+            ->andWhere('training.publishedAt IS NOT NULL')
+            ->andWhere('(LOWER(training.title) LIKE LOWER(:term) OR LOWER(training.summary) LIKE LOWER(:term) OR LOWER(category.name) LIKE LOWER(:term))')
+            ->setParameter('status', TrainingStatus::PUBLISHED)
+            ->setParameter('visibility', TrainingVisibility::PUBLIC)
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('training.publishedAt', 'DESC')
+            ->addOrderBy('training.id', 'DESC')
+            ->setMaxResults(max(1, $limit))
+            ->getQuery()
+            ->getResult();
+
+        $models = array_map(fn (TrainingEntity $entity): Training => $this->factory->fromEntity($entity), $entities);
+        $liveIds = array_values(array_map(
+            static fn (Training $training): int => $training->id,
+            array_filter($models, static fn (Training $training): bool => $training->type === TrainingType::LIVE),
+        ));
+        $liveDetails = $this->liveDetailsRepository->findByTrainingIds($liveIds);
+        foreach ($models as $model) {
+            if ($model->type === TrainingType::LIVE) {
+                $model->replaceLiveDetails($liveDetails[$model->id] ?? null);
+            }
+        }
+
+        return $models;
     }
 
     private function withLiveDetails(TrainingEntity $entity): Training

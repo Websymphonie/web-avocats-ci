@@ -1,0 +1,90 @@
+<dialog
+    id="public-search-dialog"
+    class="public-search-dialog m-auto max-h-[calc(100dvh-1rem)] w-[min(calc(100vw-1rem),56rem)] overflow-hidden rounded-2xl border border-border bg-background p-0 text-foreground shadow-2xl backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:max-h-[calc(100dvh-2rem)] sm:w-[min(calc(100vw-2rem),56rem)]"
+    data-global-search-target="dialog"
+    data-action="cancel->global-search#handleCancel click->global-search#closeOnBackdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="public-search-title"
+    aria-describedby="public-search-description"
+>
+    <div class="max-h-[calc(100dvh-1rem)] overflow-y-auto p-5 sm:max-h-[calc(100dvh-2rem)] sm:p-8">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Recherche</p>
+                <h2 id="public-search-title" class="text-2xl font-semibold tracking-tight sm:text-3xl">Que recherchez-vous&nbsp;?</h2>
+                <p id="public-search-description" class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+                    Retrouvez les actualités, événements et formations du Barreau depuis un seul endroit.
+                </p>
+            </div>
+            <button type="button" data-action="click->global-search#close" class="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Fermer la recherche">
+                <twig:ux:icon name="lucide:x" class="size-5" aria-hidden="true"/>
+            </button>
+        </div>
+
+        <div class="mt-6 flex items-center gap-3 rounded-xl border-2 border-primary/40 bg-muted/30 px-4 py-3 shadow-sm focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
+            <twig:ux:icon name="lucide:search" class="size-5 shrink-0 text-primary" aria-hidden="true"/>
+            <input
+                type="search"
+                class="min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground sm:text-lg"
+                placeholder="Rechercher une actualité, un événement, une formation…"
+                autocomplete="off"
+                spellcheck="false"
+                data-global-search-target="input"
+                data-action="input->global-search#onInput keydown->global-search#navigate"
+                aria-label="Rechercher dans les contenus publics"
+            >
+            <button type="button" data-global-search-target="clear" data-action="click->global-search#clear" class="hidden size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Effacer la recherche">
+                <twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true"/>
+            </button>
+        </div>
+
+        <div data-global-search-target="loading" class="mt-4 hidden items-center gap-2 text-sm text-muted-foreground" aria-live="polite">
+            <twig:ux:icon name="lucide:loader-circle" class="size-4 animate-spin" aria-hidden="true"/>
+            Recherche…
+        </div>
+        <p data-global-search-target="error" class="mt-4 hidden text-sm text-destructive" role="alert"></p>
+        <p data-global-search-target="empty" class="mt-4 hidden text-sm text-muted-foreground" aria-live="polite"></p>
+
+        <section data-global-search-target="directAccess" class="mt-7" aria-labelledby="public-search-direct-title">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Accès directs</p>
+                    <h3 id="public-search-direct-title" class="mt-1 text-base font-semibold">Explorer le portail</h3>
+                </div>
+                <div class="hidden items-center gap-1 text-xs text-muted-foreground sm:flex" aria-hidden="true"><kbd class="rounded border border-border px-1.5 py-1">Ctrl</kbd><span>+</span><kbd class="rounded border border-border px-1.5 py-1">K</kbd></div>
+            </div>
+            <div class="mt-3 grid gap-2 sm:grid-cols-3">
+                <a href="{{ path('web_news_list') }}" class="group rounded-xl border border-border bg-card px-4 py-3 transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <span class="flex items-center gap-3"><span class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary"><twig:ux:icon name="lucide:newspaper" class="size-4" aria-hidden="true"/></span><span><span class="block text-sm font-semibold">Actualités</span><span class="block text-xs text-muted-foreground">La vie du Barreau</span></span></span>
+                </a>
+                <a href="{{ path('web_events_list') }}" class="group rounded-xl border border-border bg-card px-4 py-3 transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <span class="flex items-center gap-3"><span class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary"><twig:ux:icon name="lucide:calendar-days" class="size-4" aria-hidden="true"/></span><span><span class="block text-sm font-semibold">Événements</span><span class="block text-xs text-muted-foreground">Rendez-vous à venir</span></span></span>
+                </a>
+                <a href="{{ path('web_trainings_list') }}" class="group rounded-xl border border-border bg-card px-4 py-3 transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <span class="flex items-center gap-3"><span class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary"><twig:ux:icon name="lucide:graduation-cap" class="size-4" aria-hidden="true"/></span><span><span class="block text-sm font-semibold">Formations</span><span class="block text-xs text-muted-foreground">Développer sa pratique</span></span></span>
+                </a>
+            </div>
+        </section>
+
+        <section data-global-search-target="recent" class="mt-7 hidden border-t border-border pt-5" aria-labelledby="public-search-recent-title">
+            <div class="flex items-center justify-between gap-3">
+                <h3 id="public-search-recent-title" class="text-base font-semibold">Recherches récentes</h3>
+                <button type="button" data-action="click->global-search#clearRecent" class="text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Effacer</button>
+            </div>
+            <div data-global-search-target="recentList" class="mt-3 flex flex-wrap gap-2"></div>
+        </section>
+
+        <section data-global-search-target="resultsSection" class="mt-6 hidden border-t border-border pt-5" aria-labelledby="public-search-results-title">
+            <div class="flex items-center justify-between gap-3">
+                <h3 id="public-search-results-title" class="text-base font-semibold">Résultats</h3>
+                <span data-global-search-target="resultCount" class="text-sm text-muted-foreground"></span>
+            </div>
+            <div data-global-search-target="results" class="mt-3 max-h-[min(46vh,25rem)] overflow-y-auto rounded-xl border border-border"></div>
+        </section>
+
+        <div class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-xs text-muted-foreground">
+            <span>↑ ↓ naviguer</span><span><kbd class="rounded border border-border px-1.5 py-1">Entrée</kbd> ouvrir</span><span><kbd class="rounded border border-border px-1.5 py-1">Échap</kbd> fermer</span>
+        </div>
+    </div>
+</dialog>

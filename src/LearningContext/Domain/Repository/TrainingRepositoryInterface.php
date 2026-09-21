@@ -17,6 +17,7 @@ interface TrainingRepositoryInterface
     public function save(Training $training): Training;
     public function getById(int $id): Training;
     public function getByUuid(string $uuid): Training;
+    public function getPublicBySlug(string $slug): Training;
     public function delete(Training $training): void;
     public function slugExists(string $slug, ?int $exceptId = null): bool;
     public function countMediaUsage(int $mediaId): int;
@@ -44,4 +45,9 @@ interface TrainingRepositoryInterface
         int $page,
         int $limit,
     ): TrainingListResult;
+
+    /**
+     * @return list<Training>
+     */
+    public function searchPublic(string $term, int $limit): array;
 }

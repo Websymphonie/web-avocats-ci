@@ -1,0 +1,124 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}Formations{% endblock %}
+
+{% block body %}
+    {% set featured = trainings.items|first %}
+    {% set secondary = trainings.items|slice(1) %}
+    <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
+        <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="trainings-page-title">
+            <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(216,184,120,0.24),transparent_34%),linear-gradient(120deg,#10233f_0%,#18375e_100%)]"></div>
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+                <div class="max-w-3xl">
+                    <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
+                        <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <span class="text-white" aria-current="page">Formations</span>
+                    </nav>
+                    <p class="mt-6 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Développer sa pratique</p>
+                    <h1 id="trainings-page-title" class="mt-3 text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl lg:text-6xl">Formations</h1>
+                    <p class="mt-5 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">Parcours, sessions en direct et ressources professionnelles pour approfondir les compétences du Barreau.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+
+                <section aria-labelledby="training-catalog-title">
+                    <div class="flex flex-col gap-5 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Catalogue</p>
+                            <h2 id="training-catalog-title" class="mt-2 text-2xl font-semibold tracking-[-0.035em] text-foreground">Apprendre, pratiquer, progresser</h2>
+                        </div>
+                        <p class="text-sm text-muted-foreground">{{ trainings.totalItemCount }} formation{{ trainings.totalItemCount > 1 ? 's' : '' }}</p>
+                    </div>
+
+                    <nav class="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-b border-border pb-4 text-sm" aria-label="Filtrer le catalogue">
+                        <a href="{{ path('web_trainings_list', selectedCategory ? {categorie: selectedCategory.slug} : {}) }}" class="border-b-2 pb-2 font-medium {{ selectedType is null and selectedAccessType is null ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground' }}">Toutes</a>
+                        <a href="{{ path('web_trainings_list', (selectedCategory ? {categorie: selectedCategory.slug} : {})|merge({type: 'COURSE'})) }}" class="border-b-2 pb-2 font-medium {{ selectedType and selectedType.value == 'COURSE' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground' }}">Cours</a>
+                        <a href="{{ path('web_trainings_list', (selectedCategory ? {categorie: selectedCategory.slug} : {})|merge({type: 'LIVE'})) }}" class="border-b-2 pb-2 font-medium {{ selectedType and selectedType.value == 'LIVE' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground' }}">Lives</a>
+                        <span class="hidden h-5 w-px bg-border sm:block" aria-hidden="true"></span>
+                        {% for access in accessTypes %}
+                            <a href="{{ path('web_trainings_list', (selectedCategory ? {categorie: selectedCategory.slug} : {})|merge({acces: access.value})) }}" class="pb-2 font-medium {{ selectedAccessType == access ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}">{{ access.label }}</a>
+                        {% endfor %}
+                    </nav>
+
+                    {% if featured %}
+                        {% set featuredCategory = featured.categoryIds|first ? categoryById[featured.categoryIds|first]|default(null) : null %}
+                        <article class="group mt-7 overflow-hidden border border-border bg-card shadow-sm sm:mt-8">
+                            <div class="grid md:grid-cols-[minmax(0,0.94fr)_minmax(20rem,1.06fr)] md:items-stretch">
+                                <a href="{{ path('web_trainings_detail', {slug: featured.slug}) }}" class="relative block aspect-[16/10] overflow-hidden bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:h-full md:aspect-auto md:min-h-[22rem]" aria-label="Découvrir {{ featured.title }}">
+                                    <img src="{{ featured.coverMediaId ? mediaUrls[featured.coverMediaId]|default(default_image_url) : default_image_url }}" alt="Couverture de {{ featured.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
+                                    <span class="absolute left-4 top-4 inline-flex items-center gap-2 bg-[#d8b878] px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-[#10233f]">À découvrir</span>
+                                </a>
+                                <div class="flex flex-col border-t-2 border-primary px-5 py-6 sm:px-7 sm:py-7 md:border-l-2 md:border-t-0 lg:px-8">
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.13em] text-muted-foreground">
+                                        <span class="text-primary">{{ featured.type.label }}</span>
+                                        <span class="h-px w-4 bg-border" aria-hidden="true"></span>
+                                        <span>{{ featuredCategory ? featuredCategory.name : 'Formation' }}</span>
+                                        <span class="h-px w-4 bg-border" aria-hidden="true"></span>
+                                        <span>{{ featured.accessType.label }}</span>
+                                    </div>
+                                    <h3 class="mt-4 line-clamp-3 text-2xl font-semibold leading-tight tracking-[-0.035em] text-card-foreground sm:text-3xl"><a href="{{ path('web_trainings_detail', {slug: featured.slug}) }}" class="transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ featured.title }}</a></h3>
+                                    <p class="mt-4 line-clamp-3 text-sm leading-6 text-muted-foreground">{{ featured.summary }}</p>
+                                    {% if featured.type.value == 'LIVE' and featured.liveDetails %}
+                                        <div class="mt-5 space-y-1.5 text-sm text-muted-foreground">
+                                            <p class="flex items-start gap-2"><twig:ux:icon name="lucide:calendar-days" class="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ featured.liveDetails.startsAt|format_datetime(pattern='EEEE d MMMM Y à HH:mm') }}</span></p>
+                                            <p class="flex items-start gap-2"><twig:ux:icon name="lucide:radio" class="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ featured.liveDetails.deliveryMode.label }}{% if featured.liveDetails.location %} · {{ featured.liveDetails.location }}{% endif %}</span></p>
+                                        </div>
+                                    {% endif %}
+                                    <a href="{{ path('web_trainings_detail', {slug: featured.slug}) }}" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Découvrir la formation <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/></a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endif %}
+
+                    {% if secondary is not empty %}
+                        <section class="mt-12" aria-labelledby="all-training-title">
+                            <div class="flex items-end justify-between gap-4 border-b border-border pb-4">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">À explorer</p>
+                                    <h3 id="all-training-title" class="mt-2 text-2xl font-semibold tracking-[-0.035em] text-foreground">Les autres formations</h3>
+                                </div>
+                            </div>
+                            <div class="mt-5 space-y-4">
+                                {% for training in secondary %}
+                                    {% set category = training.categoryIds|first ? categoryById[training.categoryIds|first]|default(null) : null %}
+                                    <article class="group border-b border-border pb-5 pt-1 last:border-b-0 sm:pb-6">
+                                        <div class="grid gap-5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center sm:gap-7">
+                                            <a href="{{ path('web_trainings_detail', {slug: training.slug}) }}" class="block aspect-[16/10] overflow-hidden bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset" aria-label="Découvrir {{ training.title }}">
+                                                <img src="{{ training.coverMediaId ? mediaUrls[training.coverMediaId]|default(default_image_url) : default_image_url }}" alt="Couverture de {{ training.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
+                                            </a>
+                                            <div class="min-w-0">
+                                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.13em] text-muted-foreground">
+                                                    <span class="text-primary">{{ training.type.label }}</span>
+                                                    <span class="h-px w-4 bg-border" aria-hidden="true"></span>
+                                                    <span>{{ category ? category.name : 'Formation' }}</span>
+                                                    <span class="h-px w-4 bg-border" aria-hidden="true"></span>
+                                                    <span>{{ training.accessType.label }}</span>
+                                                </div>
+                                                <h4 class="mt-2 text-2xl font-semibold leading-tight tracking-[-0.035em] text-card-foreground"><a href="{{ path('web_trainings_detail', {slug: training.slug}) }}" class="transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ training.title }}</a></h4>
+                                                <p class="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ training.summary }}</p>
+                                                {% if training.type.value == 'LIVE' and training.liveDetails %}<p class="mt-3 flex items-center gap-2 text-sm text-muted-foreground"><twig:ux:icon name="lucide:calendar-days" class="size-4 text-primary" aria-hidden="true"/>{{ training.liveDetails.startsAt|format_datetime(pattern='d MMMM Y à HH:mm') }} · {{ training.liveDetails.deliveryMode.label }}</p>{% endif %}
+                                            </div>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% elseif not featured %}
+                        <div class="border-b border-border px-6 py-20 text-center" aria-labelledby="trainings-empty-title">
+                            <twig:ux:icon name="lucide:graduation-cap" class="mx-auto size-10 text-muted-foreground" aria-hidden="true"/>
+                            <h3 id="trainings-empty-title" class="mt-4 text-lg font-semibold text-foreground">Aucune formation disponible</h3>
+                            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les prochains parcours du Barreau apparaîtront ici.</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-8"><div class="border-t border-border"></div>{% include 'shared/views/_list_pagination.html.twig' with {pager: trainings, route: 'web_trainings_list'} only %}</div>
+                </section>
+            </div>
+        </div>
+    </main>
+{% endblock %}

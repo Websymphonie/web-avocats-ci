@@ -34,9 +34,9 @@ fonctionnalité disponible dans l’interface.
 | PUB-003 | consulter les événements et leurs détails | `PLANNED` |
 | PUB-004 | consulter les vidéos éditoriales et galeries | `PLANNED` |
 | PUB-005 | consulter les documents explicitement publics | `PLANNED` |
-| PUB-006 | parcourir le catalogue des formations | `PLANNED` |
-| PUB-007 | consulter une fiche de formation ou de Live publiée | `PLANNED` |
-| PUB-008 | rechercher les contenus publics | `PLANNED` |
+| PUB-006 | parcourir le catalogue des formations | `IMPLEMENTED` — catalogue public, catégories, filtres COURSE/LIVE et accès |
+| PUB-007 | consulter une fiche de formation ou de Live publiée | `IMPLEMENTED` — détails publics, covers et données LIVE non sensibles |
+| PUB-008 | rechercher les contenus publics | `IMPLEMENTED` — recherche globale Actualités, Événements et Formations, autocomplete et accès contrôlé aux seuls contenus publiés |
 | PUB-009 | fournir une base SEO, responsive et accessible | `PLANNED` |
 
 Les exigences publiques ne donnent pas automatiquement accès aux contenus

@@ -126,6 +126,31 @@ final class EventRepository extends ServiceEntityRepository implements EventRepo
         return new EventListResult(array_map(fn (EventEntity $entity): Event => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
 
+    /** @return list<Event> */
+    public function searchPublished(string $term, int $limit): array
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return [];
+        }
+
+        $entities = $this->createQueryBuilder('event')
+            ->leftJoin('event.categories', 'category')->addSelect('category')
+            ->leftJoin('event.tags', 'tag')->addSelect('tag')
+            ->where('event.status = :status')
+            ->andWhere('event.publishedAt IS NOT NULL')
+            ->andWhere('(LOWER(event.title) LIKE LOWER(:term) OR LOWER(COALESCE(event.excerpt, \'\')) LIKE LOWER(:term))')
+            ->setParameter('status', EventStatus::PUBLISHED)
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('event.publishedAt', 'DESC')
+            ->addOrderBy('event.id', 'DESC')
+            ->setMaxResults(max(1, $limit))
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (EventEntity $entity): Event => $this->factory->fromEntity($entity), $entities);
+    }
+
     public function getPublishedBySlug(string $slug): Event
     {
         $entity = $this->createQueryBuilder('event')

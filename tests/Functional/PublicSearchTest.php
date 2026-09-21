@@ -1,0 +1,167 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Websymphonie\Tests\Functional;
+
+use DateTimeImmutable;
+use Doctrine\ORM\Tools\SchemaTool;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
+use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
+use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
+use Websymphonie\ContentContext\Domain\Enum\EventFormat;
+use Websymphonie\ContentContext\Domain\Enum\EventStatus;
+use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
+use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
+use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
+
+final class PublicSearchTest extends WebTestCase
+{
+    protected static function getKernelClass(): string
+    {
+        return Kernel::class;
+    }
+
+    public static function setUpBeforeClass(): void
+    {
+        foreach ([
+            'DATABASE_URL' => 'sqlite:///:memory:',
+            'MYSQL_VERSION' => '8.0.40',
+            'SECURE_SCHEME' => 'https',
+        ] as $name => $value) {
+            putenv($name . '=' . $value);
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
+
+        parent::setUpBeforeClass();
+    }
+
+    public function testPublicSearchReturnsPublishedNewsEventsAndPublicTrainings(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+
+        $client->request('GET', '/recherche/autocomplete?q=Droit', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('Droit', $payload['query']);
+        self::assertCount(3, $payload['results']);
+        self::assertSame(['news', 'event', 'training'], array_column($payload['results'], 'type'));
+        self::assertSame('/actualites/droit-publie', $payload['results'][0]['url']);
+        self::assertSame('/evenements/droit-evenement', $payload['results'][1]['url']);
+        self::assertSame('/formations/droit-formation', $payload['results'][2]['url']);
+        self::assertArrayNotHasKey('description', $payload['results'][0]);
+        self::assertArrayNotHasKey('joinUrl', $payload['results'][2]);
+    }
+
+    public function testPublicSearchDoesNotExposeDraftOrMemberContentAndHandlesShortTerms(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+
+        $client->request('GET', '/recherche/autocomplete?q=D', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame([], json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['results']);
+
+        $client->request('GET', '/recherche/autocomplete?q=secret', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('Brouillon secret', $content);
+        self::assertStringNotContainsString('Formation membre secrète', $content);
+    }
+
+    public function testSearchEntryPointAndDialogAreAvailableOnThePublicLayout(): void
+    {
+        $client = $this->clientWithSchema();
+
+        $client->request('GET', '/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('button[aria-label="Rechercher"][aria-controls="public-search-dialog"]');
+        self::assertSelectorExists('dialog#public-search-dialog[aria-modal="true"]');
+        self::assertSelectorTextContains('dialog#public-search-dialog', 'Actualités');
+        self::assertSelectorTextContains('dialog#public-search-dialog', 'Événements');
+        self::assertSelectorTextContains('dialog#public-search-dialog', 'Formations');
+    }
+
+    private function clientWithSchema(): \Symfony\Bundle\FrameworkBundle\KernelBrowser
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        (new SchemaTool($entityManager))->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
+
+        $entityManager->persist(new Reglages('app_title', 'Application title', 'Avocat CI', 'text'));
+        $entityManager->persist(new Reglages('app_paginate_limit', 'Pagination', '10', 'number'));
+        $entityManager->persist((new Images())->setName('app_favicon')->setLabel('Favicon'));
+        $entityManager->persist((new Currencies())->setCurrencyCode('XOF')->setCurrencyName('Franc CFA')->setRightSymbol('FCFA')->setDecimalPlace(0)->setIsActive(true));
+        $entityManager->flush();
+        $client->disableReboot();
+
+        return $client;
+    }
+
+    private function createDataset(): void
+    {
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $publishedAt = new DateTimeImmutable('-1 day');
+
+        $news = (new NewsEntity())
+            ->setTitle('Droit publié')
+            ->setSlug('droit-publie')
+            ->setExcerpt('Actualité sur le droit ivoirien.')
+            ->setBody('<p>Contenu public.</p>')
+            ->setStatus(NewsStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+        $draftNews = (new NewsEntity())
+            ->setTitle('Brouillon secret')
+            ->setSlug('brouillon-secret')
+            ->setExcerpt('Ne doit pas apparaître.')
+            ->setBody('<p>Brouillon.</p>');
+
+        $event = (new EventEntity())
+            ->setTitle('Droit événement')
+            ->setSlug('droit-evenement')
+            ->setExcerpt('Rendez-vous public sur le droit.')
+            ->setDescription('<p>Événement public.</p>')
+            ->setFormat(EventFormat::IN_PERSON)
+            ->setStartsAt(new DateTimeImmutable('+3 days'))
+            ->setVenueName('Maison du Barreau')
+            ->setAddress('Abidjan')
+            ->setStatus(EventStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+
+        $training = (new TrainingEntity(TrainingType::COURSE))
+            ->setTitle('Droit formation')
+            ->setSlug('droit-formation')
+            ->setSummary('Formation publique sur le droit.')
+            ->setDescription('<p>Contenu de formation.</p>')
+            ->setVisibility(TrainingVisibility::PUBLIC)
+            ->setAccessType(TrainingAccessType::FREE)
+            ->setStatus(TrainingStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+        $memberTraining = (new TrainingEntity(TrainingType::COURSE))
+            ->setTitle('Formation membre secrète')
+            ->setSlug('formation-membre-secrete')
+            ->setSummary('Contenu réservé.')
+            ->setDescription('<p>Privé.</p>')
+            ->setVisibility(TrainingVisibility::MEMBER)
+            ->setAccessType(TrainingAccessType::RESTRICTED)
+            ->setStatus(TrainingStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+
+        foreach ([$news, $draftNews, $event, $training, $memberTraining] as $item) {
+            $entityManager->persist($item);
+        }
+        $entityManager->flush();
+    }
+}

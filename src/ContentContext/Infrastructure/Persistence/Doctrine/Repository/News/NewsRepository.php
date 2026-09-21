@@ -166,6 +166,31 @@ final class NewsRepository extends ServiceEntityRepository implements NewsReposi
         return new NewsListResult(array_map(fn (NewsEntity $entity): News => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
 
+    /** @return list<News> */
+    public function searchPublished(string $term, int $limit): array
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return [];
+        }
+
+        $entities = $this->createQueryBuilder('news')
+            ->leftJoin('news.categories', 'category')->addSelect('category')
+            ->leftJoin('news.tags', 'tag')->addSelect('tag')
+            ->where('news.status = :status')
+            ->andWhere('news.publishedAt IS NOT NULL')
+            ->andWhere('(LOWER(news.title) LIKE LOWER(:term) OR LOWER(COALESCE(news.excerpt, \'\')) LIKE LOWER(:term))')
+            ->setParameter('status', NewsStatus::PUBLISHED)
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('news.publishedAt', 'DESC')
+            ->addOrderBy('news.id', 'DESC')
+            ->setMaxResults(max(1, $limit))
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (NewsEntity $entity): News => $this->factory->fromEntity($entity), $entities);
+    }
+
     public function getPublishedBySlug(string $slug): News
     {
         $entity = $this->createQueryBuilder('news')

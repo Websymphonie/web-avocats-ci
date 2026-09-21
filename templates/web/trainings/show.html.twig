@@ -1,0 +1,67 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}{{ training.title }}{% endblock %}
+
+{% block body %}
+    {% set heroImage = coverUrl|default(default_image_url) %}
+    {% set category = training.categoryIds|first ? categoryById[training.categoryIds|first]|default(null) : null %}
+    <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
+        <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="training-detail-title">
+            <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(216,184,120,0.24),transparent_34%),linear-gradient(120deg,#10233f_0%,#18375e_100%)]"></div>
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+                <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
+                    <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
+                    <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                    <a href="{{ path('web_trainings_list') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Formations</a>
+                    <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                    <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ training.title }}</span>
+                </nav>
+                <div class="mt-7 max-w-5xl">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#f1d59b]">
+                        <span>{{ training.type.label }}</span><span class="h-px w-5 bg-white/30" aria-hidden="true"></span><span>{{ category ? category.name : 'Formation' }}</span><span class="h-px w-5 bg-white/30" aria-hidden="true"></span><span>{{ training.accessType.label }}</span>
+                    </div>
+                    <h1 id="training-detail-title" class="mt-4 text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{{ training.title }}</h1>
+                    <p class="mt-5 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">{{ training.summary }}</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+
+                <article>
+                    <figure class="overflow-hidden border border-border bg-muted">
+                        <img src="{{ heroImage }}" alt="Couverture de {{ training.title }}" class="aspect-[2/1] w-full object-cover">
+                    </figure>
+
+                    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-16">
+                        <div>
+                            {% if training.type.value == 'LIVE' and training.liveDetails %}
+                                <section class="mb-10 border-y border-border py-6" aria-labelledby="live-details-title">
+                                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Session planifiée</p>
+                                    <h2 id="live-details-title" class="sr-only">Détails de la session</h2>
+                                    <div class="mt-4 grid gap-4 text-sm text-muted-foreground sm:grid-cols-2">
+                                        <p class="flex items-start gap-3"><twig:ux:icon name="lucide:calendar-days" class="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ training.liveDetails.startsAt|format_datetime(pattern='EEEE d MMMM Y à HH:mm') }}{% if training.liveDetails.endsAt %} — {{ training.liveDetails.endsAt|format_datetime(pattern='HH:mm') }}{% endif %}</span></p>
+                                        <p class="flex items-start gap-3"><twig:ux:icon name="lucide:radio" class="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true"/><span>{{ training.liveDetails.deliveryMode.label }}{% if training.liveDetails.location %} · {{ training.liveDetails.location }}{% endif %}</span></p>
+                                    </div>
+                                </section>
+                            {% endif %}
+                            <div class="rich-content max-w-3xl text-base leading-8 text-foreground sm:text-lg">{{ safeDescription|raw }}</div>
+                        </div>
+                        <aside class="h-fit border-t border-border pt-5 lg:border-l lg:border-t-0 lg:pl-6" aria-label="Informations sur la formation">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Accès</p>
+                            <p class="mt-3 text-sm font-medium text-card-foreground">{{ training.accessType.label }}</p>
+                            {% if training.tagIds is not empty %}
+                                <p class="mt-7 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Mots-clés</p>
+                                <div class="mt-3 flex flex-wrap gap-x-3 gap-y-2 lg:block">{% for tagId in training.tagIds %}{% if tagById[tagId] is defined %}<span class="mr-3 inline-block text-sm text-muted-foreground">#{{ tagById[tagId].name }}</span>{% endif %}{% endfor %}</div>
+                            {% endif %}
+                        </aside>
+                    </div>
+
+                    <div class="mt-12 border-t border-border pt-6"><a href="{{ path('web_trainings_list') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Toutes les formations</a></div>
+                </article>
+            </div>
+        </div>
+    </main>
+{% endblock %}

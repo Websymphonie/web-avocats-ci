@@ -27,5 +27,10 @@ interface NewsRepositoryInterface
 
     public function listPublished(int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): NewsListResult;
 
+    /**
+     * @return list<News>
+     */
+    public function searchPublished(string $term, int $limit): array;
+
     public function getPublishedBySlug(string $slug): News;
 }

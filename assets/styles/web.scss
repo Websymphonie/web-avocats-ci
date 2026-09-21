@@ -2,6 +2,30 @@ body {
   font-family: "Geist", sans-serif;
 }
 
+.public-search-dialog {
+  color-scheme: light;
+}
+
+.dark .public-search-dialog {
+  color-scheme: dark;
+}
+
+.public-search-dialog::backdrop {
+  background: color-mix(in oklab, oklch(0.08 0.02 250) 78%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.public-search-dialog input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@media (max-width: 639px) {
+  .public-search-dialog {
+    margin: 0.5rem auto;
+  }
+}
+
 .homepage-display {
   font-family: Georgia, "Times New Roman", serif;
 }

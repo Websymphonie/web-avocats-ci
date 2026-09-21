@@ -361,9 +361,10 @@ Les surfaces de présentation sont explicites et ne constituent pas de nouveaux
 Bounded Contexts :
 
 - **Public / Frontoffice** : porté par `WebContext`, accessible anonymement sur
-  les routes publiques explicitement déclarées. La page d’accueil `/` est la
-  surface publique actuellement implémentée ; les futurs contenus publics ne
-  sont pas considérés comme développés par cette formalisation.
+  les routes publiques explicitement déclarées. La homepage, les actualités,
+  les événements, le catalogue public des formations et la recherche globale
+  constituent les premières surfaces publiques livrées ; les autres contenus
+  restent soumis à leur verticale dédiée.
 - **Member Area** : portée par l’authentification et l’identité existantes,
   accessible sous `/espace` aux utilisateurs authentifiés. Cette surface ne
   crée pas de `MemberContext`.

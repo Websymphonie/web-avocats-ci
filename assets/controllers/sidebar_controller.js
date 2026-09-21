@@ -15,6 +15,7 @@ export default class extends Controller {
 
     open() {
         this.panelTarget.classList.remove('-translate-x-full');
+        this.panelTarget.classList.add('shadow-2xl');
         this.overlayTarget.classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
     }
@@ -32,6 +33,7 @@ export default class extends Controller {
         }
 
         this.panelTarget.classList.add('-translate-x-full');
+        this.panelTarget.classList.remove('shadow-2xl');
         this.overlayTarget.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }

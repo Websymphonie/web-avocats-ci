@@ -22,6 +22,7 @@ final class PageFactory
             $entity->getCreatedAt(),
             $entity->getUpdatedAt(),
             $entity->getCoverMediaId(),
+            $entity->getGroup(),
         );
     }
 
@@ -34,6 +35,7 @@ final class PageFactory
             ->setContent($page->content)
             ->setStatus($page->status)
             ->setPublishedAt($page->publishedAt)
-            ->setCoverMediaId($page->coverMediaId);
+            ->setCoverMediaId($page->coverMediaId)
+            ->setGroup($page->group);
     }
 }

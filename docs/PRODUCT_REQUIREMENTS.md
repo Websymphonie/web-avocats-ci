@@ -90,6 +90,7 @@ propriétaire.
 | CNT-005 | publier les documents et annonces | `IMPLEMENTED` — Backoffice + téléchargement contrôlé |
 | CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice + détail public `/informations/{slug}`, sans listing |
 | CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice + rendu public réutilisé, sans galerie |
+| CNT-006B | classer les Pages statiques par groupes éditoriaux | `IMPLEMENTED` — groupes facultatifs et sidebar publique dynamique |
 
 ## 7. Learning
 

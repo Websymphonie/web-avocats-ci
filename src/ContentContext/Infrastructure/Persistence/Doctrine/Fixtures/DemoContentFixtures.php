@@ -13,6 +13,7 @@ use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerIn
 use Websymphonie\ContentContext\Domain\Enum\EventFormat;
 use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EventCategory\EventCategoryEntity;
@@ -169,16 +170,16 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
     private function loadPages(ObjectManager $manager): void
     {
         $pages = [
-            ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true],
-            ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false],
-            ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true],
-            ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false],
-            ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true],
-            ['À propos du Barreau', 'a-propos', PageStatus::DRAFT, false],
+            ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL],
+            ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL],
+            ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT],
+            ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL],
+            ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL],
+            ['À propos du Barreau', 'a-propos', PageStatus::DRAFT, false, PageGroup::BAR],
         ];
         $now = new DateTimeImmutable();
 
-        foreach ($pages as $index => [$title, $slug, $status, $hasCover]) {
+        foreach ($pages as $index => [$title, $slug, $status, $hasCover, $group]) {
             $page = $manager->getRepository(PageEntity::class)->findOneBy(['slug' => $slug]);
             if (!$page instanceof PageEntity) {
                 $page = new PageEntity();
@@ -189,7 +190,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setContent($this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)))
                 ->setStatus($status)
                 ->setPublishedAt($status === PageStatus::PUBLISHED ? $now->modify(sprintf('-%d days', 15 + $index)) : null)
-                ->setCoverMediaId($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null);
+                ->setCoverMediaId($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null)
+                ->setGroup($group);
             $manager->persist($page);
             $this->addReference('demo_page_' . $slug, $page);
         }

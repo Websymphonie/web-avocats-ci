@@ -803,6 +803,11 @@ un statut `DRAFT` ou `PUBLISHED` et les dates éditoriales. Les commandes et
 queries de page restent séparées du modèle Doctrine ; le Backoffice utilise
 `HasGroupAccess(RoleGroupEnum::PAGES)` et les permissions `CONTENT_PAGE_*`.
 
+Depuis CNT-006B, une Page peut aussi porter une classification éditoriale
+nullable `PageGroup` (`LEGAL`, `BAR` ou `ACCOUNT`). Cette classification est
+persistée sans relation Doctrine supplémentaire et ne modifie aucune règle de
+publication ou d'autorisation.
+
 Depuis CNT-006A, la page peut aussi porter `coverMediaId`, une référence
 scalaire nullable vers un média public. Il n'existe aucune relation Doctrine
 cross-context ; le stockage, la validation serveur, les noms générés et les
@@ -815,7 +820,10 @@ suppression d'un média encore utilisé par une Page.
 Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`.
 Il n’existe pas de listing `/pages` ou `/informations` ; les Pages publiées de
 la famille légale exposent une sidebar contextuelle. La
-query `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
+sidebar est construite depuis le groupe de la Page et ne contient que les Pages
+du même groupe qui sont publiées avec `publishedAt` renseigné ; un groupe ne
+contenant qu'une seule Page n'affiche pas de sidebar. La query
+`FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
 de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO restitue
 la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.
 Les événements de cycle de vie réutilisent

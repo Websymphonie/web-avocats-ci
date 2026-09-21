@@ -1,8 +1,8 @@
-<aside class="h-fit lg:sticky lg:top-6" aria-label="Navigation des informations légales">
+<aside class="h-fit lg:sticky lg:top-6" aria-label="Navigation : {{ currentPage.group.label }}">
     <div class="border border-border bg-card p-6 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Informations</p>
-        <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">Informations légales</h2>
-        <nav class="mt-5" aria-label="Pages d’informations légales">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Navigation éditoriale</p>
+        <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">{{ currentPage.group.label }}</h2>
+        <nav class="mt-5" aria-label="Pages du groupe {{ currentPage.group.label }}">
             <ul class="space-y-1">
                 {% for item in pages %}
                     {% set isActive = currentPage.slug == item.slug %}

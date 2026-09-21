@@ -7,6 +7,7 @@ namespace Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Reposi
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Exception\PageNotFoundException;
 use Websymphonie\ContentContext\Domain\Model\Page;
 use Websymphonie\ContentContext\Domain\Model\PageListResult;
@@ -148,5 +149,22 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
             ->setParameter('status', PageStatus::PUBLISHED)
             ->getQuery()->getOneOrNullResult();
         return $entity instanceof PageEntity ? $this->factory->fromEntity($entity) : null;
+    }
+
+    /** @return list<Page> */
+    public function findPublishedByGroup(PageGroup $group): array
+    {
+        $entities = $this->createQueryBuilder('page')
+            ->andWhere('page.editorialGroup = :group')
+            ->andWhere('page.status = :status')
+            ->andWhere('page.publishedAt IS NOT NULL')
+            ->setParameter('group', $group)
+            ->setParameter('status', PageStatus::PUBLISHED)
+            ->orderBy('page.publishedAt', 'ASC')
+            ->addOrderBy('page.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (PageEntity $entity): Page => $this->factory->fromEntity($entity), $entities);
     }
 }

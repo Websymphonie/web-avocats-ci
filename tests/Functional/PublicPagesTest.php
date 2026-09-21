@@ -13,6 +13,7 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currenc
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
@@ -71,7 +72,7 @@ final class PublicPagesTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createPageDataset();
 
-        foreach (['politique-cookies', 'page-sans-date', 'page-inconnue'] as $slug) {
+        foreach (['politique-cookies', 'a-propos', 'page-sans-date', 'page-inconnue'] as $slug) {
             $client->request('GET', '/informations/' . $slug, server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, $slug);
         }
@@ -99,13 +100,13 @@ final class PublicPagesTest extends WebTestCase
 
         $client->request('GET', '/informations/mentions-legales', server: ['HTTPS' => 'on']);
 
-        self::assertSelectorExists('aside[aria-label="Navigation des informations légales"]');
-        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Mentions légales');
-        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Politique de confidentialité');
-        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Conditions générales d’utilisation');
-        self::assertSelectorExists('aside[aria-label="Navigation des informations légales"] a[aria-current="page"]');
-        self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation des informations légales"]')->html());
-        self::assertStringNotContainsString('/informations/politique-suppression-compte', $client->getCrawler()->filter('aside[aria-label="Navigation des informations légales"]')->html());
+        self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"]');
+        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Mentions légales');
+        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Politique de confidentialité');
+        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Conditions générales d’utilisation');
+        self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"] a[aria-current="page"]');
+        self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
+        self::assertStringNotContainsString('/informations/politique-suppression-compte', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
     }
 
     public function testAccountPageDoesNotUseTheLegalContextualNavigation(): void
@@ -116,7 +117,18 @@ final class PublicPagesTest extends WebTestCase
         $client->request('GET', '/informations/politique-suppression-compte', server: ['HTTPS' => 'on']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSelectorNotExists('aside[aria-label="Navigation des informations légales"]');
+        self::assertSelectorNotExists('aside[aria-label^="Navigation :"]');
+    }
+
+    public function testPageWithoutGroupDoesNotUseContextualNavigation(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/informations/page-sans-groupe', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorNotExists('aside[aria-label^="Navigation :"]');
     }
 
     private function clientWithSchema(): KernelBrowser
@@ -154,11 +166,16 @@ final class PublicPagesTest extends WebTestCase
         $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId());
         $confidentiality = $this->page('Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'));
         $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'));
-        $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'));
-        $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId());
+        $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'), $cover->getId(), PageGroup::ACCOUNT);
+        $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId(), PageGroup::LEGAL);
+        $barDraft = $this->page('À propos du Barreau', 'a-propos', PageStatus::DRAFT, null, null, PageGroup::BAR);
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
+        $withoutGroup = $this->page('Page sans groupe', 'page-sans-groupe', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'));
 
-        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $accountPolicy, $draft, $withoutPublicationDate] as $page) {
+        $publishedWithCover->setGroup(PageGroup::LEGAL);
+        $confidentiality->setGroup(PageGroup::LEGAL);
+        $legalNotice->setGroup(PageGroup::LEGAL);
+        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $accountPolicy, $draft, $barDraft, $withoutPublicationDate, $withoutGroup] as $page) {
             $entityManager->persist($page);
         }
         $entityManager->flush();
@@ -166,7 +183,7 @@ final class PublicPagesTest extends WebTestCase
         return [$publishedWithCover, $confidentiality];
     }
 
-    private function page(string $title, string $slug, PageStatus $status, ?DateTimeImmutable $publishedAt, ?int $coverMediaId = null): PageEntity
+    private function page(string $title, string $slug, PageStatus $status, ?DateTimeImmutable $publishedAt, ?int $coverMediaId = null, ?PageGroup $group = null): PageEntity
     {
         return (new PageEntity())
             ->setTitle($title)
@@ -174,6 +191,7 @@ final class PublicPagesTest extends WebTestCase
             ->setContent('<h2>' . $title . '</h2><p>Contenu public de la page.</p><script>alert(1)</script>')
             ->setStatus($status)
             ->setPublishedAt($publishedAt)
-            ->setCoverMediaId($coverMediaId);
+            ->setCoverMediaId($coverMediaId)
+            ->setGroup($group);
     }
 }

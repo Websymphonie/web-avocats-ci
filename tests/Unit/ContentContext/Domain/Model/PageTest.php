@@ -6,6 +6,7 @@ namespace Websymphonie\Tests\Unit\ContentContext\Domain\Model;
 
 use PHPUnit\Framework\TestCase;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Exception\InvalidPageException;
 use Websymphonie\ContentContext\Domain\Exception\InvalidPageTransitionException;
 use Websymphonie\ContentContext\Domain\Model\Page;
@@ -18,6 +19,7 @@ final class PageTest extends TestCase
         self::assertSame(PageStatus::DRAFT, $page->status);
         self::assertNull($page->publishedAt);
         self::assertNull($page->coverMediaId);
+        self::assertNull($page->group);
     }
 
     public function testCoverIsOptionalScalarReference(): void
@@ -26,6 +28,16 @@ final class PageTest extends TestCase
         self::assertSame(12, $page->coverMediaId);
         $page->setCoverMedia(null);
         self::assertNull($page->coverMediaId);
+    }
+
+    public function testEditorialGroupIsOptionalAndMutable(): void
+    {
+        $page = new Page(1, 'page-uuid', 'À propos', 'a-propos', '<p>Contenu</p>', group: PageGroup::LEGAL);
+        self::assertSame(PageGroup::LEGAL, $page->group);
+        $page->setGroup(PageGroup::BAR);
+        self::assertSame(PageGroup::BAR, $page->group);
+        $page->setGroup(null);
+        self::assertNull($page->group);
     }
 
     public function testCannotPublishWithoutContent(): void

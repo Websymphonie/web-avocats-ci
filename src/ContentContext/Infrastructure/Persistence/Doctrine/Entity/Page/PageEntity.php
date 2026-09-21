@@ -6,6 +6,7 @@ namespace Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Repository\Page\PageRepository;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\DatesTrait;
@@ -39,6 +40,9 @@ class PageEntity
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $coverMediaId = null;
 
+    #[ORM\Column(name: 'editorial_group', enumType: PageGroup::class, nullable: true)]
+    private ?PageGroup $editorialGroup = null;
+
     public function getTitle(): string { return $this->title; }
     public function setTitle(string $value): self { $this->title = $value; return $this; }
     public function getSlug(): string { return $this->slug; }
@@ -51,4 +55,6 @@ class PageEntity
     public function setPublishedAt(?DateTimeImmutable $value): self { $this->publishedAt = $value; return $this; }
     public function getCoverMediaId(): ?int { return $this->coverMediaId; }
     public function setCoverMediaId(?int $value): self { $this->coverMediaId = $value; return $this; }
+    public function getGroup(): ?PageGroup { return $this->editorialGroup; }
+    public function setGroup(?PageGroup $value): self { $this->editorialGroup = $value; return $this; }
 }

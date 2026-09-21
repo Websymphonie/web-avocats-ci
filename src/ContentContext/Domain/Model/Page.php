@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\ContentContext\Domain\Model;
 
 use DateTimeImmutable;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Domain\Exception\InvalidPageException;
 use Websymphonie\ContentContext\Domain\Exception\InvalidPageTransitionException;
@@ -22,6 +23,7 @@ final class Page
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
         public ?int $coverMediaId = null,
+        public ?PageGroup $group = null,
     ) {
         $this->assertRequiredIdentity($title, $slug);
         $this->title = trim($title);
@@ -39,6 +41,11 @@ final class Page
     public function setCoverMedia(?int $mediaId): void
     {
         $this->coverMediaId = $mediaId;
+    }
+
+    public function setGroup(?PageGroup $group): void
+    {
+        $this->group = $group;
     }
 
     public function publish(): void

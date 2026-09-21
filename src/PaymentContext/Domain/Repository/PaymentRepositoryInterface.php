@@ -19,5 +19,10 @@ interface PaymentRepositoryInterface
     public function list(int $page, int $limit, bool $pendingFulfillmentOnly = false): array;
 
     /** @return list<Payment> */
+    public function listByUser(int $userId, int $page, int $limit): array;
+
+    public function countByUser(int $userId): int;
+
+    /** @return list<Payment> */
     public function listPendingFulfillment(?string $paymentUuid = null): array;
 }

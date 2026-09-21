@@ -79,6 +79,32 @@ final class PaymentRepository extends ServiceEntityRepository implements Payment
         return array_map(fn (PaymentEntity $entity): Payment => $this->factory->fromEntity($entity), $entities);
     }
 
+    /** @return list<Payment> */
+    public function listByUser(int $userId, int $page, int $limit): array
+    {
+        $entities = $this->createQueryBuilder('payment')
+            ->andWhere('payment.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('payment.createdAt', 'DESC')
+            ->addOrderBy('payment.id', 'DESC')
+            ->setFirstResult(max(0, $page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (PaymentEntity $entity): Payment => $this->factory->fromEntity($entity), $entities);
+    }
+
+    public function countByUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder('payment')
+            ->select('COUNT(payment.id)')
+            ->andWhere('payment.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function listPendingFulfillment(?string $paymentUuid = null): array
     {
         $queryBuilder = $this->createQueryBuilder('payment')

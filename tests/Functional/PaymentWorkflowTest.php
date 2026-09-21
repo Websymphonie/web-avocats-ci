@@ -262,6 +262,49 @@ final class PaymentWorkflowTest extends WebTestCase
         self::assertResponseRedirects('/auth/login');
     }
 
+    public function testMemberCanViewOnlyOwnPaginatedPaymentHistoryWithFulfillmentStates(): void
+    {
+        $client = $this->clientWithSchema();
+        $member = $this->createUser(['ROLE_AVOCAT']);
+        $otherMember = $this->createUser(['ROLE_AVOCAT']);
+        $firstTraining = $this->createTraining(TrainingAccessType::PAID);
+        $secondTraining = $this->createTraining(TrainingAccessType::PAID);
+
+        $this->saveMemberPayment($member, $firstTraining, PaymentStatus::PENDING, null, 'member-pending', 'pending-provider-reference');
+        $this->saveMemberPayment($member, $firstTraining, PaymentStatus::CONFIRMED, PaymentFulfillmentStatus::PENDING, 'member-confirmed-pending', 'pending-fulfillment-reference');
+        $this->saveMemberPayment($member, $secondTraining, PaymentStatus::CONFIRMED, PaymentFulfillmentStatus::COMPLETED, 'member-confirmed-completed', 'completed-provider-reference');
+        $this->saveMemberPayment($member, $secondTraining, PaymentStatus::FAILED, null, 'member-failed', 'failed-provider-reference');
+        $this->saveMemberPayment($member, (new TrainingEntity())->setTitle('Unavailable reference'), PaymentStatus::PENDING, null, 'member-missing-training', 'missing-training-reference', trainingId: 999999);
+        $this->saveMemberPayment($otherMember, $secondTraining, PaymentStatus::CONFIRMED, PaymentFulfillmentStatus::COMPLETED, 'other-member-payment', 'other-provider-reference');
+
+        $client->loginUser($member);
+        $client->request('GET', '/espace/paiements', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($firstTraining->getTitle(), $content);
+        self::assertStringContainsString($secondTraining->getTitle(), $content);
+        self::assertStringContainsString('Formation indisponible', $content);
+        self::assertStringContainsString('En attente', $content);
+        self::assertStringContainsString('Échoué', $content);
+        self::assertStringContainsString('Traitement en cours', $content);
+        self::assertStringContainsString('Accès activé', $content);
+        self::assertStringContainsString('15 000 XOF', $content);
+        self::assertStringNotContainsString('other-provider-reference', $content);
+        self::assertStringNotContainsString('pending-provider-reference', $content);
+        self::assertStringNotContainsString('completed-provider-reference', $content);
+        self::assertStringContainsString('Page 1 sur 1', $content);
+    }
+
+    public function testAnonymousCannotViewMemberPaymentHistory(): void
+    {
+        $client = $this->clientWithSchema();
+
+        $client->request('GET', '/espace/paiements', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/auth/login');
+    }
+
     public function testKkiaPayWebhookRejectsInvalidSecretWithoutAuthenticationRedirect(): void
     {
         $client = $this->clientWithSchema();
@@ -454,6 +497,31 @@ final class PaymentWorkflowTest extends WebTestCase
     private function saveOffer(TrainingEntity $training, int $amount): void
     {
         $this->commandBus()->handle(new SaveTrainingOfferCommand($training->getId() ?? 0, $amount, 'XOF', true));
+    }
+
+    private function saveMemberPayment(
+        User $user,
+        TrainingEntity $training,
+        PaymentStatus $status,
+        ?PaymentFulfillmentStatus $fulfillmentStatus,
+        string $idempotencyKey,
+        string $providerReference,
+        ?int $trainingId = null,
+    ): Payment {
+        return static::getContainer()->get(PaymentRepositoryInterface::class)->save(new Payment(
+            id: 0,
+            uuid: \Symfony\Component\Uid\Uuid::v7()->toRfc4122(),
+            userId: $user->getId() ?? 0,
+            trainingId: $trainingId ?? ($training->getId() ?? 0),
+            trainingOfferId: null,
+            amount: 15000,
+            currency: 'XOF',
+            status: $status,
+            provider: PaymentProvider::FAKE,
+            providerReference: $providerReference,
+            idempotencyKey: $idempotencyKey,
+            fulfillmentStatus: $fulfillmentStatus,
+        ));
     }
 
     private function createUser(array $roles): User

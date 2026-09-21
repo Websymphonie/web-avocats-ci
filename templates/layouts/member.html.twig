@@ -51,6 +51,11 @@
                     <twig:ux:icon name="lucide:graduation-cap" class="size-[18px] shrink-0" aria-hidden="true"/>
                     <span>Mes formations</span>
                 </a>
+                <a href="{{ path('payment_member_list') }}"
+                   class="group flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-[#d8b878] {{ currentRoute starts with 'payment_member_' ? 'bg-white/12 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                    <twig:ux:icon name="lucide:receipt-text" class="size-[18px] shrink-0" aria-hidden="true"/>
+                    <span>Paiements</span>
+                </a>
                 <a href="{{ path('member_notifications_index') }}"
                    class="group relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-[#d8b878] {{ currentRoute starts with 'member_notifications_' ? 'bg-white/12 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                     <twig:ux:icon name="lucide:bell" class="size-[18px] shrink-0" aria-hidden="true"/>

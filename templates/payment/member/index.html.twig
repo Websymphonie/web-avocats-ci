@@ -1,0 +1,96 @@
+{% extends 'layouts/member.html.twig' %}
+
+{% block title %}Mes paiements{% endblock %}
+{% block member_page_title %}Mes paiements{% endblock %}
+
+{% block body %}
+    <div class="space-y-8">
+        <section class="flex flex-col justify-between gap-5 border-b border-border pb-7 sm:flex-row sm:items-end">
+            <div>
+                <p class="mb-2 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#a77d2e] dark:text-[#e0bf7d]">
+                    <span class="h-px w-7 bg-[#c49b52] dark:bg-[#d8b878]"></span>
+                    Espace avocat
+                </p>
+                <h1 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Mes paiements</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Retrouvez l’historique de vos paiements de formation et l’état d’activation de vos accès.</p>
+            </div>
+            <span class="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                <twig:ux:icon name="lucide:receipt" class="size-4" aria-hidden="true"/>
+                {{ payments.total }} paiement{{ payments.total > 1 ? 's' : '' }}
+            </span>
+        </section>
+
+        {% if payments.items is empty %}
+            <section class="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center" aria-labelledby="empty-payments-title">
+                <span class="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <twig:ux:icon name="lucide:receipt-text" class="size-7" aria-hidden="true"/>
+                </span>
+                <h2 id="empty-payments-title" class="mt-5 text-lg font-semibold text-card-foreground">Vous n’avez encore effectué aucun paiement.</h2>
+                <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-muted-foreground">Vos paiements de formation apparaîtront ici dès qu’une transaction aura été initiée.</p>
+            </section>
+        {% else %}
+            <section class="space-y-4" aria-labelledby="payments-list-title">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Historique</p>
+                        <h2 id="payments-list-title" class="mt-1 text-xl font-semibold tracking-tight text-foreground">Vos transactions</h2>
+                    </div>
+                    <span class="text-sm text-muted-foreground">Page {{ payments.page }} sur {{ payments.pageCount() }}</span>
+                </div>
+
+                <div class="space-y-4">
+                    {% for payment in payments.items %}
+                        <article class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div class="flex min-w-0 items-start gap-3">
+                                    <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                        <twig:ux:icon name="lucide:receipt-text" class="size-5" aria-hidden="true"/>
+                                    </span>
+                                    <div class="min-w-0">
+                                        <h3 class="truncate text-base font-semibold text-card-foreground">{{ payment.trainingTitle }}</h3>
+                                        <p class="mt-1 text-sm text-muted-foreground">{{ payment.createdAt ? payment.createdAt|format_datetime('long', 'short', locale='fr_FR') : 'Date indisponible' }}</p>
+                                    </div>
+                                </div>
+                                <twig:Badge variant="{{ payment.paymentStatusVariant }}">{{ payment.paymentStatusLabel }}</twig:Badge>
+                            </div>
+
+                            <dl class="mt-5 grid gap-4 border-t border-border pt-5 sm:grid-cols-3">
+                                <div>
+                                    <dt class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Montant</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-card-foreground">{{ payment.amount|number_format(0, ',', ' ') }} {{ payment.currency }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Paiement</dt>
+                                    <dd class="mt-2"><twig:Badge variant="{{ payment.paymentStatusVariant }}">{{ payment.paymentStatusLabel }}</twig:Badge></dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Accès</dt>
+                                    <dd class="mt-2"><twig:Badge variant="{{ payment.accessStatusVariant }}">{{ payment.accessStatusLabel }}</twig:Badge></dd>
+                                </div>
+                            </dl>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if payments.pageCount() > 1 %}
+                <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination des paiements">
+                    {% if payments.hasPreviousPage() %}
+                        <a href="{{ path('payment_member_list', {page: payments.page - 1}) }}" class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>
+                            Précédent
+                        </a>
+                    {% else %}
+                        <span></span>
+                    {% endif %}
+                    {% if payments.hasNextPage() %}
+                        <a href="{{ path('payment_member_list', {page: payments.page + 1}) }}" class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            Suivant
+                            <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                        </a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

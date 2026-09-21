@@ -211,6 +211,116 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('Formation terminée', (string) $client->getResponse()->getContent());
     }
 
+    public function testAvocatCanOpenCoursePlayerAndResumeFirstIncompleteLesson(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $completedLesson = $this->createCourseLesson($course, 1);
+        $activeLesson = $this->createCourseLesson($course, 2);
+        $enrollment = $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $progress = (new LessonProgressEntity())
+            ->setEnrollmentId($enrollment->getId() ?? 0)
+            ->setLessonId($completedLesson->getId() ?? 0)
+            ->setStatus(\Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus::COMPLETED)
+            ->setStartedAt(new DateTimeImmutable('-1 hour'))
+            ->setLastAccessedAt(new DateTimeImmutable('-10 minutes'))
+            ->setCompletedAt(new DateTimeImmutable('-10 minutes'));
+        $this->entityManager()->persist($progress);
+        $this->entityManager()->flush();
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($course->getTitle(), $content);
+        self::assertStringContainsString($activeLesson->getTitle(), $content);
+        self::assertStringContainsString('50 %', $content);
+        self::assertStringContainsString('/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $activeLesson->getUuidAsString(), $content);
+        self::assertStringNotContainsString('meet.example.test', $content);
+    }
+
+    public function testCoursePlayerDisplaysResourcesThroughProtectedDownloadRoute(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        [$resource] = $this->createResource($course, false);
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Support', $content);
+        self::assertStringContainsString('/espace/learning/resources/' . $resource->getUuidAsString() . '/download', $content);
+        self::assertStringNotContainsString('private/learning/resources/', $content);
+    }
+
+    public function testCoursePlayerDeniesOtherUserRoleUserAndLive(): void
+    {
+        $client = $this->clientWithSchema();
+        $owner = $this->createUser(['ROLE_AVOCAT']);
+        $otherAvocat = $this->createUser(['ROLE_AVOCAT']);
+        $roleUser = $this->createUser(['ROLE_USER']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $this->createCourseLesson($course, 1);
+        $this->createEnrollment($course, $owner, EnrollmentStatus::ACTIVE);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $this->createCourseLesson($live, 1);
+        $this->createEnrollment($live, $owner, EnrollmentStatus::ACTIVE);
+        $client->disableReboot();
+
+        foreach ([$otherAvocat, $roleUser] as $user) {
+            $client->loginUser($user);
+            $client->request('GET', '/espace/formations/' . $course->getUuidAsString(), server: ['HTTPS' => 'on']);
+            self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        }
+
+        $client->loginUser($owner);
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString(), server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testCoursePlayerProgressActionsAreCsrfProtectedAndReturnToPlayer(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($course, 1);
+        $enrollment = $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+        $client->disableReboot();
+        $playerUrl = '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lesson->getUuidAsString();
+
+        $client->request('POST', '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/start', [
+            '_token' => 'invalid',
+            '_return_to' => $playerUrl,
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $client->request('POST', '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/start', [
+            '_token' => $this->csrfToken($client, 'learning_member_lesson_start_' . $lesson->getUuidAsString()),
+            '_return_to' => $playerUrl,
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects($playerUrl);
+
+        $client->request('POST', '/espace/learning/lessons/' . $lesson->getUuidAsString() . '/complete', [
+            '_token' => $this->csrfToken($client, 'learning_member_lesson_complete_' . $lesson->getUuidAsString()),
+            '_return_to' => $playerUrl,
+        ], server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects($playerUrl);
+
+        $progress = $this->entityManager()->getRepository(LessonProgressEntity::class)->findOneBy([
+            'enrollmentId' => $enrollment->getId(),
+            'lessonId' => $lesson->getId(),
+        ]);
+        self::assertInstanceOf(LessonProgressEntity::class, $progress);
+        self::assertSame('COMPLETED', $progress->getStatus()->value);
+    }
+
     public function testFreeSelfEnrollmentIsSuccessfulAndIdempotent(): void
     {
         $client = $this->clientWithSchema();

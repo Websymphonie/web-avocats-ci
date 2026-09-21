@@ -74,6 +74,28 @@ final class LessonRepository extends ServiceEntityRepository implements LessonRe
         return array_map(fn (LessonEntity $entity): Lesson => $this->factory->fromEntity($entity), $entities);
     }
 
+    /** @return list<Lesson> */
+    public function listByTraining(int $trainingId): array
+    {
+        $ids = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT lesson.id
+             FROM lesson
+             INNER JOIN course_module module ON module.id = lesson.module_id
+             WHERE module.training_id = :trainingId
+             ORDER BY module.position ASC, module.id ASC, lesson.position ASC, lesson.id ASC',
+            ['trainingId' => $trainingId],
+        )->fetchFirstColumn();
+        if ($ids === []) { return []; }
+
+        $entitiesById = [];
+        foreach ($this->findBy(['id' => array_map('intval', $ids)]) as $entity) {
+            $entitiesById[$entity->getId()] = $entity;
+        }
+        $entities = array_values(array_filter(array_map(static fn (string|int $id): ?LessonEntity => $entitiesById[(int) $id] ?? null, $ids)));
+
+        return array_map(fn (LessonEntity $entity): Lesson => $this->factory->fromEntity($entity), $entities);
+    }
+
     /** @param list<int> $lessonIds */
     public function reorder(int $moduleId, array $lessonIds): void
     {

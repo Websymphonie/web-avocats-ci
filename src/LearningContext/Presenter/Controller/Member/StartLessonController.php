@@ -42,6 +42,16 @@ final class StartLessonController extends AbstractController
         } catch (UserFacingError $exception) {
             $this->flash()->errorFromException($exception);
         }
+        return $this->redirectAfterLessonAction($request);
+    }
+
+    private function redirectAfterLessonAction(Request $request): Response
+    {
+        $returnTo = (string) $request->request->get('_return_to', '');
+        if (preg_match('#^/espace/formations/[^/?]+(?:/lecons/[^/?]+)?$#', $returnTo) === 1) {
+            return $this->redirect($returnTo);
+        }
+
         return $this->redirectToRoute('app_member');
     }
 }

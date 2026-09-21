@@ -69,7 +69,11 @@ final class LessonResourceRepository extends ServiceEntityRepository implements 
     public function listByLesson(int $lessonId): array
     {
         $entities = $this->createQueryBuilder('resource')->where('resource.lessonId = :lessonId')->setParameter('lessonId', $lessonId)->orderBy('resource.position', 'ASC')->addOrderBy('resource.id', 'ASC')->getQuery()->getResult();
-        return array_map(fn (LessonResourceEntity $entity): LessonResource => $this->factory->fromEntity($entity, $this->files->getById($entity->getStoredFileId())), $entities);
+        $files = $this->files->findByIds(array_values(array_unique(array_map(static fn (LessonResourceEntity $entity): int => $entity->getStoredFileId(), $entities))));
+        $filesById = [];
+        foreach ($files as $file) { $filesById[$file->id] = $file; }
+
+        return array_map(fn (LessonResourceEntity $entity): LessonResource => $this->factory->fromEntity($entity, $filesById[$entity->getStoredFileId()] ?? null), $entities);
     }
 
     /** @param list<int> $resourceIds */

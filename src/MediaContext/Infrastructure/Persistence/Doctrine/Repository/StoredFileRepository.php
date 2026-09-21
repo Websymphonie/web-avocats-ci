@@ -33,6 +33,23 @@ final class StoredFileRepository extends ServiceEntityRepository implements Stor
         if (!$entity instanceof StoredFileEntity) { throw new StoredFileNotFoundException(sprintf('Le fichier #%d est introuvable.', $id)); }
         return $this->factory->fromEntity($entity);
     }
+
+    /**
+     * @param list<int> $ids
+     * @return list<StoredFile>
+     */
+    public function findByIds(array $ids): array
+    {
+        if ($ids === []) { return []; }
+
+        $entities = $this->createQueryBuilder('file')
+            ->andWhere('file.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (StoredFileEntity $entity): StoredFile => $this->factory->fromEntity($entity), $entities);
+    }
     public function delete(StoredFile $file): void
     {
         $entity = $this->find($file->id);

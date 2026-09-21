@@ -17,6 +17,9 @@ interface LessonRepositoryInterface
     /** @return list<Lesson> */
     public function listByModule(int $moduleId): array;
 
+    /** @return list<Lesson> */
+    public function listByTraining(int $trainingId): array;
+
     /** @param list<int> $lessonIds */
     public function reorder(int $moduleId, array $lessonIds): void;
 

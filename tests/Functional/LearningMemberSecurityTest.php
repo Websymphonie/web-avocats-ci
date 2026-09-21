@@ -141,6 +141,71 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
     }
 
+    public function testAvocatDashboardPrioritizesInProgressCourseAndExcludesOtherUsers(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $otherUser = $this->createUser(['ROLE_AVOCAT']);
+
+        $notStarted = $this->createTraining(TrainingAccessType::FREE);
+        $inProgress = $this->createTraining(TrainingAccessType::FREE);
+        $completed = $this->createTraining(TrainingAccessType::FREE);
+        $otherCourse = $this->createTraining(TrainingAccessType::FREE);
+
+        $notStartedLesson = $this->createCourseLesson($notStarted, 1);
+        $inProgressLessons = [];
+        for ($position = 1; $position <= 9; ++$position) {
+            $inProgressLessons[] = $this->createCourseLesson($inProgress, $position);
+        }
+        $completedLesson = $this->createCourseLesson($completed, 1);
+        $otherLesson = $this->createCourseLesson($otherCourse, 1);
+
+        $this->createEnrollment($notStarted, $avocat, EnrollmentStatus::ACTIVE);
+        $inProgressEnrollment = $this->createEnrollment($inProgress, $avocat, EnrollmentStatus::ACTIVE);
+        $completedEnrollment = $this->createEnrollment($completed, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($otherCourse, $otherUser, EnrollmentStatus::ACTIVE);
+
+        foreach (array_slice($inProgressLessons, 0, 4) as $lesson) {
+            $this->markLessonCompleted($inProgressEnrollment, $lesson);
+        }
+        $this->markLessonCompleted($completedEnrollment, $completedLesson);
+        $this->entityManager()->flush();
+
+        $client->loginUser($avocat);
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($inProgress->getTitle(), $content);
+        self::assertStringContainsString('44 %', $content);
+        self::assertStringContainsString('Continuer', $content);
+        self::assertStringContainsString('/espace/formations/' . $inProgress->getUuidAsString(), $content);
+        self::assertStringNotContainsString($notStarted->getTitle(), $content);
+        self::assertStringNotContainsString($completed->getTitle(), $content);
+        self::assertStringNotContainsString($otherCourse->getTitle(), $content);
+        self::assertStringNotContainsString((string) $notStartedLesson->getTitle(), $content);
+        self::assertStringNotContainsString((string) $otherLesson->getTitle(), $content);
+    }
+
+    public function testAvocatDashboardFallsBackToNotStartedCourse(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $this->createCourseLesson($course, 1);
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($course->getTitle(), $content);
+        self::assertStringContainsString('0 %', $content);
+        self::assertStringContainsString('Commencer', $content);
+        self::assertStringContainsString('/espace/formations/' . $course->getUuidAsString(), $content);
+    }
+
     public function testRoleUserDashboardDoesNotExposeUpcomingLives(): void
     {
         $client = $this->clientWithSchema();
@@ -168,7 +233,9 @@ final class LearningMemberSecurityTest extends WebTestCase
         $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Aucun rendez-vous à afficher', (string) $client->getResponse()->getContent());
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Aucun rendez-vous à afficher', $content);
+        self::assertStringContainsString('Votre parcours apparaîtra ici', $content);
     }
 
     public function testRoleUserWithActiveEnrollmentSeesEmptyMemberTrainingState(): void
@@ -239,6 +306,30 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('50 %', $content);
         self::assertStringContainsString('/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $activeLesson->getUuidAsString(), $content);
         self::assertStringNotContainsString('meet.example.test', $content);
+        self::assertStringNotContainsString('youtube-nocookie.com', $content);
+    }
+
+    public function testAvocatCanRenderAYouTubeLessonInTheProtectedCoursePlayer(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($course, 1)
+            ->setVideoProvider('YOUTUBE')
+            ->setVideoUrl('https://www.youtube.com/watch?v=M7lc1UVf-VE')
+            ->setExternalVideoId('M7lc1UVf-VE');
+        $this->entityManager()->flush();
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lesson->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+        self::assertStringContainsString('title="Vidéo de la leçon ' . $lesson->getTitle() . '"', $content);
+        self::assertStringContainsString('allowfullscreen', $content);
+        self::assertStringNotContainsString('autoplay=1', $content);
     }
 
     public function testAvocatCanOpenOwnLiveDetailsWithoutExposingJoinUrl(): void
@@ -913,6 +1004,18 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->persist($enrollment);
         $this->entityManager()->flush();
         return $enrollment;
+    }
+
+    private function markLessonCompleted(EnrollmentEntity $enrollment, LessonEntity $lesson): void
+    {
+        $progress = (new LessonProgressEntity())
+            ->setEnrollmentId($enrollment->getId() ?? 0)
+            ->setLessonId($lesson->getId() ?? 0)
+            ->setStatus(\Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus::COMPLETED)
+            ->setStartedAt(new DateTimeImmutable('-1 hour'))
+            ->setLastAccessedAt(new DateTimeImmutable('-10 minutes'))
+            ->setCompletedAt(new DateTimeImmutable('-10 minutes'));
+        $this->entityManager()->persist($progress);
     }
 
     private function csrfToken(KernelBrowser $client, string $id): string

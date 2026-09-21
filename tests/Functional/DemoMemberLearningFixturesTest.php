@@ -15,7 +15,9 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currenc
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
 use Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\CourseModule\CourseModuleEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Enrollment\EnrollmentEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Lesson\LessonEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LessonProgress\LessonProgressEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails\LiveTrainingDetailsEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
@@ -123,6 +125,19 @@ final class DemoMemberLearningFixturesTest extends WebTestCase
         );
         self::assertCount(0, $this->progressFor($entityManager, $live01Enrollment));
         self::assertCount(0, $this->progressFor($entityManager, $live02Enrollment));
+        $course02Module = $entityManager->getRepository(CourseModuleEntity::class)->findOneBy([
+            'trainingId' => $course02->getId(),
+            'position' => 1,
+        ]);
+        self::assertInstanceOf(CourseModuleEntity::class, $course02Module);
+        $youtubeLesson = $entityManager->getRepository(LessonEntity::class)->findOneBy([
+            'moduleId' => $course02Module->getId(),
+            'position' => 1,
+        ]);
+        self::assertInstanceOf(LessonEntity::class, $youtubeLesson);
+        self::assertSame('YOUTUBE', $youtubeLesson->getVideoProvider());
+        self::assertSame('M7lc1UVf-VE', $youtubeLesson->getExternalVideoId());
+        self::assertSame('https://www.youtube.com/watch?v=M7lc1UVf-VE', $youtubeLesson->getVideoUrl());
         $liveDetails = $entityManager->getRepository(LiveTrainingDetailsEntity::class)->findOneBy([
             'trainingId' => $live01->getId(),
         ]);

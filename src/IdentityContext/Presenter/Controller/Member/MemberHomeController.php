@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetMemberTrainingSummariesQuery;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Domain\Model\MemberTrainingSummary;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -27,8 +28,9 @@ final class MemberHomeController extends AbstractController
         }
 
         $now = new DateTimeImmutable();
+        $summaries = $this->handleQuery(new GetMemberTrainingSummariesQuery($user->id));
         $upcomingLives = array_values(array_filter(
-            $this->handleQuery(new GetMemberTrainingSummariesQuery($user->id)),
+            $summaries,
             static fn ($summary): bool => $summary->training->type === TrainingType::LIVE
                 && $summary->training->liveDetails !== null
                 && $summary->training->liveDetails->startsAt > $now,
@@ -38,15 +40,37 @@ final class MemberHomeController extends AbstractController
             static fn ($left, $right): int => $left->training->liveDetails->startsAt <=> $right->training->liveDetails->startsAt,
         );
         $upcomingLives = array_slice($upcomingLives, 0, 3);
-        $mediaIds = array_values(array_filter(array_map(
-            static fn ($summary): ?int => $summary->training->coverMediaId,
-            $upcomingLives,
-        )));
+        $inProgressCourses = array_values(array_filter(
+            $summaries,
+            static fn (MemberTrainingSummary $summary): bool => $summary->training->type === TrainingType::COURSE
+                && $summary->progress !== null
+                && $summary->progress->progressPercentage > 0
+                && $summary->progress->progressPercentage < 100,
+        ));
+        $notStartedCourses = array_values(array_filter(
+            $summaries,
+            static fn (MemberTrainingSummary $summary): bool => $summary->training->type === TrainingType::COURSE
+                && $summary->progress !== null
+                && $summary->progress->progressPercentage === 0,
+        ));
+        $continuationCourse = $inProgressCourses[0] ?? $notStartedCourses[0] ?? null;
+
+        $mediaIds = [];
+        foreach (array_merge($upcomingLives, $continuationCourse !== null ? [$continuationCourse] : []) as $summary) {
+            if ($summary->training->coverMediaId !== null) {
+                $mediaIds[] = $summary->training->coverMediaId;
+            }
+        }
+        $coverUrls = $this->mediaUrls->resolveMany(array_values(array_unique($mediaIds)));
 
         return $this->render('member/home/index.html.twig', [
             'title' => 'Tableau de bord',
             'upcomingLives' => $upcomingLives,
-            'liveCoverUrls' => $this->mediaUrls->resolveMany($mediaIds),
+            'liveCoverUrls' => $coverUrls,
+            'continuationCourse' => $continuationCourse,
+            'continuationCoverUrl' => $continuationCourse !== null && $continuationCourse->training->coverMediaId !== null
+                ? ($coverUrls[$continuationCourse->training->coverMediaId] ?? null)
+                : null,
         ]);
     }
 }

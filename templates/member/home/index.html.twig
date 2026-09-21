@@ -114,15 +114,54 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Apprentissage</p>
                         <h2 class="mt-1.5 text-xl font-semibold tracking-tight text-card-foreground">Continuer ma formation</h2>
                     </div>
-                    <span class="hidden rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground sm:inline-flex">À venir</span>
+                    <span class="hidden rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground sm:inline-flex">{{ continuationCourse ? (continuationCourse.progress.progressPercentage > 0 ? 'En cours' : 'À commencer') : 'À venir' }}</span>
                 </div>
-                <div class="flex min-h-52 flex-col items-center justify-center px-6 py-10 text-center">
-                    <span class="flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-                        <twig:ux:icon name="lucide:book-open" class="size-6" aria-hidden="true"/>
-                    </span>
-                    <h3 class="mt-4 text-base font-semibold text-card-foreground">Votre parcours apparaîtra ici</h3>
-                    <p class="mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les formations auxquelles vous aurez accès, votre progression et votre prochaine leçon seront regroupées dans cet espace.</p>
-                </div>
+                {% if continuationCourse %}
+                    {% set course = continuationCourse.training %}
+                    {% set progress = continuationCourse.progress %}
+                    {% set progressPercentage = progress ? progress.progressPercentage : 0 %}
+                    <div class="grid gap-5 p-5 sm:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] sm:p-6">
+                        <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted sm:aspect-auto sm:min-h-36">
+                            <img src="{{ continuationCoverUrl|default(default_image_url) }}" alt="" class="size-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#10233f]/65 via-transparent to-transparent" aria-hidden="true"></div>
+                            <span class="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                                <twig:ux:icon name="lucide:book-open" class="size-3.5" aria-hidden="true"/>
+                                Course
+                            </span>
+                        </div>
+                        <div class="flex min-w-0 flex-col justify-center">
+                            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                {{ progressPercentage > 0 ? 'En cours' : 'À commencer' }}
+                            </p>
+                            <h3 class="mt-1.5 line-clamp-2 text-lg font-semibold leading-6 text-card-foreground">{{ course.title }}</h3>
+                            <div class="mt-4">
+                                <div class="mb-2 flex items-center justify-between gap-3 text-xs font-medium">
+                                    <span class="text-muted-foreground">Progression</span>
+                                    <span class="text-card-foreground">{{ progressPercentage }} %{% if progress and progress.totalLessons > 0 %} · {{ progress.completedLessons }}/{{ progress.totalLessons }} leçons{% endif %}</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-full bg-muted" role="progressbar" aria-label="Progression de {{ course.title }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progressPercentage }}">
+                                    <div class="h-full rounded-full bg-primary transition-all" style="width: {{ progressPercentage }}%"></div>
+                                </div>
+                            </div>
+                            <a href="{{ path('learning_member_course_player', {uuid: course.uuid}) }}" class="mt-5 inline-flex min-h-10 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                {{ progressPercentage > 0 ? 'Continuer' : 'Commencer' }}
+                                <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex min-h-52 flex-col items-center justify-center px-6 py-10 text-center">
+                        <span class="flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+                            <twig:ux:icon name="lucide:book-open" class="size-6" aria-hidden="true"/>
+                        </span>
+                        <h3 class="mt-4 text-base font-semibold text-card-foreground">Votre parcours apparaîtra ici</h3>
+                        <p class="mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les formations auxquelles vous aurez accès, votre progression et votre prochaine leçon seront regroupées dans cet espace.</p>
+                        <a href="{{ path('learning_member_training_list') }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            Voir mes formations
+                            <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                        </a>
+                    </div>
+                {% endif %}
             </article>
 
             <article class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">

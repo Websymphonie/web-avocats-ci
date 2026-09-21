@@ -10,6 +10,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
+use Websymphonie\LearningContext\Domain\Enum\LearningVideoProvider;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -27,6 +28,8 @@ use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\Train
 
 final class DemoLearningFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
+    private const DEMO_YOUTUBE_VIDEO_ID = 'M7lc1UVf-VE';
+
     public function __construct(
         private readonly CurrencyCatalogInterface $currencies,
     ) {
@@ -161,6 +164,12 @@ final class DemoLearningFixtures extends Fixture implements FixtureGroupInterfac
                         ->setSummary('Leçon de démonstration avec contenu riche.')
                         ->setContent(sprintf('<h2>Objectif de la leçon</h2><p>Cette leçon fictive accompagne le module %d et sert à vérifier la lecture du contenu pédagogique.</p><ul><li>Notion clé à retenir.</li><li>Exemple d’application en cabinet.</li></ul>', $modulePosition))
                         ->setPosition($lessonPosition);
+                    if ($trainingIndex === 1 && $modulePosition === 1 && $lessonPosition === 1) {
+                        $lesson
+                            ->setVideoProvider(LearningVideoProvider::YOUTUBE->value)
+                            ->setVideoUrl('https://www.youtube.com/watch?v=' . self::DEMO_YOUTUBE_VIDEO_ID)
+                            ->setExternalVideoId(self::DEMO_YOUTUBE_VIDEO_ID);
+                    }
                     $manager->persist($lesson);
                 }
             }

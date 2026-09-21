@@ -81,15 +81,7 @@
             <form id="user-bulk-delete" method="post" action="{{ path('app_users_bulk_delete') }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete_users') }}">
             </form>
-            <twig:BulkSelection
-                id="user-selection"
-                inputName="ids[]"
-                inputForm="user-bulk-delete"
-                selectionLabelSingular="utilisateur"
-                selectionLabelPlural="utilisateurs"
-                confirmationTemplate="Supprimer {count} utilisateur(s) ?"
-                confirmationDescriptionTemplate="{count} utilisateur(s) seront retirés de la liste active. Une restauration n’est pas proposée dans cette interface."
-            >
+            {% component 'BulkSelection' with { id: 'user-selection', inputName: 'ids[]', inputForm: 'user-bulk-delete', selectionLabelSingular: 'utilisateur', selectionLabelPlural: 'utilisateurs', confirmationTemplate: 'Supprimer {count} utilisateur(s) ?', confirmationDescriptionTemplate: '{count} utilisateur(s) seront retirés de la liste active. Une restauration n’est pas proposée dans cette interface.' } %}
                     {% block actions %}
                         {% if is_granted('ROLE_DELETE') %}
                             {{ component('BulkDeleteUsers', {formId: 'user-bulk-delete'}) }}
@@ -218,7 +210,7 @@
                             {% include 'shared/views/_list_pagination.html.twig' with {pager: users, route: 'app_user_index'} only %}
                         </section>
                     {% endblock %}
-            </twig:BulkSelection>
+            {% endcomponent %}
         </div>
     </main>
 {% endblock %}

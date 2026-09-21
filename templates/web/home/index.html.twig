@@ -2,8 +2,185 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block web_header %}{% endblock %}
+
+{% block web_footer %}{% endblock %}
+
+{% set homepageEvents = [
+    {slug: 'rentree-solennelle-du-barreau', date: '18/09', format: 'Présentiel', title: 'Rentrée solennelle du Barreau', image: 'images/events/rentree-solennelle.webp'},
+    {slug: 'conference-evolutions-du-droit', date: '26/09', format: 'Hybride', title: 'Conférence sur les évolutions du droit', image: 'images/events/conference-droit.webp'},
+    {slug: 'justice-numerique', date: '04/10', format: 'En ligne', title: 'Regards croisés sur la justice numérique', image: 'images/events/justice-numerique.webp'},
+    {slug: 'atelier-pratique-avocats', date: '12/10', format: 'Présentiel', title: 'Atelier pratique pour les avocats', image: 'images/events/atelier-avocats.webp'},
+    {slug: 'rencontre-professionnelle-barreau', date: '21/10', format: 'Hybride', title: 'Rencontre professionnelle du Barreau', image: 'images/events/rencontre-barreau.webp'}
+] %}
+
+{% set homepageNews = [
+    {slug: 'barreau-evolutions-justice', date: '12/09', format: 'Institution', title: 'Le Barreau au cœur des évolutions de la justice', image: 'images/news-editorial.webp'},
+    {slug: 'rencontre-professionnelle', date: '08/09', format: 'Profession', title: 'Une rencontre pour faire avancer la profession', image: 'images/news-barreau.webp'},
+    {slug: 'nouvelle-procedure-civile', date: '02/09', format: 'Droit', title: 'Les nouvelles pratiques de la procédure civile', image: 'images/news-procedure.webp'},
+    {slug: 'justice-et-transformation-numerique', date: '28/08', format: 'Innovation', title: 'Justice et transformation numérique : les enjeux', image: 'images/news-justice.webp'},
+    {slug: 'barreau-engagements', date: '21/08', format: 'Engagement', title: 'Les engagements du Barreau auprès de la communauté', image: 'images/news-community.webp'}
+] %}
+
 {% block body %}
-    <h1>Page d'accueil</h1>
-    <p>{{ 500000|price }}</p>
-    <p>{{ 500000|amountToLetter }}</p>
+    <main class="h-svh overflow-hidden bg-[#10233f] text-[#f7f4ee]" data-controller="pointer-wave">
+        <section class="relative isolate h-full overflow-hidden">
+            <div class="homepage-visual absolute inset-[-2%] opacity-95" style="--homepage-hero-image: url('{{ asset('images/avocat-ci-hero-library.webp') }}')" aria-hidden="true"></div>
+            <div class="homepage-orbit absolute -right-40 -top-48 size-[32rem] rounded-full border border-[#c7a263]/25" aria-hidden="true"></div>
+            <div class="homepage-orbit absolute -right-16 -top-24 size-[22rem] rounded-full border border-[#c7a263]/20 [animation-delay:500ms]" aria-hidden="true"></div>
+            <div class="homepage-display pointer-events-none absolute -bottom-20 left-1/3 text-[22rem] leading-none text-white/[0.025]" aria-hidden="true">A</div>
+
+            <div class="relative mx-auto flex h-full max-w-[96rem] flex-col px-5 py-5 sm:px-8 sm:py-6 lg:px-10 lg:py-7">
+                <div class="homepage-reveal flex shrink-0 items-center justify-between border-b border-white/15 pb-4">
+                    <a href="{{ path('app_home') }}" class="group inline-flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f]" aria-label="Accueil Avocat CI">
+                        <span class="flex size-10 items-center justify-center border border-[#d8b878]/70 text-xs font-semibold tracking-[0.16em] text-[#f1d59b] sm:size-11 sm:text-sm">AC</span>
+                        <span class="hidden text-xs font-medium uppercase tracking-[0.24em] text-white/70 sm:inline">Avocat CI</span>
+                    </a>
+
+                    <div class="flex items-center gap-3 text-right sm:gap-4">
+                        <span class="hidden text-[0.65rem] font-medium uppercase tracking-[0.22em] text-white/45 md:inline">Ordre professionnel</span>
+                        <a href="{{ path('app_login') }}" class="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/20 px-3.5 text-xs font-medium text-white transition hover:border-[#d8b878] hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:min-h-10 sm:px-4">
+                            Espace avocat
+                            <twig:ux:icon name="lucide:arrow-up-right" class="size-3.5" aria-hidden="true"/>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid min-h-0 flex-1 gap-4 py-6 lg:grid-cols-[minmax(18rem,0.78fr)_minmax(34rem,1.22fr)] lg:items-center lg:gap-12 lg:py-12">
+                    <div class="homepage-reveal homepage-hero-copy flex shrink-0 flex-col justify-center lg:max-w-xl">
+                        <p class="mb-4 flex items-center gap-3 text-[0.65rem] font-medium uppercase tracking-[0.24em] text-[#e0bf7d] sm:mb-5 sm:text-xs">
+                            <span class="h-px w-8 bg-[#e0bf7d] sm:w-10"></span>
+                            Le Barreau de Côte d'Ivoire
+                        </p>
+                        <h1 class="homepage-display max-w-xl text-[2.8rem] leading-[0.94] tracking-[-0.045em] text-balance sm:text-6xl lg:text-[4.8rem] xl:text-[5.5rem]">
+                            Le droit,<br><span class="text-[#d8b878]">une présence.</span>
+                        </h1>
+                        <p class="mt-4 max-w-md text-sm leading-6 text-white/70 sm:mt-6 sm:text-base sm:leading-7">
+                            Un point d'accès clair vers la profession d'avocat, ses actualités, ses rendez-vous et ses ressources.
+                        </p>
+                        <div class="mt-4 flex flex-wrap items-center gap-2.5 sm:mt-8 sm:gap-3">
+                            <a href="#navigation-principale" class="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#d8b878] px-4 text-xs font-semibold text-[#10233f] transition hover:bg-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-11 sm:px-5 sm:text-sm">
+                                Explorer le site
+                                <twig:ux:icon name="lucide:arrow-down" class="size-3.5 sm:size-4" aria-hidden="true"/>
+                            </a>
+                            <a href="#institution" class="inline-flex min-h-10 items-center rounded-full border border-white/20 px-4 text-xs font-medium text-white transition hover:border-white/50 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] sm:min-h-11 sm:px-5 sm:text-sm">
+                                Le Barreau
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="navigation-principale" class="grid min-h-0 grid-cols-2 grid-rows-5 gap-x-2 gap-y-3 sm:gap-3 lg:grid-cols-6 lg:grid-rows-3" aria-labelledby="navigation-title">
+                        <h2 id="navigation-title" class="sr-only">Navigation publique</h2>
+
+                        <a id="trouver-un-avocat" href="{{ path('app_home') }}#trouver-un-avocat" class="homepage-card group relative col-span-2 flex min-h-28 flex-col justify-between overflow-hidden rounded-2xl bg-[#173252] p-4 shadow-xl shadow-black/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] lg:col-span-2 lg:row-span-2 lg:min-h-0 lg:rounded-3xl lg:p-6">
+                            <div class="absolute -right-10 -top-10 size-32 rounded-full border border-[#d8b878]/30 transition duration-300 group-hover:scale-110" aria-hidden="true"></div>
+                            <div class="relative flex items-center justify-between">
+                                <span class="inline-flex size-8 items-center justify-center rounded-full border border-[#d8b878]/60 text-[#d8b878] sm:size-9 lg:size-11"><twig:ux:icon name="lucide:search" class="size-4 lg:size-5" aria-hidden="true"/></span>
+                                <span class="text-[0.6rem] uppercase tracking-[0.16em] text-white/45 sm:text-xs">Service public</span>
+                            </div>
+                            <div class="relative">
+                                <h3 class="homepage-display text-2xl leading-none tracking-[-0.035em] sm:text-3xl lg:max-w-xs lg:text-4xl">Trouver un avocat</h3>
+                                <p class="mt-2 hidden max-w-xs text-sm leading-6 text-white/65 lg:mt-4 lg:block">Le point d'entrée naturel pour trouver le bon interlocuteur.</p>
+                                <span class="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-[#f1d59b] sm:text-sm lg:mt-7">Accéder à l'annuaire <twig:ux:icon name="lucide:arrow-up-right" class="size-3.5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 sm:size-4" aria-hidden="true"/></span>
+                            </div>
+                        </a>
+
+                        <div id="actualites" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#f1d59b] hover:bg-white/[0.13] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les cinq dernières actualités">
+                            <div class="flex items-start justify-between">
+                                <a href="{{ path('app_home') }}#actualites" class="inline-flex items-center gap-2 rounded-xl bg-[#d8b878]/20 px-2 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#f1d59b] transition hover:bg-[#d8b878]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b] sm:text-xs" aria-label="Menu principal Actualités"><twig:ux:icon name="lucide:newspaper" class="size-4" aria-hidden="true"/>Actualités</a>
+                                <div class="flex items-center gap-2 text-[0.6rem] font-medium text-white/45 sm:text-xs">
+                                    <span data-homepage-event-carousel-target="current">01</span>/<span data-homepage-event-carousel-target="total">05</span>
+                                </div>
+                            </div>
+
+                            <div class="homepage-event-carousel__viewport" aria-live="polite">
+                                {% for news in homepageNews %}
+                                    <article id="actualite-{{ news.slug }}" data-homepage-event-carousel-target="slide" data-image="{{ asset(news.image) }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Actualité {{ loop.index }} sur {{ homepageNews|length }}" {% if not loop.first %}hidden{% endif %}>
+                                        <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
+                                            <span>{{ news.date }}</span>
+                                            <span class="h-px w-4 bg-[#d8b878]/60"></span>
+                                            <span>{{ news.format }}</span>
+                                        </div>
+                                        <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('app_home') }}#actualite-{{ news.slug }}" data-index="{{ loop.index0 }}" data-action="click->homepage-event-carousel#followLink" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ news.title }}</a></h3>
+                                    </article>
+                                {% endfor %}
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2">
+                                {% if homepageNews|length > 1 %}
+                                    <div class="homepage-event-carousel__controls ml-auto flex items-center gap-1.5">
+                                        <button type="button" data-action="homepage-event-carousel#previous" class="homepage-event-carousel__control" aria-label="Actualité précédente"><twig:ux:icon name="lucide:chevron-left" class="size-3.5" aria-hidden="true"/></button>
+                                        <button type="button" data-action="homepage-event-carousel#next" class="homepage-event-carousel__control" aria-label="Actualité suivante"><twig:ux:icon name="lucide:chevron-right" class="size-3.5" aria-hidden="true"/></button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="evenements" data-controller="homepage-event-carousel" class="homepage-card homepage-event-carousel group relative flex min-h-20 flex-col justify-between overflow-hidden rounded-2xl border border-[#d8b878]/35 bg-[#d8b878]/[0.14] p-3.5 hover:border-[#f1d59b] hover:bg-[#d8b878]/[0.22] focus-within:border-[#f1d59b] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5" aria-roledescription="carousel" aria-label="Les cinq derniers événements">
+                            <div class="flex items-start justify-between">
+                                <a href="{{ path('app_home') }}#evenements" class="inline-flex items-center gap-2 rounded-xl bg-[#d8b878]/20 px-2 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[#f1d59b] transition hover:bg-[#d8b878]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b] sm:text-xs" aria-label="Menu principal Événements"><twig:ux:icon name="lucide:calendar-days" class="size-4" aria-hidden="true"/>Événements</a>
+                                <div class="flex items-center gap-2 text-[0.6rem] font-medium text-white/45 sm:text-xs">
+                                    <span data-homepage-event-carousel-target="current">01</span>/<span data-homepage-event-carousel-target="total">05</span>
+                                </div>
+                            </div>
+
+                            <div class="homepage-event-carousel__viewport" aria-live="polite">
+                                {% for event in homepageEvents %}
+                                    <article id="evenement-{{ event.slug }}" data-homepage-event-carousel-target="slide" data-image="{{ asset(event.image) }}" class="homepage-event-carousel__slide" role="group" aria-roledescription="slide" aria-label="Événement {{ loop.index }} sur {{ homepageEvents|length }}" {% if not loop.first %}hidden{% endif %}>
+                                        <div class="homepage-event-meta flex items-center gap-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[#f1d59b] sm:text-[0.65rem]">
+                                            <span>{{ event.date }}</span>
+                                            <span class="h-px w-4 bg-[#d8b878]/60"></span>
+                                            <span>{{ event.format }}</span>
+                                        </div>
+                                        <h3 class="mt-2 line-clamp-2 text-sm font-semibold leading-5 tracking-tight sm:text-base"><a href="{{ path('app_home') }}#evenement-{{ event.slug }}" data-index="{{ loop.index0 }}" data-action="click->homepage-event-carousel#followLink" class="homepage-event-carousel__title transition hover:text-[#f1d59b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">{{ event.title }}</a></h3>
+                                    </article>
+                                {% endfor %}
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2">
+                                {% if homepageEvents|length > 1 %}
+                                    <div class="homepage-event-carousel__controls ml-auto flex items-center gap-1.5">
+                                        <button type="button" data-action="homepage-event-carousel#previous" class="homepage-event-carousel__control" aria-label="Événement précédent"><twig:ux:icon name="lucide:chevron-left" class="size-3.5" aria-hidden="true"/></button>
+                                        <button type="button" data-action="homepage-event-carousel#next" class="homepage-event-carousel__control" aria-label="Événement suivant"><twig:ux:icon name="lucide:chevron-right" class="size-3.5" aria-hidden="true"/></button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <a id="formations" href="{{ path('app_home') }}#formations" style="--homepage-card-image: url('{{ asset('images/formations.webp') }}')" class="homepage-card homepage-image-card group flex min-h-20 flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#d8b878]/60 hover:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5">
+                            <div class="flex items-start justify-between gap-2"><div class="flex min-w-0 items-center gap-2"><span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-[#d8b878]/15 text-[#f1d59b] sm:size-9"><twig:ux:icon name="lucide:graduation-cap" class="size-4" aria-hidden="true"/></span><h3 class="truncate text-sm font-semibold tracking-tight sm:text-base lg:text-lg">Formations</h3></div><span class="text-[0.6rem] font-medium text-white/40 sm:text-xs">03</span></div>
+                            <p class="mt-2 hidden text-xs leading-5 text-white/55 lg:block">Développer ses compétences au rythme de la profession.</p>
+                        </a>
+
+                        <a id="publications" href="{{ path('app_home') }}#publications" style="--homepage-card-image: url('{{ asset('images/publications.webp') }}')" class="homepage-card homepage-image-card group flex min-h-20 flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#d8b878]/60 hover:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5">
+                            <div class="flex items-start justify-between gap-2"><div class="flex min-w-0 items-center gap-2"><span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-[#d8b878]/15 text-[#f1d59b] sm:size-9"><twig:ux:icon name="lucide:book-open" class="size-4" aria-hidden="true"/></span><h3 class="truncate text-sm font-semibold tracking-tight sm:text-base lg:text-lg">Publications</h3></div><span class="text-[0.6rem] font-medium text-white/40 sm:text-xs">04</span></div>
+                            <p class="mt-2 hidden text-xs leading-5 text-white/55 lg:block">Ressources et documents de référence.</p>
+                        </a>
+
+                        <a id="institution" href="{{ path('app_home') }}#institution" style="--homepage-card-image: url('{{ asset('images/barreau.webp') }}')" class="homepage-card homepage-image-card group col-span-2 flex min-h-20 items-center justify-between gap-3 rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#d8b878]/60 hover:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5">
+                            <div><p class="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-[#e0bf7d] sm:text-xs">Institution</p><h3 class="mt-1 text-base font-semibold tracking-tight sm:text-lg">Le Barreau</h3><p class="mt-1 hidden text-xs leading-5 text-white/55 lg:block">Missions, histoire et voix de la profession.</p></div>
+                            <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/65 transition group-hover:border-[#d8b878] group-hover:text-[#f1d59b] sm:size-9"><twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/></span>
+                        </a>
+
+                        <a id="carpa" href="{{ path('app_home') }}#carpa" style="--homepage-card-image: url('{{ asset('images/carpa.webp') }}')" class="homepage-card homepage-image-card group flex min-h-20 flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#d8b878]/60 hover:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5">
+                            <div class="flex items-start justify-between gap-2"><div class="flex min-w-0 items-center gap-2"><span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-[#d8b878]/15 text-[#f1d59b] sm:size-9"><twig:ux:icon name="lucide:receipt" class="size-4" aria-hidden="true"/></span><h3 class="truncate text-sm font-semibold tracking-tight sm:text-base lg:text-lg">La CARPA</h3></div><span class="text-[0.6rem] font-medium text-white/40 sm:text-xs">05</span></div>
+                            <p class="mt-2 hidden text-xs leading-5 text-white/55 lg:block">La caisse au service de la profession.</p>
+                        </a>
+
+                        <a id="recherche" href="{{ path('app_home') }}#recherche" style="--homepage-card-image: url('{{ asset('images/recherche.webp') }}')" class="homepage-card homepage-image-card group flex min-h-20 flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 hover:border-[#d8b878]/60 hover:bg-white/[0.13] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b878] focus-visible:ring-offset-2 focus-visible:ring-offset-[#10233f] sm:min-h-24 sm:p-4 lg:col-span-2 lg:min-h-0 lg:rounded-3xl lg:p-5">
+                            <div class="flex items-start justify-between gap-2"><div class="flex min-w-0 items-center gap-2"><span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-[#d8b878]/15 text-[#f1d59b] sm:size-9"><twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/></span><h3 class="truncate text-sm font-semibold tracking-tight sm:text-base lg:text-lg">Recherche</h3></div><span class="text-[0.6rem] font-medium text-white/40 sm:text-xs">06</span></div>
+                            <p class="mt-2 hidden text-xs leading-5 text-white/55 lg:block">Retrouver rapidement une information.</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between border-t border-white/15 pt-3 text-[0.58rem] uppercase tracking-[0.2em] text-white/40 sm:pt-4 sm:text-[0.65rem]">
+                    <span>Accueil public</span>
+                    <span class="flex items-center gap-3"><span class="h-px w-7 bg-white/30 sm:w-8"></span>01 / 01</span>
+                </div>
+            </div>
+
+            <span data-pointer-wave-target="wave" class="homepage-pointer-wave" aria-hidden="true"></span>
+        </section>
+    </main>
 {% endblock %}

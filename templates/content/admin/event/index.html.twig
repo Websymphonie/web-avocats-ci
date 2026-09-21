@@ -1,10 +1,131 @@
 {% extends 'layouts/base.html.twig' %}
 {% block title %}Événements{% endblock %}
 {% block body %}
-<main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8"><div class="mx-auto max-w-7xl space-y-6">
-    <section class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"><div><p class="text-sm font-medium text-muted-foreground">Contenu</p><h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Événements</h1><p class="mt-2 text-sm text-muted-foreground">Planifiez et maintenez les rendez-vous éditoriaux de la plateforme.</p></div>{% if is_granted('CONTENT_EVENT_MANAGE') %}<a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ path('content_admin_event_new') }}"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouvel événement</a>{% endif %}</section>
-    <details class="group rounded-2xl border border-border bg-card shadow-sm" {% if app.request.query.all|length > 0 %}open{% endif %}><summary class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium"><span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter" class="size-4 text-muted-foreground"/>Filtrer les événements</span><twig:ux:icon name="lucide:chevron-down" class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/></summary><div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,180px)_minmax(0,180px)_auto]', novalidate: true}}) }}<div class="space-y-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div class="space-y-2">{{ form_label(filterForm.status, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.status, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div class="space-y-2">{{ form_label(filterForm.format, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.format, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div class="flex items-end gap-2"><button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground" type="submit">Appliquer</button><a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground" href="{{ path('content_admin_event_list') }}">Réinitialiser</a></div><div class="mt-4 grid gap-4 sm:grid-cols-2"><div>{{ form_label(filterForm.categoryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.categoryId, {attr: {class: 'mt-2 flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div>{{ form_label(filterForm.tagId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.tagId, {attr: {class: 'mt-2 flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div></div>{{ form_end(filterForm) }}</div></details>
-    <form id="event-bulk-delete" method="post" action="{{ path('content_admin_event_bulk_delete') }}"><input type="hidden" name="_token" value="{{ csrf_token('event-bulk-delete') }}"></form>
-    <twig:BulkSelection id="event-selection" inputName="ids[]" inputForm="event-bulk-delete" selectionLabelSingular="événement" selectionLabelPlural="événements" confirmationTemplate="Supprimer {count} événement(s) ?" confirmationDescriptionTemplate="{count} événement(s) seront définitivement supprimé(s).">{% block actions %}{% if is_granted('CONTENT_EVENT_DELETE') %}{{ component('BulkDeleteEvents', {formId: 'event-bulk-delete'}) }}{% endif %}{% endblock %}{% block content %}<section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm" aria-labelledby="event-list-title"><div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6"><div class="flex items-start gap-3"><label class="mt-0.5 inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring"><input type="checkbox" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="master" aria-label="Sélectionner tous les événements de la page"></label><div><h2 id="event-list-title" class="text-sm font-semibold">Registre des événements</h2><p class="mt-1 text-sm text-muted-foreground">{{ events.totalItemCount }} événement{{ events.totalItemCount > 1 ? 's' : '' }}</p></div></div></div><div class="divide-y divide-border md:hidden">{% for item in events.items %}<article class="space-y-4 p-5"><div class="flex items-start gap-3"><label class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" value="{{ item.id }}" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="row" aria-label="Sélectionner l’événement : {{ item.title }}"></label><div class="min-w-0 flex-1"><h3 class="font-medium">{{ item.title }}</h3><p class="mt-1 text-sm text-muted-foreground">{{ item.startsAt|date('d/m/Y H:i') }}</p></div></div><div class="flex items-center justify-between border-y border-border py-3 text-sm"><span class="text-muted-foreground">Format</span><span>{{ item.format.label }}</span></div><div class="flex items-center justify-between text-sm"><span class="text-muted-foreground">Statut</span><twig:Badge variant="{{ item.status.value == 'PUBLISHED' ? 'success' : (item.status.value == 'CANCELLED' ? 'danger' : (item.status.value == 'ARCHIVED' ? 'warning' : 'secondary')) }}">{{ item.status.label }}</twig:Badge></div><div class="flex justify-end">{{ component('EventTableDropdown', {event: item, instanceId: 'mobile-' ~ item.id}) }}</div></article>{% else %}<div class="px-6 py-14 text-center text-muted-foreground">Aucun événement ne correspond à vos critères.</div>{% endfor %}</div><div class="hidden overflow-x-auto md:block"><table class="w-full text-left text-sm"><thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-5 py-3 font-medium sm:px-6"><span class="sr-only">Sélection</span></th><th class="px-5 py-3 font-medium">Titre</th><th class="px-5 py-3 font-medium">Début</th><th class="px-5 py-3 font-medium">Format</th><th class="px-5 py-3 font-medium">Statut</th><th class="px-5 py-3 text-right font-medium sm:px-6">Actions</th></tr></thead><tbody class="divide-y divide-border">{% for item in events.items %}<tr class="transition-colors hover:bg-muted/40"><td class="px-5 py-4 sm:px-6"><label class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" value="{{ item.id }}" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="row" aria-label="Sélectionner l’événement : {{ item.title }}"></label></td><td class="px-5 py-4"><div class="min-w-0"><p class="truncate font-medium">{{ item.title }}</p><p class="mt-1 truncate text-xs text-muted-foreground">/{{ item.slug }}</p></div></td><td class="px-5 py-4 text-muted-foreground">{{ item.startsAt|date('d/m/Y H:i') }}</td><td class="px-5 py-4">{{ item.format.label }}</td><td class="px-5 py-4"><twig:Badge variant="{{ item.status.value == 'PUBLISHED' ? 'success' : (item.status.value == 'CANCELLED' ? 'danger' : (item.status.value == 'ARCHIVED' ? 'warning' : 'secondary')) }}">{{ item.status.label }}</twig:Badge></td><td class="px-5 py-4 sm:px-6"><div class="flex justify-end">{{ component('EventTableDropdown', {event: item, instanceId: 'desktop-' ~ item.id}) }}</div></td></tr>{% else %}<tr><td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucun événement ne correspond à vos critères.</td></tr>{% endfor %}</tbody></table></div>{% include 'shared/views/_list_pagination.html.twig' with {pager: events, route: 'content_admin_event_list'} only %}</section>{% endblock %}</twig:BulkSelection>
-</div></main>
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-7xl space-y-6">
+            <section
+                    class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                <div><p class="text-sm font-medium text-muted-foreground">Contenu</p>
+                    <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Événements</h1>
+                    <p class="mt-2 text-sm text-muted-foreground">Planifiez et maintenez les rendez-vous éditoriaux de
+                        la plateforme.</p></div>{% if is_granted('CONTENT_EVENT_MANAGE') %}<a
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                href="{{ path('content_admin_event_new') }}">
+                    <twig:ux:icon name="lucide:plus" class="size-4"/>
+                    Nouvel événement</a>{% endif %}</section>
+            <details class="group rounded-2xl border border-border bg-card shadow-sm"
+                     {% if app.request.query.all|length > 0 %}open{% endif %}>
+                <summary
+                        class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium">
+                    <span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter"
+                                                                        class="size-4 text-muted-foreground"/>Filtrer les événements</span>
+                    <twig:ux:icon name="lucide:chevron-down"
+                                  class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/>
+                </summary>
+                <div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,180px)_minmax(0,180px)_auto]', novalidate: true}}) }}
+                    <div class="space-y-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                    <div class="space-y-2">{{ form_label(filterForm.status, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.status, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                    <div class="space-y-2">{{ form_label(filterForm.format, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.format, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                    <div class="flex items-end gap-2">
+                        <button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+                                type="submit">Appliquer
+                        </button>
+                        <a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground"
+                           href="{{ path('content_admin_event_list') }}">Réinitialiser</a></div>
+                    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <div>{{ form_label(filterForm.categoryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.categoryId, {attr: {class: 'mt-2 flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                        <div>{{ form_label(filterForm.tagId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.tagId, {attr: {class: 'mt-2 flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                    </div>{{ form_end(filterForm) }}</div>
+            </details>
+            <form id="event-bulk-delete" method="post" action="{{ path('content_admin_event_bulk_delete') }}"><input
+                        type="hidden" name="_token" value="{{ csrf_token('event-bulk-delete') }}"></form>
+            {% component 'BulkSelection' with { id: 'event-selection', inputName: 'ids[]', inputForm: 'event-bulk-delete', selectionLabelSingular: 'événement', selectionLabelPlural: 'événements', confirmationTemplate: 'Supprimer {count} événement(s) ?', confirmationDescriptionTemplate: '{count} événement(s) seront définitivement supprimé(s).' } %}{% block actions %}{% if is_granted('CONTENT_EVENT_DELETE') %}{{ component('BulkDeleteEvents', {formId: 'event-bulk-delete'}) }}{% endif %}{% endblock %}{% block content %}
+                    <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                             aria-labelledby="event-list-title">
+                    <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+                        <div class="flex items-start gap-3"><label
+                                    class="mt-0.5 inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted focus-within:ring-2 focus-within:ring-ring"><input
+                                        type="checkbox" class="size-4 rounded border-input accent-primary"
+                                        data-bulk-selection-target="master"
+                                        aria-label="Sélectionner tous les événements de la page"></label>
+                            <div><h2 id="event-list-title" class="text-sm font-semibold">Registre des événements</h2>
+                                <p class="mt-1 text-sm text-muted-foreground">{{ events.totalItemCount }}
+                                    événement{{ events.totalItemCount > 1 ? 's' : '' }}</p></div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-border md:hidden">{% for item in events.items %}
+                            <article class="space-y-4 p-5">
+                            <div class="flex items-start gap-3"><label
+                                        class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted"><input
+                                            type="checkbox" value="{{ item.id }}"
+                                            class="size-4 rounded border-input accent-primary"
+                                            data-bulk-selection-target="row"
+                                            aria-label="Sélectionner l’événement : {{ item.title }}"></label>
+                                <div class="min-w-0 flex-1"><h3 class="font-medium">{{ item.title }}</h3>
+                                    <p class="mt-1 text-sm text-muted-foreground">{{ item.startsAt|date('d/m/Y H:i') }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between border-y border-border py-3 text-sm"><span
+                                        class="text-muted-foreground">Format</span><span>{{ item.format.label }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm"><span class="text-muted-foreground">Statut</span>
+                                <twig:Badge variant="{{ item.status.value == 'PUBLISHED' ? 'success' : (item.status.value == 'CANCELLED' ? 'danger' : (item.status.value == 'ARCHIVED' ? 'warning' : 'secondary')) }}">
+                                    {{ item.status.label() }}
+                                </twig:Badge>
+                            </div>
+                            <div class="flex justify-end">{{ component('EventTableDropdown', {event: item, instanceId: 'mobile-' ~ item.id}) }}</div>
+                            </article>{% else %}
+                            <div class="px-6 py-14 text-center text-muted-foreground">Aucun événement ne correspond à
+                                vos critères.
+                            </div>{% endfor %}</div>
+                    <div class="hidden overflow-x-auto md:block">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr>
+                            <th class="px-5 py-3 font-medium sm:px-6"><span class="sr-only">Sélection</span></th>
+                            <th class="px-5 py-3 font-medium">Titre</th>
+                            <th class="px-5 py-3 font-medium">Début</th>
+                            <th class="px-5 py-3 font-medium">Format</th>
+                            <th class="px-5 py-3 font-medium">Statut</th>
+                            <th class="px-5 py-3 text-right font-medium sm:px-6">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">{% for item in events.items %}
+                            <tr class="transition-colors hover:bg-muted/40">
+                            <td class="px-5 py-4 sm:px-6"><label
+                                        class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input
+                                            type="checkbox" value="{{ item.id }}"
+                                            class="size-4 rounded border-input accent-primary"
+                                            data-bulk-selection-target="row"
+                                            aria-label="Sélectionner l’événement : {{ item.title }}"></label></td>
+                            <td class="px-5 py-4">
+                                <div class="min-w-0">
+                                    <p class="truncate font-medium">{{ item.title }}</p>
+                                </div>
+                            </td>
+                            <td class="px-5 py-4 text-muted-foreground">{{ item.startsAt|date('d/m/Y H:i') }}</td>
+                            <td class="px-5 py-4">
+                                <twig:Badge variant="{{ item.format.badge() }}">
+                                    {{ item.format.label() }}
+                                </twig:Badge>
+                            </td>
+                            <td class="px-5 py-4">
+                                <twig:Badge
+                                        variant="{{ item.status.value == 'PUBLISHED' ? 'success' : (item.status.value == 'CANCELLED' ? 'danger' : (item.status.value == 'ARCHIVED' ? 'warning' : 'secondary')) }}">
+                                    {{ item.status.label() }}
+                                </twig:Badge>
+                            </td>
+                            <td class="px-5 py-4 sm:px-6">
+                                <div class="flex justify-end">{{ component('EventTableDropdown', {event: item, instanceId: 'desktop-' ~ item.id}) }}</div>
+                            </td></tr>{% else %}
+                            <tr>
+                                <td class="px-6 py-14 text-center text-muted-foreground" colspan="6">Aucun événement ne
+                                    correspond à vos critères.
+                                </td>
+                            </tr>{% endfor %}</tbody>
+                    </table>
+                    </div>{% include 'shared/views/_list_pagination.html.twig' with {pager: events, route: 'content_admin_event_list'} only %}
+                    </section>{% endblock %}{% endcomponent %}
+        </div>
+    </main>
 {% endblock %}

@@ -1,1 +1,110 @@
-{% extends 'layouts/base.html.twig' %}{% block title %}Pages statiques{% endblock %}{% block body %}<main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8"><div class="mx-auto max-w-7xl space-y-6"><section class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"><div><p class="text-sm font-medium text-muted-foreground">Contenu</p><h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Pages statiques</h1><p class="mt-2 text-sm text-muted-foreground">Gérez les pages institutionnelles depuis le Backoffice.</p></div>{% if is_granted('CONTENT_PAGE_MANAGE') %}<a class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90" href="{{ path('content_admin_page_new') }}"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouvelle page</a>{% endif %}</section><details class="group rounded-2xl border border-border bg-card shadow-sm" {% if app.request.query.all|length > 0 %}open{% endif %}><summary class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium"><span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter" class="size-4 text-muted-foreground"/>Filtrer les pages</span><twig:ux:icon name="lucide:chevron-down" class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/></summary><div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]', novalidate: true}}) }}<div class="space-y-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div class="space-y-2">{{ form_label(filterForm.status, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.status, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div><div class="flex items-end gap-2"><button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground" type="submit">Appliquer</button><a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground" href="{{ path('content_admin_page_list') }}">Réinitialiser</a></div>{{ form_end(filterForm) }}</div></details><form id="page-bulk-delete" method="post" action="{{ path('content_admin_page_bulk_delete') }}"><input type="hidden" name="_token" value="{{ csrf_token('page-bulk-delete') }}"></form><twig:BulkSelection id="page-selection" inputName="ids[]" inputForm="page-bulk-delete" selectionLabelSingular="page" selectionLabelPlural="pages">{% block actions %}{% if is_granted('CONTENT_PAGE_DELETE') %}{{ component('BulkDeletePages', {formId: 'page-bulk-delete'}) }}{% endif %}{% endblock %}{% block content %}<section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"><div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6"><div class="flex items-start gap-3"><label class="mt-0.5 inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="master" aria-label="Sélectionner toutes les pages de la page"></label><div><h2 class="text-sm font-semibold">Registre des pages</h2><p class="mt-1 text-sm text-muted-foreground">{{ pages.totalItemCount }} page{{ pages.totalItemCount > 1 ? 's' : '' }}</p></div></div></div><div class="divide-y divide-border md:hidden">{% for page in pages.items %}<article class="space-y-4 p-5"><div class="flex items-start gap-3"><label class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" value="{{ page.id }}" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="row" aria-label="Sélectionner la page : {{ page.title }}"></label><div class="min-w-0 flex-1"><h3 class="font-medium">{{ page.title }}</h3><p class="mt-1 text-sm text-muted-foreground">/{{ page.slug }}</p></div></div><div class="flex items-center justify-between border-y border-border py-3 text-sm"><span class="text-muted-foreground">Statut</span><twig:Badge variant="{{ page.status.value == 'PUBLISHED' ? 'success' : 'secondary' }}">{{ page.status.label }}</twig:Badge></div><div class="flex justify-end">{{ component('PageTableDropdown', {page: page, instanceId: 'mobile-' ~ page.id}) }}</div></article>{% else %}<div class="px-6 py-14 text-center text-muted-foreground">Aucune page ne correspond à vos critères.</div>{% endfor %}</div><div class="hidden overflow-x-auto md:block"><table class="w-full text-left text-sm"><thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-5 py-3"><span class="sr-only">Sélection</span></th><th class="px-5 py-3 font-medium">Couverture</th><th class="px-5 py-3 font-medium">Titre</th><th class="px-5 py-3 font-medium">Slug</th><th class="px-5 py-3 font-medium">Statut</th><th class="px-5 py-3 font-medium">Publication</th><th class="px-5 py-3 text-right font-medium">Actions</th></tr></thead><tbody class="divide-y divide-border">{% for page in pages.items %}<tr class="transition-colors hover:bg-muted/40"><td class="px-5 py-4"><label class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input type="checkbox" value="{{ page.id }}" class="size-4 rounded border-input accent-primary" data-bulk-selection-target="row" aria-label="Sélectionner la page : {{ page.title }}"></label></td><td class="px-5 py-4">{% if mediaUrls[page.coverMediaId] is defined %}<img class="size-12 rounded-lg border border-border object-cover" src="{{ mediaUrls[page.coverMediaId]|imagine_filter('thumbnail') }}" alt="Couverture de {{ page.title }}">{% else %}<span class="text-muted-foreground">—</span>{% endif %}</td><td class="px-5 py-4"><p class="font-medium">{{ page.title }}</p></td><td class="px-5 py-4 text-muted-foreground">/{{ page.slug }}</td><td class="px-5 py-4"><twig:Badge variant="{{ page.status.value == 'PUBLISHED' ? 'success' : 'secondary' }}">{{ page.status.label }}</twig:Badge></td><td class="px-5 py-4 text-muted-foreground">{{ page.publishedAt ? page.publishedAt|date('d/m/Y H:i') : '—' }}</td><td class="px-5 py-4"><div class="flex justify-end">{{ component('PageTableDropdown', {page: page, instanceId: 'desktop-' ~ page.id}) }}</div></td></tr>{% else %}<tr><td class="px-6 py-14 text-center text-muted-foreground" colspan="7">Aucune page ne correspond à vos critères.</td></tr>{% endfor %}</tbody></table></div>{% include 'shared/views/_list_pagination.html.twig' with {pager: pages, route: 'content_admin_page_list'} only %}</section>{% endblock %}</twig:BulkSelection></div></main>{% endblock %}
+{% extends 'layouts/base.html.twig' %}{% block title %}Pages statiques{% endblock %}{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div class="mx-auto max-w-7xl space-y-6">
+        <section
+                class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div><p class="text-sm font-medium text-muted-foreground">Contenu</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Pages statiques</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Gérez les pages institutionnelles depuis le
+                    Backoffice.</p></div>{% if is_granted('CONTENT_PAGE_MANAGE') %}<a
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90"
+            href="{{ path('content_admin_page_new') }}">
+                <twig:ux:icon name="lucide:plus" class="size-4"/>
+                Nouvelle page</a>{% endif %}</section>
+        <details class="group rounded-2xl border border-border bg-card shadow-sm"
+                 {% if app.request.query.all|length > 0 %}open{% endif %}>
+            <summary class="flex cursor-pointer list-none items-center justify-between px-6 py-5 text-sm font-medium">
+                <span class="flex items-center gap-2"><twig:ux:icon name="lucide:list-filter"
+                                                                    class="size-4 text-muted-foreground"/>Filtrer les pages</span>
+                <twig:ux:icon name="lucide:chevron-down"
+                              class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/>
+            </summary>
+            <div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]', novalidate: true}}) }}
+                <div class="space-y-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                <div class="space-y-2">{{ form_label(filterForm.status, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.status, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}</div>
+                <div class="flex items-end gap-2">
+                    <button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground"
+                            type="submit">Appliquer
+                    </button>
+                    <a class="inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-medium text-muted-foreground"
+                       href="{{ path('content_admin_page_list') }}">Réinitialiser</a></div>{{ form_end(filterForm) }}
+            </div>
+        </details>
+        <form id="page-bulk-delete" method="post" action="{{ path('content_admin_page_bulk_delete') }}"><input
+                    type="hidden" name="_token" value="{{ csrf_token('page-bulk-delete') }}">
+        </form>{% component 'BulkSelection' with { id: 'page-selection', inputName: 'ids[]', inputForm: 'page-bulk-delete', selectionLabelSingular: 'page', selectionLabelPlural: 'pages' } %}{% block actions %}{% if is_granted('CONTENT_PAGE_DELETE') %}{{ component('BulkDeletePages', {formId: 'page-bulk-delete'}) }}{% endif %}{% endblock %}{% block content %}
+        <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div class="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+            <div class="flex items-start gap-3"><label
+                        class="mt-0.5 inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input
+                            type="checkbox" class="size-4 rounded border-input accent-primary"
+                            data-bulk-selection-target="master"
+                            aria-label="Sélectionner toutes les pages de la page"></label>
+                <div><h2 class="text-sm font-semibold">Registre des pages</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ pages.totalItemCount }}
+                        page{{ pages.totalItemCount > 1 ? 's' : '' }}</p></div>
+            </div>
+        </div>
+        <div class="divide-y divide-border md:hidden">{% for page in pages.items %}
+                <article class="space-y-4 p-5">
+                <div class="flex items-start gap-3"><label
+                            class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-muted"><input
+                                type="checkbox" value="{{ page.id }}" class="size-4 rounded border-input accent-primary"
+                                data-bulk-selection-target="row"
+                                aria-label="Sélectionner la page : {{ page.title }}"></label>
+                    <div class="min-w-0 flex-1"><h3 class="font-medium">{{ page.title }}</h3>
+                        <p class="mt-1 text-sm text-muted-foreground">/{{ page.slug }}</p></div>
+                </div>
+                <div class="flex items-center justify-between border-y border-border py-3 text-sm"><span
+                            class="text-muted-foreground">Statut</span>
+                    <twig:Badge
+                            variant="{{ page.status.value == 'PUBLISHED' ? 'success' : 'secondary' }}">{{ page.status.label }}</twig:Badge>
+                </div>
+                <div class="flex justify-end">{{ component('PageTableDropdown', {page: page, instanceId: 'mobile-' ~ page.id}) }}</div>
+                </article>{% else %}
+                <div class="px-6 py-14 text-center text-muted-foreground">Aucune page ne correspond à vos critères.
+                </div>{% endfor %}</div>
+        <div class="hidden overflow-x-auto md:block">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+            <tr>
+                <th class="px-5 py-3"><span class="sr-only">Sélection</span></th>
+                <th class="px-5 py-3 font-medium">Couverture</th>
+                <th class="px-5 py-3 font-medium">Titre</th>
+                <th class="px-5 py-3 font-medium">Slug</th>
+                <th class="px-5 py-3 font-medium">Statut</th>
+                <th class="px-5 py-3 font-medium">Publication</th>
+                <th class="px-5 py-3 text-right font-medium">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-border">{% for page in pages.items %}
+                <tr class="transition-colors hover:bg-muted/40">
+                <td class="px-5 py-4"><label
+                            class="inline-flex size-9 items-center justify-center rounded-lg hover:bg-muted"><input
+                                type="checkbox" value="{{ page.id }}" class="size-4 rounded border-input accent-primary"
+                                data-bulk-selection-target="row"
+                                aria-label="Sélectionner la page : {{ page.title }}"></label></td>
+                <td class="px-5 py-4">{% if mediaUrls[page.coverMediaId] is defined %}<img
+                        class="size-12 rounded-lg border border-border object-cover"
+                        src="{{ mediaUrls[page.coverMediaId]|imagine_filter('thumbnail') }}"
+                        alt="Couverture de {{ page.title }}">{% else %}<span
+                            class="text-muted-foreground">—</span>{% endif %}</td>
+                <td class="px-5 py-4"><p class="font-medium">{{ page.title }}</p></td>
+                <td class="px-5 py-4 text-muted-foreground">/{{ page.slug }}</td>
+                <td class="px-5 py-4">
+                    <twig:Badge variant="{{ page.status.badge() }}">
+                        {{ page.status.label() }}
+                    </twig:Badge>
+                </td>
+                <td class="px-5 py-4 text-muted-foreground">{{ page.publishedAt ? page.publishedAt|date('d/m/Y H:i') : '—' }}</td>
+                <td class="px-5 py-4">
+                    <div class="flex justify-end">{{ component('PageTableDropdown', {page: page, instanceId: 'desktop-' ~ page.id}) }}</div>
+                </td></tr>{% else %}
+                <tr>
+                    <td class="px-6 py-14 text-center text-muted-foreground" colspan="7">Aucune page ne correspond à vos
+                        critères.
+                    </td>
+                </tr>{% endfor %}</tbody>
+        </table>
+        </div>{% include 'shared/views/_list_pagination.html.twig' with {pager: pages, route: 'content_admin_page_list'} only %}
+        </section>{% endblock %}{% endcomponent %}</div></main>{% endblock %}

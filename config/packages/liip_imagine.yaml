@@ -16,7 +16,10 @@ liip_imagine:
     default:
       filesystem:
         data_root:
-          - '%kernel.project_dir%/public'
+          # Les originaux Media vivent dans la racine persistante, pas dans
+          # public/. Les alias storage/public/uploads/* conservent le préfixe
+          # d'URL /uploads utilisé par MediaPublicUrlResolver.
+          - '%app.storage.public_dir%'
 
   # define your filter sets under this option
   filter_sets:

@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Domain\Enum;
 
+use Websymphonie\SharedContext\Domain\Enum\ColorEnum;
+
 enum TrainingVisibility: string
 {
     case PUBLIC = 'PUBLIC';
     case MEMBER = 'MEMBER';
+
+    public function badge(): string
+    {
+        return match ($this) {
+            self::PUBLIC => ColorEnum::PRIMARY->value,
+            self::MEMBER => ColorEnum::SUCCESS->value,
+        };
+    }
 
     public function label(): string
     {

@@ -3,21 +3,23 @@
 declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Presenter\Controller\Training;
-use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
-use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
 use Websymphonie\LearningContext\Application\Usecase\Command\UpdateTrainingCommand;
-use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQuery;
-use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
+use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
+use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
 #[Route('/trainings', name: 'learning_admin_training_')]
@@ -25,8 +27,14 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::TRAININGS)]
 final class UpdateTrainingController extends AbstractController
 {
-    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls) {}
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    {
+    }
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
     public function __invoke(Request $request, int $id): Response
     {

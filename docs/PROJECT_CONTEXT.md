@@ -179,7 +179,9 @@ Ces domaines cibles ne signifient pas que tous les Bounded Contexts doivent
 L’intégration KkiaPay est `COMPLETE` côté code (SDK officiel, vérification
 serveur et webhook), mais la certification réelle Sandbox reste `PARTIAL`.
 L’architecture du stockage persistant est définie via `APP_STORAGE_DIR` avec
-`/shared/storage` comme chemin canonique ; son provisionnement reste requis
+`/shared/storage` comme chemin canonique de déploiement ; en développement local,
+un fallback `<project>/storage`, hors de `var/`, est utilisé lorsque la variable
+n’est pas définie. Son provisionnement reste requis
 dans chaque environnement.
 
 ## 10. Évolutions futures

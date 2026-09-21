@@ -11,7 +11,9 @@
 
 </head>
 <body class="min-h-svh bg-background text-foreground antialiased">
-<twig:WebHeader title="{{ block('title')|striptags|trim }}"/>
+{% block web_header %}
+    <twig:WebHeader title="{{ block('title')|striptags|trim }}"/>
+{% endblock %}
 
 <div id="pageWrapper" class="min-h-svh">
     <twig:FlashToast/>
@@ -20,7 +22,9 @@
         {% block body %}{% endblock %}
     </div>
 
-    <twig:WebFooter/>
+    {% block web_footer %}
+        <twig:WebFooter/>
+    {% endblock %}
 </div>
 
 {{ encore_entry_script_tags('web') }}

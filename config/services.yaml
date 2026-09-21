@@ -7,7 +7,9 @@ parameters:
   app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
   app.sender_name: '%env(MAILER_SENDER_NAME)%'
   upload_dir: '/uploads'
-  app.storage.default_dir: '/shared/storage'
+  # Local development fallback. Deployments must provide APP_STORAGE_DIR
+  # explicitly and point it to a persistent volume.
+  app.storage.default_dir: '%kernel.project_dir%/storage'
   app.storage_dir: '%env(default:app.storage.default_dir:APP_STORAGE_DIR)%'
   app.storage.public_dir: '%app.storage_dir%/public'
   app.storage.private_dir: '%app.storage_dir%/private'

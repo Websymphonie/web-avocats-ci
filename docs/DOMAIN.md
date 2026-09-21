@@ -440,7 +440,7 @@ automatiquement les médias; leur suppression physique est explicite et refusée
 tant qu’un consommateur les référence.
 
 Le stockage persistant est centralisé par `APP_STORAGE_DIR`, dont la valeur
-canonique est `/shared/storage` : les images publiques résident sous
+canonique de déploiement est `/shared/storage` : les images publiques résident sous
 `public/galleries` et `public/content/covers`, tandis que les documents privés
 résident sous `private/documents`, sans chemin absolu ni relation de
 consommateur enregistrée en base. `var/` reste réservé au runtime Symfony et

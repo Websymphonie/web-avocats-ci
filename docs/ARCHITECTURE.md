@@ -733,9 +733,11 @@ Backoffice.
 
 ### Provisionnement du stockage persistant
 
-Chaque environnement doit définir `APP_STORAGE_DIR` et fournir une racine
-persistante avec les droits d’écriture du processus PHP. Le provisionnement
-initial est idempotent :
+Chaque déploiement doit définir `APP_STORAGE_DIR` et fournir une racine
+persistante avec les droits d’écriture du processus PHP. En développement local,
+si la variable n’est pas définie, le fallback est `<project>/storage`, à la
+racine du dépôt et volontairement hors de `var/` afin de survivre au nettoyage
+du cache. Le provisionnement initial est idempotent :
 
 ```bash
 mkdir -p "$APP_STORAGE_DIR/public/galleries" \
@@ -753,6 +755,13 @@ Lorsque `public/uploads` contient encore les anciens uploads Vich/Admin, ne pas
 le remplacer sans migration : utiliser des alias ou liens spécialisés pour
 `/uploads/galleries` et `/uploads/content/covers`, puis planifier la migration.
 Les documents privés ne doivent avoir aucun alias HTTP direct.
+
+LiipImagine lit les originaux depuis `$APP_STORAGE_DIR/public`. Comme les
+URLs publiques historiques conservent le préfixe `/uploads`, le provisionnement
+doit également fournir sous `$APP_STORAGE_DIR/public/uploads` les alias
+`content`, `training` et `galleries` vers leurs répertoires frères. Cela permet
+aux miniatures de résoudre le même chemin que celui exposé par le serveur web,
+sans recopier les images ni les placer dans `var/`.
 
 Checklist minimale :
 

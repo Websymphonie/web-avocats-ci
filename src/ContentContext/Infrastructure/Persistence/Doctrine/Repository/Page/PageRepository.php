@@ -143,6 +143,7 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
         $entity = $this->createQueryBuilder('page')
             ->andWhere('page.slug = :slug')
             ->andWhere('page.status = :status')
+            ->andWhere('page.publishedAt IS NOT NULL')
             ->setParameter('slug', $slug)
             ->setParameter('status', PageStatus::PUBLISHED)
             ->getQuery()->getOneOrNullResult();

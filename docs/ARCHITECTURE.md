@@ -812,9 +812,11 @@ création et la publication, et le composant Backoffice existant gère son uploa
 aperçu, remplacement et retrait. Le vérificateur d'usage Content empêche la
 suppression d'un média encore utilisé par une Page.
 
-Aucun écran Frontoffice final ni route publique n’est ajouté par CNT-006/A. La query
-`FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet de
-retourner qu’une page publiée ; son DTO restitue la couverture lorsqu'elle existe.
+Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`.
+Il n’existe pas de listing `/pages` ou `/informations`, ni de sidebar en V1. La
+query `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
+de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO restitue
+la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.

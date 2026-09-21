@@ -73,8 +73,8 @@ CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
 CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice uniquement
-CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice uniquement ; Frontoffice différé
-CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice uniquement
+CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + détail public `/informations/{slug}`
+CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -159,8 +159,8 @@ expose.
 ```text
 DOC-001  Documentation produit                     DONE
 CORE-FIX-001 Consolidation backend                 CURRENT
-CNT-006  Static Pages                               DONE — Backoffice uniquement
-CNT-006A Optional static page cover                 DONE — Backoffice uniquement
+CNT-006  Static Pages                               DONE — Backoffice + détail public
+CNT-006A Optional static page cover                 DONE — Backoffice + rendu public
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED — Backoffice + première verticale publique FO-002
 FO-002   Actualités publiques dynamiques             DONE — liste, détail, pagination, catégories, tags et covers
@@ -201,8 +201,8 @@ produit ci-dessus font foi pour l’historique réel, où YouTube Live est `LRN-
 `CORE-FIX-001` traite les dettes techniques restantes de la revue backend :
 lecture batch des références Learning depuis Payment, échappement des titres
 UI et synchronisation documentaire. Une fois ses quality gates validés,
-`CNT-006 Static Pages` est livré côté Backoffice ; sa lecture publique finale
-reste différée avec la conception Frontoffice.
+`CNT-006 Static Pages` est livré côté Backoffice et expose désormais le détail
+public des Pages publiées sous `/informations/{slug}`, sans listing générique.
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.
 

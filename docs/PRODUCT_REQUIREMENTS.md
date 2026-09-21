@@ -88,8 +88,8 @@ propriétaire.
 | CNT-004 | publier les galeries photos | `IMPLEMENTED` — Backoffice uniquement; Media public minimal, sans médiathèque ni Frontoffice |
 | CNT-004A | ajouter couvertures et galeries liées à News/Event | `IMPLEMENTED` — Backoffice uniquement, sans Frontoffice |
 | CNT-005 | publier les documents et annonces | `IMPLEMENTED` — Backoffice + téléchargement contrôlé |
-| CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice uniquement ; routes Frontoffice différées |
-| CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice uniquement ; upload image réutilisé, sans galerie ni Frontoffice |
+| CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice + détail public `/informations/{slug}`, sans listing |
+| CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice + rendu public réutilisé, sans galerie |
 
 ## 7. Learning
 

@@ -478,8 +478,9 @@ peut revenir à `DRAFT` via `unpublish()`. La date `publishedAt` est renseignée
 Le slug est normalisé et unique, mais reste éditable depuis le Backoffice. Le
 contenu est saisi avec le composant Tiptap existant et nettoyé par le sanitizer
 serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
-individuelles et bulk de suppression, ainsi que la query de lecture publique
-future ; il ne livre pas encore les routes Frontoffice.
+individuelles et bulk de suppression, ainsi que la lecture publique d’une Page
+publiée via `/informations/{slug}`. Il n’existe pas de listing Frontoffice
+générique ni de sidebar en V1.
 
 ### CNT-006A — Couverture facultative des pages
 

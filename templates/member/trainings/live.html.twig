@@ -1,0 +1,100 @@
+{% extends 'layouts/member.html.twig' %}
+
+{% block title %}{{ session.title }}{% endblock %}
+{% block member_page_title %}{{ session.title }}{% endblock %}
+
+{% block body %}
+    {% set isUpcoming = session.startsAt > now %}
+    {% set isPast = session.endsAt <= now %}
+    {% set statusLabel = isPast ? 'Session terminée' : (isUpcoming ? 'À venir' : 'Session en cours') %}
+    {% set statusClasses = isPast
+        ? 'border-border bg-muted text-muted-foreground'
+        : (isUpcoming ? 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300' : 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300') %}
+    {% set imageUrl = coverUrl|default(default_image_url) %}
+
+    <div class="space-y-8">
+        <a href="{{ path('learning_member_training_list') }}" class="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>
+            Mes formations
+        </a>
+
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)] lg:items-start">
+            <article class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <div class="relative aspect-[16/7] overflow-hidden bg-gradient-to-br from-[#10233f] via-[#183b63] to-[#d8b878]/70">
+                    <img src="{{ imageUrl }}" alt="" class="size-full object-cover" loading="eager">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#10233f]/90 via-[#10233f]/20 to-transparent" aria-hidden="true"></div>
+                    <div class="absolute inset-x-5 bottom-5 flex flex-wrap items-center gap-2 sm:inset-x-6">
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                            <twig:ux:icon name="lucide:radio-tower" class="size-3.5" aria-hidden="true"/>
+                            Live
+                        </span>
+                        <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm {{ statusClasses }}">
+                            {{ statusLabel }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-5 sm:p-7">
+                    {% if session.categoryName %}
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ session.categoryName }}</p>
+                    {% endif %}
+                    <h1 class="mt-2 text-2xl font-semibold tracking-tight text-card-foreground sm:text-3xl">{{ session.title }}</h1>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Retrouvez les informations pratiques de votre session Live et son accès sécurisé.</p>
+
+                    <div class="mt-7 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
+                        <div class="flex items-start gap-3">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:calendar-days" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Date</p>
+                                <p class="mt-1 text-sm font-medium text-card-foreground">{{ session.startsAt|format_datetime('long', 'none', locale='fr_FR') }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                <twig:ux:icon name="lucide:clock-3" class="size-5" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Horaire</p>
+                                <p class="mt-1 text-sm font-medium text-card-foreground">{{ session.startsAt|format_time('short', locale='fr_FR') }} – {{ session.endsAt|format_time('short', locale='fr_FR') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <aside class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6" aria-labelledby="live-information-title">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Informations pratiques</p>
+                <h2 id="live-information-title" class="mt-1.5 text-lg font-semibold text-card-foreground">Votre session</h2>
+
+                <dl class="mt-5 space-y-4">
+                    <div class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                        <dt class="text-sm text-muted-foreground">Mode</dt>
+                        <dd class="text-right text-sm font-semibold text-card-foreground">{{ session.deliveryMode.label() }}</dd>
+                    </div>
+                    {% if session.location %}
+                        <div class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                            <dt class="text-sm text-muted-foreground">Lieu</dt>
+                            <dd class="max-w-[60%] text-right text-sm font-semibold text-card-foreground">{{ session.location }}</dd>
+                        </div>
+                    {% endif %}
+                    <div class="flex items-start justify-between gap-4">
+                        <dt class="text-sm text-muted-foreground">État</dt>
+                        <dd class="text-right text-sm font-semibold text-card-foreground">{{ statusLabel }}</dd>
+                    </div>
+                </dl>
+
+                {% if session.canJoin %}
+                    <a href="{{ path('learning_member_live_join', {uuid: session.trainingUuid}) }}" class="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        Accéder à la session
+                        <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/>
+                    </a>
+                    <p class="mt-3 text-center text-xs leading-5 text-muted-foreground">L’accès est vérifié côté serveur pour votre inscription active.</p>
+                {% elseif session.deliveryMode.value == 'IN_PERSON' %}
+                    <p class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm leading-5 text-muted-foreground">Cette session se déroule en présentiel.</p>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+{% endblock %}

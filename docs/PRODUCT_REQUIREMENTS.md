@@ -50,7 +50,7 @@ son lecteur ou ses documents.
 | MEM-001 | protéger `/espace` par authentification | `IMPLEMENTED` |
 | MEM-002 | fournir une page d’accueil Member minimale | `IMPLEMENTED` |
 | MEM-003 | consulter et modifier son profil selon autorisation | `PLANNED` |
-| MEM-004 | consulter ses formations et Lives | `PLANNED` |
+| MEM-004 | consulter ses formations et Lives | `IMPLEMENTED` — liste membre, détail LIVE sécurisé et accès protégé |
 | MEM-005 | consulter sa progression | `PLANNED` |
 | MEM-006 | consulter ses certificats | `PLANNED` |
 | MEM-007 | consulter ses cotisations et paiements | `DISCOVERY` |

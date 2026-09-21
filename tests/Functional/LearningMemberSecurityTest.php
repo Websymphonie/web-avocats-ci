@@ -241,6 +241,75 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringNotContainsString('meet.example.test', $content);
     }
 
+    public function testAvocatCanOpenOwnLiveDetailsWithoutExposingJoinUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($live->getTitle(), $content);
+        self::assertStringContainsString('En ligne', $content);
+        self::assertStringContainsString('À venir', $content);
+        self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+        self::assertStringNotContainsString('https://meet.example.test/live', $content);
+    }
+
+    public function testLiveDetailsShowHybridLocationAndDenyUnauthorizedMembers(): void
+    {
+        $client = $this->clientWithSchema();
+        $owner = $this->createUser(['ROLE_AVOCAT']);
+        $otherAvocat = $this->createUser(['ROLE_AVOCAT']);
+        $roleUser = $this->createUser(['ROLE_USER']);
+        $hybrid = $this->createLive(LiveDeliveryMode::HYBRID, TrainingStatus::PUBLISHED, 'https://meet.example.test/hybrid', 'Maison de l’Avocat');
+        $unowned = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/unowned');
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $this->createEnrollment($hybrid, $owner, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($unowned, $otherAvocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($hybrid, $roleUser, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($course, $owner, EnrollmentStatus::ACTIVE);
+        $client->loginUser($owner);
+        $client->disableReboot();
+
+        $client->request('GET', '/espace/formations/' . $hybrid->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Hybride', $content);
+        self::assertStringContainsString('Maison de l’Avocat', $content);
+        self::assertStringNotContainsString('https://meet.example.test/hybrid', $content);
+
+        $client->loginUser($owner);
+        $client->request('GET', '/espace/formations/' . $unowned->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $client->loginUser($otherAvocat);
+        $client->request('GET', '/espace/formations/' . $hybrid->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $client->loginUser($roleUser);
+        $client->request('GET', '/espace/formations/' . $hybrid->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+    }
+
+    public function testAnonymousCannotOpenLiveDetails(): void
+    {
+        $client = $this->clientWithSchema();
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/auth/login');
+    }
+
     public function testCoursePlayerDisplaysResourcesThroughProtectedDownloadRoute(): void
     {
         $client = $this->clientWithSchema();

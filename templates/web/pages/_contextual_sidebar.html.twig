@@ -1,0 +1,19 @@
+<aside class="h-fit lg:sticky lg:top-6" aria-label="Navigation des informations légales">
+    <div class="border border-border bg-card p-6 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Informations</p>
+        <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">Informations légales</h2>
+        <nav class="mt-5" aria-label="Pages d’informations légales">
+            <ul class="space-y-1">
+                {% for item in pages %}
+                    {% set isActive = currentPage.slug == item.slug %}
+                    <li>
+                        <a href="{{ path('web_information_detail', {slug: item.slug}) }}" class="group flex items-center justify-between gap-3 border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}"{% if isActive %} aria-current="page"{% endif %}>
+                            <span>{{ item.title }}</span>
+                            <twig:ux:icon name="lucide:chevron-right" class="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+</aside>

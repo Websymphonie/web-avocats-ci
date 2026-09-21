@@ -480,7 +480,8 @@ contenu est saisi avec le composant Tiptap existant et nettoyé par le sanitizer
 serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
 individuelles et bulk de suppression, ainsi que la lecture publique d’une Page
 publiée via `/informations/{slug}`. Il n’existe pas de listing Frontoffice
-générique ni de sidebar en V1.
+générique ; les Pages publiées de la famille légale peuvent afficher une
+sidebar contextuelle.
 
 ### CNT-006A — Couverture facultative des pages
 

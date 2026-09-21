@@ -92,6 +92,33 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringNotContainsString('/informations/politique-suppression-compte', $content);
     }
 
+    public function testLegalPagesExposePublishedContextualNavigationWithActivePage(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/informations/mentions-legales', server: ['HTTPS' => 'on']);
+
+        self::assertSelectorExists('aside[aria-label="Navigation des informations légales"]');
+        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Mentions légales');
+        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Politique de confidentialité');
+        self::assertSelectorTextContains('aside[aria-label="Navigation des informations légales"]', 'Conditions générales d’utilisation');
+        self::assertSelectorExists('aside[aria-label="Navigation des informations légales"] a[aria-current="page"]');
+        self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation des informations légales"]')->html());
+        self::assertStringNotContainsString('/informations/politique-suppression-compte', $client->getCrawler()->filter('aside[aria-label="Navigation des informations légales"]')->html());
+    }
+
+    public function testAccountPageDoesNotUseTheLegalContextualNavigation(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/informations/politique-suppression-compte', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorNotExists('aside[aria-label="Navigation des informations légales"]');
+    }
+
     private function clientWithSchema(): KernelBrowser
     {
         self::ensureKernelShutdown();
@@ -127,10 +154,11 @@ final class PublicPagesTest extends WebTestCase
         $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId());
         $confidentiality = $this->page('Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'));
         $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'));
+        $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'));
         $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId());
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
 
-        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $draft, $withoutPublicationDate] as $page) {
+        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $accountPolicy, $draft, $withoutPublicationDate] as $page) {
             $entityManager->persist($page);
         }
         $entityManager->flush();

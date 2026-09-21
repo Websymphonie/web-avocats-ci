@@ -28,7 +28,13 @@
         </section>
 
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <article class="mx-auto max-w-4xl" aria-labelledby="page-title">
+            {% set hasContextualSidebar = contextualPages is not empty %}
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% if hasContextualSidebar %}
+                    {% include 'web/pages/_contextual_sidebar.html.twig' with {pages: contextualPages, currentPage: page} only %}
+                {% endif %}
+
+                <article class="{{ hasContextualSidebar ? 'max-w-4xl' : 'mx-auto max-w-4xl' }}" aria-labelledby="page-title">
                 {% if coverUrl %}
                     <figure class="overflow-hidden rounded-2xl bg-muted">
                         <img src="{{ coverUrl }}" alt="Couverture de {{ page.title }}" class="aspect-[2/1] w-full object-cover">
@@ -45,7 +51,8 @@
                         Retour à l'accueil
                     </a>
                 </div>
-            </article>
+                </article>
+            </div>
         </div>
     </main>
 {% endblock %}

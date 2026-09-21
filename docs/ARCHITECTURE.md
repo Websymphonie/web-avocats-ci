@@ -813,7 +813,8 @@ aperçu, remplacement et retrait. Le vérificateur d'usage Content empêche la
 suppression d'un média encore utilisé par une Page.
 
 Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`.
-Il n’existe pas de listing `/pages` ou `/informations`, ni de sidebar en V1. La
+Il n’existe pas de listing `/pages` ou `/informations` ; les Pages publiées de
+la famille légale exposent une sidebar contextuelle. La
 query `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
 de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO restitue
 la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.

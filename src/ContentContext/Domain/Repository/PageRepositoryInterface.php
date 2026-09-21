@@ -29,6 +29,11 @@ interface PageRepositoryInterface
     public function list(?string $search, ?PageStatus $status, int $page, int $limit): PageListResult;
     public function findPublishedBySlug(string $slug): ?Page;
 
+    /**
+     * @return list<Page>
+     */
+    public function searchPublished(string $term, int $limit): array;
+
     /** @return list<Page> */
     public function findPublishedByGroup(PageGroup $group): array;
 }

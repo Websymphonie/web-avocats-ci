@@ -13,8 +13,11 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\ContentContext\Domain\Enum\EventFormat;
 use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
+use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -77,6 +80,53 @@ final class PublicSearchTest extends WebTestCase
         $content = (string) $client->getResponse()->getContent();
         self::assertStringNotContainsString('Brouillon secret', $content);
         self::assertStringNotContainsString('Formation membre secrète', $content);
+
+        $client->request('GET', '/recherche/autocomplete?q=nonpubliee', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame([], json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['results']);
+    }
+
+    public function testPublicSearchReturnsPublishedInformationWithGroupMetadataAndCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+
+        $client->request('GET', '/recherche/autocomplete?q=Mentions', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'Mentions légales',
+            'url' => '/informations/mentions-legales',
+            'metadata' => 'Informations légales',
+        ], $payload['results'][0]);
+
+        $client->request('GET', '/recherche/autocomplete?q=Confidentialité', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('information', $payload['results'][0]['type']);
+        self::assertSame('Compte et confidentialité', $payload['results'][0]['metadata']);
+        self::assertSame('/informations/politique-confidentialite', $payload['results'][0]['url']);
+
+        $client->request('GET', '/recherche/autocomplete?q=Guide', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('information', $payload['results'][0]['type']);
+        self::assertSame('Informations', $payload['results'][0]['metadata']);
+        self::assertSame('/informations/guide-visiteur', $payload['results'][0]['url']);
+
+        $client->request('GET', '/recherche/autocomplete?q=politique-confidentialite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('Politique de confidentialité', $payload['results'][0]['title']);
     }
 
     public function testSearchEntryPointAndDialogAreAvailableOnThePublicLayout(): void
@@ -158,8 +208,39 @@ final class PublicSearchTest extends WebTestCase
             ->setAccessType(TrainingAccessType::RESTRICTED)
             ->setStatus(TrainingStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
+        $legalPage = (new PageEntity())
+            ->setTitle('Mentions légales')
+            ->setSlug('mentions-legales')
+            ->setContent('<p>Informations légales publiques.</p>')
+            ->setGroup(PageGroup::LEGAL)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+        $accountPage = (new PageEntity())
+            ->setTitle('Politique de confidentialité')
+            ->setSlug('politique-confidentialite')
+            ->setContent('<p>Informations de confidentialité publiques.</p>')
+            ->setGroup(PageGroup::ACCOUNT)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
+        $draftPage = (new PageEntity())
+            ->setTitle('Page secrète brouillon')
+            ->setSlug('page-secrete-brouillon')
+            ->setContent('<p>Brouillon.</p>')
+            ->setGroup(PageGroup::LEGAL)
+            ->setStatus(PageStatus::DRAFT);
+        $unpublishedPage = (new PageEntity())
+            ->setTitle('Information non publiée')
+            ->setSlug('information-nonpubliee')
+            ->setContent('<p>Sans date de publication.</p>')
+            ->setStatus(PageStatus::PUBLISHED);
+        $ungroupedPage = (new PageEntity())
+            ->setTitle('Guide du visiteur')
+            ->setSlug('guide-visiteur')
+            ->setContent('<p>Information publique sans groupe.</p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
 
-        foreach ([$news, $draftNews, $event, $training, $memberTraining] as $item) {
+        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $unpublishedPage, $ungroupedPage] as $item) {
             $entityManager->persist($item);
         }
         $entityManager->flush();

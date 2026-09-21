@@ -296,6 +296,6 @@ export default class extends Controller {
     }
 
     typeInitial(type) {
-        return { news: 'A', event: 'E', training: 'F' }[type] || '•';
+        return { news: 'A', event: 'E', training: 'F', information: 'I' }[type] || '•';
     }
 }

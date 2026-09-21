@@ -6,8 +6,10 @@ namespace Websymphonie\WebContext\Application\Usecase\QueryHandler;
 
 use Websymphonie\ContentContext\Domain\Model\Event;
 use Websymphonie\ContentContext\Domain\Model\News;
+use Websymphonie\ContentContext\Domain\Model\Page;
 use Websymphonie\ContentContext\Domain\Repository\EventRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\PageRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\QueryHandler;
@@ -19,6 +21,7 @@ final readonly class GetPublicSearchSuggestionsHandler implements QueryHandler
     public function __construct(
         private NewsRepositoryInterface $newsRepository,
         private EventRepositoryInterface $eventRepository,
+        private PageRepositoryInterface $pageRepository,
         private TrainingRepositoryInterface $trainingRepository,
     ) {
     }
@@ -39,6 +42,9 @@ final readonly class GetPublicSearchSuggestionsHandler implements QueryHandler
         }
         foreach ($this->eventRepository->searchPublished($term, $limit) as $event) {
             $suggestions[] = $this->eventSuggestion($event);
+        }
+        foreach ($this->pageRepository->searchPublished($term, $limit) as $page) {
+            $suggestions[] = $this->pageSuggestion($page);
         }
         foreach ($this->trainingRepository->searchPublic($term, $limit) as $training) {
             $suggestions[] = $this->trainingSuggestion($training);
@@ -74,6 +80,16 @@ final readonly class GetPublicSearchSuggestionsHandler implements QueryHandler
             title: $training->title,
             slug: $training->slug,
             metadata: 'Formation · ' . $training->type->label(),
+        );
+    }
+
+    private function pageSuggestion(Page $page): PublicSearchSuggestion
+    {
+        return new PublicSearchSuggestion(
+            type: 'information',
+            title: $page->title,
+            slug: $page->slug,
+            metadata: $page->group?->label() ?? 'Informations',
         );
     }
 

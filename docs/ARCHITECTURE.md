@@ -831,6 +831,11 @@ contenant qu'une seule Page n'affiche pas de sidebar. La query
 `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
 de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO restitue
 la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.
+La recherche globale publique interroge également `Page` sur son titre et son
+slug, uniquement lorsque le statut est `PUBLISHED` et que `publishedAt` est
+présent. Elle expose un résultat `Information` vers la route canonique
+`web_information_detail` ; le `PageGroup` sert uniquement de metadata et ne
+devient pas un filtre de recherche.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.

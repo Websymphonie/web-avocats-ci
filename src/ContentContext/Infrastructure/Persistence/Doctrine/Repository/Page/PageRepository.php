@@ -152,6 +152,29 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
     }
 
     /** @return list<Page> */
+    public function searchPublished(string $term, int $limit): array
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return [];
+        }
+
+        $entities = $this->createQueryBuilder('page')
+            ->where('page.status = :status')
+            ->andWhere('page.publishedAt IS NOT NULL')
+            ->andWhere('(LOWER(page.title) LIKE LOWER(:term) OR LOWER(page.slug) LIKE LOWER(:term))')
+            ->setParameter('status', PageStatus::PUBLISHED)
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('LOWER(page.title)', 'ASC')
+            ->addOrderBy('LOWER(page.slug)', 'ASC')
+            ->setMaxResults(max(1, $limit))
+            ->getQuery()
+            ->getResult();
+
+        return array_map(fn (PageEntity $entity): Page => $this->factory->fromEntity($entity), $entities);
+    }
+
+    /** @return list<Page> */
     public function findPublishedByGroup(PageGroup $group): array
     {
         $entities = $this->createQueryBuilder('page')

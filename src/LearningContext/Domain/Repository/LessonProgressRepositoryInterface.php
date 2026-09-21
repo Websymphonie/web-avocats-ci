@@ -22,4 +22,10 @@ interface LessonProgressRepositoryInterface
      * @return array<int, CourseProgress>
      */
     public function summarizeByEnrollmentIds(array $enrollmentIds, int $totalLessons): array;
+
+    /**
+     * @param array<int, int> $totalLessonsByEnrollmentId
+     * @return array<int, CourseProgress>
+     */
+    public function summarizeByEnrollmentIdsWithTotalLessons(array $totalLessonsByEnrollmentId): array;
 }

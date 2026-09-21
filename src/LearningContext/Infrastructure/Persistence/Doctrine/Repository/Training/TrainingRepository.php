@@ -125,14 +125,37 @@ final class TrainingRepository extends ServiceEntityRepository implements Traini
             return [];
         }
 
-        return array_map(
-            fn (TrainingEntity $entity): Training => $this->withLiveDetails($entity),
-            $this->createQueryBuilder('training')
+        $entities = $this->createQueryBuilder('training')
                 ->andWhere('training.id IN (:ids)')
                 ->setParameter('ids', $ids)
                 ->getQuery()
-                ->getResult(),
-        );
+                ->getResult();
+        $models = [];
+        $liveIds = [];
+        foreach ($entities as $entity) {
+            if (!$entity instanceof TrainingEntity) {
+                continue;
+            }
+            $model = $this->factory->fromEntity($entity);
+            $models[$model->id] = $model;
+            if ($model->type === TrainingType::LIVE) {
+                $liveIds[] = $model->id;
+            }
+        }
+        $liveDetails = $this->liveDetailsRepository->findByTrainingIds($liveIds);
+        foreach ($models as $model) {
+            if ($model->type === TrainingType::LIVE) {
+                $model->replaceLiveDetails($liveDetails[$model->id] ?? null);
+            }
+        }
+
+        $ordered = [];
+        foreach ($ids as $id) {
+            if (isset($models[$id])) {
+                $ordered[] = $models[$id];
+            }
+        }
+        return $ordered;
     }
 
     /** @return list<TrainingSummary> */

@@ -12,6 +12,12 @@ interface LiveTrainingDetailsRepositoryInterface
 
     public function findByTrainingId(int $trainingId): ?LiveTrainingDetails;
 
+    /**
+     * @param list<int> $trainingIds
+     * @return array<int, LiveTrainingDetails>
+     */
+    public function findByTrainingIds(array $trainingIds): array;
+
     public function getByTrainingId(int $trainingId): LiveTrainingDetails;
 
     public function deleteByTrainingId(int $trainingId): void;

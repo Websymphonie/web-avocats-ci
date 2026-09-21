@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repository\LiveTrainingDetails;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Websymphonie\LearningContext\Domain\Exception\LiveTrainingDetailsNotFoundException;
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
@@ -41,6 +42,30 @@ final class LiveTrainingDetailsRepository extends ServiceEntityRepository implem
     {
         $entity = $this->findOneBy(['trainingId' => $trainingId]);
         return $entity instanceof LiveTrainingDetailsEntity ? $this->factory->fromEntity($entity) : null;
+    }
+
+    /** @param list<int> $trainingIds @return array<int, LiveTrainingDetails> */
+    public function findByTrainingIds(array $trainingIds): array
+    {
+        if ($trainingIds === []) {
+            return [];
+        }
+
+        $entities = $this->createQueryBuilder('details')
+            ->andWhere('details.trainingId IN (:trainingIds)')
+            ->setParameter('trainingIds', $trainingIds, ArrayParameterType::INTEGER)
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($entities as $entity) {
+            if ($entity instanceof LiveTrainingDetailsEntity) {
+                $model = $this->factory->fromEntity($entity);
+                $result[$model->trainingId] = $model;
+            }
+        }
+
+        return $result;
     }
 
     public function getByTrainingId(int $trainingId): LiveTrainingDetails

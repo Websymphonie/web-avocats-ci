@@ -22,4 +22,10 @@ interface LessonRepositoryInterface
 
     public function countByModule(int $moduleId): int;
     public function countByTraining(int $trainingId): int;
+
+    /**
+     * @param list<int> $trainingIds
+     * @return array<int, int>
+     */
+    public function countByTrainingIds(array $trainingIds): array;
 }

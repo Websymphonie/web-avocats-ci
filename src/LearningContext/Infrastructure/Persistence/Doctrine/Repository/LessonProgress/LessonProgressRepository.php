@@ -54,16 +54,28 @@ final class LessonProgressRepository extends ServiceEntityRepository implements 
     /** @param list<int> $enrollmentIds @return array<int, CourseProgress> */
     public function summarizeByEnrollmentIds(array $enrollmentIds, int $totalLessons): array
     {
-        if ($enrollmentIds === []) { return []; }
+        return $this->summarizeByEnrollmentIdsWithTotalLessons(array_fill_keys($enrollmentIds, $totalLessons));
+    }
+
+    /** @param array<int, int> $totalLessonsByEnrollmentId @return array<int, CourseProgress> */
+    public function summarizeByEnrollmentIdsWithTotalLessons(array $totalLessonsByEnrollmentId): array
+    {
+        if ($totalLessonsByEnrollmentId === []) { return []; }
+        $enrollmentIds = array_keys($totalLessonsByEnrollmentId);
         $rows = $this->getEntityManager()->getConnection()->executeQuery(
             'SELECT enrollment_id, COUNT(id) AS started_lessons, SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS completed_lessons, MAX(last_accessed_at) AS last_activity_at FROM lesson_progress WHERE enrollment_id IN (?) GROUP BY enrollment_id',
             [LessonProgressStatus::COMPLETED->value, $enrollmentIds],
             ['string', ArrayParameterType::INTEGER],
         )->fetchAllAssociative();
         $result = [];
+        foreach ($totalLessonsByEnrollmentId as $enrollmentId => $totalLessons) {
+            $result[$enrollmentId] = CourseProgress::empty($enrollmentId, $totalLessons);
+        }
         foreach ($rows as $row) {
+            $enrollmentId = (int) $row['enrollment_id'];
             $completed = (int) $row['completed_lessons'];
-            $result[(int) $row['enrollment_id']] = new CourseProgress((int) $row['enrollment_id'], $totalLessons, (int) $row['started_lessons'], $completed, $totalLessons > 0 ? (int) round($completed / $totalLessons * 100) : 0, $row['last_activity_at'] !== null ? new \DateTimeImmutable((string) $row['last_activity_at']) : null);
+            $totalLessons = $totalLessonsByEnrollmentId[$enrollmentId] ?? 0;
+            $result[$enrollmentId] = new CourseProgress($enrollmentId, $totalLessons, (int) $row['started_lessons'], $completed, $totalLessons > 0 ? (int) round($completed / $totalLessons * 100) : 0, $row['last_activity_at'] !== null ? new \DateTimeImmutable((string) $row['last_activity_at']) : null);
         }
         return $result;
     }

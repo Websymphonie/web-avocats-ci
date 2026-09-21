@@ -137,6 +137,7 @@ final class LearningAccessTest extends WebTestCase
         $schemaTool->dropDatabase();
         $schemaTool->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
         $entityManager->persist(new Reglages('app_title', 'Application title', 'Avocat CI', 'text'));
+        $entityManager->persist(new Reglages('app_paginate_limit', 'Pagination', '15', 'number'));
         $entityManager->persist((new Images())->setName('app_logo')->setLabel('Logo'));
         $entityManager->persist((new Images())->setName('app_favicon')->setLabel('Favicon'));
         $entityManager->persist((new Currencies())->setCurrencyCode('XOF')->setCurrencyName('Franc CFA')->setRightSymbol('FCFA')->setDecimalPlace(0)->setIsActive(true));

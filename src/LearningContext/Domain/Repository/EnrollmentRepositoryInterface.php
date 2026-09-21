@@ -17,6 +17,12 @@ interface EnrollmentRepositoryInterface
     public function getByUuid(string $uuid): Enrollment;
     public function countByTraining(int $trainingId): int;
     public function countActiveByTraining(int $trainingId): int;
+
+    /**
+     * @return list<Enrollment>
+     */
+    public function listByUser(int $userId, ?EnrollmentStatus $status = null): array;
+
     /** @param list<int>|null $userIds */
     public function listByTraining(int $trainingId, ?EnrollmentStatus $status, ?EnrollmentSource $source, ?array $userIds, int $page, int $limit): EnrollmentListResult;
 }

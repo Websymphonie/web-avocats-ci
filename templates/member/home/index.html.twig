@@ -60,8 +60,11 @@
                         <span class="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Learning</span>
                     </div>
                     <h3 class="mt-5 text-base font-semibold text-card-foreground">Formations</h3>
-                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Votre parcours et votre progression apparaîtront ici.</p>
-                    <span class="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground">Espace en préparation</span>
+                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Retrouvez vos parcours et votre progression dans votre espace dédié.</p>
+                    <a href="{{ path('learning_member_training_list') }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        Voir mes formations
+                        <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                    </a>
                 </article>
 
                 <article class="rounded-2xl border border-border bg-card p-5 shadow-sm">

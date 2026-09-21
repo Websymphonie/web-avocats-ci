@@ -78,6 +78,84 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertResponseRedirects('/auth/login');
     }
 
+    public function testAnonymousCannotOpenMemberTrainingList(): void
+    {
+        $client = $this->clientWithSchema();
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/auth/login');
+    }
+
+    public function testAvocatSeesOnlyPublishedActiveEnrollmentsOnMemberTrainingList(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $otherUser = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $this->createCourseLesson($course, 1);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
+        $revoked = $this->createTraining(TrainingAccessType::FREE);
+        $draft = $this->createTraining(TrainingAccessType::FREE, TrainingStatus::DRAFT);
+        $other = $this->createTraining(TrainingAccessType::FREE);
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($revoked, $avocat, EnrollmentStatus::REVOKED);
+        $this->createEnrollment($draft, $avocat, EnrollmentStatus::ACTIVE);
+        $this->createEnrollment($other, $otherUser, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString($course->getTitle(), $content);
+        self::assertStringContainsString($live->getTitle(), $content);
+        self::assertStringNotContainsString($revoked->getTitle(), $content);
+        self::assertStringNotContainsString($draft->getTitle(), $content);
+        self::assertStringNotContainsString($other->getTitle(), $content);
+    }
+
+    public function testRoleUserWithActiveEnrollmentSeesEmptyMemberTrainingState(): void
+    {
+        $client = $this->clientWithSchema();
+        $user = $this->createUser(['ROLE_USER']);
+        $training = $this->createTraining(TrainingAccessType::FREE);
+        $this->createEnrollment($training, $user, EnrollmentStatus::ACTIVE);
+        $client->loginUser($user);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Vous n’avez encore aucune formation accessible.', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString($training->getTitle(), (string) $client->getResponse()->getContent());
+    }
+
+    public function testMemberTrainingListDisplaysCourseProgress(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($course, 1);
+        $enrollment = $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $progress = (new LessonProgressEntity())
+            ->setEnrollmentId($enrollment->getId() ?? 0)
+            ->setLessonId($lesson->getId() ?? 0)
+            ->setStatus(\Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus::COMPLETED)
+            ->setStartedAt(new DateTimeImmutable('-1 hour'))
+            ->setLastAccessedAt(new DateTimeImmutable('-10 minutes'))
+            ->setCompletedAt(new DateTimeImmutable('-10 minutes'));
+        $this->entityManager()->persist($progress);
+        $this->entityManager()->flush();
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('100 %', (string) $client->getResponse()->getContent());
+        self::assertStringContainsString('Formation terminée', (string) $client->getResponse()->getContent());
+    }
+
     public function testFreeSelfEnrollmentIsSuccessfulAndIdempotent(): void
     {
         $client = $this->clientWithSchema();
@@ -595,11 +673,12 @@ final class LearningMemberSecurityTest extends WebTestCase
         return [$resource, $fileName];
     }
 
-    private function createEnrollment(TrainingEntity $training, User $user, EnrollmentStatus $status): void
+    private function createEnrollment(TrainingEntity $training, User $user, EnrollmentStatus $status): EnrollmentEntity
     {
         $enrollment = (new EnrollmentEntity())->setTrainingId($training->getId() ?? 0)->setUserId($user->getId() ?? 0)->setStatus($status)->setSource(EnrollmentSource::SELF_SERVICE)->setActivatedAt(new DateTimeImmutable());
         $this->entityManager()->persist($enrollment);
         $this->entityManager()->flush();
+        return $enrollment;
     }
 
     private function csrfToken(KernelBrowser $client, string $id): string

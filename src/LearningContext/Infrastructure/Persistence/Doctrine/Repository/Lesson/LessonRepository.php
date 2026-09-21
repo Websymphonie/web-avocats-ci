@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repository\Lesson;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -102,5 +103,30 @@ final class LessonRepository extends ServiceEntityRepository implements LessonRe
             'SELECT COUNT(lesson.id) FROM lesson INNER JOIN course_module ON course_module.id = lesson.module_id WHERE course_module.training_id = :trainingId',
             ['trainingId' => $trainingId],
         );
+    }
+
+    /** @param list<int> $trainingIds @return array<int, int> */
+    public function countByTrainingIds(array $trainingIds): array
+    {
+        if ($trainingIds === []) {
+            return [];
+        }
+
+        $rows = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT course_module.training_id AS training_id, COUNT(lesson.id) AS lesson_count
+             FROM lesson
+             INNER JOIN course_module ON course_module.id = lesson.module_id
+             WHERE course_module.training_id IN (?)
+             GROUP BY course_module.training_id',
+            [$trainingIds],
+            [ArrayParameterType::INTEGER],
+        )->fetchAllAssociative();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[(int) $row['training_id']] = (int) $row['lesson_count'];
+        }
+
+        return $counts;
     }
 }

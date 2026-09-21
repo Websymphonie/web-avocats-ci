@@ -67,6 +67,23 @@ final class EnrollmentRepository extends ServiceEntityRepository implements Enro
         return (int) $this->createQueryBuilder('enrollment')->select('COUNT(enrollment.id)')->where('enrollment.trainingId = :trainingId')->andWhere('enrollment.status = :status')->setParameter('trainingId', $trainingId)->setParameter('status', EnrollmentStatus::ACTIVE)->getQuery()->getSingleScalarResult();
     }
 
+    /** @return list<Enrollment> */
+    public function listByUser(int $userId, ?EnrollmentStatus $status = null): array
+    {
+        $qb = $this->createQueryBuilder('enrollment')
+            ->where('enrollment.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('enrollment.createdAt', 'DESC');
+        if ($status !== null) {
+            $qb->andWhere('enrollment.status = :status')->setParameter('status', $status);
+        }
+
+        return array_map(
+            fn (EnrollmentEntity $entity): Enrollment => $this->factory->fromEntity($entity),
+            $qb->getQuery()->getResult(),
+        );
+    }
+
     /** @param list<int>|null $userIds */
     public function listByTraining(int $trainingId, ?EnrollmentStatus $status, ?EnrollmentSource $source, ?array $userIds, int $page, int $limit): EnrollmentListResult
     {

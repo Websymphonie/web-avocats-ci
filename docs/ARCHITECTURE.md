@@ -843,8 +843,9 @@ suppression d'un média encore utilisé par une Page.
 Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`
 pour les groupes autres que `BAR`. Les Pages du groupe `BAR` utilisent la route
 canonique `/le-barreau/{slug}` ; une demande de la même Page via
-`/informations/{slug}` effectue une redirection permanente. Il n’existe pas de
-listing `/pages`, `/informations` ou `/le-barreau` générique. La sidebar est
+`/informations/{slug}` effectue une redirection permanente. Le hub public
+`/le-barreau` liste les Pages `BAR` publiées dans l’ordre éditorial et ne
+remplace pas un listing générique des autres groupes. La sidebar est
 construite depuis le groupe de la Page et ne contient que les Pages du même
 groupe qui sont publiées avec `publishedAt` renseigné ; ses liens utilisent la
 route canonique du groupe. Un groupe ne contenant qu'une seule Page n'affiche

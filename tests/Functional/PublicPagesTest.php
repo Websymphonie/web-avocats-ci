@@ -96,6 +96,35 @@ final class PublicPagesTest extends WebTestCase
         self::assertSame('/le-barreau/presentation', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"]')->attr('href'));
         self::assertStringContainsString('/le-barreau/historique', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->html());
         self::assertStringNotContainsString('bar-draft', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->html());
+        self::assertSame('/le-barreau', $client->getCrawler()->filter('nav[aria-label="Fil d’Ariane"] a')->last()->attr('href'));
+    }
+
+    public function testBarreauHubListsPublishedBarPagesInEditorialOrder(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Le Barreau');
+        self::assertSame([
+            '/le-barreau/presentation',
+            '/le-barreau/historique',
+        ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
+        self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('/le-barreau/mentions-legales', (string) $client->getResponse()->getContent());
+    }
+
+    public function testBarreauHubShowsAnHonestEmptyState(): void
+    {
+        $client = $this->clientWithSchema();
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('main', 'Les contenus institutionnels seront publiés prochainement.');
+        self::assertCount(0, $client->getCrawler()->filter('main a[href^="/le-barreau/"]'));
     }
 
     public function testBarRouteRejectsDraftAndNonBarPages(): void
@@ -131,6 +160,7 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringContainsString('/informations/conditions-generales-utilisation', $content);
         self::assertStringContainsString('/informations/politique-confidentialite', $content);
         self::assertStringContainsString('/informations/mentions-legales', $content);
+        self::assertSame('/le-barreau', $client->getCrawler()->filter('footer a')->first()->attr('href'));
         self::assertStringNotContainsString('/informations/politique-cookies', $content);
         self::assertStringNotContainsString('/informations/politique-suppression-compte', $content);
     }

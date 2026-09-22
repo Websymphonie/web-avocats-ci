@@ -55,6 +55,7 @@ final class PublicHomeTest extends WebTestCase
         self::assertStringContainsString('/actualites/actualite-la-plus-recente', $content);
         self::assertStringNotContainsString('/#actualite-', $content);
         self::assertStringContainsString('/uploads/content/covers/homepage-cover.jpg', $content);
+        self::assertSame('/le-barreau', $client->getCrawler()->filter('#institution')->attr('href'));
 
         self::assertStringContainsString('Événement le plus proche', $content);
         self::assertStringContainsString('Événement suivant', $content);

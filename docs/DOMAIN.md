@@ -492,9 +492,11 @@ serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
 individuelles et bulk de suppression, ainsi que la lecture publique d’une Page
 publiée via `/informations/{slug}`. Depuis CNT-008, les Pages `BAR` sont
 exposées canoniquement sous `/le-barreau/{slug}` et l’ancienne URL
-`/informations/{slug}` redirige définitivement vers cette route. Il n’existe
-pas de listing Frontoffice générique ; les Pages publiées d’un même groupe
-peuvent afficher une sidebar contextuelle utilisant les URLs canoniques.
+`/informations/{slug}` redirige définitivement vers cette route. Le hub public
+`/le-barreau` liste les Pages `BAR` publiées dans leur ordre éditorial. Il
+n’existe pas de listing Frontoffice générique des autres groupes ; les Pages
+publiées d’un même groupe peuvent afficher une sidebar contextuelle utilisant
+les URLs canoniques.
 
 ### CNT-006A — Couverture facultative des pages
 

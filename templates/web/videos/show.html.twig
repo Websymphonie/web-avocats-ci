@@ -8,7 +8,7 @@
         <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="video-detail-title">
             <img src="{{ thumbnail }}" alt="" class="absolute inset-0 -z-20 size-full object-cover opacity-25" aria-hidden="true">
             <div class="absolute inset-0 -z-10 bg-[linear-gradient(115deg,rgba(16,35,63,0.98)_0%,rgba(16,35,63,0.88)_48%,rgba(16,35,63,0.62)_100%)]"></div>
-            <div class="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-9 lg:px-8 lg:py-10">
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
                 <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
                     <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
                     <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
@@ -16,48 +16,53 @@
                     <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
                     <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ video.title }}</span>
                 </nav>
-                <p class="mt-5 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Regards du Barreau</p>
-                <h1 id="video-detail-title" class="mt-2 max-w-4xl text-3xl font-semibold leading-tight tracking-[-0.05em] sm:text-4xl lg:text-5xl">{{ video.title }}</h1>
-                <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.15em] text-white/65">
-                    <span class="text-[#f1d59b]">{{ video.provider.label }}</span>
-                    <span class="h-px w-5 bg-white/30" aria-hidden="true"></span>
-                    <time datetime="{{ video.publishedAt|date('Y-m-d') }}">{{ video.publishedAt|format_datetime(pattern='d MMMM Y') }}</time>
-                </div>
+                <p class="mt-6 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Regards du Barreau</p>
+                <h1 id="video-detail-title" class="mt-3 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{{ video.title }}</h1>
             </div>
         </section>
 
-        <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div class="overflow-hidden rounded-3xl border border-border/80 bg-black shadow-sm">
-                {% if embedUrl %}
-                    <div class="aspect-video">
-                        <iframe src="{{ embedUrl }}" title="Lecture vidéo : {{ video.title }}" class="size-full" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                    </div>
-                {% elseif video.provider.value == 'EXTERNAL_URL' and video.videoUrl %}
-                    <div class="flex min-h-56 items-center justify-center bg-muted/30 px-6 py-12 text-center sm:min-h-72">
-                        <div>
-                            <twig:ux:icon name="lucide:external-link" class="mx-auto size-9 text-primary" aria-hidden="true"/>
-                            <p class="mt-4 text-sm text-muted-foreground">Cette vidéo est disponible sur un site externe.</p>
-                            <a href="{{ video.videoUrl }}" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Ouvrir la vidéo <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/></a>
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+            <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
+                {% include 'web/videos/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+
+                <article aria-labelledby="video-detail-title">
+                    <header class="border-b border-border pb-8 sm:pb-10">
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                            {% if video.category %}<span class="text-primary">{{ video.category.name }}</span><span class="h-px w-5 bg-border" aria-hidden="true"></span>{% endif %}
+                            <time datetime="{{ video.publishedAt|date('Y-m-d') }}">{{ video.publishedAt|format_datetime(pattern='d MMMM Y') }}</time>
                         </div>
+                        {% if video.excerpt %}<p class="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{{ video.excerpt }}</p>{% endif %}
+                    </header>
+
+                    <div class="mt-8 overflow-hidden rounded-2xl border border-border bg-black shadow-sm sm:mt-10">
+                        {% if embedUrl %}
+                            <div class="aspect-video">
+                                <iframe src="{{ embedUrl }}" title="Lecture vidéo : {{ video.title }}" class="size-full" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                            </div>
+                        {% elseif video.provider.value == 'EXTERNAL_URL' and video.videoUrl %}
+                            <div class="flex min-h-56 items-center justify-center bg-muted/30 px-6 py-12 text-center sm:min-h-72">
+                                <div>
+                                    <twig:ux:icon name="lucide:external-link" class="mx-auto size-9 text-primary" aria-hidden="true"/>
+                                    <p class="mt-4 text-sm text-muted-foreground">Cette vidéo est disponible sur un site externe.</p>
+                                    <a href="{{ video.videoUrl }}" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Ouvrir la vidéo <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/></a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="flex min-h-56 items-center justify-center bg-muted/30 px-6 py-12 text-center sm:min-h-72">
+                                <div>
+                                    <twig:ux:icon name="lucide:video-off" class="mx-auto size-9 text-muted-foreground" aria-hidden="true"/>
+                                    <p class="mt-4 text-sm text-muted-foreground">Le lecteur vidéo n’est pas disponible pour cette publication.</p>
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <div class="flex min-h-56 items-center justify-center bg-muted/30 px-6 py-12 text-center sm:min-h-72">
-                        <div>
-                            <twig:ux:icon name="lucide:video-off" class="mx-auto size-9 text-muted-foreground" aria-hidden="true"/>
-                            <p class="mt-4 text-sm text-muted-foreground">Le lecteur vidéo n’est pas disponible pour cette publication.</p>
-                        </div>
-                    </div>
-                {% endif %}
 
-            </div>
+                    <article class="mx-auto mt-10 max-w-3xl" aria-label="Description de la vidéo">
+                        <div class="rich-content text-base leading-8 text-foreground sm:text-lg">{{ safeDescription|raw }}</div>
+                    </article>
 
-            <article class="mx-auto mt-10 max-w-3xl" aria-labelledby="video-detail-title">
-                {% if video.excerpt %}<p class="text-lg leading-8 text-muted-foreground">{{ video.excerpt }}</p>{% endif %}
-                <div class="rich-content mt-8 text-base leading-8 text-foreground sm:text-lg">{{ safeDescription|raw }}</div>
-            </article>
-
-            <div class="mt-10 border-t border-border pt-6">
-                <a href="{{ path('web_videos_list') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Toutes les vidéos</a>
+                    <div class="mt-12 border-t border-border pt-6"><a href="{{ path('web_videos_list') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Toutes les vidéos</a></div>
+                </article>
             </div>
         </div>
     </main>

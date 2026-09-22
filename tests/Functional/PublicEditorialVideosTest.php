@@ -14,6 +14,7 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\ContentContext\Domain\Enum\EditorialVideoStatus;
 use Websymphonie\ContentContext\Domain\Enum\VideoProvider;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideoCategory\EditorialVideoCategoryEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class PublicEditorialVideosTest extends WebTestCase
@@ -52,6 +53,8 @@ final class PublicEditorialVideosTest extends WebTestCase
         self::assertStringContainsString('Vidéo ancienne', $content);
         self::assertStringNotContainsString('Vidéo brouillon', $content);
         self::assertStringContainsString('/videos/video-recente', $content);
+        self::assertStringContainsString('Toutes les vidéos', $content);
+        self::assertStringContainsString('Interviews', $content);
         $recentPosition = strpos($content, 'Vidéo récente');
         $oldPosition = strpos($content, 'Vidéo ancienne');
         self::assertNotFalse($recentPosition);
@@ -78,6 +81,22 @@ final class PublicEditorialVideosTest extends WebTestCase
         self::assertStringContainsString('title="Lecture vidéo : Vidéo récente"', $content);
         self::assertStringNotContainsString('autoplay', $content);
         self::assertStringContainsString('Description publique', $content);
+        self::assertStringContainsString('Catégories vidéo', $content);
+        self::assertStringContainsString('aria-current="page"', $content);
+    }
+
+    public function testPublicCategoryFilterUsesTheVideoCategorySlug(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createVideoDataset();
+
+        $client->request('GET', '/videos?category=interviews', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Vidéo récente', $content);
+        self::assertStringNotContainsString('Vidéo ancienne', $content);
+        self::assertStringContainsString('aria-current="page"', $content);
     }
 
     public function testDraftAndUnknownVideosAreNotPubliclyAccessible(): void
@@ -112,9 +131,13 @@ final class PublicEditorialVideosTest extends WebTestCase
     private function createVideoDataset(): void
     {
         $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $recent = $this->video('Vidéo récente', 'video-recente', EditorialVideoStatus::PUBLISHED, new DateTimeImmutable('-1 day'));
-        $old = $this->video('Vidéo ancienne', 'video-ancienne', EditorialVideoStatus::PUBLISHED, new DateTimeImmutable('-2 days'));
-        $draft = $this->video('Vidéo brouillon', 'video-brouillon', EditorialVideoStatus::DRAFT, null);
+        $interviews = (new EditorialVideoCategoryEntity())->setName('Interviews')->setSlug('interviews');
+        $conferences = (new EditorialVideoCategoryEntity())->setName('Conférences')->setSlug('conferences');
+        $entityManager->persist($interviews);
+        $entityManager->persist($conferences);
+        $recent = $this->video('Vidéo récente', 'video-recente', EditorialVideoStatus::PUBLISHED, new DateTimeImmutable('-1 day'))->setCategory($interviews);
+        $old = $this->video('Vidéo ancienne', 'video-ancienne', EditorialVideoStatus::PUBLISHED, new DateTimeImmutable('-2 days'))->setCategory($conferences);
+        $draft = $this->video('Vidéo brouillon', 'video-brouillon', EditorialVideoStatus::DRAFT, null)->setCategory($interviews);
 
         foreach ([$recent, $old, $draft] as $video) {
             $entityManager->persist($video);

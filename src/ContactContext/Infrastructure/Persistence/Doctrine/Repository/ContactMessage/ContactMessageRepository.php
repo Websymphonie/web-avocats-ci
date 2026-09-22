@@ -6,7 +6,12 @@ namespace Websymphonie\ContactContext\Infrastructure\Persistence\Doctrine\Reposi
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
+use Websymphonie\ContactContext\Domain\Enum\ContactMessageDeliveryStatus;
+use Websymphonie\ContactContext\Domain\Exception\ContactMessageNotFoundException;
 use Websymphonie\ContactContext\Domain\Model\ContactMessage;
+use Websymphonie\ContactContext\Domain\Model\ContactMessageListResult;
 use Websymphonie\ContactContext\Domain\Repository\ContactMessageRepositoryInterface;
 use Websymphonie\ContactContext\Infrastructure\Persistence\Doctrine\Entity\ContactMessage\ContactMessageEntity;
 use Websymphonie\ContactContext\Infrastructure\Persistence\Factory\ContactMessageFactory;
@@ -37,5 +42,57 @@ final class ContactMessageRepository extends ServiceEntityRepository implements 
         }
 
         return $this->factory->fromEntity($entity);
+    }
+
+    public function getByUuid(string $uuid): ContactMessage
+    {
+        try {
+            $identifier = Uuid::fromString($uuid);
+        } catch (\Throwable) {
+            throw ContactMessageNotFoundException::withUuid($uuid);
+        }
+
+        $entity = $this->createQueryBuilder('message')
+            ->andWhere('message.uuid = :uuid')
+            ->setParameter('uuid', $identifier, UuidType::NAME)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$entity instanceof ContactMessageEntity) {
+            throw ContactMessageNotFoundException::withUuid($uuid);
+        }
+
+        return $this->factory->fromEntity($entity);
+    }
+
+    public function list(?ContactMessageDeliveryStatus $status, int $page, int $limit): ContactMessageListResult
+    {
+        $queryBuilder = $this->createQueryBuilder('message');
+
+        if ($status !== null) {
+            $queryBuilder
+                ->andWhere('message.deliveryStatus = :status')
+                ->setParameter('status', $status);
+        }
+
+        $total = (int) (clone $queryBuilder)
+            ->select('COUNT(message.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $entities = $queryBuilder
+            ->orderBy('message.submittedAt', 'DESC')
+            ->addOrderBy('message.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return new ContactMessageListResult(
+            array_map(fn (ContactMessageEntity $entity): ContactMessage => $this->factory->fromEntity($entity), $entities),
+            $total,
+            $page,
+            $limit,
+        );
     }
 }

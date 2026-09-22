@@ -160,6 +160,17 @@ final class ContentMenu implements SidebarModuleInterface
                 groupOrder: 2,
                 order: 6,
             ),
+            MenuFactory::item(
+                label: 'Messages de contact',
+                routes: [RouteEnum::CONTACT_MESSAGE_INDEX->value, 'contact_admin_message_show'],
+                roles: [],
+                icon: 'lucide:messages-square',
+                link: RouteEnum::CONTACT_MESSAGE_INDEX->value,
+                group: self::GROUP,
+                permission: 'CONTACT_MESSAGE_LIST',
+                groupOrder: 2,
+                order: 7,
+            ),
         ];
     }
 }

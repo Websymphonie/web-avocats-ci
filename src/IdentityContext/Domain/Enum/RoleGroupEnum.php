@@ -34,6 +34,7 @@ enum RoleGroupEnum: string
     case TAG_TRAININGS = 'TAG_TRAININGS';
     case PAYMENTS = 'PAYMENTS';
     case PAYMENT_OFFERS = 'PAYMENT_OFFERS';
+    case CONTACT_MESSAGES = 'CONTACT_MESSAGES';
 
     case ALL = 'ALL';
 
@@ -95,7 +96,8 @@ enum RoleGroupEnum: string
             self::CATEGORY_TRAININGS,
             self::TAG_TRAININGS,
             self::PAYMENTS,
-            self::PAYMENT_OFFERS => [self::SUPER, self::ADMIN],
+            self::PAYMENT_OFFERS,
+            self::CONTACT_MESSAGES => [self::SUPER, self::ADMIN],
 
             self::ALL => [
                 self::SUPER,

@@ -16,7 +16,7 @@ final class ContentMenuTest extends TestCase
         $items = ContentMenu::items();
 
         self::assertSame(
-            ['Actualités', 'Événements', 'Médias', 'Documents', 'Pages statiques', 'Tags'],
+            ['Actualités', 'Événements', 'Médias', 'Documents', 'Pages statiques', 'Tags', 'Messages de contact'],
             array_map(static fn ($item): string => $item->label, $items),
         );
         self::assertSame(

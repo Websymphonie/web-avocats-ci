@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Message de contact{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-4xl space-y-6">
+            <a class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground" href="{{ path('contact_admin_message_list') }}">
+                <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Messages de contact
+            </a>
+
+            <article class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <header class="flex flex-col gap-4 border-b border-border p-6 sm:flex-row sm:items-start sm:justify-between sm:p-8">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-muted-foreground">Message reçu le {{ message.submittedAt|date('d/m/Y à H:i') }}</p>
+                        <h1 class="mt-2 break-words text-2xl font-semibold tracking-[-0.03em]">{{ message.subject }}</h1>
+                        <p class="mt-2 break-words text-sm text-muted-foreground">{{ message.fullName }} · {{ message.email }}</p>
+                    </div>
+                    <twig:Badge variant="{{ message.deliveryStatus.value == 'SENT' ? 'success' : (message.deliveryStatus.value == 'FAILED' ? 'danger' : 'warning') }}">{{ message.deliveryStatus.label }}</twig:Badge>
+                </header>
+
+                <div class="space-y-8 p-6 sm:p-8">
+                    <dl class="grid gap-5 sm:grid-cols-2">
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Nom complet</dt>
+                            <dd class="mt-1 break-words font-medium">{{ message.fullName }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
+                            <dd class="mt-1 break-words"><a class="text-primary underline-offset-4 hover:underline" href="mailto:{{ message.email }}">{{ message.email }}</a></dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Téléphone</dt>
+                            <dd class="mt-1 break-words">{{ message.phone ?: 'Non renseigné' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Consentement</dt>
+                            <dd class="mt-1">{{ message.consentAt|date('d/m/Y à H:i') }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Soumission</dt>
+                            <dd class="mt-1">{{ message.submittedAt|date('d/m/Y à H:i') }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Envoi email</dt>
+                            <dd class="mt-1">{{ message.sentAt ? message.sentAt|date('d/m/Y à H:i') : 'Non envoyé' }}</dd>
+                        </div>
+                    </dl>
+
+                    <section class="border-t border-border pt-6">
+                        <h2 class="text-sm font-semibold">Message</h2>
+                        <p class="mt-3 max-w-none whitespace-pre-wrap break-words rounded-xl border border-border bg-muted/30 p-5 text-sm leading-7">{{ message.message }}</p>
+                    </section>
+                </div>
+            </article>
+        </div>
+    </main>
+{% endblock %}

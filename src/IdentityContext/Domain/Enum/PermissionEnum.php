@@ -67,6 +67,8 @@ enum PermissionEnum: string
     case PAYMENT_VIEW = 'PAYMENT_VIEW';
     case PAYMENT_OFFER_VIEW = 'PAYMENT_OFFER_VIEW';
     case PAYMENT_OFFER_MANAGE = 'PAYMENT_OFFER_MANAGE';
+    case CONTACT_MESSAGE_LIST = 'CONTACT_MESSAGE_LIST';
+    case CONTACT_MESSAGE_VIEW = 'CONTACT_MESSAGE_VIEW';
 
     /** @return list<self> */
     public static function configurableCases(): array
@@ -131,6 +133,8 @@ enum PermissionEnum: string
             self::PAYMENT_VIEW,
             self::PAYMENT_OFFER_VIEW,
             self::PAYMENT_OFFER_MANAGE,
+            self::CONTACT_MESSAGE_LIST,
+            self::CONTACT_MESSAGE_VIEW,
         ];
     }
 
@@ -197,6 +201,8 @@ enum PermissionEnum: string
             self::PAYMENT_VIEW => 'Paiements : lecture',
             self::PAYMENT_OFFER_VIEW => 'Tarifs de formations : lecture',
             self::PAYMENT_OFFER_MANAGE => 'Tarifs de formations : gestion',
+            self::CONTACT_MESSAGE_LIST => 'Messages de contact : liste',
+            self::CONTACT_MESSAGE_VIEW => 'Messages de contact : détail',
         };
     }
 
@@ -263,6 +269,8 @@ enum PermissionEnum: string
             self::PAYMENT_VIEW => ColorEnum::INFO,
             self::PAYMENT_OFFER_VIEW => ColorEnum::INFO,
             self::PAYMENT_OFFER_MANAGE => ColorEnum::SUCCESS,
+            self::CONTACT_MESSAGE_LIST => ColorEnum::INFO,
+            self::CONTACT_MESSAGE_VIEW => ColorEnum::INFO,
         };
     }
 }

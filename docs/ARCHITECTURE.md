@@ -214,6 +214,11 @@ demande. Les réglages de coordonnées publics sont lus via un provider typé
 depuis le référentiel de réglages existant ; les messages ne sont pas exposés
 dans une API publique et aucune interface CRM n’est introduite.
 
+Le Backoffice expose uniquement une lecture paginée sous
+`/admin/contact/messages` et son détail par UUID. Les messages sont immuables,
+leur statut de livraison est présenté sans action de relance ou de suppression,
+et leur contenu est rendu comme texte échappé.
+
 ---
 
 ## 4. Candidate business contexts
@@ -398,6 +403,7 @@ HasGroupAccess(RoleGroupEnum::NEWS).
 Les groupes dédiés livrés couvrent notamment NEWS, CATEGORY_NEWS, EVENTS,
 CATEGORY_EVENTS, VIDEOS, GALLERIES, DOCUMENTS, TRAININGS, COURSE_MODULES,
 ENROLLMENTS, CATEGORY_TRAININGS, TAG_TRAININGS, PAYMENTS et PAYMENT_OFFERS.
+Les messages de contact utilisent également CONTACT_MESSAGES.
 Ces groupes sont réservés à SUPER_ADMIN et ADMIN. Ce contrôle de groupe
 constitue la barrière d’accès à la surface Backoffice.
 Le contrôle fin de l’opération reste ensuite porté par la permission métier

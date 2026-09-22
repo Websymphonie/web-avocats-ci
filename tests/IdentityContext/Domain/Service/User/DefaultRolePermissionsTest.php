@@ -75,6 +75,8 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::PAYMENT_VIEW,
             PermissionEnum::PAYMENT_OFFER_VIEW,
             PermissionEnum::PAYMENT_OFFER_MANAGE,
+            PermissionEnum::CONTACT_MESSAGE_LIST,
+            PermissionEnum::CONTACT_MESSAGE_VIEW,
         ], $permissions);
     }
 
@@ -140,6 +142,8 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::PAYMENT_VIEW,
             PermissionEnum::PAYMENT_OFFER_VIEW,
             PermissionEnum::PAYMENT_OFFER_MANAGE,
+            PermissionEnum::CONTACT_MESSAGE_LIST,
+            PermissionEnum::CONTACT_MESSAGE_VIEW,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,

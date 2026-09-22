@@ -82,6 +82,8 @@ final class PermissionCatalog
             PermissionEnum::PAYMENT_VIEW,
             PermissionEnum::PAYMENT_OFFER_VIEW,
             PermissionEnum::PAYMENT_OFFER_MANAGE => 'Paiements',
+            PermissionEnum::CONTACT_MESSAGE_LIST,
+            PermissionEnum::CONTACT_MESSAGE_VIEW => 'Communication · Messages de contact',
         };
     }
 

@@ -433,6 +433,15 @@ pas accordées par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs
 ajoutent également `HasGroupAccess(RoleGroupEnum::PAGES)` ; les configurations
 persistées de la matrice de rôles restent prioritaires.
 
+### Messages de contact — BKO-CONTACT-001
+
+`CONTACT_MESSAGE_LIST` et `CONTACT_MESSAGE_VIEW` sont accordées par défaut à
+`ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global. Elles ne sont
+pas accordées par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs
+Backoffice utilisent également `HasGroupAccess(RoleGroupEnum::CONTACT_MESSAGES)`.
+Le périmètre est strictement consultatif : aucune permission d’édition ou de
+suppression n’est exposée.
+
 ### Formations COURSE — LRN-001
 
 Les permissions `LEARNING_TRAINING_VIEW`, `LEARNING_TRAINING_MANAGE`,

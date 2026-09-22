@@ -31,5 +31,6 @@ enum RouteEnum: string
     case CONTENT_VIDEO_CATEGORY_INDEX = 'content_admin_video_category_list';
     case CONTENT_GALLERY_INDEX = 'content_admin_gallery_list';
     case CONTENT_DOCUMENT_INDEX = 'content_admin_document_list';
+    case CONTACT_MESSAGE_INDEX = 'contact_admin_message_list';
     case LEARNING_TRAINING_INDEX = 'learning_admin_training_list';
 }

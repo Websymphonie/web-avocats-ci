@@ -1,0 +1,16 @@
+{% extends 'emails/_layout.html.twig' %}
+
+{% block email_title %}Nouveau message de contact{% endblock %}
+{% block email_preheader %}Nouveau message reçu depuis le site public.{% endblock %}
+
+{% block email_content %}
+    <h1 style="margin:0 0 22px;font-size:24px;line-height:1.2;color:#18181b;">Nouveau message de contact</h1>
+    <p style="margin:0 0 18px;line-height:1.65;">Un visiteur a envoyé un message depuis le formulaire public.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;font-size:14px;line-height:1.6;">
+        <tr><td style="padding:8px 0;color:#71717a;width:34%;">Nom</td><td style="padding:8px 0;color:#18181b;">{{ contactMessage.fullName }}</td></tr>
+        <tr><td style="padding:8px 0;color:#71717a;">Email</td><td style="padding:8px 0;color:#18181b;">{{ contactMessage.email }}</td></tr>
+        {% if contactMessage.phone %}<tr><td style="padding:8px 0;color:#71717a;">Téléphone</td><td style="padding:8px 0;color:#18181b;">{{ contactMessage.phone }}</td></tr>{% endif %}
+        <tr><td style="padding:8px 0;color:#71717a;">Sujet</td><td style="padding:8px 0;color:#18181b;">{{ contactMessage.subject }}</td></tr>
+    </table>
+    <div style="margin-top:22px;padding:18px;border-radius:12px;background:#f4f4f5;white-space:pre-wrap;line-height:1.65;">{{ contactMessage.message }}</div>
+{% endblock %}

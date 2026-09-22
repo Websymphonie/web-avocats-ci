@@ -12,6 +12,7 @@ use Websymphonie\SharedContext\Application\Service\Mailing\EmailDefinition;
 use Websymphonie\SharedContext\Application\Service\Mailing\Mailer;
 use Websymphonie\SharedContext\Application\Service\Mailing\RenderedEmailDefinition;
 use Websymphonie\SharedContext\Application\Service\Mailing\AttachmentEmailDefinition;
+use Websymphonie\SharedContext\Application\Service\Mailing\ReplyToEmailDefinition;
 
 final readonly class SymfonyMailer implements Mailer
 {
@@ -57,6 +58,9 @@ final readonly class SymfonyMailer implements Mailer
             foreach ($email->attachments() as $attachment) {
                 $message->attach($attachment['content'], $attachment['filename'], $attachment['mediaType']);
             }
+        }
+        if ($email instanceof ReplyToEmailDefinition) {
+            $message->replyTo((string) $email->replyTo());
         }
 
         $this->mailer->send($message);

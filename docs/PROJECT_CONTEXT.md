@@ -166,6 +166,7 @@ Ces domaines cibles ne signifient pas que tous les Bounded Contexts doivent
 - `PaymentContext` — `COMPLETE` pour offres, paiements et fulfillment Learning ;
 - IAM (`AuthContext` + `IdentityContext`) — `COMPLETE` pour le socle actuel ;
 - `WebContext` pour le shell public ;
+- `ContactContext` pour la capture et l’archivage sécurisé des messages du formulaire public ;
 - surfaces Web Public, Member et Backoffice ;
 - quality gates et baseline Doctrine stabilisés.
 

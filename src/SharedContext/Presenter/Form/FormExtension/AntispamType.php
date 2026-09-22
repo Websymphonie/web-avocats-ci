@@ -32,7 +32,7 @@ class AntispamType extends AbstractType
     {
         return [
             'row_attr' => [
-                'class' => 'antispam_robot'
+                'class' => 'antispam_robot hidden',
             ],
             'attr' => [
                 'autocomplete' => 'off',

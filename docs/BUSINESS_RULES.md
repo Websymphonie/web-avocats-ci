@@ -511,6 +511,16 @@ Les décisions suivantes restent explicitement ouvertes :
 - une page ne possède pas de catégorie, de tag, de média ou de page builder dans cette verticale ;
 - les actions de cycle de vie sont auditées sans stocker le contenu HTML dans les métadonnées d’audit.
 
+## FO-009 — Contact public
+
+- le formulaire public `/contact` exige un nom, une adresse email valide, un sujet, un message et le consentement explicite de l’utilisateur ;
+- chaque demande est persistée avant toute tentative d’envoi email et conserve `consentAt` et `submittedAt` ;
+- le statut de livraison est `PENDING`, puis `SENT` ou `FAILED` ; un échec d’envoi ne supprime jamais le message archivé ;
+- le destinataire est configuré séparément via `CONTACT_RECIPIENT_EMAIL` et l’adresse de l’utilisateur est utilisée uniquement comme `Reply-To` après validation Symfony ;
+- le formulaire est protégé par CSRF, honeypot et limitation de cinq soumissions par adresse IP sur quinze minutes ;
+- les coordonnées institutionnelles affichées sont facultatives et proviennent des réglages configurés ; les valeurs absentes sont masquées ;
+- aucune politique de rétention automatique n’est appliquée tant qu’elle n’a pas été définie pour la production.
+
 ## LRN-003 — Contenu pédagogique des leçons
 
 Une leçon est publiable lorsqu’elle possède un contenu riche significatif, une

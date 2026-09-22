@@ -6,6 +6,7 @@
 parameters:
   app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
   app.sender_name: '%env(MAILER_SENDER_NAME)%'
+  contact.recipient_email: '%env(CONTACT_RECIPIENT_EMAIL)%'
   upload_dir: '/uploads'
   # Local development fallback. Deployments must provide APP_STORAGE_DIR
   # explicitly and point it to a persistent volume.
@@ -41,6 +42,7 @@ services:
       int $galleryMediaMaxSize: '%media.gallery.max_size%'
       int $documentMaxSize: '%media.document.max_size%'
       int $resourceMaxSize: '%media.document.max_size%'
+      string $contactRecipientEmail: '%contact.recipient_email%'
 
   _instanceof:
     Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:
@@ -208,6 +210,10 @@ services:
     arguments:
       $senderEmail: '%app.sender_email%'
       $senderName: '%app.sender_name%'
+
+  Websymphonie\ContactContext\Application\Service\ContactThrottle:
+    arguments:
+      $ipLimiter: '@limiter.contact_ip'
 
   Websymphonie\SharedContext\Presenter\Controller\Errors\ErrorController:
     public: true

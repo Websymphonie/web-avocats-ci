@@ -204,6 +204,16 @@ scope de NOT-REV-002.
 
 Public website.
 
+### ContactContext
+
+`ContactContext` porte le formulaire public `/contact` et l’archivage des
+messages entrants. `ContactMessage` est persisté avec son consentement, sa
+date de soumission et un statut de livraison `PENDING`, `SENT` ou `FAILED`.
+La persistence précède l’envoi email afin qu’un échec du transport conserve la
+demande. Les réglages de coordonnées publics sont lus via un provider typé
+depuis le référentiel de réglages existant ; les messages ne sont pas exposés
+dans une API publique et aucune interface CRM n’est introduite.
+
 ---
 
 ## 4. Candidate business contexts

@@ -5,6 +5,13 @@ web:
   type: attribute
   prefix: '/'
 
+contact:
+  resource:
+    path: ../src/ContactContext/Presenter/Controller/
+    namespace: Websymphonie\ContactContext\Presenter\Controller
+  type: attribute
+  prefix: '/'
+
 auth:
   resource:
     path: ../src/AuthContext/Presenter/Controller/

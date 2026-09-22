@@ -401,6 +401,12 @@ Les permissions `CONTENT_VIDEO_VIEW`, `CONTENT_VIDEO_MANAGE`,
 `ROLE_ADMIN` uniquement. Elles ne sont pas accordées par défaut à
 `ROLE_AVOCAT` ni `ROLE_USER`.
 
+Les permissions `CONTENT_VIDEO_CATEGORY_VIEW`,
+`CONTENT_VIDEO_CATEGORY_MANAGE` et `CONTENT_VIDEO_CATEGORY_DELETE` suivent la
+même règle pour le référentiel des catégories éditoriales vidéo. Le groupe
+`RoleGroupEnum::CATEGORY_VIDEOS` est réservé à `ROLE_SUPER_ADMIN` et
+`ROLE_ADMIN`.
+
 ### Galeries photos — CNT-004
 
 `CONTENT_GALLERY_VIEW`, `CONTENT_GALLERY_MANAGE`, `CONTENT_GALLERY_PUBLISH` et

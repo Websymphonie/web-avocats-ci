@@ -469,6 +469,16 @@ vidéo YouTube n’est intégrée qu’à partir d’un identifiant extrait d’
 validée. Le Frontoffice expose uniquement les vidéos `PUBLISHED` possédant une
 date de publication ; les galeries publiques restent hors de cette livraison.
 
+### CNT-007 — Catégories éditoriales des vidéos
+
+`EditorialVideoCategory` est une taxonomie Content dédiée aux vidéos
+éditoriales. Une vidéo possède au plus une catégorie via une référence Doctrine
+interne au même contexte ; la colonne reste nullable pour préserver les
+vidéos historiques, mais toute nouvelle création ou modification Backoffice
+doit sélectionner une catégorie. La suppression d’une catégorie utilisée est
+refusée. Le listing Backoffice expose un filtre et le listing public accepte
+le filtre optionnel `category` par slug sans modifier le rendu public.
+
 ## CNT-006 — Pages statiques
 
 `Page` est un contenu institutionnel simple de `ContentContext`. Une page

@@ -29,6 +29,7 @@ final class GetPublicEditorialVideoListController extends AbstractController
         $videos = $this->handleQuery(new GetPublishedEditorialVideoListQuery(
             page: max(1, $request->query->getInt('page', 1)),
             limit: max(1, $context->getPaginatorPageSize()),
+            category: is_string($request->query->get('category')) ? $request->query->get('category') : null,
         ));
 
         $thumbnailUrls = [];

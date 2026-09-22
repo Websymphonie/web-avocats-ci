@@ -22,6 +22,7 @@ enum RoleGroupEnum: string
     case EVENTS = 'EVENTS';
     case CATEGORY_EVENTS = 'CATEGORY_EVENTS';
     case VIDEOS = 'VIDEOS';
+    case CATEGORY_VIDEOS = 'CATEGORY_VIDEOS';
     case GALLERIES = 'GALLERIES';
     case TAGS = 'TAGS';
     case DOCUMENTS = 'DOCUMENTS';
@@ -83,6 +84,7 @@ enum RoleGroupEnum: string
             self::EVENTS,
             self::CATEGORY_EVENTS,
             self::VIDEOS,
+            self::CATEGORY_VIDEOS,
             self::GALLERIES,
             self::TAGS,
             self::DOCUMENTS,

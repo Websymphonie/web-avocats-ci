@@ -28,13 +28,14 @@ final class EditorialVideo
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
         public array $tags = [],
+        public ?EditorialVideoCategory $category = null,
     ) {
         self::assertUrl($provider, $videoUrl, allowEmpty: true);
         $this->externalVideoId = self::youtubeIdFromUrl($provider, $videoUrl);
     }
 
     /** @param list<Tag> $tags */
-    public function update(string $title, string $slug, ?string $excerpt, string $description, VideoProvider $provider, string $videoUrl, array $tags = []): void
+    public function update(string $title, string $slug, ?string $excerpt, string $description, VideoProvider $provider, string $videoUrl, array $tags = [], ?EditorialVideoCategory $category = null): void
     {
         self::assertUrl($provider, $videoUrl, allowEmpty: true);
         $this->title = $title;
@@ -47,6 +48,7 @@ final class EditorialVideo
             $this->slug = $slug;
         }
         $this->replaceTags($tags);
+        $this->category = $category;
     }
 
     /** @param list<Tag> $tags */

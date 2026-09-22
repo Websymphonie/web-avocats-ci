@@ -17,6 +17,6 @@ final readonly class GetPublishedEditorialVideoListQueryHandler implements Query
 
     public function __invoke(GetPublishedEditorialVideoListQuery $query): EditorialVideoListResult
     {
-        return $this->repository->listPublished(max(1, $query->page), max(1, $query->limit));
+        return $this->repository->listPublished(max(1, $query->page), max(1, $query->limit), $query->category);
     }
 }

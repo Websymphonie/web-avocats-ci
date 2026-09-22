@@ -28,7 +28,7 @@ final class ContentMenuTest extends TestCase
             array_map(static fn ($item): string => $item->label, $items[1]->children),
         );
         self::assertSame(
-            ['Vidéos', 'Galeries photos'],
+            ['Vidéos', 'Catégories de vidéos', 'Galeries photos'],
             array_map(static fn ($item): string => $item->label, $items[2]->children),
         );
     }

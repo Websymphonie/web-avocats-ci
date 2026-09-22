@@ -8,18 +8,20 @@ use Websymphonie\ContentContext\Domain\Model\EditorialVideo;
 use Websymphonie\ContentContext\Domain\Model\Tag;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideoCategory\EditorialVideoCategoryEntity;
 
 final class EditorialVideoFactory
 {
-    public function __construct(private readonly TagFactory $tagFactory) {}
+    public function __construct(private readonly TagFactory $tagFactory, private readonly EditorialVideoCategoryFactory $categoryFactory) {}
     public function fromEntity(EditorialVideoEntity $entity): EditorialVideo
     {
-        return new EditorialVideo(id: $entity->getId() ?? 0, uuid: $entity->getUuidAsString() ?? '', title: $entity->getTitle(), slug: $entity->getSlug(), excerpt: $entity->getExcerpt(), description: $entity->getDescription(), provider: $entity->getProvider(), videoUrl: $entity->getVideoUrl(), externalVideoId: $entity->getExternalVideoId(), status: $entity->getStatus(), publishedAt: $entity->getPublishedAt(), createdAt: $entity->getCreatedAt(), updatedAt: $entity->getUpdatedAt(), tags: array_map(fn (TagEntity $tag): Tag => $this->tagFactory->fromEntity($tag), $entity->getTags()->toArray()));
+        $category = $entity->getCategory();
+        return new EditorialVideo(id: $entity->getId() ?? 0, uuid: $entity->getUuidAsString() ?? '', title: $entity->getTitle(), slug: $entity->getSlug(), excerpt: $entity->getExcerpt(), description: $entity->getDescription(), provider: $entity->getProvider(), videoUrl: $entity->getVideoUrl(), externalVideoId: $entity->getExternalVideoId(), status: $entity->getStatus(), publishedAt: $entity->getPublishedAt(), createdAt: $entity->getCreatedAt(), updatedAt: $entity->getUpdatedAt(), tags: array_map(fn (TagEntity $tag): Tag => $this->tagFactory->fromEntity($tag), $entity->getTags()->toArray()), category: $category instanceof EditorialVideoCategoryEntity ? $this->categoryFactory->fromEntity($category) : null);
     }
     /** @param list<TagEntity> $tagEntities */
-    public function toEntity(EditorialVideo $model, ?EditorialVideoEntity $entity = null, array $tagEntities = []): EditorialVideoEntity
+    public function toEntity(EditorialVideo $model, ?EditorialVideoEntity $entity = null, array $tagEntities = [], ?EditorialVideoCategoryEntity $categoryEntity = null): EditorialVideoEntity
     {
         $entity ??= new EditorialVideoEntity();
-        return $entity->setTitle($model->title)->setSlug($model->slug)->setExcerpt($model->excerpt)->setDescription($model->description)->setProvider($model->provider)->setVideoUrl($model->videoUrl)->setExternalVideoId($model->externalVideoId)->setStatus($model->status)->setPublishedAt($model->publishedAt)->replaceTags($tagEntities);
+        return $entity->setTitle($model->title)->setSlug($model->slug)->setExcerpt($model->excerpt)->setDescription($model->description)->setProvider($model->provider)->setVideoUrl($model->videoUrl)->setExternalVideoId($model->externalVideoId)->setStatus($model->status)->setPublishedAt($model->publishedAt)->setCategory($categoryEntity)->replaceTags($tagEntities);
     }
 }

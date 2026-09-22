@@ -34,7 +34,7 @@ final class GetEditorialVideoListController extends AbstractController
         $form = $this->createForm(EditorialVideoFilterType::class, $query, ['method' => 'GET', 'action' => $this->generateUrl('content_admin_video_list')]);
         $form->handleRequest($request);
         $limit = $context->getPaginatorPageSize();
-        $result = $this->handleQuery(new GetEditorialVideoListQuery($query->search ?: null, $query->status instanceof EditorialVideoStatus ? $query->status : null, $query->provider instanceof VideoProvider ? $query->provider : null, $query->tagId ?: null, $query->page, $limit));
+        $result = $this->handleQuery(new GetEditorialVideoListQuery($query->search ?: null, $query->status instanceof EditorialVideoStatus ? $query->status : null, $query->provider instanceof VideoProvider ? $query->provider : null, $query->tagId ?: null, $query->categoryId ?: null, $query->page, $limit));
         return $this->render('content/admin/editorial_video/index.html.twig', ['videos' => $result, 'filterForm' => $form->createView()]);
     }
 }

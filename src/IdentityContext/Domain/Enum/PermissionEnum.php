@@ -36,6 +36,9 @@ enum PermissionEnum: string
     case CONTENT_VIDEO_MANAGE = 'CONTENT_VIDEO_MANAGE';
     case CONTENT_VIDEO_PUBLISH = 'CONTENT_VIDEO_PUBLISH';
     case CONTENT_VIDEO_DELETE = 'CONTENT_VIDEO_DELETE';
+    case CONTENT_VIDEO_CATEGORY_VIEW = 'CONTENT_VIDEO_CATEGORY_VIEW';
+    case CONTENT_VIDEO_CATEGORY_MANAGE = 'CONTENT_VIDEO_CATEGORY_MANAGE';
+    case CONTENT_VIDEO_CATEGORY_DELETE = 'CONTENT_VIDEO_CATEGORY_DELETE';
     case CONTENT_GALLERY_VIEW = 'CONTENT_GALLERY_VIEW';
     case CONTENT_GALLERY_MANAGE = 'CONTENT_GALLERY_MANAGE';
     case CONTENT_GALLERY_PUBLISH = 'CONTENT_GALLERY_PUBLISH';
@@ -97,6 +100,9 @@ enum PermissionEnum: string
             self::CONTENT_VIDEO_MANAGE,
             self::CONTENT_VIDEO_PUBLISH,
             self::CONTENT_VIDEO_DELETE,
+            self::CONTENT_VIDEO_CATEGORY_VIEW,
+            self::CONTENT_VIDEO_CATEGORY_MANAGE,
+            self::CONTENT_VIDEO_CATEGORY_DELETE,
             self::CONTENT_GALLERY_VIEW,
             self::CONTENT_GALLERY_MANAGE,
             self::CONTENT_GALLERY_PUBLISH,
@@ -160,6 +166,9 @@ enum PermissionEnum: string
             self::CONTENT_VIDEO_MANAGE => 'Vidéos éditoriales : création et édition',
             self::CONTENT_VIDEO_PUBLISH => 'Vidéos éditoriales : publication et archivage',
             self::CONTENT_VIDEO_DELETE => 'Vidéos éditoriales : suppression',
+            self::CONTENT_VIDEO_CATEGORY_VIEW => 'Catégories de vidéos éditoriales : lecture',
+            self::CONTENT_VIDEO_CATEGORY_MANAGE => 'Catégories de vidéos éditoriales : création et édition',
+            self::CONTENT_VIDEO_CATEGORY_DELETE => 'Catégories de vidéos éditoriales : suppression',
             self::CONTENT_GALLERY_VIEW => 'Galeries photos : lecture',
             self::CONTENT_GALLERY_MANAGE => 'Galeries photos : création et édition',
             self::CONTENT_GALLERY_PUBLISH => 'Galeries photos : publication et archivage',
@@ -223,6 +232,9 @@ enum PermissionEnum: string
             self::CONTENT_VIDEO_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_VIDEO_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_VIDEO_DELETE => ColorEnum::DANGER,
+            self::CONTENT_VIDEO_CATEGORY_VIEW => ColorEnum::INFO,
+            self::CONTENT_VIDEO_CATEGORY_MANAGE => ColorEnum::SUCCESS,
+            self::CONTENT_VIDEO_CATEGORY_DELETE => ColorEnum::DANGER,
             self::CONTENT_GALLERY_VIEW => ColorEnum::INFO,
             self::CONTENT_GALLERY_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_GALLERY_PUBLISH => ColorEnum::WARNING,

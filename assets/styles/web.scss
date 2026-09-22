@@ -108,14 +108,40 @@ body {
 
 .homepage-event-carousel__viewport {
   min-height: 3.25rem;
+  position: relative;
 }
 
 .homepage-event-carousel {
+  isolation: isolate;
   background-image:
     linear-gradient(180deg, rgba(16, 35, 63, 0.86) 0%, rgba(16, 35, 63, 0.7) 55%, rgba(16, 35, 63, 0.82) 100%),
     var(--homepage-carousel-image);
   background-position: center;
   background-size: cover;
+}
+
+.homepage-event-carousel::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  opacity: 0;
+  background-position: center;
+  background-size: cover;
+  transition: opacity 360ms ease-out;
+}
+
+.homepage-event-carousel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.homepage-event-carousel.is-carousel-transitioning::before {
+  opacity: 1;
+  background-image:
+    linear-gradient(180deg, rgba(16, 35, 63, 0.86) 0%, rgba(16, 35, 63, 0.7) 55%, rgba(16, 35, 63, 0.82) 100%),
+    var(--homepage-carousel-next-image);
 }
 
 .homepage-event-carousel__slide[hidden] {
@@ -128,6 +154,46 @@ body {
   position: relative;
   isolation: isolate;
   padding: 0.55rem 0.65rem;
+}
+
+.homepage-event-carousel__slide.is-carousel-entering,
+.homepage-event-carousel__slide.is-carousel-exiting {
+  transition: opacity 360ms ease-out, transform 360ms ease-out;
+  will-change: opacity, transform;
+}
+
+.homepage-event-carousel__slide.is-carousel-entering {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+}
+
+.homepage-event-carousel__slide.is-carousel-direction-next.is-carousel-entering {
+  transform: translate3d(0.75rem, 0, 0);
+}
+
+.homepage-event-carousel__slide.is-carousel-direction-previous.is-carousel-entering {
+  transform: translate3d(-0.75rem, 0, 0);
+}
+
+.homepage-event-carousel__slide.is-carousel-entering.is-carousel-animated {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.homepage-event-carousel__slide.is-carousel-exiting {
+  opacity: 1;
+}
+
+.homepage-event-carousel__slide.is-carousel-direction-next.is-carousel-exiting.is-carousel-animated {
+  opacity: 0;
+  transform: translate3d(-0.75rem, 0, 0);
+}
+
+.homepage-event-carousel__slide.is-carousel-direction-previous.is-carousel-exiting.is-carousel-animated {
+  opacity: 0;
+  transform: translate3d(0.75rem, 0, 0);
 }
 
 .homepage-event-carousel__slide > * {
@@ -204,6 +270,15 @@ body {
   .homepage-event-carousel__control {
     width: 1.15rem;
     height: 1.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage-event-carousel::before,
+  .homepage-event-carousel__slide.is-carousel-entering,
+  .homepage-event-carousel__slide.is-carousel-exiting {
+    transition-duration: 1ms;
+    transform: none;
   }
 }
 

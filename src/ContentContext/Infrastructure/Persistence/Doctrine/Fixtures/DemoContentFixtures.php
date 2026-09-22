@@ -18,6 +18,7 @@ use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Domain\Enum\EditorialVideoStatus;
 use Websymphonie\ContentContext\Domain\Enum\VideoProvider;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideoCategory\EditorialVideoCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EventCategory\EventCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
@@ -48,6 +49,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
         DbLogListener::withoutLogging(function () use ($manager): void {
             $this->loadNews($manager);
             $this->loadEvents($manager);
+            $this->loadEditorialVideoCategories($manager);
             $this->loadEditorialVideos($manager);
             $this->loadPages($manager);
             $manager->flush();
@@ -211,7 +213,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
         ];
         $now = new DateTimeImmutable();
 
-        foreach ($videos as [$title, $slug, $status, $daysAgo]) {
+        $categorySlugs = ['vie-du-barreau', 'pratique-professionnelle', 'vie-du-barreau'];
+        foreach ($videos as $index => [$title, $slug, $status, $daysAgo]) {
             $video = $manager->getRepository(EditorialVideoEntity::class)->findOneBy(['slug' => $slug]);
             if (!$video instanceof EditorialVideoEntity) {
                 $video = new EditorialVideoEntity();
@@ -223,10 +226,25 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setProvider(VideoProvider::YOUTUBE)
                 ->setVideoUrl('https://www.youtube.com/watch?v=M7lc1UVf-VE')
                 ->setExternalVideoId('M7lc1UVf-VE')
+                ->setCategory($this->editorialVideoCategory($categorySlugs[$index]))
                 ->setStatus($status)
                 ->setPublishedAt($daysAgo === null ? null : $now->modify(sprintf('-%d days', $daysAgo)));
             $manager->persist($video);
             $this->addReference('demo_editorial_video_' . $slug, $video);
+        }
+    }
+
+    private function loadEditorialVideoCategories(ObjectManager $manager): void
+    {
+        foreach ([
+            ['Vie du Barreau', 'vie-du-barreau'],
+            ['Pratique professionnelle', 'pratique-professionnelle'],
+        ] as [$name, $slug]) {
+            $category = $manager->getRepository(EditorialVideoCategoryEntity::class)->findOneBy(['slug' => $slug]);
+            if (!$category instanceof EditorialVideoCategoryEntity) { $category = new EditorialVideoCategoryEntity(); }
+            $category->setName($name)->setSlug($slug)->setDescription('Catégorie de démonstration pour les vidéos éditoriales.');
+            $manager->persist($category);
+            $this->addReference('demo_editorial_video_category_' . $slug, $category);
         }
     }
 
@@ -243,6 +261,11 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
     private function eventCategory(string $name): EventCategoryEntity
     {
         return $this->getReference($name, EventCategoryEntity::class);
+    }
+
+    private function editorialVideoCategory(string $slug): EditorialVideoCategoryEntity
+    {
+        return $this->getReference('demo_editorial_video_category_' . $slug, EditorialVideoCategoryEntity::class);
     }
 
     private function tag(string $name): TagEntity

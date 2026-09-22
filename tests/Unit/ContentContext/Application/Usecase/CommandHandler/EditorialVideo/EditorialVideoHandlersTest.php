@@ -21,6 +21,8 @@ use Websymphonie\ContentContext\Application\Usecase\CommandHandler\EditorialVide
 use Websymphonie\ContentContext\Application\Usecase\CommandHandler\EditorialVideo\UpdateEditorialVideoHandler;
 use Websymphonie\ContentContext\Domain\Enum\EditorialVideoStatus;
 use Websymphonie\ContentContext\Domain\Model\EditorialVideo;
+use Websymphonie\ContentContext\Domain\Model\EditorialVideoCategory;
+use Websymphonie\ContentContext\Domain\Repository\EditorialVideoCategoryRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\EditorialVideoRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
 
@@ -30,17 +32,20 @@ final class EditorialVideoHandlersTest extends TestCase
     {
         $repository = $this->createMock(EditorialVideoRepositoryInterface::class);
         $tags = $this->createMock(TagRepositoryInterface::class);
+        $categories = $this->createMock(EditorialVideoCategoryRepositoryInterface::class);
         $sanitizer = $this->createMock(RichTextSanitizerInterface::class);
         $sanitizer->expects(self::exactly(2))->method('sanitize')->willReturnArgument(0);
         $tags->expects(self::exactly(2))->method('findByIds')->willReturn([]);
+        $category = new EditorialVideoCategory(5, 'category-uuid', 'Profession', 'profession');
+        $categories->expects(self::exactly(2))->method('getById')->with(5)->willReturn($category);
         $repository->method('slugExists')->willReturn(false);
         $repository->expects(self::exactly(2))->method('save')->willReturnArgument(0);
-        $create = new CreateEditorialVideoHandler($repository, $tags, $sanitizer, new AsciiSlugger('en'));
-        $video = $create(new CreateEditorialVideoCommand(title: 'Première vidéo', description: '<p>Texte</p>', videoUrl: 'https://youtu.be/abcDEF_123'));
+        $create = new CreateEditorialVideoHandler($repository, $tags, $categories, $sanitizer, new AsciiSlugger('en'));
+        $video = $create(new CreateEditorialVideoCommand(title: 'Première vidéo', description: '<p>Texte</p>', videoUrl: 'https://youtu.be/abcDEF_123', categoryId: 5));
         self::assertSame('premiere-video', $video->slug);
-        $update = new UpdateEditorialVideoHandler($repository, $tags, $sanitizer, new AsciiSlugger('en'));
+        $update = new UpdateEditorialVideoHandler($repository, $tags, $categories, $sanitizer, new AsciiSlugger('en'));
         $repository->method('getById')->willReturn($video);
-        $update(new UpdateEditorialVideoCommand(1, 'Vidéo modifiée', description: '<p>Autre</p>', videoUrl: 'https://youtu.be/abcDEF_123'));
+        $update(new UpdateEditorialVideoCommand(1, 'Vidéo modifiée', description: '<p>Autre</p>', videoUrl: 'https://youtu.be/abcDEF_123', categoryId: 5));
         self::assertSame('video-modifiee', $video->slug);
     }
 

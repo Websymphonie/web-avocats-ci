@@ -14,6 +14,7 @@ use Websymphonie\ContentContext\Domain\Model\EditorialVideoListResult;
 use Websymphonie\ContentContext\Domain\Model\Tag;
 use Websymphonie\ContentContext\Domain\Repository\EditorialVideoRepositoryInterface;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideo\EditorialVideoEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideoCategory\EditorialVideoCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Factory\EditorialVideoFactory;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
@@ -28,7 +29,8 @@ final class EditorialVideoRepository extends ServiceEntityRepository implements 
     {
         $entity = $video->id > 0 ? $this->find($video->id) : null;
         $tags = array_values(array_filter(array_map(fn (Tag $tag): ?TagEntity => $this->getEntityManager()->find(TagEntity::class, $tag->id), $video->tags)));
-        $entity = $this->factory->toEntity($video, $entity, $tags);
+        $category = $video->category !== null ? $this->getEntityManager()->find(EditorialVideoCategoryEntity::class, $video->category->id) : null;
+        $entity = $this->factory->toEntity($video, $entity, $tags, $category);
         DbLogListener::disable();
         try { $this->manager->execute($entity, $video->id > 0 ? DbActionEnum::EDIT : DbActionEnum::NEW); } finally { DbLogListener::enable(); }
         return $this->factory->fromEntity($entity);
@@ -40,25 +42,29 @@ final class EditorialVideoRepository extends ServiceEntityRepository implements 
      * @param list<int> $ids
      * @return list<EditorialVideo>
      */
-    public function findByIds(array $ids): array { if ($ids === []) { return []; } return array_map(fn (EditorialVideoEntity $entity): EditorialVideo => $this->factory->fromEntity($entity), $this->createQueryBuilder('video')->andWhere('video.id IN (:ids)')->setParameter('ids', $ids)->getQuery()->getResult()); }
-    public function list(?string $search, ?EditorialVideoStatus $status, ?VideoProvider $provider, ?int $tagId, int $page, int $limit): EditorialVideoListResult
+    public function findByIds(array $ids): array { if ($ids === []) { return []; } return array_map(fn (EditorialVideoEntity $entity): EditorialVideo => $this->factory->fromEntity($entity), $this->createQueryBuilder('video')->leftJoin('video.tags', 'tag')->addSelect('tag')->leftJoin('video.category', 'category')->addSelect('category')->andWhere('video.id IN (:ids)')->setParameter('ids', $ids)->getQuery()->getResult()); }
+    public function list(?string $search, ?EditorialVideoStatus $status, ?VideoProvider $provider, ?int $tagId, ?int $categoryId, int $page, int $limit): EditorialVideoListResult
     {
-        $qb = $this->createQueryBuilder('video');
+        $qb = $this->createQueryBuilder('video')->leftJoin('video.category', 'category')->addSelect('category');
         if ($search !== null && trim($search) !== '') { $qb->andWhere('LOWER(video.title) LIKE LOWER(:search)')->setParameter('search', '%' . trim($search) . '%'); }
         if ($status !== null) { $qb->andWhere('video.status = :status')->setParameter('status', $status); }
         if ($provider !== null) { $qb->andWhere('video.provider = :provider')->setParameter('provider', $provider); }
         if ($tagId !== null) { $qb->join('video.tags', 'tag_filter')->andWhere('tag_filter.id = :tagId')->setParameter('tagId', $tagId); }
+        if ($categoryId !== null) { $qb->andWhere('category.id = :categoryId')->setParameter('categoryId', $categoryId); }
         $total = (int) (clone $qb)->select('COUNT(video.id)')->getQuery()->getSingleScalarResult();
-        $entities = $qb->orderBy('video.updatedAt', 'DESC')->addOrderBy('video.id', 'DESC')->setFirstResult(($page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
+        $entities = $qb->leftJoin('video.tags', 'tag')->addSelect('tag')->orderBy('video.updatedAt', 'DESC')->addOrderBy('video.id', 'DESC')->setFirstResult(($page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
         return new EditorialVideoListResult(array_map(fn (EditorialVideoEntity $entity): EditorialVideo => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
 
-    public function listPublished(int $page, int $limit): EditorialVideoListResult
+    public function listPublished(int $page, int $limit, ?string $categorySlug = null): EditorialVideoListResult
     {
         $query = $this->createQueryBuilder('video')
+            ->leftJoin('video.category', 'category')->addSelect('category')
+            ->leftJoin('video.tags', 'tag')->addSelect('tag')
             ->where('video.status = :status')
             ->andWhere('video.publishedAt IS NOT NULL')
             ->setParameter('status', EditorialVideoStatus::PUBLISHED);
+        if ($categorySlug !== null && trim($categorySlug) !== '') { $query->andWhere('category.slug = :categorySlug')->setParameter('categorySlug', trim($categorySlug)); }
 
         $total = (int) (clone $query)
             ->select('COUNT(video.id)')
@@ -80,6 +86,7 @@ final class EditorialVideoRepository extends ServiceEntityRepository implements 
     {
         $entity = $this->createQueryBuilder('video')
             ->leftJoin('video.tags', 'tag')->addSelect('tag')
+            ->leftJoin('video.category', 'category')->addSelect('category')
             ->where('video.slug = :slug')
             ->andWhere('video.status = :status')
             ->andWhere('video.publishedAt IS NOT NULL')

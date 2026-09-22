@@ -73,6 +73,7 @@ CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
 CNT-002 — Événements                         IMPLEMENTED
 CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice + Frontoffice `/videos`
+CNT-007 — Catégories éditoriales des vidéos   IMPLEMENTED — CRUD Backoffice + association et filtre préparé
 CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + détail public `/informations/{slug}`
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique

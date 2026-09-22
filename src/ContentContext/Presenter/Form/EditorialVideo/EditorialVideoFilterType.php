@@ -14,17 +14,19 @@ use Websymphonie\ContentContext\Application\Usecase\Query\EditorialVideo\GetEdit
 use Websymphonie\ContentContext\Domain\Enum\EditorialVideoStatus;
 use Websymphonie\ContentContext\Domain\Enum\VideoProvider;
 use Websymphonie\ContentContext\Domain\Repository\TagRepositoryInterface;
+use Websymphonie\ContentContext\Domain\Repository\EditorialVideoCategoryRepositoryInterface;
 
 /** @extends AbstractType<GetEditorialVideoListQuery> */
 final class EditorialVideoFilterType extends AbstractType
 {
-    public function __construct(private readonly TagRepositoryInterface $tagRepository) {}
+    public function __construct(private readonly TagRepositoryInterface $tagRepository, private readonly EditorialVideoCategoryRepositoryInterface $categoryRepository) {}
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('search', TextType::class, ['label' => 'Rechercher', 'required' => false, 'attr' => ['placeholder' => 'Rechercher par titre']])
             ->add('status', EnumType::class, ['label' => 'Statut', 'class' => EditorialVideoStatus::class, 'choice_label' => static fn (EditorialVideoStatus $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les statuts'])
             ->add('provider', EnumType::class, ['label' => 'Fournisseur', 'class' => VideoProvider::class, 'choice_label' => static fn (VideoProvider $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les fournisseurs'])
-            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Tous les tags']);
+            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Tous les tags'])
+            ->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'choices' => self::choices($this->categoryRepository->list(null, 1, 200)->items), 'placeholder' => 'Toutes les catégories']);
     }
     public function configureOptions(OptionsResolver $resolver): void { $resolver->setDefaults(['data_class' => GetEditorialVideoListQuery::class, 'method' => 'GET', 'csrf_protection' => false]); }
     public function getBlockPrefix(): string { return ''; }

@@ -15,6 +15,7 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Batonnier\BatonnierMandateEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -125,6 +126,47 @@ final class PublicPagesTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('main', 'Les contenus institutionnels seront publiés prochainement.');
         self::assertCount(0, $client->getCrawler()->filter('main a[href^="/le-barreau/"]'));
+    }
+
+    public function testBatonnierPageShowsCurrentStructuredMandateWhenAvailable(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $page = $this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::BAR, 10);
+        $mandate = (new BatonnierMandateEntity())
+            ->setFullName('Me Démonstration')
+            ->setMandateStartedAt(new DateTimeImmutable('2025-01-01'))
+            ->setMandateEndedAt(null)
+            ->setSummary('Présentation institutionnelle du mandat.');
+        $entityManager->persist($page);
+        $entityManager->persist($mandate);
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/le-batonnier', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#batonnier-profile-title', 'Me Démonstration');
+        self::assertSelectorTextContains('main', 'Présentation institutionnelle du mandat.');
+        self::assertSelectorTextContains('main', 'Mandat depuis 2025');
+    }
+
+    public function testBatonnierPageRemainsValidWithoutCurrentMandate(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $page = $this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::BAR, 10);
+        $entityManager->persist($page);
+        $entityManager->persist((new BatonnierMandateEntity())
+            ->setFullName('Ancien Bâtonnier')
+            ->setMandateStartedAt(new DateTimeImmutable('2020-01-01'))
+            ->setMandateEndedAt(new DateTimeImmutable('2024-01-01')));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/le-batonnier', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('#batonnier-profile-title');
+        self::assertSelectorTextContains('h1', 'Le Bâtonnier');
     }
 
     public function testBarRouteRejectsDraftAndNonBarPages(): void

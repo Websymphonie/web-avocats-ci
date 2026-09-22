@@ -862,3 +862,21 @@ et ne devient pas un filtre de recherche.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
+
+## 15. Donnée structurée du Bâtonnier — CNT-009
+
+`BatonnierMandate` est un modèle métier de `ContentContext`, persisté dans
+`batonnier_mandate`. Il ne référence pas `IdentityContext\User` : le nom du
+Bâtonnier est une donnée institutionnelle historique. Le portrait est seulement
+un `portraitMediaId` scalaire nullable vers `MediaContext`.
+
+La contrainte unique sur `current_marker` (nullable, valorisée uniquement pour
+le mandat courant) complète le contrôle applicatif et garantit l'unicité même
+en cas de concurrence. Les images passent par le stockage public persistant
+configuré par `APP_STORAGE_DIR`, sous `institution/portraits`; `var/` reste
+réservé au runtime et ne contient pas ces fichiers métier.
+
+La route canonique `/le-barreau/le-batonnier` compose la Page BAR publiée avec
+le mandat courant. La page, son slug et son contenu riche restent donc gérés
+par les commandes/queries Page ; l'ajout du bloc structuré n'introduit pas de
+nouvelle page publique ni de remplacement de Page.

@@ -150,6 +150,17 @@ final class ContentMenu implements SidebarModuleInterface
                 order: 5,
             ),
             MenuFactory::item(
+                label: 'Le Bâtonnier',
+                routes: ['content_admin_batonnier_list', 'content_admin_batonnier_new', 'content_admin_batonnier_show', 'content_admin_batonnier_edit'],
+                roles: [],
+                icon: 'lucide:scale',
+                link: 'content_admin_batonnier_list',
+                group: self::GROUP,
+                permission: 'BATONNIER_LIST',
+                groupOrder: 2,
+                order: 6,
+            ),
+            MenuFactory::item(
                 label: 'Tags',
                 routes: [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'],
                 roles: [],
@@ -158,7 +169,7 @@ final class ContentMenu implements SidebarModuleInterface
                 group: self::GROUP,
                 permission: 'CONTENT_TAG_VIEW',
                 groupOrder: 2,
-                order: 6,
+                order: 7,
             ),
             MenuFactory::item(
                 label: 'Messages de contact',
@@ -169,7 +180,7 @@ final class ContentMenu implements SidebarModuleInterface
                 group: self::GROUP,
                 permission: 'CONTACT_MESSAGE_LIST',
                 groupOrder: 2,
-                order: 7,
+                order: 8,
             ),
         ];
     }

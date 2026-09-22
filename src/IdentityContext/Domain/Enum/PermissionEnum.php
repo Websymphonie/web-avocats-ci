@@ -52,6 +52,10 @@ enum PermissionEnum: string
     case CONTENT_PAGE_MANAGE = 'CONTENT_PAGE_MANAGE';
     case CONTENT_PAGE_PUBLISH = 'CONTENT_PAGE_PUBLISH';
     case CONTENT_PAGE_DELETE = 'CONTENT_PAGE_DELETE';
+    case BATONNIER_LIST = 'BATONNIER_LIST';
+    case BATONNIER_VIEW = 'BATONNIER_VIEW';
+    case BATONNIER_CREATE = 'BATONNIER_CREATE';
+    case BATONNIER_EDIT = 'BATONNIER_EDIT';
     case LEARNING_TRAINING_VIEW = 'LEARNING_TRAINING_VIEW';
     case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
     case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
@@ -119,6 +123,10 @@ enum PermissionEnum: string
             self::CONTENT_PAGE_MANAGE,
             self::CONTENT_PAGE_PUBLISH,
             self::CONTENT_PAGE_DELETE,
+            self::BATONNIER_LIST,
+            self::BATONNIER_VIEW,
+            self::BATONNIER_CREATE,
+            self::BATONNIER_EDIT,
             self::LEARNING_TRAINING_VIEW,
             self::LEARNING_TRAINING_MANAGE,
             self::LEARNING_TRAINING_PUBLISH,
@@ -188,6 +196,10 @@ enum PermissionEnum: string
             self::CONTENT_PAGE_MANAGE => 'Pages statiques : création et édition',
             self::CONTENT_PAGE_PUBLISH => 'Pages statiques : publication et dépublication',
             self::CONTENT_PAGE_DELETE => 'Pages statiques : suppression',
+            self::BATONNIER_LIST => 'Bâtonnier : liste',
+            self::BATONNIER_VIEW => 'Bâtonnier : détail',
+            self::BATONNIER_CREATE => 'Bâtonnier : création',
+            self::BATONNIER_EDIT => 'Bâtonnier : édition',
             self::LEARNING_TRAINING_VIEW => 'Formations : lecture',
             self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
             self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',
@@ -257,6 +269,10 @@ enum PermissionEnum: string
             self::CONTENT_PAGE_MANAGE => ColorEnum::SUCCESS,
             self::CONTENT_PAGE_PUBLISH => ColorEnum::WARNING,
             self::CONTENT_PAGE_DELETE => ColorEnum::DANGER,
+            self::BATONNIER_LIST => ColorEnum::INFO,
+            self::BATONNIER_VIEW => ColorEnum::INFO,
+            self::BATONNIER_CREATE => ColorEnum::SUCCESS,
+            self::BATONNIER_EDIT => ColorEnum::WARNING,
             self::LEARNING_TRAINING_VIEW => ColorEnum::INFO,
             self::LEARNING_TRAINING_MANAGE => ColorEnum::SUCCESS,
             self::LEARNING_TRAINING_PUBLISH => ColorEnum::WARNING,

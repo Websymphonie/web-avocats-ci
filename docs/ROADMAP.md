@@ -79,6 +79,7 @@ CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rend
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
 CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
+CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Content + bloc public sur `le-batonnier`
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de

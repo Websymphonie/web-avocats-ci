@@ -45,6 +45,22 @@
                     </figure>
                 {% endif %}
 
+                {% if mandate %}
+                    <section class="mt-10 overflow-hidden rounded-2xl border border-border bg-card sm:mt-12" aria-labelledby="batonnier-profile-title">
+                        <div class="grid md:grid-cols-[11rem_minmax(0,1fr)]">
+                            {% if portraitUrl %}
+                                <img src="{{ portraitUrl }}" alt="Portrait de {{ mandate.fullName }}" class="h-64 w-full object-cover md:h-full md:min-h-64">
+                            {% endif %}
+                            <div class="p-6 sm:p-8">
+                                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Le Bâtonnier</p>
+                                <h2 id="batonnier-profile-title" class="mt-3 text-2xl font-semibold tracking-[-0.03em]">{{ mandate.fullName }}</h2>
+                                <p class="mt-2 text-sm text-muted-foreground">Mandat depuis {{ mandate.mandateStartedAt|date('Y') }} · En cours</p>
+                                {% if mandate.summary %}<p class="mt-5 whitespace-pre-line text-base leading-7 text-muted-foreground">{{ mandate.summary }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </section>
+                {% endif %}
+
                 <div class="rich-content mt-10 max-w-3xl text-base leading-8 text-foreground sm:mt-12 sm:text-lg">
                     {{ safeContent|raw }}
                 </div>

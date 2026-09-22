@@ -147,6 +147,9 @@ services:
   Websymphonie\ContentContext\Application\Service\GalleryMediaUsageChecker:
     tags: [ 'app.media_usage_checker' ]
 
+  Websymphonie\ContentContext\Application\Service\BatonnierMediaUsageChecker:
+    tags: [ 'app.media_usage_checker' ]
+
   Websymphonie\LearningContext\Application\Service\TrainingMediaUsageChecker:
     tags: [ 'app.media_usage_checker' ]
 

@@ -513,6 +513,26 @@ le remplacement d'une cover tentent le nettoyage du média devenu orphelin sans
 modifier les audits Page existants. La query `FindPublishedPageBySlug` restitue
 `coverMediaId` lorsque la page publiée en possède une.
 
+## CNT-009 — Donnée structurée du Bâtonnier
+
+`BatonnierMandate` appartient à `ContentContext` et conserve l'historique des
+mandats du Bâtonnier : nom complet, dates de mandat, présentation courte et
+référence scalaire nullable vers un portrait `Media`. Un mandat dont la date de
+fin est nulle est courant ; la base garantit qu'il n'y en a jamais plus d'un,
+tandis que l'absence de mandat courant reste valide.
+
+Le portrait est une image publique gérée par `MediaContext` sous le préfixe
+`institution/portraits`, sans relation Doctrine cross-context. Le média reste
+protégé tant qu'il est référencé par un mandat. Les mandats historiques ne sont
+pas supprimés en bulk et aucune donnée officielle n'est ajoutée par fixture.
+
+Le Backoffice expose la liste, le détail, la création et la modification sous
+`/admin/content/batonnier`, avec `HasGroupAccess(RoleGroupEnum::BATONNIER)` et
+les permissions `BATONNIER_LIST`, `BATONNIER_VIEW`, `BATONNIER_CREATE` et
+`BATONNIER_EDIT`. La Page BAR `le-batonnier` reste propriétaire du contenu riche
+public ; lorsqu'un mandat courant existe, elle affiche en plus le bloc structuré
+du Bâtonnier. Sans mandat courant, la page reste accessible sans bloc artificiel.
+
 ## 12. Références
 
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;

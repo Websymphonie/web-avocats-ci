@@ -93,6 +93,7 @@ propriétaire.
 | CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice + rendu public réutilisé, sans galerie |
 | CNT-006B | classer les Pages statiques par groupes éditoriaux | `IMPLEMENTED` — groupes facultatifs et sidebar publique dynamique |
 | CNT-006C | contrôler l’ordre des Pages dans un groupe éditorial | `IMPLEMENTED` — ordre Backoffice et tri public déterministe |
+| CNT-009 | administrer et afficher la donnée structurée du Bâtonnier | `IMPLEMENTED` — historique de mandats, portrait facultatif et bloc Page BAR |
 | BKO-CONTACT-001 | consulter les messages du formulaire Contact | `IMPLEMENTED` — liste paginée, filtres de livraison, détail immuable et retry manuel des échecs |
 
 ## 7. Learning

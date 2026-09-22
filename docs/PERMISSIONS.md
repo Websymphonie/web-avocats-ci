@@ -433,6 +433,15 @@ pas accordées par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs
 ajoutent également `HasGroupAccess(RoleGroupEnum::PAGES)` ; les configurations
 persistées de la matrice de rôles restent prioritaires.
 
+### Bâtonnier — CNT-009
+
+Les permissions `BATONNIER_LIST`, `BATONNIER_VIEW`, `BATONNIER_CREATE` et
+`BATONNIER_EDIT` sont accordées par défaut à `ROLE_ADMIN` et à
+`ROLE_SUPER_ADMIN` via son comportement global. Elles ne sont pas accordées à
+`ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs utilisent également
+`HasGroupAccess(RoleGroupEnum::BATONNIER)`. Aucune permission de suppression
+n'est ajoutée dans cette première version afin de préserver l'historique.
+
 ### Messages de contact — BKO-CONTACT-001
 
 `CONTACT_MESSAGE_LIST`, `CONTACT_MESSAGE_VIEW` et `CONTACT_MESSAGE_RETRY` sont accordées par défaut à

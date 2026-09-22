@@ -12,7 +12,9 @@ use Websymphonie\ContentContext\Application\Model\PublishedPage;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPagesByGroupQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPageBySlugQuery;
+use Websymphonie\ContentContext\Application\Usecase\Query\Batonnier\GetCurrentBatonnierMandateQuery;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
+use Websymphonie\ContentContext\Domain\Model\BatonnierMandate;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -51,7 +53,12 @@ final class GetPublicPageDetailsController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        return $this->renderPage($page);
+        $mandate = $slug === 'le-batonnier' ? $this->handleQuery(new GetCurrentBatonnierMandateQuery()) : null;
+        $portraitUrl = $mandate?->portraitMediaId !== null
+            ? $this->mediaUrls->resolveMany([$mandate->portraitMediaId])[$mandate->portraitMediaId] ?? null
+            : null;
+
+        return $this->renderPage($page, $mandate, $portraitUrl);
     }
 
     private function findPublishedPage(string $slug): ?PublishedPage
@@ -62,7 +69,7 @@ final class GetPublicPageDetailsController extends AbstractController
         return $page;
     }
 
-    private function renderPage(PublishedPage $page): Response
+    private function renderPage(PublishedPage $page, ?BatonnierMandate $mandate = null, ?string $portraitUrl = null): Response
     {
         $coverUrl = null;
         if ($page->coverMediaId !== null) {
@@ -74,6 +81,8 @@ final class GetPublicPageDetailsController extends AbstractController
             'coverUrl' => $coverUrl,
             'safeContent' => $this->sanitizer->sanitize($page->content),
             'contextualPages' => $this->findContextualPages($page),
+            'mandate' => $mandate,
+            'portraitUrl' => $portraitUrl,
         ]);
     }
 

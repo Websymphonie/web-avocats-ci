@@ -61,6 +61,7 @@ security:
     - { path: ^/auth/user-email-verify$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/auth/account/activate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/(actualites|evenements|videos|galeries|formations|lives)(/|$), roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/le-barreau/[a-z0-9]+(?:-[a-z0-9]+)*$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/informations/[a-z0-9]+(?:-[a-z0-9]+)*$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/recherche/autocomplete$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/documents/[0-9a-fA-F-]+/download$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }

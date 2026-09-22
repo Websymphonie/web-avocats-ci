@@ -490,9 +490,11 @@ Le slug est normalisé et unique, mais reste éditable depuis le Backoffice. Le
 contenu est saisi avec le composant Tiptap existant et nettoyé par le sanitizer
 serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
 individuelles et bulk de suppression, ainsi que la lecture publique d’une Page
-publiée via `/informations/{slug}`. Il n’existe pas de listing Frontoffice
-générique ; les Pages publiées de la famille légale peuvent afficher une
-sidebar contextuelle.
+publiée via `/informations/{slug}`. Depuis CNT-008, les Pages `BAR` sont
+exposées canoniquement sous `/le-barreau/{slug}` et l’ancienne URL
+`/informations/{slug}` redirige définitivement vers cette route. Il n’existe
+pas de listing Frontoffice générique ; les Pages publiées d’un même groupe
+peuvent afficher une sidebar contextuelle utilisant les URLs canoniques.
 
 ### CNT-006A — Couverture facultative des pages
 

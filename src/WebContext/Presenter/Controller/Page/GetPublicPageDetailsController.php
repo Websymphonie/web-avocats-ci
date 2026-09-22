@@ -12,10 +12,10 @@ use Websymphonie\ContentContext\Application\Model\PublishedPage;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPagesByGroupQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPageBySlugQuery;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
-#[Route('/informations', name: 'web_information_')]
 final class GetPublicPageDetailsController extends AbstractController
 {
     public function __construct(
@@ -28,15 +28,42 @@ final class GetPublicPageDetailsController extends AbstractController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[Route('/{slug}', name: 'detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
+    #[Route('/informations/{slug}', name: 'web_information_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
     public function __invoke(string $slug): Response
     {
-        /** @var PublishedPage|null $page */
-        $page = $this->handleQuery(new FindPublishedPageBySlugQuery($slug));
+        $page = $this->findPublishedPage($slug);
         if ($page === null) {
             throw $this->createNotFoundException();
         }
 
+        if ($page->group === PageGroup::BAR) {
+            return $this->redirectToRoute('web_bar_page_detail', ['slug' => $slug], Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        return $this->renderPage($page);
+    }
+
+    #[Route('/le-barreau/{slug}', name: 'web_bar_page_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
+    public function barPage(string $slug): Response
+    {
+        $page = $this->findPublishedPage($slug);
+        if ($page === null || $page->group !== PageGroup::BAR) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->renderPage($page);
+    }
+
+    private function findPublishedPage(string $slug): ?PublishedPage
+    {
+        /** @var PublishedPage|null $page */
+        $page = $this->handleQuery(new FindPublishedPageBySlugQuery($slug));
+
+        return $page;
+    }
+
+    private function renderPage(PublishedPage $page): Response
+    {
         $coverUrl = null;
         if ($page->coverMediaId !== null) {
             $coverUrl = $this->mediaUrls->resolveMany([$page->coverMediaId])[$page->coverMediaId] ?? null;

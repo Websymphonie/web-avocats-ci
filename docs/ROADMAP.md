@@ -78,6 +78,7 @@ CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + dé
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
 CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
+CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -209,7 +210,9 @@ produit ci-dessus font foi pour l’historique réel, où YouTube Live est `LRN-
 lecture batch des références Learning depuis Payment, échappement des titres
 UI et synchronisation documentaire. Une fois ses quality gates validés,
 `CNT-006 Static Pages` est livré côté Backoffice et expose désormais le détail
-public des Pages publiées sous `/informations/{slug}`, sans listing générique.
+public des Pages publiées. Depuis CNT-008, les Pages `BAR` utilisent les URLs
+canoniques `/le-barreau/{slug}` et les autres Pages restent sous
+`/informations/{slug}`, sans listing générique.
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.
 

@@ -11,6 +11,7 @@ final readonly class PublicSearchSuggestion
         public string $title,
         public string $slug,
         public string $metadata,
+        public bool $isBarPage = false,
     ) {
     }
 }

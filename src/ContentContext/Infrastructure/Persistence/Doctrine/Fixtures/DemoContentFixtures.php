@@ -181,7 +181,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT, 10],
             ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 10],
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
-            ['À propos du Barreau', 'a-propos', PageStatus::DRAFT, false, PageGroup::BAR, 10],
+            ['Présentation du Barreau', 'presentation', PageStatus::DRAFT, false, PageGroup::BAR, 10],
         ];
         $now = new DateTimeImmutable();
 

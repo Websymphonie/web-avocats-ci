@@ -840,20 +840,24 @@ création et la publication, et le composant Backoffice existant gère son uploa
 aperçu, remplacement et retrait. Le vérificateur d'usage Content empêche la
 suppression d'un média encore utilisé par une Page.
 
-Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`.
-Il n’existe pas de listing `/pages` ou `/informations` ; les Pages publiées de
-la famille légale exposent une sidebar contextuelle. La
-sidebar est construite depuis le groupe de la Page et ne contient que les Pages
-du même groupe qui sont publiées avec `publishedAt` renseigné ; un groupe ne
-contenant qu'une seule Page n'affiche pas de sidebar. La query
+Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`
+pour les groupes autres que `BAR`. Les Pages du groupe `BAR` utilisent la route
+canonique `/le-barreau/{slug}` ; une demande de la même Page via
+`/informations/{slug}` effectue une redirection permanente. Il n’existe pas de
+listing `/pages`, `/informations` ou `/le-barreau` générique. La sidebar est
+construite depuis le groupe de la Page et ne contient que les Pages du même
+groupe qui sont publiées avec `publishedAt` renseigné ; ses liens utilisent la
+route canonique du groupe. Un groupe ne contenant qu'une seule Page n'affiche
+pas de sidebar. La query
 `FindPublishedPageBySlug` expose seulement un DTO de lecture et ne permet
 de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO restitue
 la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.
 La recherche globale publique interroge également `Page` sur son titre et son
 slug, uniquement lorsque le statut est `PUBLISHED` et que `publishedAt` est
-présent. Elle expose un résultat `Information` vers la route canonique
-`web_information_detail` ; le `PageGroup` sert uniquement de metadata et ne
-devient pas un filtre de recherche.
+présent. Elle expose un résultat `Information` vers `web_bar_page_detail` pour
+les Pages BAR et vers `web_information_detail` pour les autres Pages ; le
+`PageGroup` sert uniquement à sélectionner la route canonique et comme metadata,
+et ne devient pas un filtre de recherche.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.

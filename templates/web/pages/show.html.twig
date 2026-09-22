@@ -13,7 +13,7 @@
                 <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
                     <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
                     <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
-                    <span>Informations</span>
+                    <span>{{ page.group and page.group.value == 'BAR' ? 'Le Barreau' : 'Informations' }}</span>
                     <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
                     <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ page.title }}</span>
                 </nav>

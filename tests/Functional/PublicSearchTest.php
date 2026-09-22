@@ -112,6 +112,14 @@ final class PublicSearchTest extends WebTestCase
         self::assertSame('Compte et confidentialité', $payload['results'][0]['metadata']);
         self::assertSame('/informations/politique-confidentialite', $payload['results'][0]['url']);
 
+        $client->request('GET', '/recherche/autocomplete?q=Présentation', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('Le Barreau', $payload['results'][0]['metadata']);
+        self::assertSame('/le-barreau/presentation', $payload['results'][0]['url']);
+
         $client->request('GET', '/recherche/autocomplete?q=Guide', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
@@ -245,8 +253,15 @@ final class PublicSearchTest extends WebTestCase
             ->setContent('<p>Information publique sans groupe.</p>')
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
+        $barPage = (new PageEntity())
+            ->setTitle('Présentation du Barreau')
+            ->setSlug('presentation')
+            ->setContent('<p>Présentation institutionnelle publique.</p>')
+            ->setGroup(PageGroup::BAR)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
 
-        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $unpublishedPage, $ungroupedPage] as $item) {
+        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $unpublishedPage, $ungroupedPage, $barPage] as $item) {
             $entityManager->persist($item);
         }
         $entityManager->flush();

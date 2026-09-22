@@ -7,6 +7,7 @@ namespace Websymphonie\WebContext\Application\Usecase\QueryHandler;
 use Websymphonie\ContentContext\Domain\Model\Event;
 use Websymphonie\ContentContext\Domain\Model\News;
 use Websymphonie\ContentContext\Domain\Model\Page;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Repository\EventRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\NewsRepositoryInterface;
 use Websymphonie\ContentContext\Domain\Repository\PageRepositoryInterface;
@@ -90,6 +91,7 @@ final readonly class GetPublicSearchSuggestionsHandler implements QueryHandler
             title: $page->title,
             slug: $page->slug,
             metadata: $page->group?->label() ?? 'Informations',
+            isBarPage: $page->group === PageGroup::BAR,
         );
     }
 

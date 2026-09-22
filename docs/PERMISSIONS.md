@@ -435,12 +435,13 @@ persistées de la matrice de rôles restent prioritaires.
 
 ### Messages de contact — BKO-CONTACT-001
 
-`CONTACT_MESSAGE_LIST` et `CONTACT_MESSAGE_VIEW` sont accordées par défaut à
+`CONTACT_MESSAGE_LIST`, `CONTACT_MESSAGE_VIEW` et `CONTACT_MESSAGE_RETRY` sont accordées par défaut à
 `ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global. Elles ne sont
 pas accordées par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs
 Backoffice utilisent également `HasGroupAccess(RoleGroupEnum::CONTACT_MESSAGES)`.
-Le périmètre est strictement consultatif : aucune permission d’édition ou de
-suppression n’est exposée.
+Le contenu reste immuable : `CONTACT_MESSAGE_RETRY` autorise uniquement la
+reprise de livraison d’un message `FAILED`, avec CSRF et confirmation. Aucune
+permission d’édition ou de suppression n’est exposée.
 
 ### Formations COURSE — LRN-001
 

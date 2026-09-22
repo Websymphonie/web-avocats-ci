@@ -131,6 +131,9 @@ services:
   Websymphonie\MediaContext\Application\Service\MediaStorageInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\LocalPublicImageStorage
 
+  Websymphonie\ContactContext\Application\Service\ContactMessageDeliveryInterface:
+    alias: Websymphonie\ContactContext\Application\Service\ContactMessageDelivery
+
   Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\LocalMediaUploadService
 

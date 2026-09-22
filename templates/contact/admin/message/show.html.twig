@@ -16,7 +16,32 @@
                         <h1 class="mt-2 break-words text-2xl font-semibold tracking-[-0.03em]">{{ message.subject }}</h1>
                         <p class="mt-2 break-words text-sm text-muted-foreground">{{ message.fullName }} · {{ message.email }}</p>
                     </div>
-                    <twig:Badge variant="{{ message.deliveryStatus.value == 'SENT' ? 'success' : (message.deliveryStatus.value == 'FAILED' ? 'danger' : 'warning') }}">{{ message.deliveryStatus.label }}</twig:Badge>
+                    <div class="flex flex-col items-start gap-3 sm:items-end">
+                        <twig:Badge variant="{{ message.deliveryStatus.value == 'SENT' ? 'success' : (message.deliveryStatus.value == 'FAILED' ? 'danger' : 'warning') }}">{{ message.deliveryStatus.label }}</twig:Badge>
+                        {% if message.deliveryStatus.value == 'FAILED' and is_granted('CONTACT_MESSAGE_RETRY') %}
+                            <twig:AlertDialog id="contact-message-retry">
+                                <twig:AlertDialog:Trigger>
+                                    <button class="inline-flex h-9 items-center gap-2 rounded-lg border border-input bg-background px-3 text-sm font-medium hover:bg-muted" type="button" data-action="click->alert-dialog#open" data-alert-dialog-target="trigger" aria-haspopup="dialog">
+                                        <twig:ux:icon name="lucide:rotate-ccw" class="size-4" aria-hidden="true"/>
+                                        Réessayer l’envoi
+                                    </button>
+                                </twig:AlertDialog:Trigger>
+                                <twig:AlertDialog:Content>
+                                    <twig:AlertDialog:Header>
+                                        <twig:AlertDialog:Title>Réessayer l’envoi ?</twig:AlertDialog:Title>
+                                        <twig:AlertDialog:Description>Une nouvelle tentative sera effectuée pour ce message. Son contenu restera inchangé.</twig:AlertDialog:Description>
+                                    </twig:AlertDialog:Header>
+                                    <twig:AlertDialog:Footer>
+                                        <twig:AlertDialog:Cancel>Annuler</twig:AlertDialog:Cancel>
+                                        <form method="post" action="{{ path('contact_admin_message_retry', {uuid: message.uuid}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('contact_message_retry_' ~ message.uuid) }}">
+                                            <button class="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground" type="submit">Réessayer l’envoi</button>
+                                        </form>
+                                    </twig:AlertDialog:Footer>
+                                </twig:AlertDialog:Content>
+                            </twig:AlertDialog>
+                        {% endif %}
+                    </div>
                 </header>
 
                 <div class="space-y-8 p-6 sm:p-8">

@@ -14,5 +14,7 @@ interface ContactMessageRepositoryInterface
 
     public function getByUuid(string $uuid): ContactMessage;
 
+    public function claimForRetry(string $uuid): ContactMessage;
+
     public function list(?ContactMessageDeliveryStatus $status, int $page, int $limit): ContactMessageListResult;
 }

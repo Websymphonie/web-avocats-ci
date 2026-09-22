@@ -214,10 +214,12 @@ demande. Les réglages de coordonnées publics sont lus via un provider typé
 depuis le référentiel de réglages existant ; les messages ne sont pas exposés
 dans une API publique et aucune interface CRM n’est introduite.
 
-Le Backoffice expose uniquement une lecture paginée sous
-`/admin/contact/messages` et son détail par UUID. Les messages sont immuables,
-leur statut de livraison est présenté sans action de relance ou de suppression,
-et leur contenu est rendu comme texte échappé.
+Le Backoffice expose une lecture paginée sous `/admin/contact/messages` et son
+détail par UUID. Les messages restent immuables et leur contenu est rendu
+comme texte échappé. Un administrateur disposant de
+`CONTACT_MESSAGE_RETRY` peut relancer uniquement un message `FAILED` après
+confirmation ; la reprise utilise un claim pessimiste et le pipeline d’audit
+métier. Aucune suppression n’est exposée.
 
 ---
 

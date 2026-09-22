@@ -7,20 +7,18 @@ namespace Websymphonie\ContactContext\Application\Usecase\CommandHandler;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Throwable;
+use Websymphonie\ContactContext\Application\Service\ContactMessageDeliveryInterface;
 use Websymphonie\ContactContext\Application\Service\ContactThrottleInterface;
 use Websymphonie\ContactContext\Application\Usecase\Command\SubmitContactMessageCommand;
 use Websymphonie\ContactContext\Domain\Model\ContactMessage;
 use Websymphonie\ContactContext\Domain\Repository\ContactMessageRepositoryInterface;
-use Websymphonie\SharedContext\Application\Service\Mailing\Mailer;
-use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\ValueObject\Email;
 
 final readonly class SubmitContactMessageHandler
 {
     public function __construct(
         private ContactMessageRepositoryInterface $repository,
         private ContactThrottleInterface $throttle,
-        private Mailer $mailer,
-        private string $contactRecipientEmail,
+        private ContactMessageDeliveryInterface $delivery,
         private LoggerInterface $logger,
     ) {
     }
@@ -49,11 +47,7 @@ final readonly class SubmitContactMessageHandler
         ));
 
         try {
-            $this->mailer->send(new ContactMessageEmail(
-                recipient: new Email($this->contactRecipientEmail),
-                replyTo: new Email($message->email),
-                message: $message,
-            ));
+            $this->delivery->send($message);
             $message->markSent(new DateTimeImmutable());
         } catch (Throwable $exception) {
             $message->markFailed();

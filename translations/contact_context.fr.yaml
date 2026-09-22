@@ -1,0 +1,1 @@
+exceptions.contact_message_delivery_retry_not_allowed: 'Seuls les messages en échec peuvent être relancés.'

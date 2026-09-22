@@ -6,6 +6,7 @@ namespace Websymphonie\ContactContext\Domain\Model;
 
 use DateTimeImmutable;
 use Websymphonie\ContactContext\Domain\Enum\ContactMessageDeliveryStatus;
+use Websymphonie\ContactContext\Domain\Exception\ContactMessageDeliveryRetryNotAllowedException;
 use Websymphonie\SharedContext\Domain\Exception\InvalidArgument;
 
 final class ContactMessage
@@ -41,6 +42,16 @@ final class ContactMessage
     public function markFailed(): void
     {
         $this->deliveryStatus = ContactMessageDeliveryStatus::FAILED;
+        $this->sentAt = null;
+    }
+
+    public function prepareForRetry(): void
+    {
+        if ($this->deliveryStatus !== ContactMessageDeliveryStatus::FAILED) {
+            throw new ContactMessageDeliveryRetryNotAllowedException();
+        }
+
+        $this->deliveryStatus = ContactMessageDeliveryStatus::PENDING;
         $this->sentAt = null;
     }
 

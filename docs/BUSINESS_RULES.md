@@ -519,6 +519,8 @@ Les décisions suivantes restent explicitement ouvertes :
 - le destinataire est configuré séparément via `CONTACT_RECIPIENT_EMAIL` et l’adresse de l’utilisateur est utilisée uniquement comme `Reply-To` après validation Symfony ;
 - le formulaire est protégé par CSRF, honeypot et limitation de cinq soumissions par adresse IP sur quinze minutes ;
 - les coordonnées institutionnelles affichées sont facultatives et proviennent des réglages configurés ; les valeurs absentes sont masquées ;
+- une reprise de livraison est autorisée uniquement pour un message `FAILED` ; elle passe temporairement par `PENDING`, puis devient `SENT` ou reste `FAILED` ;
+- la reprise est réclamée sous verrou pessimiste afin qu’une concurrence applicative ne lance pas deux tentatives pour le même message ; le fournisseur SMTP ne garantit toutefois pas l’exactly-once si l’acceptation est suivie d’une perte de réponse ;
 - aucune politique de rétention automatique n’est appliquée tant qu’elle n’a pas été définie pour la production.
 
 ## LRN-003 — Contenu pédagogique des leçons

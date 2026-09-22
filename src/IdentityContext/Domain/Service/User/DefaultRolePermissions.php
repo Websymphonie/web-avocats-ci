@@ -111,6 +111,7 @@ final class DefaultRolePermissions
             PermissionEnum::PAYMENT_OFFER_MANAGE->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTACT_MESSAGE_LIST->value => [UserRolesEnum::ADMIN],
             PermissionEnum::CONTACT_MESSAGE_VIEW->value => [UserRolesEnum::ADMIN],
+            PermissionEnum::CONTACT_MESSAGE_RETRY->value => [UserRolesEnum::ADMIN],
         ];
     }
 }

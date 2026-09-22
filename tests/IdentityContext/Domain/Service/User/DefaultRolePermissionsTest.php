@@ -77,6 +77,7 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::PAYMENT_OFFER_MANAGE,
             PermissionEnum::CONTACT_MESSAGE_LIST,
             PermissionEnum::CONTACT_MESSAGE_VIEW,
+            PermissionEnum::CONTACT_MESSAGE_RETRY,
         ], $permissions);
     }
 
@@ -144,6 +145,7 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::PAYMENT_OFFER_MANAGE,
             PermissionEnum::CONTACT_MESSAGE_LIST,
             PermissionEnum::CONTACT_MESSAGE_VIEW,
+            PermissionEnum::CONTACT_MESSAGE_RETRY,
         ], DefaultRolePermissions::forRole(UserRolesEnum::ADMIN));
         self::assertSame([
             PermissionEnum::LIST,
@@ -231,6 +233,7 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'training manage' => [PermissionEnum::LEARNING_TRAINING_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'training publish' => [PermissionEnum::LEARNING_TRAINING_PUBLISH, [UserRolesEnum::ADMIN]];
         yield 'training delete' => [PermissionEnum::LEARNING_TRAINING_DELETE, [UserRolesEnum::ADMIN]];
+        yield 'contact message retry' => [PermissionEnum::CONTACT_MESSAGE_RETRY, [UserRolesEnum::ADMIN]];
     }
 
     public function testSuperAdministratorHasEveryKnownPermission(): void

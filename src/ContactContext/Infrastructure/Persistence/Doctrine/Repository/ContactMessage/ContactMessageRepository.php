@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\ContactContext\Infrastructure\Persistence\Doctrine\Repository\ContactMessage;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -63,6 +64,52 @@ final class ContactMessageRepository extends ServiceEntityRepository implements 
         }
 
         return $this->factory->fromEntity($entity);
+    }
+
+    public function claimForRetry(string $uuid): ContactMessage
+    {
+        try {
+            $identifier = Uuid::fromString($uuid);
+        } catch (\Throwable) {
+            throw ContactMessageNotFoundException::withUuid($uuid);
+        }
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->beginTransaction();
+
+        try {
+            $entity = $this->createQueryBuilder('message')
+                ->andWhere('message.uuid = :uuid')
+                ->setParameter('uuid', $identifier, UuidType::NAME)
+                ->getQuery()
+                ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+                ->getOneOrNullResult();
+
+            if (!$entity instanceof ContactMessageEntity) {
+                throw ContactMessageNotFoundException::withUuid($uuid);
+            }
+
+            $message = $this->factory->fromEntity($entity);
+            $message->prepareForRetry();
+            $this->factory->toEntity($message, $entity);
+
+            DbLogListener::disable();
+            try {
+                $entityManager->flush();
+            } finally {
+                DbLogListener::enable();
+            }
+
+            $entityManager->commit();
+
+            return $message;
+        } catch (\Throwable $exception) {
+            if ($entityManager->getConnection()->isTransactionActive()) {
+                $entityManager->rollback();
+            }
+
+            throw $exception;
+        }
     }
 
     public function list(?ContactMessageDeliveryStatus $status, int $page, int $limit): ContactMessageListResult

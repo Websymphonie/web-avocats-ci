@@ -9,6 +9,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
@@ -53,7 +54,13 @@ final class ContactMessageSecurityTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertStringContainsString('Envoyé', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('Réessayer l’envoi', (string) $client->getResponse()->getContent());
         self::assertNotSame($oldUuid, $newUuid);
+
+        $client->request('GET', '/admin/contact/messages/' . $oldUuid, server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertStringContainsString('Réessayer l’envoi', (string) $client->getResponse()->getContent());
     }
 
     public function testStatusFilterAndEscapedMessageAreApplied(): void
@@ -73,11 +80,57 @@ final class ContactMessageSecurityTest extends WebTestCase
         self::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', (string) $client->getResponse()->getContent());
     }
 
+    public function testAuthorizedAdminCanRetryFailedMessage(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        $uuid = $this->createMessage('Message à relancer', new DateTimeImmutable(), ContactMessageDeliveryStatus::FAILED);
+        $token = $this->csrfToken($client, 'contact_message_retry_' . $uuid);
+
+        $client->request('POST', '/admin/contact/messages/' . $uuid . '/retry', [
+            '_token' => $token,
+        ], server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/admin/contact/messages/' . $uuid);
+        $message = static::getContainer()->get('doctrine')->getRepository(ContactMessageEntity::class)->findOneBy([]);
+        self::assertInstanceOf(ContactMessageEntity::class, $message);
+        self::assertSame(ContactMessageDeliveryStatus::SENT, $message->getDeliveryStatus());
+        $auditAction = static::getContainer()->get('doctrine.dbal.default_connection')->fetchOne(
+            'SELECT action FROM audit_entry WHERE target_id = :target ORDER BY id DESC LIMIT 1',
+            ['target' => $uuid],
+        );
+        self::assertSame('contact.message.delivery_retry_succeeded', $auditAction);
+    }
+
+    public function testRetryRequiresValidCsrfToken(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        $uuid = $this->createMessage('Message protégé', new DateTimeImmutable(), ContactMessageDeliveryStatus::FAILED);
+
+        $client->request('POST', '/admin/contact/messages/' . $uuid . '/retry', [
+            '_token' => 'invalid-token',
+        ], server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
     /** @dataProvider deniedRoles */
     public function testUnauthorizedRolesCannotAccessMessages(string $role): void
     {
         $client = $this->authenticatedClient([$role]);
         $client->request('GET', '/admin/contact/messages', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    /** @dataProvider deniedRoles */
+    public function testUnauthorizedRolesCannotRetryMessages(string $role): void
+    {
+        $client = $this->authenticatedClient([$role]);
+        $uuid = $this->createMessage('Message interdit', new DateTimeImmutable(), ContactMessageDeliveryStatus::FAILED);
+
+        $client->request('POST', '/admin/contact/messages/' . $uuid . '/retry', [
+            '_token' => 'invalid-token',
+        ], server: ['HTTPS' => 'on']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
@@ -155,5 +208,21 @@ final class ContactMessageSecurityTest extends WebTestCase
         $entityManager->flush();
 
         return $entity->getUuidAsString() ?? Uuid::v7()->toRfc4122();
+    }
+
+    private function csrfToken(KernelBrowser $client, string $id): string
+    {
+        $request = Request::create('/', 'GET', [], [], [], ['HTTPS' => 'on']);
+        $request->setSession($client->getSession());
+        $requestStack = static::getContainer()->get('request_stack');
+        $requestStack->push($request);
+        try {
+            $token = static::getContainer()->get('security.csrf.token_manager')->getToken($id)->getValue();
+            $request->getSession()->save();
+
+            return $token;
+        } finally {
+            $requestStack->pop();
+        }
     }
 }

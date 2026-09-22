@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html.twig' %}
+{% block title %}Conseil de l’Ordre{% endblock %}
+{% block body %}
+<main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div class="mx-auto max-w-7xl space-y-6">
+        <section class="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div><p class="text-sm font-medium text-muted-foreground">Contenu institutionnel</p><h1 class="mt-1 text-2xl font-semibold">Conseil de l’Ordre</h1><p class="mt-2 text-sm text-muted-foreground">Gérez la composition actuelle et l’historique des membres.</p></div>
+            {% if is_granted('COUNCIL_MEMBER_CREATE') %}<a class="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground" href="{{ path('content_admin_council_member_new') }}"><twig:ux:icon name="lucide:plus" class="size-4"/>Nouveau membre</a>{% endif %}
+        </section>
+        <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"><div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground"><tr><th class="px-5 py-3">Nom</th><th class="px-5 py-3">Fonction</th><th class="px-5 py-3">Mandat</th><th class="px-5 py-3">Ordre</th><th class="px-5 py-3">État</th><th class="px-5 py-3 text-right">Actions</th></tr></thead><tbody class="divide-y divide-border">
+        {% for member in members %}<tr class="hover:bg-muted/40"><td class="px-5 py-4 font-medium">{{ member.fullName }}</td><td class="px-5 py-4 text-muted-foreground">{{ member.function }}</td><td class="px-5 py-4 text-muted-foreground">{% if member.mandateStartedAt %}{{ member.mandateStartedAt|date('d/m/Y') }}{% else %}—{% endif %} → {% if member.mandateEndedAt %}{{ member.mandateEndedAt|date('d/m/Y') }}{% else %}aujourd’hui{% endif %}</td><td class="px-5 py-4 text-muted-foreground">{{ member.sortOrder }}</td><td class="px-5 py-4"><twig:Badge variant="{{ member.isCurrent ? 'success' : 'secondary' }}">{{ member.isCurrent ? 'En cours' : 'Terminé' }}</twig:Badge></td><td class="px-5 py-4"><div class="flex justify-end gap-2"><a class="inline-flex h-9 items-center gap-2 rounded-lg border border-input px-3 text-sm hover:bg-muted" href="{{ path('content_admin_council_member_show', {id: member.id}) }}"><twig:ux:icon name="lucide:eye" class="size-4"/>Voir</a>{% if is_granted('COUNCIL_MEMBER_EDIT') %}<a class="inline-flex h-9 items-center gap-2 rounded-lg border border-input px-3 text-sm hover:bg-muted" href="{{ path('content_admin_council_member_edit', {id: member.id}) }}"><twig:ux:icon name="lucide:pencil" class="size-4"/>Modifier</a>{% endif %}</div></td></tr>{% else %}<tr><td colspan="6" class="px-6 py-14 text-center text-muted-foreground">Aucun membre enregistré.</td></tr>{% endfor %}
+        </tbody></table></div></section>
+    </div>
+</main>
+{% endblock %}

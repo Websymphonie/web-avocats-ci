@@ -161,6 +161,17 @@ final class ContentMenu implements SidebarModuleInterface
                 order: 6,
             ),
             MenuFactory::item(
+                label: 'Conseil de l’Ordre',
+                routes: ['content_admin_council_member_list', 'content_admin_council_member_new', 'content_admin_council_member_show', 'content_admin_council_member_edit'],
+                roles: [],
+                icon: 'lucide:users-round',
+                link: 'content_admin_council_member_list',
+                group: self::GROUP,
+                permission: 'COUNCIL_MEMBER_LIST',
+                groupOrder: 2,
+                order: 7,
+            ),
+            MenuFactory::item(
                 label: 'Tags',
                 routes: [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'],
                 roles: [],
@@ -169,7 +180,7 @@ final class ContentMenu implements SidebarModuleInterface
                 group: self::GROUP,
                 permission: 'CONTENT_TAG_VIEW',
                 groupOrder: 2,
-                order: 7,
+                order: 8,
             ),
             MenuFactory::item(
                 label: 'Messages de contact',
@@ -180,7 +191,7 @@ final class ContentMenu implements SidebarModuleInterface
                 group: self::GROUP,
                 permission: 'CONTACT_MESSAGE_LIST',
                 groupOrder: 2,
-                order: 8,
+                order: 9,
             ),
         ];
     }

@@ -36,6 +36,7 @@ enum RoleGroupEnum: string
     case PAYMENT_OFFERS = 'PAYMENT_OFFERS';
     case CONTACT_MESSAGES = 'CONTACT_MESSAGES';
     case BATONNIER = 'BATONNIER';
+    case COUNCIL_MEMBERS = 'COUNCIL_MEMBERS';
 
     case ALL = 'ALL';
 
@@ -99,7 +100,8 @@ enum RoleGroupEnum: string
             self::PAYMENTS,
             self::PAYMENT_OFFERS,
             self::CONTACT_MESSAGES,
-            self::BATONNIER => [self::SUPER, self::ADMIN],
+            self::BATONNIER,
+            self::COUNCIL_MEMBERS => [self::SUPER, self::ADMIN],
 
             self::ALL => [
                 self::SUPER,

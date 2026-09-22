@@ -16,6 +16,7 @@ use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Batonnier\BatonnierMandateEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\CouncilMember\CouncilMemberEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -167,6 +168,38 @@ final class PublicPagesTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorNotExists('#batonnier-profile-title');
         self::assertSelectorTextContains('h1', 'Le Bâtonnier');
+    }
+
+    public function testCouncilPageShowsOnlyCurrentMembersInEditorialOrder(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page('Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::BAR, 30));
+        $entityManager->persist((new CouncilMemberEntity())->setFullName('Me Binta Yao')->setFunction('Membre')->setSortOrder(20));
+        $entityManager->persist((new CouncilMemberEntity())->setFullName('Me Alain Koffi')->setFunction('Secrétaire')->setSortOrder(10));
+        $entityManager->persist((new CouncilMemberEntity())->setFullName('Ancien membre')->setFunction('Membre')->setSortOrder(1)->setMandateEndedAt(new DateTimeImmutable('2024-01-01')));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/conseil-de-l-ordre', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#council-title', 'Le Conseil de l’Ordre');
+        self::assertSame(['Me Alain Koffi', 'Me Binta Yao'], $client->getCrawler()->filter('section[aria-labelledby="council-title"] h3')->each(static fn ($node): string => trim($node->text())));
+        self::assertStringNotContainsString('Ancien membre', (string) $client->getResponse()->getContent());
+    }
+
+    public function testCouncilPageRemainsValidWithoutCurrentMembers(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page('Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::BAR, 30));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/conseil-de-l-ordre', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('#council-title');
+        self::assertSelectorTextContains('h1', 'Conseil de l’Ordre');
     }
 
     public function testBarRouteRejectsDraftAndNonBarPages(): void

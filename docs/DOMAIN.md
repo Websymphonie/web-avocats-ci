@@ -533,6 +533,23 @@ les permissions `BATONNIER_LIST`, `BATONNIER_VIEW`, `BATONNIER_CREATE` et
 public ; lorsqu'un mandat courant existe, elle affiche en plus le bloc structuré
 du Bâtonnier. Sans mandat courant, la page reste accessible sans bloc artificiel.
 
+## CNT-010 — Conseil de l’Ordre structuré
+
+`CouncilMember` appartient à `ContentContext` et conserve une composition
+historique du Conseil de l’Ordre : nom complet, fonction textuelle, ordre
+d’affichage, dates facultatives et référence scalaire nullable vers un portrait
+`Media`. Une date de fin nulle signifie que le membre est courant ; plusieurs
+membres courants sont autorisés. La page BAR `conseil-de-l-ordre` reste
+propriétaire du contenu riche et affiche uniquement les membres courants,
+triés par ordre puis par nom. Sans membre courant, la page reste accessible sans
+section vide.
+
+Le Backoffice expose la liste, le détail, la création et la modification sous
+`/admin/content/conseil-ordre`. Il n’y a pas de suppression dans cette première
+version afin de préserver l’historique. Les portraits réutilisent le stockage
+public `institution/portraits` et le vérificateur composite bloque la suppression
+d’un média encore utilisé.
+
 ## 12. Références
 
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) ;

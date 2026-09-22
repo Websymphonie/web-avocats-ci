@@ -442,6 +442,15 @@ Les permissions `BATONNIER_LIST`, `BATONNIER_VIEW`, `BATONNIER_CREATE` et
 `HasGroupAccess(RoleGroupEnum::BATONNIER)`. Aucune permission de suppression
 n'est ajoutée dans cette première version afin de préserver l'historique.
 
+### Conseil de l’Ordre — CNT-010
+
+Les permissions `COUNCIL_MEMBER_LIST`, `COUNCIL_MEMBER_VIEW`,
+`COUNCIL_MEMBER_CREATE` et `COUNCIL_MEMBER_EDIT` sont accordées par défaut à
+`ROLE_ADMIN` et à `ROLE_SUPER_ADMIN` via son comportement global. Elles ne sont
+pas accordées à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs utilisent
+également `HasGroupAccess(RoleGroupEnum::COUNCIL_MEMBERS)`. Aucune permission
+de suppression n’est exposée afin de préserver l’historique institutionnel.
+
 ### Messages de contact — BKO-CONTACT-001
 
 `CONTACT_MESSAGE_LIST`, `CONTACT_MESSAGE_VIEW` et `CONTACT_MESSAGE_RETRY` sont accordées par défaut à

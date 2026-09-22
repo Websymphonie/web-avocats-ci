@@ -13,8 +13,10 @@ use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerIn
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPagesByGroupQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPageBySlugQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Batonnier\GetCurrentBatonnierMandateQuery;
+use Websymphonie\ContentContext\Application\Usecase\Query\CouncilMember\GetCurrentCouncilMembersQuery;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Model\BatonnierMandate;
+use Websymphonie\ContentContext\Domain\Model\CouncilMember;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -58,7 +60,10 @@ final class GetPublicPageDetailsController extends AbstractController
             ? $this->mediaUrls->resolveMany([$mandate->portraitMediaId])[$mandate->portraitMediaId] ?? null
             : null;
 
-        return $this->renderPage($page, $mandate, $portraitUrl);
+        $councilMembers = $slug === 'conseil-de-l-ordre' ? $this->handleQuery(new GetCurrentCouncilMembersQuery()) : [];
+        $councilPortraitUrls = $this->resolveCouncilPortraits($councilMembers);
+
+        return $this->renderPage($page, $mandate, $portraitUrl, $councilMembers, $councilPortraitUrls);
     }
 
     private function findPublishedPage(string $slug): ?PublishedPage
@@ -69,7 +74,11 @@ final class GetPublicPageDetailsController extends AbstractController
         return $page;
     }
 
-    private function renderPage(PublishedPage $page, ?BatonnierMandate $mandate = null, ?string $portraitUrl = null): Response
+    /**
+     * @param list<CouncilMember> $councilMembers
+     * @param array<int, string> $councilPortraitUrls
+     */
+    private function renderPage(PublishedPage $page, ?BatonnierMandate $mandate = null, ?string $portraitUrl = null, array $councilMembers = [], array $councilPortraitUrls = []): Response
     {
         $coverUrl = null;
         if ($page->coverMediaId !== null) {
@@ -83,7 +92,23 @@ final class GetPublicPageDetailsController extends AbstractController
             'contextualPages' => $this->findContextualPages($page),
             'mandate' => $mandate,
             'portraitUrl' => $portraitUrl,
+            'councilMembers' => $councilMembers,
+            'councilPortraitUrls' => $councilPortraitUrls,
         ]);
+    }
+
+    /**
+     * @param list<CouncilMember> $members
+     * @return array<int, string>
+     */
+    private function resolveCouncilPortraits(array $members): array
+    {
+        $mediaIds = array_values(array_filter(array_map(static fn (CouncilMember $member): ?int => $member->portraitMediaId, $members), static fn (?int $mediaId): bool => $mediaId !== null));
+        if ($mediaIds === []) {
+            return [];
+        }
+
+        return $this->mediaUrls->resolveMany($mediaIds);
     }
 
     /** @return list<PublishedPage> */

@@ -880,3 +880,19 @@ La route canonique `/le-barreau/le-batonnier` compose la Page BAR publiée avec
 le mandat courant. La page, son slug et son contenu riche restent donc gérés
 par les commandes/queries Page ; l'ajout du bloc structuré n'introduit pas de
 nouvelle page publique ni de remplacement de Page.
+
+## 16. Conseil de l’Ordre structuré — CNT-010
+
+`CouncilMember` est un modèle métier dédié de `ContentContext`, persisté dans
+`council_member`. Il ne référence pas un utilisateur : le nom et la fonction
+sont des données institutionnelles. `portraitMediaId` est une référence
+scalaire nullable vers `MediaContext`, sans relation Doctrine cross-context.
+Les membres courants sont ceux dont `mandateEndedAt` est nul et sont lus par
+une query dédiée pour la Page BAR `conseil-de-l-ordre` ; l’absence de membres
+n’empêche pas le rendu de la Page.
+
+Les portraits réutilisent le stockage public existant `institution/portraits`
+et le vérificateur composite Media bloque toute suppression d’un média encore
+référencé par un membre. Le Backoffice est limité à la liste, au détail, à la
+création et à la modification ; aucune suppression n’est exposée dans cette
+première version.

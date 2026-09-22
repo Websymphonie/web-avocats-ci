@@ -56,6 +56,10 @@ enum PermissionEnum: string
     case BATONNIER_VIEW = 'BATONNIER_VIEW';
     case BATONNIER_CREATE = 'BATONNIER_CREATE';
     case BATONNIER_EDIT = 'BATONNIER_EDIT';
+    case COUNCIL_MEMBER_LIST = 'COUNCIL_MEMBER_LIST';
+    case COUNCIL_MEMBER_VIEW = 'COUNCIL_MEMBER_VIEW';
+    case COUNCIL_MEMBER_CREATE = 'COUNCIL_MEMBER_CREATE';
+    case COUNCIL_MEMBER_EDIT = 'COUNCIL_MEMBER_EDIT';
     case LEARNING_TRAINING_VIEW = 'LEARNING_TRAINING_VIEW';
     case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
     case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
@@ -127,6 +131,10 @@ enum PermissionEnum: string
             self::BATONNIER_VIEW,
             self::BATONNIER_CREATE,
             self::BATONNIER_EDIT,
+            self::COUNCIL_MEMBER_LIST,
+            self::COUNCIL_MEMBER_VIEW,
+            self::COUNCIL_MEMBER_CREATE,
+            self::COUNCIL_MEMBER_EDIT,
             self::LEARNING_TRAINING_VIEW,
             self::LEARNING_TRAINING_MANAGE,
             self::LEARNING_TRAINING_PUBLISH,
@@ -200,6 +208,10 @@ enum PermissionEnum: string
             self::BATONNIER_VIEW => 'Bâtonnier : détail',
             self::BATONNIER_CREATE => 'Bâtonnier : création',
             self::BATONNIER_EDIT => 'Bâtonnier : édition',
+            self::COUNCIL_MEMBER_LIST => 'Conseil de l’Ordre : liste',
+            self::COUNCIL_MEMBER_VIEW => 'Conseil de l’Ordre : détail',
+            self::COUNCIL_MEMBER_CREATE => 'Conseil de l’Ordre : création',
+            self::COUNCIL_MEMBER_EDIT => 'Conseil de l’Ordre : édition',
             self::LEARNING_TRAINING_VIEW => 'Formations : lecture',
             self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
             self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',
@@ -273,6 +285,10 @@ enum PermissionEnum: string
             self::BATONNIER_VIEW => ColorEnum::INFO,
             self::BATONNIER_CREATE => ColorEnum::SUCCESS,
             self::BATONNIER_EDIT => ColorEnum::WARNING,
+            self::COUNCIL_MEMBER_LIST => ColorEnum::INFO,
+            self::COUNCIL_MEMBER_VIEW => ColorEnum::INFO,
+            self::COUNCIL_MEMBER_CREATE => ColorEnum::SUCCESS,
+            self::COUNCIL_MEMBER_EDIT => ColorEnum::WARNING,
             self::LEARNING_TRAINING_VIEW => ColorEnum::INFO,
             self::LEARNING_TRAINING_MANAGE => ColorEnum::SUCCESS,
             self::LEARNING_TRAINING_PUBLISH => ColorEnum::WARNING,

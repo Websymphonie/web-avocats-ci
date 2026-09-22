@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Websymphonie\ContentContext\Application\Usecase\Query\CouncilMember;
+
+final readonly class GetCouncilMemberQuery
+{
+    public function __construct(public int $id)
+    {
+    }
+}

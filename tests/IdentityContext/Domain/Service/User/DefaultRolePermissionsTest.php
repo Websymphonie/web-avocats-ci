@@ -64,6 +64,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::BATONNIER_VIEW,
             PermissionEnum::BATONNIER_CREATE,
             PermissionEnum::BATONNIER_EDIT,
+            PermissionEnum::COUNCIL_MEMBER_LIST,
+            PermissionEnum::COUNCIL_MEMBER_VIEW,
+            PermissionEnum::COUNCIL_MEMBER_CREATE,
+            PermissionEnum::COUNCIL_MEMBER_EDIT,
             PermissionEnum::LEARNING_TRAINING_VIEW,
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
@@ -136,6 +140,10 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::BATONNIER_VIEW,
             PermissionEnum::BATONNIER_CREATE,
             PermissionEnum::BATONNIER_EDIT,
+            PermissionEnum::COUNCIL_MEMBER_LIST,
+            PermissionEnum::COUNCIL_MEMBER_VIEW,
+            PermissionEnum::COUNCIL_MEMBER_CREATE,
+            PermissionEnum::COUNCIL_MEMBER_EDIT,
             PermissionEnum::LEARNING_TRAINING_VIEW,
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
@@ -241,6 +249,10 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'batonnier view' => [PermissionEnum::BATONNIER_VIEW, [UserRolesEnum::ADMIN]];
         yield 'batonnier create' => [PermissionEnum::BATONNIER_CREATE, [UserRolesEnum::ADMIN]];
         yield 'batonnier edit' => [PermissionEnum::BATONNIER_EDIT, [UserRolesEnum::ADMIN]];
+        yield 'council member list' => [PermissionEnum::COUNCIL_MEMBER_LIST, [UserRolesEnum::ADMIN]];
+        yield 'council member view' => [PermissionEnum::COUNCIL_MEMBER_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'council member create' => [PermissionEnum::COUNCIL_MEMBER_CREATE, [UserRolesEnum::ADMIN]];
+        yield 'council member edit' => [PermissionEnum::COUNCIL_MEMBER_EDIT, [UserRolesEnum::ADMIN]];
         yield 'training view' => [PermissionEnum::LEARNING_TRAINING_VIEW, [UserRolesEnum::ADMIN]];
         yield 'training manage' => [PermissionEnum::LEARNING_TRAINING_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'training publish' => [PermissionEnum::LEARNING_TRAINING_PUBLISH, [UserRolesEnum::ADMIN]];

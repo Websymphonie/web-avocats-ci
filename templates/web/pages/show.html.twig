@@ -45,6 +45,23 @@
                     </figure>
                 {% endif %}
 
+                {% if councilMembers is not empty %}
+                    <section class="mt-10 sm:mt-12" aria-labelledby="council-title">
+                        <div class="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
+                            <div><p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Composition actuelle</p><h2 id="council-title" class="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">Le Conseil de l’Ordre</h2></div>
+                        </div>
+                        <div class="mt-7 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                            {% for member in councilMembers %}
+                                {% set memberPortraitUrl = councilPortraitUrls[member.portraitMediaId]|default(null) %}
+                                <article class="overflow-hidden rounded-2xl border border-border bg-card">
+                                    {% if memberPortraitUrl %}<img src="{{ memberPortraitUrl }}" alt="Portrait de {{ member.fullName }}" class="aspect-[4/5] w-full object-cover">{% else %}<div class="flex aspect-[4/5] items-center justify-center bg-muted text-muted-foreground" aria-hidden="true"><twig:ux:icon name="lucide:user-round" class="size-14 opacity-40"/></div>{% endif %}
+                                    <div class="p-5"><h3 class="text-lg font-semibold tracking-[-0.02em]">{{ member.fullName }}</h3><p class="mt-1 text-sm leading-6 text-muted-foreground">{{ member.function }}</p></div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
                 {% if mandate %}
                     <section class="mt-10 overflow-hidden rounded-2xl border border-border bg-card sm:mt-12" aria-labelledby="batonnier-profile-title">
                         <div class="grid md:grid-cols-[11rem_minmax(0,1fr)]">

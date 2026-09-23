@@ -194,6 +194,7 @@ FO-004   Catalogue public des formations               DONE — liste, filtres, 
 FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations/Pages publiées
 FO-009   Contact public                                READY FOR VISUAL REVIEW — formulaire sécurisé, archivage et notification email
 FO-010   Hub public « Le Barreau »                      READY FOR VISUAL REVIEW — listing éditorial des Pages BAR et routes canoniques
+FO-FUND-002 Surface publique du Fonds de Solidarité      READY FOR CONTENT VALIDATION — Page BAR seedée en DRAFT, CTA membre conditionné à publication
 BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste paginée, statuts, détail immuable et retry manuel audité
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation

@@ -82,6 +82,17 @@
                     {{ safeContent|raw }}
                 </div>
 
+                {% if page.slug == 'fonds-de-solidarite' %}
+                    <section class="mt-10 rounded-2xl border border-border bg-card p-6 sm:mt-12 sm:p-8" aria-labelledby="fund-resources-title">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Ressources réservées aux avocats</p>
+                        <h2 id="fund-resources-title" class="mt-2 text-xl font-semibold tracking-[-0.02em] text-foreground sm:text-2xl">Consultez les ressources disponibles dans votre espace professionnel</h2>
+                        <a href="{{ path('member_fund_resources_index') }}" class="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            Accéder aux ressources
+                            <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                        </a>
+                    </section>
+                {% endif %}
+
                 <div class="mt-12 border-t border-border pt-6">
                     <a href="{{ path('app_home') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>

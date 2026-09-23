@@ -182,6 +182,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 10],
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
             ['Présentation du Barreau', 'presentation', PageStatus::DRAFT, false, PageGroup::BAR, 10],
+            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 20],
         ];
         $now = new DateTimeImmutable();
 
@@ -191,9 +192,12 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 $page = new PageEntity();
             }
             $notice = 'Contenu de démonstration — à valider et adapter juridiquement avant mise en production.';
+            $content = $slug === 'fonds-de-solidarite'
+                ? ''
+                : $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice));
             $page->setTitle($title)
                 ->setSlug($slug)
-                ->setContent($this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)))
+                ->setContent($content)
                 ->setStatus($status)
                 ->setPublishedAt($status === PageStatus::PUBLISHED ? $now->modify(sprintf('-%d days', 15 + $index)) : null)
                 ->setCoverMediaId($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null)

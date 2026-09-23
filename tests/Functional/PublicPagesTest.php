@@ -99,6 +99,41 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringContainsString('/le-barreau/historique', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->html());
         self::assertStringNotContainsString('bar-draft', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->html());
         self::assertSame('/le-barreau', $client->getCrawler()->filter('nav[aria-label="Fil d’Ariane"] a')->last()->attr('href'));
+        self::assertSelectorNotExists('a[href="/espace/ressources/fonds-de-solidarite"]');
+
+        $desktopMenuItems = $client->getCrawler()
+            ->filter('nav[aria-label="Navigation principale"] div.hidden.items-center')
+            ->children()
+            ->each(static fn ($node): string => trim($node->filter('summary')->count() > 0 ? $node->filter('summary')->text() : $node->text()));
+        self::assertSame(['Accueil', 'Le Barreau', 'Actualités'], array_slice($desktopMenuItems, 0, 3));
+        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau'], $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a')->each(static fn ($node): string => trim($node->text())));
+        self::assertSame('/le-barreau/presentation', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a[aria-current="page"]')->attr('href'));
+        self::assertStringNotContainsString('Fonds de Solidarité', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
+        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau'], $client->getCrawler()->filter('nav[aria-label="Navigation mobile"] details a')->each(static fn ($node): string => trim($node->text())));
+    }
+
+    public function testPublishedSolidarityFundPageRendersMemberResourcesCtaAndBarSidebar(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        self::assertInstanceOf(PageEntity::class, $fundPage);
+        $fundPage->setContent('<p>Contenu de test uniquement.</p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorTextContains('h1', 'Fonds de Solidarité');
+        self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"][href="/le-barreau/fonds-de-solidarite"]');
+        self::assertSelectorExists('a[href="/espace/ressources/fonds-de-solidarite"]');
+        self::assertSelectorTextContains('a[href="/espace/ressources/fonds-de-solidarite"]', 'Accéder aux ressources');
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+        self::assertStringContainsString('/le-barreau/fonds-de-solidarite', (string) $client->getResponse()->getContent());
     }
 
     public function testBarreauHubListsPublishedBarPagesInEditorialOrder(): void
@@ -114,6 +149,7 @@ final class PublicPagesTest extends WebTestCase
             '/le-barreau/presentation',
             '/le-barreau/historique',
         ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
+        self::assertStringNotContainsString('/le-barreau/fonds-de-solidarite', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/mentions-legales', (string) $client->getResponse()->getContent());
     }
@@ -207,7 +243,7 @@ final class PublicPagesTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createPageDataset();
 
-        foreach (['bar-draft', 'bar-without-publication-date', 'mentions-legales'] as $slug) {
+        foreach (['bar-draft', 'fonds-de-solidarite', 'bar-without-publication-date', 'mentions-legales'] as $slug) {
             $client->request('GET', '/le-barreau/' . $slug, server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, $slug);
         }
@@ -325,11 +361,12 @@ final class PublicPagesTest extends WebTestCase
         $barPresentation = $this->page('Présentation du Barreau', 'presentation', PageStatus::PUBLISHED, new DateTimeImmutable('-6 days'), null, PageGroup::BAR, 10);
         $barHistory = $this->page('Historique du Barreau', 'historique', PageStatus::PUBLISHED, new DateTimeImmutable('-7 days'), null, PageGroup::BAR, 20);
         $barDraft = $this->page('Page BAR brouillon', 'bar-draft', PageStatus::DRAFT, null, null, PageGroup::BAR, 30);
+        $fundDraft = $this->page('Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, null, null, PageGroup::BAR, 20)->setContent('');
         $barWithoutPublicationDate = $this->page('Page BAR sans date', 'bar-without-publication-date', PageStatus::PUBLISHED, null, null, PageGroup::BAR, 40);
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
         $withoutGroup = $this->page('Page sans groupe', 'page-sans-groupe', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'));
 
-        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $sameOrder, $accountPolicy, $draft, $barPresentation, $barHistory, $barDraft, $barWithoutPublicationDate, $withoutPublicationDate, $withoutGroup] as $page) {
+        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $sameOrder, $accountPolicy, $draft, $barPresentation, $barHistory, $barDraft, $fundDraft, $barWithoutPublicationDate, $withoutPublicationDate, $withoutGroup] as $page) {
             $entityManager->persist($page);
         }
         $entityManager->flush();

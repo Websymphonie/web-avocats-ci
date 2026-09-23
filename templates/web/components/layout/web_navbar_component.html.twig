@@ -1,4 +1,6 @@
 <nav class="border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale" data-controller="public-navbar">
+    {% set currentRoute = app.request.attributes.get('_route')|default('') %}
+    {% set isBarSection = currentRoute starts with 'web_barreau_' or currentRoute == 'web_bar_page_detail' %}
     <div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a href="{{ path('app_home') }}" class="group inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <span class="flex size-9 items-center justify-center rounded-lg bg-primary text-xs font-semibold tracking-[0.14em] text-primary-foreground">AC</span>
@@ -8,6 +10,21 @@
         <div class="flex items-center gap-1 sm:gap-2">
             <div class="hidden items-center gap-1 sm:gap-2 lg:flex">
                 <a href="{{ path('app_home') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
+                <details class="group relative">
+                    <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isBarSection ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground' }}">
+                        Le Barreau
+                        <twig:ux:icon name="lucide:chevron-down" class="size-3.5 transition-transform group-open:rotate-180" aria-hidden="true"/>
+                    </summary>
+                    <div class="absolute left-0 top-full z-50 mt-2 min-w-60 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-lg">
+                        <a href="{{ path('web_barreau_index') }}" class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" {% if currentRoute == 'web_barreau_index' %}aria-current="page"{% endif %}>Vue d’ensemble</a>
+                        {% if barPages is not empty %}
+                            <div class="my-1 border-t border-border" aria-hidden="true"></div>
+                            {% for page in barPages %}
+                                <a href="{{ path('web_bar_page_detail', {slug: page.slug}) }}" class="block rounded-lg px-3 py-2 text-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ currentRoute == 'web_bar_page_detail' and app.request.attributes.get('slug') == page.slug ? 'font-semibold text-primary' : 'text-muted-foreground hover:text-foreground' }}" {% if currentRoute == 'web_bar_page_detail' and app.request.attributes.get('slug') == page.slug %}aria-current="page"{% endif %}>{{ page.title }}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </details>
                 <a href="{{ path('web_news_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
                 <a href="{{ path('web_events_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_events_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_events_' %}aria-current="page"{% endif %}>Événements</a>
                 <a href="{{ path('web_trainings_list') }}" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_trainings_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_trainings_' %}aria-current="page"{% endif %}>Formations</a>
@@ -33,6 +50,18 @@
     <div id="public-mobile-menu" data-public-navbar-target="menu" class="border-t border-border bg-background lg:hidden" hidden>
         <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 sm:px-6" aria-label="Navigation mobile">
             <a href="{{ path('app_home') }}" data-public-navbar-target="firstLink" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Accueil</a>
+            <details class="group rounded-lg">
+                <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isBarSection ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground' }}">
+                    Le Barreau
+                    <twig:ux:icon name="lucide:chevron-down" class="size-4 transition-transform group-open:rotate-180" aria-hidden="true"/>
+                </summary>
+                <div class="ml-3 border-l border-border py-1 pl-3">
+                    <a href="{{ path('web_barreau_index') }}" data-action="click->public-navbar#close" class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" {% if currentRoute == 'web_barreau_index' %}aria-current="page"{% endif %}>Vue d’ensemble</a>
+                    {% for page in barPages %}
+                        <a href="{{ path('web_bar_page_detail', {slug: page.slug}) }}" data-action="click->public-navbar#close" class="block rounded-lg px-3 py-2 text-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ currentRoute == 'web_bar_page_detail' and app.request.attributes.get('slug') == page.slug ? 'font-semibold text-primary' : 'text-muted-foreground hover:text-foreground' }}" {% if currentRoute == 'web_bar_page_detail' and app.request.attributes.get('slug') == page.slug %}aria-current="page"{% endif %}>{{ page.title }}</a>
+                    {% endfor %}
+                </div>
+            </details>
             <a href="{{ path('web_news_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_news_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_news_' %}aria-current="page"{% endif %}>Actualités</a>
             <a href="{{ path('web_events_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_events_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_events_' %}aria-current="page"{% endif %}>Événements</a>
             <a href="{{ path('web_trainings_list') }}" data-action="click->public-navbar#close" class="rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ app.request.attributes.get('_route') starts with 'web_trainings_' ? 'bg-primary/10 text-primary' : 'text-muted-foreground' }}" {% if app.request.attributes.get('_route') starts with 'web_trainings_' %}aria-current="page"{% endif %}>Formations</a>

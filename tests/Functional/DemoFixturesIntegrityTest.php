@@ -99,7 +99,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertNotNull($entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']));
         self::assertSame(24, $entityManager->getRepository(NewsEntity::class)->count([]));
         self::assertSame(18, $entityManager->getRepository(EventEntity::class)->count([]));
-        self::assertSame(6, $entityManager->getRepository(PageEntity::class)->count([]));
+        self::assertSame(7, $entityManager->getRepository(PageEntity::class)->count([]));
         self::assertSame(7, $entityManager->getRepository(TrainingCategoryEntity::class)->count([]));
         self::assertSame(8, $entityManager->getRepository(TrainingTagEntity::class)->count([]));
         self::assertSame(14, $entityManager->getRepository(TrainingEntity::class)->count([]));
@@ -115,7 +115,13 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
-        self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
+        self::assertSame(2, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
+        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        self::assertInstanceOf(PageEntity::class, $fundPage);
+        self::assertSame(PageStatus::DRAFT, $fundPage->getStatus());
+        self::assertSame(PageGroup::BAR, $fundPage->getGroup());
+        self::assertSame('', $fundPage->getContent());
+        self::assertSame(20, $fundPage->getSortOrder());
         self::assertSame(10, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'mentions-legales'])->getSortOrder());
         self::assertSame(20, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite'])->getSortOrder());
         self::assertSame(30, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation'])->getSortOrder());
@@ -150,6 +156,6 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/content/covers');
         self::assertDirectoryExists(self::$storageDirectory . '/public/training/covers');
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
-        self::assertCount(2, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+        self::assertCount(3, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
     }
 }

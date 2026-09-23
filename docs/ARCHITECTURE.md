@@ -1000,5 +1000,21 @@ UUID de provenance sont nullable et uniques pour LawyerProfile et Cabinet.
 Les téléphones Cabinet sont stockés sous forme d’une liste JSON ordonnée ; la
 migration préserve l’ancien téléphone unique et le Backoffice accepte un numéro
 par ligne. L’annuaire n’expose que les coordonnées professionnelles explicitement
-renseignées, et n’utilise pas l’email du compte. Aucune donnée historique réelle
-n’est importée par DIR-002.
+renseignées, et n’utilise pas l’email du compte.
+
+DATA-DIR-005 ajoute `app:data:import-legacy-directory`, un import local explicite
+des JSON historiques, sans réseau ni chargement automatique par les fixtures.
+Le dry-run est le défaut ; `--write` a été validé seulement sur une base MySQL
+temporaire isolée, migrée au schéma courant. L’upsert repose uniquement sur
+`legacySourceUuid`. Aucun User n’est créé, aucun rapprochement automatique par
+nom/email n’est effectué et aucun portrait n’est téléchargé. Les conflits
+d’UUID source et les correspondances potentielles sont rapportés ; les champs
+non contrôlés, dont l’UUID public, le lien User, le statut professionnel après
+création et le portrait, sont préservés.
+
+Le dataset comporte 605 avocats, 377 Cabinets, 7 Cabinets partiels, 5 profils
+sans Cabinet et 10 relations asymétriques signalées. Aucune ville fiable n’étant
+fournie, la recherche publique par localité reste incomplète. Les URLs de 603
+portraits sont ignorées jusqu’à DATA-DIR-006. Le statut `ACTIVE` nécessaire à
+la publication des Cabinets est une exigence technique actuelle et non une
+vérification institutionnelle contemporaine.

@@ -20,7 +20,7 @@ final class Version20260923120000 extends AbstractMigration
         $this->addSql('UPDATE lawyer_profile profile INNER JOIN user account ON account.id = profile.user_id SET profile.display_name = account.name');
         $this->addSql('ALTER TABLE lawyer_profile MODIFY display_name VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE lawyer_profile ADD legacy_source_uuid BINARY(16) DEFAULT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_LAWYER_PROFILE_LEGACY_UUID ON lawyer_profile (legacy_source_uuid)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8EDD0691C5F53C6 ON lawyer_profile (legacy_source_uuid)');
 
         $this->addSql('ALTER TABLE lawyer_profile DROP FOREIGN KEY FK_7C3D0B5DA76ED395');
         $this->addSql('ALTER TABLE lawyer_profile MODIFY user_id INT DEFAULT NULL');
@@ -28,7 +28,7 @@ final class Version20260923120000 extends AbstractMigration
         $this->addSql("ALTER TABLE lawyer_profile MODIFY professional_status VARCHAR(40) NOT NULL DEFAULT 'UNKNOWN'");
 
         $this->addSql('ALTER TABLE cabinet ADD legacy_source_uuid BINARY(16) DEFAULT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_CABINET_LEGACY_UUID ON cabinet (legacy_source_uuid)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_4CED05B01C5F53C6 ON cabinet (legacy_source_uuid)');
         $this->addSql('ALTER TABLE cabinet ADD phones JSON DEFAULT NULL');
         $this->addSql("UPDATE cabinet SET phones = CASE WHEN phone IS NULL OR TRIM(phone) = '' THEN JSON_ARRAY() ELSE JSON_ARRAY(TRIM(phone)) END");
         $this->addSql('ALTER TABLE cabinet MODIFY phones JSON NOT NULL');
@@ -52,14 +52,14 @@ final class Version20260923120000 extends AbstractMigration
         $this->addSql('ALTER TABLE cabinet ADD phone VARCHAR(80) DEFAULT NULL');
         $this->addSql("UPDATE cabinet SET phone = NULLIF(JSON_UNQUOTE(JSON_EXTRACT(phones, '$[0]')), '')");
         $this->addSql('ALTER TABLE cabinet DROP phones');
-        $this->addSql('DROP INDEX UNIQ_CABINET_LEGACY_UUID ON cabinet');
+        $this->addSql('DROP INDEX UNIQ_4CED05B01C5F53C6 ON cabinet');
         $this->addSql('ALTER TABLE cabinet DROP legacy_source_uuid');
 
         $this->addSql('ALTER TABLE lawyer_profile DROP FOREIGN KEY FK_7C3D0B5DA76ED395');
         $this->addSql('ALTER TABLE lawyer_profile MODIFY user_id INT NOT NULL');
         $this->addSql('ALTER TABLE lawyer_profile ADD CONSTRAINT FK_7C3D0B5DA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql("ALTER TABLE lawyer_profile MODIFY professional_status VARCHAR(40) NOT NULL DEFAULT 'ACTIVE'");
-        $this->addSql('DROP INDEX UNIQ_LAWYER_PROFILE_LEGACY_UUID ON lawyer_profile');
+        $this->addSql('DROP INDEX UNIQ_8EDD0691C5F53C6 ON lawyer_profile');
         $this->addSql('ALTER TABLE lawyer_profile DROP legacy_source_uuid');
         $this->addSql('ALTER TABLE lawyer_profile DROP display_name');
     }

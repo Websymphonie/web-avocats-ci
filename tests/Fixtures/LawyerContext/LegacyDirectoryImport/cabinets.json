@@ -1,0 +1,44 @@
+{
+  "metadata": {"sourceCount": 3},
+  "entries": [
+    {
+      "sourceUuid": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "name": "Cabinet Awa et Associés",
+      "detailStatus": "OK",
+      "addressRaw": "12 rue du Test",
+      "phones": ["+225 01 02 03", "07 08 09 10"],
+      "email": "contact@awa.example.test",
+      "countryRaw": "Côte d’Ivoire",
+      "cityRaw": "Abidjan",
+      "website": null,
+      "description": null,
+      "memberSourceUuids": ["11111111-1111-4111-8111-111111111111"]
+    },
+    {
+      "sourceUuid": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "name": "Cabinet Partiel",
+      "detailStatus": "FAILED",
+      "addressRaw": null,
+      "phones": [],
+      "email": null,
+      "countryRaw": null,
+      "cityRaw": null,
+      "website": null,
+      "description": null,
+      "memberSourceUuids": []
+    },
+    {
+      "sourceUuid": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "name": "Cabinet Téléphone Unique",
+      "detailStatus": "OK",
+      "addressRaw": null,
+      "phones": [" 01 11 22 33 "],
+      "email": null,
+      "countryRaw": null,
+      "cityRaw": null,
+      "website": null,
+      "description": null,
+      "memberSourceUuids": []
+    }
+  ]
+}

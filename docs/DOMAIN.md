@@ -619,10 +619,33 @@ vérifié : il ne signifie pas « Actif », n’est pas attribué rétroactiveme
 profils existants et devient le défaut des nouveaux profils.
 
 `legacySourceUuid` nullable et unique sur LawyerProfile et Cabinet conserve
-uniquement la provenance d’un futur import ; l’UUID Avocat CI reste l’identité
+uniquement la provenance de l’import ; l’UUID Avocat CI reste l’identité
 publique. La provenance n’est exposée ni dans les read models publics, ni dans
 les URLs ou interfaces publiques. Les cabinets conservent leurs téléphones dans
 une liste ordonnée ; la migration convertit le téléphone historique unique en
 liste sans perte. Le formulaire Backoffice accepte un numéro par ligne et la
-fiche publique les affiche séparément. Ce changement de modèle ne réalise aucun
-import de l’ancien annuaire.
+fiche publique les affiche séparément.
+
+DATA-DIR-005 ajoute une commande explicite `app:data:import-legacy-directory`
+qui consomme uniquement les trois JSON locaux extraits, sans réseau, et n’est
+pas exécutée par les fixtures. Le mode par défaut est une prévisualisation ;
+`--write` a été validé uniquement sur une base MySQL temporaire isolée et
+migrée, jamais sur les bases utilisateur, staging ou production. Les profils
+créés ont `user = null`, `professionalStatus = UNKNOWN` et aucune référence de
+portrait ; leurs UUID publics restent indépendants des UUID de provenance.
+L’upsert n’utilise que `legacySourceUuid`. Les champs contrôlés sont explicités
+dans le rapport, et les ressemblances avec des profils existants sans UUID
+source sont signalées sans fusion automatique.
+
+Le dataset comprend 605 avocats et 377 Cabinets, dont 7 fiches Cabinet
+partielles. 600 relations avocat → Cabinet sont résolues par UUID source ; 5
+profils restent sans Cabinet et 10 asymétries avec `memberSourceUuids` sont
+signalées sans invalider la relation portée par la fiche avocat. Huit emails
+d’avocats et sept emails de Cabinets invalides sont exclus des champs validés
+et conservés dans le rapport ; 59 emails et 6 téléphones avocat sont absents.
+Aucune ville fiable n’est structurée : le filtre public par localité reste
+incomplet. Les 603 URLs de portrait sont reportées à DATA-DIR-006 et ne sont
+jamais chargées depuis la source. Le `ACTIVE` imposé aux Cabinets par la policy
+de publication actuelle est une compatibilité technique, pas une vérification
+institutionnelle contemporaine. Aucun pays n’est fabriqué ; les éventuels
+défauts d’affichage restent des défauts applicatifs, pas des données source.

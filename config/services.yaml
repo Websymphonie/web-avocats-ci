@@ -166,6 +166,9 @@ services:
   Websymphonie\LawyerContext\Domain\Repository\LawyerDirectoryRepositoryInterface:
     alias: Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Repository\LawyerProfile\LawyerProfileRepository
 
+  Websymphonie\LawyerContext\Domain\Repository\PublicCabinetDirectoryRepositoryInterface:
+    alias: Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Repository\Cabinet\CabinetRepository
+
   Websymphonie\MediaContext\Application\Service\StoredFileStorageInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\PrivateDocumentStorage
 

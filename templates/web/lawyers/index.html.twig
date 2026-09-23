@@ -68,10 +68,11 @@
                                 {% else %}
                                     <span class="inline-flex size-16 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-lg font-semibold uppercase text-primary sm:size-[4.5rem]" aria-hidden="true">{{ lawyer.name|first }}</span>
                                 {% endif %}
-                                <div class="min-w-0 pt-1">
+                                <div class="min-w-0 flex-1 pt-1">
                                     <h3 class="break-words text-lg font-semibold leading-snug tracking-[-0.02em] text-card-foreground">{{ lawyer.name }}</h3>
                                     {% if lawyer.cabinetName %}<p class="mt-2 break-words text-sm text-muted-foreground">{{ lawyer.cabinetName }}</p>{% endif %}
                                     {% if lawyer.location %}<p class="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><twig:ux:icon name="lucide:map-pin" class="size-4 shrink-0 text-primary" aria-hidden="true"/>{{ lawyer.location }}</p>{% endif %}
+                                    <a href="{{ path('web_lawyer_directory_profile', {uuid: lawyer.publicUuid}) }}" class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Voir le profil<twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" /></a>
                                 </div>
                             </article>
                         {% endfor %}

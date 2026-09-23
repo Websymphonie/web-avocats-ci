@@ -202,7 +202,8 @@ CNT-BAR-005 — CARPA & ressources validées                IMPLEMENTED — Page
 FO-FUND-002 Surface publique du Fonds de Solidarité      DONE — Page BAR publiée, contenu CARE et CTA vers l’espace avocat
 BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste paginée, statuts, détail immuable et retry manuel audité
 DIR-001 Fondation de publication de l’annuaire Avocats/Cabinets DONE — données, opt-in, critères V1 et fixtures synthétiques ; aucun listing public ni import réel
-FO-DIR-001 Annuaire public Avocats                  DONE — recherche nom/cabinet/localité, liste paginée, aucun détail ni entrée navbar
+FO-DIR-001 Annuaire public Avocats                  DONE — recherche nom/cabinet/localité, liste paginée et liens vers fiches publiques
+FO-DIR-002 Fiches publiques Avocat & Cabinet        DONE — UUID publics, éligibilité DIR-001, coordonnées professionnelles et membres publiables
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés

@@ -977,3 +977,14 @@ et sa projection minimale restent propriétaires de `LawyerContext`. Le filtre
 de rôle s’exécute en base (`JSON_CONTAINS` sur MySQL ; comparaison du jeton JSON
 exact dans les tests SQLite), avec comptage et pagination DB-first. Aucune
 entité Doctrine ni donnée de compte n’est exposée au template.
+
+FO-DIR-002 complète cette surface avec les fiches publiques `/avocats/{uuid}`
+et `/cabinets/{uuid}`. Les queries et projections minimales appartiennent à
+`LawyerContext`; `WebContext` rend les pages et résout les portraits par le
+service public Media existant. Une fiche avocat reprend les quatre critères
+DIR-001, et une fiche Cabinet exige `ACTIVE` et `directoryVisible`; toute
+ressource non éligible répond 404. Les membres sont projetés et triés en base
+avec les mêmes critères avocat, sans charger un graphe Doctrine dans Twig.
+Les identifiants de route sont uniquement les UUID publics existants. Aucun
+schéma ni permission n’est ajouté. L’annuaire n’expose que les coordonnées
+professionnelles explicitement renseignées, et n’utilise pas l’email du compte.

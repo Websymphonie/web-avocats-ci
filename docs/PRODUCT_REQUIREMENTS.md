@@ -101,8 +101,9 @@ propriétaire.
 | CNT-009 | administrer et afficher la donnée structurée du Bâtonnier | `IMPLEMENTED` — historique de mandats, portrait facultatif et bloc Page BAR |
 | CNT-010 | administrer et afficher la composition structurée du Conseil de l’Ordre | `IMPLEMENTED` — historique des membres, portraits facultatifs et bloc Page BAR |
 | BKO-CONTACT-001 | consulter les messages du formulaire Contact | `IMPLEMENTED` — liste paginée, filtres de livraison, détail immuable et retry manuel des échecs |
-| DIR-001 | préparer la publication de profils Avocat et Cabinet | `IMPLEMENTED` — UUID profil, visibilité explicite, coordonnées professionnelles, portrait protégé et règle d’éligibilité V1 ; les pages publiques restent à livrer |
-| FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable par nom, cabinet et localité, paginé et sans fiche détail |
+| DIR-001 | préparer la publication de profils Avocat et Cabinet | `IMPLEMENTED` — UUID profil, visibilité explicite, coordonnées professionnelles, portrait protégé et règle d’éligibilité V1 |
+| FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable, paginé et lié aux fiches publiques FO-DIR-002 |
+| FO-DIR-002 | consulter les fiches publiques avocat et cabinet | `IMPLEMENTED` — `/avocats/{uuid}` et `/cabinets/{uuid}`, critères DIR-001, coordonnées professionnelles et membres éligibles |
 
 ## 7. Learning
 

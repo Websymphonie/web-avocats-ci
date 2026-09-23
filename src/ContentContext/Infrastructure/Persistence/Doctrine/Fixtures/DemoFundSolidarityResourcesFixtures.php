@@ -9,11 +9,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
+use Websymphonie\ContentContext\Infrastructure\SeedData\InstitutionalDocumentData;
 use Websymphonie\LogContext\Infrastructure\Listener\DbLogListener;
 use Websymphonie\MediaContext\Application\Service\StoredFileUploadServiceInterface;
 
@@ -41,46 +40,28 @@ final class DemoFundSolidarityResourcesFixtures extends Fixture implements Fixtu
                 throw new \LogicException('Le tag Fonds de Solidarité doit être chargé avant ses ressources.');
             }
 
-            $sourceDirectory = __DIR__ . '/Files/FundSolidarity';
             $publishedAt = new DateTimeImmutable();
-            $documents = [
-                ['Formulaire de demande de prêt', 'fonds-solidarite-demande-pret', 'Formulaire vierge à remplir pour une demande de prêt au Fonds de Solidarité.', 'fonds-solidarite-demande-pret.pdf'],
-                ['Formulaire de demande de don', 'fonds-solidarite-demande-don', 'Formulaire vierge à remplir pour une demande de don au Fonds de Solidarité.', 'fonds-solidarite-demande-don.pdf'],
-                ['Guide du réseau de soins', 'fonds-solidarite-guide-reseau-soins', 'Guide de l’assuré présentant le réseau de soins de la mutuelle santé du Barreau.', 'fonds-solidarite-guide-reseau-soins.pdf'],
-            ];
+            $documents = array_slice(InstitutionalDocumentData::definitions(), 1);
 
-            foreach ($documents as [$title, $slug, $description, $filename]) {
-                $publication = $manager->getRepository(DocumentPublicationEntity::class)->findOneBy(['slug' => $slug]);
+            foreach ($documents as $definition) {
+                $publication = $manager->getRepository(DocumentPublicationEntity::class)->findOneBy(['slug' => $definition['slug']]);
                 if (!$publication instanceof DocumentPublicationEntity) {
-                    $path = $sourceDirectory . '/' . $filename;
-                    if (!is_file($path) || !is_readable($path)) {
-                        throw new \RuntimeException(sprintf('Asset documentaire de fixture introuvable ou illisible : %s', $path));
-                    }
-
-                    $temporaryPath = tempnam(sys_get_temp_dir(), 'fund-resource-');
-                    if ($temporaryPath === false || !copy($path, $temporaryPath)) {
-                        if ($temporaryPath !== false && is_file($temporaryPath)) {
-                            unlink($temporaryPath);
-                        }
-
-                        throw new \RuntimeException('Impossible de préparer temporairement un asset documentaire de fixture.');
-                    }
-
+                    $upload = InstitutionalDocumentData::copyToTemporaryUpload($definition, 'fund-resource-');
                     try {
-                        $storedFile = $this->files->upload(new UploadedFile($temporaryPath, $filename, 'application/pdf', null, true));
+                        $storedFile = $this->files->upload($upload);
                     } finally {
-                        if (is_file($temporaryPath)) {
-                            unlink($temporaryPath);
+                        if (is_file($upload->getPathname())) {
+                            unlink($upload->getPathname());
                         }
                     }
 
                     $publication = (new DocumentPublicationEntity())->setStoredFileId($storedFile->id);
                 }
 
-                $publication->setTitle($title)
-                    ->setSlug($slug)
-                    ->setDescription($description)
-                    ->setAccessLevel(DocumentAccessLevel::LAWYER)
+                $publication->setTitle($definition['title'])
+                    ->setSlug($definition['slug'])
+                    ->setDescription($definition['description'])
+                    ->setAccessLevel($definition['accessLevel'])
                     ->setStatus(DocumentStatus::PUBLISHED)
                     ->setPublishedAt($publication->getPublishedAt() ?? $publishedAt)
                     ->replaceTags([$tag]);

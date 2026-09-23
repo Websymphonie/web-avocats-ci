@@ -855,9 +855,18 @@ php bin/console app:data:bootstrap-institutional-content
 Les deux commandes `app:data:bootstrap-*` sont idempotentes. La première
 crée seulement les réglages et références d’assets système absents ; les assets
 doivent être présents sous `public/assets`. La seconde crée ou met à jour les
-pages institutionnelles canoniques et la composition structurée du Barreau,
-sans comptes ni contenu synthétique. Le contenu « Devenir avocat » reste en
-brouillon. Pour l’annuaire historique uniquement, les commandes explicites
+pages institutionnelles canoniques, la composition structurée du Barreau et les
+quatre documents institutionnels versionnés dans le dépôt, sans comptes ni
+contenu synthétique. Les métadonnées de ces documents sont partagées avec les
+fixtures demo. La commande reconnaît les publications existantes à partir de
+leur slug et de leur fichier ; elle ne remplace pas une publication divergente
+et retourne un échec avec la liste des conflits. Le document classé `PUBLIC`
+est servi anonymement par la route de téléchargement contrôlée ; les trois
+documents `LAWYER` restent soumis à l’authentification et à l’éligibilité avocat.
+Dans l’implémentation actuelle, les quatre StoredFiles sont conservés sous le
+stockage privé et les téléchargements passent par le contrôleur : `PUBLIC`
+décrit l’accès applicatif, pas une URL de fichier exposée. Le contenu « Devenir
+avocat » reste en brouillon. Pour l’annuaire historique uniquement, les commandes explicites
 `app:data:import-legacy-directory --write` puis
 `app:data:import-legacy-directory-portraits --write` sont optionnelles et
 doivent être exécutées après validation de la base cible. Elles ne sont pas

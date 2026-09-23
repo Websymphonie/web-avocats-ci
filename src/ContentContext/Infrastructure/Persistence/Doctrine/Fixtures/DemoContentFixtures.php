@@ -175,15 +175,75 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
 
     private function loadPages(ObjectManager $manager): void
     {
+        $presentationContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Barreau de Côte d’Ivoire réunit les avocats inscrits au Tableau de l’Ordre ainsi que les avocats stagiaires inscrits sur la liste de stage.</p>
+            <h2>Qui sommes-nous ?</h2>
+            <p>La profession d’avocat est libérale et indépendante. Les avocats conseillent, assistent et représentent les personnes physiques et morales auprès des juridictions et des administrations, dans le respect de leur déontologie.</p>
+            <h2>Nos missions</h2>
+            <ul><li>Contribuer au maintien de la compétence professionnelle.</li><li>Veiller au respect des règles professionnelles et déontologiques.</li><li>Faciliter l’accès au droit et à la justice.</li></ul>
+            <h2>Nos principes</h2>
+            <p>L’exercice de la profession s’inscrit dans des principes d’honneur, d’indépendance, de probité, de délicatesse, de loyauté et de dignité.</p>
+            <h2>Organisation institutionnelle</h2>
+            <p>Le Barreau est dirigé par le Bâtonnier et administré par le Conseil de l’Ordre. Retrouvez leurs présentations dans les rubriques institutionnelles dédiées.</p>
+            HTML);
+
+        $historyContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Cette page rassemble des repères historiques repris de l’ancien site du Barreau. Les dates et périodes ci-dessous sont conservées telles qu’elles y apparaissaient ; elles ne constituent pas une chronologie juridique exhaustive.</p>
+            <h2>Avant la mise en place du Barreau</h2>
+            <p>L’ancien site évoque les avocats défenseurs qui exerçaient avant la mise en place du Barreau. Il indique qu’ils exerçaient individuellement devant leur juridiction de résidence et qu’ils pouvaient intervenir devant les juridictions de l’A.O.F.</p>
+            <h2>1959 — Mise en place du Barreau</h2>
+            <p>La source situe la mise en place du Barreau par la loi du 7 novembre 1959.</p>
+            <h2>1981 — Évolution du cadre légal</h2>
+            <p>La source indique que la loi n°81-588 du 27 juillet 1981 a abrogé et remplacé la loi du 7 novembre 1959.</p>
+            <h2>2006 — Libre circulation et établissement dans l’espace UEMOA</h2>
+            <p>L’ancien site mentionne le règlement n°10/2006/CM/UEMOA du 25 juillet 2006. Il le présente comme portant sur la libre circulation et l’établissement des avocats ressortissants de l’UEMOA, notamment l’exercice ponctuel dans un Barreau d’accueil et l’établissement à titre principal ou secondaire. Il rappelle également des obligations relatives au domicile élu et au respect des règles du Barreau d’accueil.</p>
+            <h2>2014 — Harmonisation des règles professionnelles</h2>
+            <p>L’ancien site mentionne le règlement n°05/CM/UEMOA du 25 septembre 2014 et l’associe à l’harmonisation des règles de la profession dans l’espace UEMOA : organisation des Barreaux nationaux, droit de plaidoirie, conditions d’accès et modalités d’exercice.</p>
+            <p>Ces références sont reproduites comme des repères historiques cités par l’ancienne page. Elles ne constituent pas un résumé des règles actuellement en vigueur.</p>
+            <h2>Les anciens Bâtonniers mentionnés</h2>
+            <p>Les noms et périodes ci-dessous reprennent les indications de l’ancien site. Les périodes qui se chevauchent et les dates manquantes sont laissées visibles, sans arbitrage ni correction.</p>
+            <h3>Anciens Bâtonniers mentionnés sans période</h3>
+            <ul>
+            <li>Louis Vigouroux</li><li>Lucien Yapobi</li><li>Armand Josse</li><li>Jean Réveillé</li>
+            </ul>
+            <h3>Noms et périodes telles qu’affichées</h3>
+            <ul>
+            <li>René Clarac — 1971–1973</li>
+            <li>Maurice Carlton — 1973–1975</li>
+            <li>Charles Dogue — 1975–1977</li>
+            <li>Camille Adam — 1977–1979</li>
+            <li>Jean Konan-Banny — 1979–1980</li>
+            <li>Maurice Kakou — 1980–1983</li>
+            <li>Julien Mondon-Konan — 1983–1985</li>
+            <li>Emile Dervin — 1985–1987</li>
+            <li>Amadou Fadika — 1987–1989</li>
+            <li>Gabriel Assamoi — 1989–1990</li>
+            <li>Charles Gaby Kouassi — 1991–1993</li>
+            <li>Lucien N’Gouin Claih — 1993–1995</li>
+            <li>Emmanuel Tano K. — 1995–1997</li>
+            <li>Essy N’Gatta — 1997–1999</li>
+            <li>Luc Adje Kacou — 1999–2001</li>
+            <li>Louis Metan — 2000–2003</li>
+            <li>Emmanuel Assi — 2005–2007</li>
+            <li>Mamadou Kone — 2009–2010 ; 2013–2014</li>
+            <li>Joachim Bile-Aka — 2011–2013</li>
+            <li>Marcel Beugre — 2014–2015</li>
+            <li>Thomas Zé N’Dri — 2019–2021</li>
+            <li>Claude Mentenon — 2003–2005 ; 2005–2007 ; 2021–2024</li>
+            </ul>
+            HTML);
+
+        /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
             ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 20],
             ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT, 10],
             ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 10],
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
-            ['Présentation du Barreau', 'presentation', PageStatus::DRAFT, false, PageGroup::BAR, 10],
-            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 20],
-            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 30],
+            ['Présentation du Barreau', 'presentation', PageStatus::PUBLISHED, false, PageGroup::BAR, 10],
+            ['Historique du Barreau', 'historique', PageStatus::PUBLISHED, true, PageGroup::BAR, 20],
+            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 30],
+            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 40],
         ];
         $now = new DateTimeImmutable();
 
@@ -193,15 +253,21 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 $page = new PageEntity();
             }
             $notice = 'Contenu de démonstration — à valider et adapter juridiquement avant mise en production.';
-            $content = in_array($slug, ['fonds-de-solidarite', 'carpa'], true)
-                ? ''
-                : $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice));
+            $content = match ($slug) {
+                'presentation' => $presentationContent,
+                'historique' => $historyContent,
+                'fonds-de-solidarite', 'carpa' => '',
+                default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
+            };
+            $coverMediaId = $slug === 'historique'
+                ? $this->mediaId('demo_media_content_bar_history')
+                : ($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null);
             $page->setTitle($title)
                 ->setSlug($slug)
                 ->setContent($content)
                 ->setStatus($status)
                 ->setPublishedAt($status === PageStatus::PUBLISHED ? $now->modify(sprintf('-%d days', 15 + $index)) : null)
-                ->setCoverMediaId($hasCover ? $this->mediaId($index % 2 === 0 ? 'demo_media_content' : 'demo_media_content_alt') : null)
+                ->setCoverMediaId($coverMediaId)
                 ->setGroup($group)
                 ->setSortOrder($sortOrder);
             $manager->persist($page);

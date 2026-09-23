@@ -120,6 +120,18 @@ final class PublicSearchTest extends WebTestCase
         self::assertSame('Le Barreau', $payload['results'][0]['metadata']);
         self::assertSame('/le-barreau/presentation', $payload['results'][0]['url']);
 
+        $client->request('GET', '/recherche/autocomplete?q=Historique', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'Historique du Barreau',
+            'url' => '/le-barreau/historique',
+            'metadata' => 'Le Barreau',
+        ], $payload['results'][0]);
+
         $client->request('GET', '/recherche/autocomplete?q=Guide', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
@@ -298,8 +310,15 @@ final class PublicSearchTest extends WebTestCase
             ->setGroup(PageGroup::BAR)
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
+        $barHistoryPage = (new PageEntity())
+            ->setTitle('Historique du Barreau')
+            ->setSlug('historique')
+            ->setContent('<p>Repères historiques du Barreau.</p>')
+            ->setGroup(PageGroup::BAR)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt($publishedAt);
 
-        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $carpaPage, $unpublishedPage, $ungroupedPage, $barPage] as $item) {
+        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $carpaPage, $unpublishedPage, $ungroupedPage, $barPage, $barHistoryPage] as $item) {
             $entityManager->persist($item);
         }
         $entityManager->flush();

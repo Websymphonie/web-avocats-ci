@@ -28,6 +28,7 @@ final class DemoMediaFixtures extends Fixture implements FixtureGroupInterface
         $sources = [
             'content' => dirname(__DIR__, 6) . '/public/assets/logo.png',
             'content_alt' => dirname(__DIR__, 6) . '/public/assets/avatar.png',
+            'content_bar_history' => dirname(__DIR__, 6) . '/public/assets/images/barreau-anciens-batonniers.png',
             'learning' => dirname(__DIR__, 6) . '/public/assets/logo.png',
             'learning_alt' => dirname(__DIR__, 6) . '/public/assets/avatar.png',
         ];

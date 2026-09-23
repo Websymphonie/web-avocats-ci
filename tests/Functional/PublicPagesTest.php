@@ -136,6 +136,15 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringNotContainsString('Fonds de Solidarité', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
         self::assertStringNotContainsString('CARPA', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
         self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau'], $client->getCrawler()->filter('nav[aria-label="Navigation mobile"] details a')->each(static fn ($node): string => trim($node->text())));
+
+        $client->request('GET', '/le-barreau/historique', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Historique du Barreau');
+        self::assertSelectorTextContains('.rich-content', 'Contenu public de la page.');
+        self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"][href="/le-barreau/historique"]');
+        self::assertSame('/le-barreau', $client->getCrawler()->filter('nav[aria-label="Fil d’Ariane"] a')->last()->attr('href'));
+        self::assertStringContainsString('/uploads/content/covers/public-page.jpg', (string) $client->getResponse()->getContent());
     }
 
     public function testPublishedSolidarityFundPageRendersMemberResourcesCtaAndBarSidebar(): void
@@ -385,7 +394,7 @@ final class PublicPagesTest extends WebTestCase
         $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'), $cover->getId(), PageGroup::ACCOUNT, 10);
         $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId(), PageGroup::LEGAL, 40);
         $barPresentation = $this->page('Présentation du Barreau', 'presentation', PageStatus::PUBLISHED, new DateTimeImmutable('-6 days'), null, PageGroup::BAR, 10);
-        $barHistory = $this->page('Historique du Barreau', 'historique', PageStatus::PUBLISHED, new DateTimeImmutable('-7 days'), null, PageGroup::BAR, 20);
+        $barHistory = $this->page('Historique du Barreau', 'historique', PageStatus::PUBLISHED, new DateTimeImmutable('-7 days'), $cover->getId(), PageGroup::BAR, 20);
         $barDraft = $this->page('Page BAR brouillon', 'bar-draft', PageStatus::DRAFT, null, null, PageGroup::BAR, 30);
         $fundDraft = $this->page('Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, null, null, PageGroup::BAR, 20)->setContent('');
         $carpaDraft = $this->page('CARPA', 'carpa', PageStatus::DRAFT, null, null, PageGroup::BAR, 30)->setContent('');

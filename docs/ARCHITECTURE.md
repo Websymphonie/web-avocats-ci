@@ -873,9 +873,15 @@ Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
 
-La fixture de démonstration prépare une Page `CARPA` vide, `DRAFT`, de groupe
-`BAR` et d’ordre éditorial `30` ; aucun texte institutionnel n’est présumé
-validé. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
+Les fixtures de démonstration préparent les Pages `Présentation du Barreau`
+(`presentation`) et `Historique du Barreau` (`historique`) comme Pages `BAR`
+publiées, aux ordres `10` et `20`. La Page Historique réutilise une image
+collective locale importée via `MediaContext`; les portraits individuels ne sont
+pas intégrés car le rich-text editor actuel ne gère pas les images. Aucune entrée
+historique n’est créée dans `BatonnierMandate`. La Page `Fonds de Solidarité`
+reste vide et `DRAFT` à l’ordre `30`, et la Page `CARPA` reste vide et `DRAFT`
+à l’ordre `40` ; aucun contenu institutionnel n’est présumé validé pour ces
+deux Pages. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
 la query `FindPublishedPageBySlug('carpa')` ne retourne pas une Page BAR publiée
 avec une date de publication. Après publication, elle pointe automatiquement
 vers `/le-barreau/carpa`. Le hub, la navigation BAR et la recherche publique

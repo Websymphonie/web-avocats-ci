@@ -37,6 +37,7 @@ use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Trai
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Fixtures\DemoFundSolidarityResourcesFixtures;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Fixtures\DemoCarpaResourcesFixtures;
 use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\TrainingOffer\TrainingOfferEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -121,7 +122,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(16, $entityManager->getRepository(NewsEntity::class)->count(['status' => NewsStatus::PUBLISHED]));
         self::assertSame(10, $entityManager->getRepository(EventEntity::class)->count(['status' => EventStatus::PUBLISHED]));
         self::assertSame(9, $entityManager->getRepository(TrainingEntity::class)->count(['status' => TrainingStatus::PUBLISHED]));
-        self::assertSame(9, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
+        self::assertSame(10, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
         self::assertSame(6, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
@@ -185,8 +186,12 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(50, $fundPage->getSortOrder());
         $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
-        self::assertSame(PageStatus::DRAFT, $carpaPage->getStatus());
-        self::assertSame('', $carpaPage->getContent());
+        self::assertSame(PageStatus::PUBLISHED, $carpaPage->getStatus());
+        self::assertSame(PageGroup::BAR, $carpaPage->getGroup());
+        self::assertStringContainsString('Caisse Autonome de Règlement Pécuniaire des Avocats', $carpaPage->getContent());
+        self::assertStringContainsString('sous la supervision du Bâtonnier', $carpaPage->getContent());
+        self::assertStringContainsString('href="/contact"', $carpaPage->getContent());
+        self::assertNotNull($carpaPage->getPublishedAt());
         self::assertSame(60, $carpaPage->getSortOrder());
         self::assertSame(10, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'mentions-legales'])->getSortOrder());
         self::assertSame(20, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite'])->getSortOrder());
@@ -224,7 +229,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/institution/portraits');
         self::assertFileExists(self::$storageDirectory . '/public/content/covers/' . $entityManager->getRepository(MediaEntity::class)->find($history->getCoverMediaId())->getStorageName());
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
-        self::assertCount(2, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+        self::assertCount(1, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
 
         $fundDocuments = $entityManager->getRepository(DocumentPublicationEntity::class)->findBy(['accessLevel' => DocumentAccessLevel::LAWYER, 'status' => DocumentStatus::PUBLISHED]);
         self::assertCount(3, $fundDocuments);
@@ -239,6 +244,17 @@ final class DemoFixturesIntegrityTest extends WebTestCase
             self::assertFileDoesNotExist(dirname(__DIR__, 2) . '/public/' . $storedFile->getStorageName());
         }
 
+        $carpaDocument = $entityManager->getRepository(DocumentPublicationEntity::class)->findOneBy(['slug' => 'reglement-interieur-barreau-cote-ivoire']);
+        self::assertInstanceOf(DocumentPublicationEntity::class, $carpaDocument);
+        self::assertSame('Règlement intérieur du Barreau de Côte d’Ivoire', $carpaDocument->getTitle());
+        self::assertSame(DocumentAccessLevel::PUBLIC, $carpaDocument->getAccessLevel());
+        self::assertSame(DocumentStatus::PUBLISHED, $carpaDocument->getStatus());
+        self::assertCount(0, $carpaDocument->getTags());
+        $carpaStoredFile = $entityManager->getRepository(StoredFileEntity::class)->find($carpaDocument->getStoredFileId());
+        self::assertInstanceOf(StoredFileEntity::class, $carpaStoredFile);
+        self::assertStringStartsWith('documents/', $carpaStoredFile->getStorageName());
+        self::assertFileExists(self::$storageDirectory . '/private/' . $carpaStoredFile->getStorageName());
+
         $resourceFixture = null;
         foreach ($fixtures as $fixture) {
             if ($fixture instanceof DemoFundSolidarityResourcesFixtures) {
@@ -249,7 +265,20 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertInstanceOf(DemoFundSolidarityResourcesFixtures::class, $resourceFixture);
         $storedFileCount = $entityManager->getRepository(StoredFileEntity::class)->count([]);
         $resourceFixture->load($entityManager);
-        self::assertSame(3, $entityManager->getRepository(DocumentPublicationEntity::class)->count([]));
+        self::assertSame(4, $entityManager->getRepository(DocumentPublicationEntity::class)->count([]));
         self::assertSame($storedFileCount, $entityManager->getRepository(StoredFileEntity::class)->count([]));
+
+        $carpaFixture = null;
+        foreach ($fixtures as $fixture) {
+            if ($fixture instanceof DemoCarpaResourcesFixtures) {
+                $carpaFixture = $fixture;
+                break;
+            }
+        }
+        self::assertInstanceOf(DemoCarpaResourcesFixtures::class, $carpaFixture);
+        $carpaFixture->load($entityManager);
+        self::assertSame(4, $entityManager->getRepository(DocumentPublicationEntity::class)->count([]));
+        self::assertSame($storedFileCount, $entityManager->getRepository(StoredFileEntity::class)->count([]));
+        self::assertFileExists(dirname(__DIR__, 2) . '/src/ContentContext/Infrastructure/Persistence/Doctrine/Fixtures/Files/Carpa/reglement-interieur-barreau-cote-ivoire.pdf');
     }
 }

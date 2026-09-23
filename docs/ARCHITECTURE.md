@@ -895,12 +895,29 @@ fixture sont conservées dans `src/ContentContext/.../Fixtures/Files/FundSolidar
 et importées par le service de stockage des fichiers privés sous
 `$APP_STORAGE_DIR/private/documents` ; aucun téléchargement HTTP n’a lieu pendant
 le chargement des fixtures. La Page Fonds conserve le CTA membre automatique.
-La Page `CARPA` reste vide et `DRAFT` à l’ordre `60` ; aucun contenu
-institutionnel n’est présumé validé pour cette Page. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
-la query `FindPublishedPageBySlug('carpa')` ne retourne pas une Page BAR publiée
-avec une date de publication. Après publication, elle pointe automatiquement
-vers `/le-barreau/carpa`. Le hub, la navigation BAR et la recherche publique
-continuent d’appliquer leurs filtres de publication existants.
+La Page `CARPA` est publiée à l’ordre `60` avec une présentation institutionnelle
+prudente : développement de l’appellation, rôle général dans les règlements
+pécuniaires des avocats, supervision institutionnelle du Bâtonnier et principe
+général de reversement aux bénéficiaires. Elle ne décrit ni procédure pratique,
+ni seuil, ni contrôle LBC/FT. En l’absence de coordonnées CARPA distinctes, son
+CTA renvoie au formulaire institutionnel `/contact`.
+
+Le document officiel `Règlement intérieur du Barreau de Côte d’Ivoire` est
+conservé sous son titre général et publié comme `PUBLIC`, sans tag CARPA : il
+comporte des dispositions relatives aux règlements pécuniaires mais n’est pas
+présenté comme un règlement CARPA autonome. La fixture locale est importée par
+le mécanisme documentaire existant, sans appel réseau au chargement. Les liens
+de l’ancien site vers les statuts, le règlement CARPA dédié, le guide « CARPA pas
+à pas », les bordereaux et le texte UEMOA n’ayant pas fourni de fichiers réels
+exploitables, ces ressources ne sont pas fabriquées. Aucun document `LAWYER`
+CARPA confirmé n’est donc ajouté à l’espace membre ; aucun workflow ni changement
+de `PaymentContext` n’est introduit.
+
+La carte CARPA de la homepage pointe automatiquement vers `/le-barreau/carpa`
+car la query `FindPublishedPageBySlug('carpa')` retourne maintenant une Page BAR
+publiée et datée. Le hub, la navigation BAR et la recherche publique conservent
+leurs filtres existants ; les publications documentaires ne sont pas indexées
+par la recherche globale.
 
 ## 15. Donnée structurée du Bâtonnier — CNT-009
 

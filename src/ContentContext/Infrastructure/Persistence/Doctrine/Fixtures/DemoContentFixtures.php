@@ -272,6 +272,15 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             <p>Le Barreau présente une mutuelle santé destinée aux avocats et gérée par le Fonds de Solidarité. Le guide du réseau de soins est mis à disposition dans l’espace avocat.</p>
             HTML);
 
+        $carpaContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>La Caisse Autonome de Règlement Pécuniaire des Avocats (CARPA) est l’organisme du Barreau associé aux règlements pécuniaires effectués par les avocats.</p>
+            <h2>Une mission au service de la profession</h2>
+            <p>Dans le cadre des dossiers confiés aux avocats, les fonds reçus pour le compte de leurs destinataires sont déposés auprès de la CARPA, sous la supervision du Bâtonnier, puis reversés aux bénéficiaires concernés. Les honoraires dus à l’avocat sont également pris en compte dans ce règlement.</p>
+            <h2>Un cadre institutionnel</h2>
+            <p>La CARPA participe ainsi au cadre de sécurisation des règlements pécuniaires liés à l’activité des avocats. Le règlement intérieur du Barreau comporte des dispositions relatives à ces règlements.</p>
+            <p>Pour toute demande d’information, veuillez <a href="/contact">contacter le Barreau</a>.</p>
+            HTML);
+
         /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
@@ -284,7 +293,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
             ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
-            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 60],
+            ['CARPA', 'carpa', PageStatus::PUBLISHED, false, PageGroup::BAR, 60],
         ];
         $now = new DateTimeImmutable();
 
@@ -300,7 +309,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 'le-batonnier' => $batonnierContent,
                 'conseil-de-l-ordre' => $councilContent,
                 'fonds-de-solidarite' => $fundContent,
-                'carpa' => '',
+                'carpa' => $carpaContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'

@@ -83,7 +83,7 @@ CNT-BAR-002 — Migration Présentation & Historique IMPLEMENTED — contenus de
 CNT-BAR-003 — Migration Bâtonnier & Conseil actuels IMPLEMENTED — 1 titulaire courant, 19 membres ordonnés, portraits locaux et Pages BAR publiées
 CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Content + bloc public sur `le-batonnier`
 CNT-010 — Conseil de l’Ordre structuré         IMPLEMENTED — historique Content + bloc public sur `conseil-de-l-ordre`
-CNT-CARPA-001 — Préparer Page institutionnelle CARPA IMPLEMENTED — fixture BAR vide en DRAFT à l’ordre 60 et lien homepage avec fallback hub
+CNT-CARPA-001 — Préparer Page institutionnelle CARPA IMPLEMENTED — état initial : fixture BAR DRAFT à l’ordre 60 et fallback hub ; état remplacé par CNT-BAR-005
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de
@@ -198,6 +198,7 @@ FO-005   Recherche globale Frontoffice                  DONE — modal accessibl
 FO-009   Contact public                                READY FOR VISUAL REVIEW — formulaire sécurisé, archivage et notification email
 FO-010   Hub public « Le Barreau »                      READY FOR VISUAL REVIEW — listing éditorial des Pages BAR et routes canoniques
 CNT-BAR-004 — Fonds de Solidarité & ressources avocat    IMPLEMENTED — Page BAR publiée, trois ressources LAWYER chargées depuis les fixtures locales
+CNT-BAR-005 — CARPA & ressources validées                IMPLEMENTED — Page BAR publiée à l’ordre 60, règlement général du Barreau distinct en PUBLIC ; ressources CARPA dédiées non retrouvées exclues
 FO-FUND-002 Surface publique du Fonds de Solidarité      DONE — Page BAR publiée, contenu CARE et CTA vers l’espace avocat
 BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste paginée, statuts, détail immuable et retry manuel audité
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning

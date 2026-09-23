@@ -91,7 +91,9 @@ final class PublicPagesTest extends WebTestCase
         $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
 
-        $carpaPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $carpaPage->setContent('<p>La Caisse Autonome de Règlement Pécuniaire des Avocats participe au cadre institutionnel du Barreau.</p><p><a href="/contact">Contacter le Barreau</a></p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();
 
         $client->request('GET', '/le-barreau/carpa', server: ['HTTPS' => 'on']);
@@ -191,6 +193,12 @@ final class PublicPagesTest extends WebTestCase
         $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
         self::assertInstanceOf(PageEntity::class, $fundPage);
         $fundPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'))->setSortOrder(50);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        self::assertInstanceOf(PageEntity::class, $carpaPage);
+        $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day'))
+            ->setSortOrder(60);
         $entityManager->flush();
 
         $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
@@ -203,6 +211,7 @@ final class PublicPagesTest extends WebTestCase
             '/le-barreau/le-batonnier',
             '/le-barreau/conseil-de-l-ordre',
             '/le-barreau/fonds-de-solidarite',
+            '/le-barreau/carpa',
         ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
         self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/mentions-legales', (string) $client->getResponse()->getContent());

@@ -170,7 +170,9 @@ final class PublicSearchTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
-        $carpaPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();
 
         $client->request('GET', '/recherche/autocomplete?q=CARPA', server: ['HTTPS' => 'on']);
@@ -222,6 +224,14 @@ final class PublicSearchTest extends WebTestCase
             ->setAccessLevel(DocumentAccessLevel::LAWYER)
             ->setStatus(DocumentStatus::PUBLISHED)
             ->setPublishedAt(new DateTimeImmutable('-1 day')));
+        $entityManager->persist((new DocumentPublicationEntity())
+            ->setTitle('Règlement intérieur du Barreau de Côte d’Ivoire')
+            ->setSlug('reglement-interieur-barreau-cote-ivoire')
+            ->setDescription('Texte institutionnel public comportant une section relative aux règlements pécuniaires.')
+            ->setStoredFileId(1)
+            ->setAccessLevel(DocumentAccessLevel::PUBLIC)
+            ->setStatus(DocumentStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day')));
         $entityManager->flush();
 
         $client->request('GET', '/recherche/autocomplete?q=Bâtonnier', server: ['HTTPS' => 'on']);
@@ -251,6 +261,11 @@ final class PublicSearchTest extends WebTestCase
         ], $payload['results'][0]);
 
         $client->request('GET', '/recherche/autocomplete?q=Formulaire de demande de prêt', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([], $payload['results']);
+
+        $client->request('GET', '/recherche/autocomplete?q=Règlement intérieur du Barreau', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame([], $payload['results']);

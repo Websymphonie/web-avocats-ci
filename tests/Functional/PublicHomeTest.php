@@ -84,7 +84,9 @@ final class PublicHomeTest extends WebTestCase
         $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
 
-        $carpaPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();
 
         $client->request('GET', '/', server: ['HTTPS' => 'on']);

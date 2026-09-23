@@ -22,7 +22,7 @@
 
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
             <a id="directory-back" href="{{ path('web_lawyer_directory_list') }}" class="mb-7 inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true" />Retour à l’annuaire</a>
-            <div class="grid gap-8 {{ (cabinet.phone or cabinet.email or cabinet.websiteUrl) ? 'lg:grid-cols-[minmax(0,1fr)_19rem]' : '' }}">
+            <div class="grid gap-8 {{ (cabinet.phones is not empty or cabinet.email or cabinet.websiteUrl) ? 'lg:grid-cols-[minmax(0,1fr)_19rem]' : '' }}">
                 <article class="min-w-0">
                     {% if cabinet.description %}<section aria-labelledby="cabinet-about-title"><h2 id="cabinet-about-title" class="text-2xl font-semibold tracking-[-0.035em] text-foreground">Présentation</h2><p class="mt-4 whitespace-pre-line break-words text-base leading-7 text-muted-foreground">{{ cabinet.description }}</p></section>{% endif %}
                     {% if cabinet.address or cabinet.city or cabinet.country %}
@@ -30,12 +30,12 @@
                     {% endif %}
                 </article>
 
-                {% if cabinet.phone or cabinet.email or cabinet.websiteUrl %}
+                {% if cabinet.phones is not empty or cabinet.email or cabinet.websiteUrl %}
                     <aside class="h-fit rounded-xl border border-border bg-card p-5 sm:p-6" aria-labelledby="cabinet-contact-title">
                         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Coordonnées</p><h2 id="cabinet-contact-title" class="mt-2 text-xl font-semibold text-card-foreground">Contacter le cabinet</h2>
                         <dl class="mt-5 space-y-4 text-sm">
                             {% if cabinet.email %}<div><dt class="text-muted-foreground">Email</dt><dd class="mt-1 break-all font-medium"><a href="mailto:{{ cabinet.email }}" class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ cabinet.email }}</a></dd></div>{% endif %}
-                            {% if cabinet.phone %}<div><dt class="text-muted-foreground">Téléphone</dt><dd class="mt-1 break-words font-medium">{% if phoneHref %}<a href="{{ phoneHref }}" class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ cabinet.phone }}</a>{% else %}{{ cabinet.phone }}{% endif %}</dd></div>{% endif %}
+                            {% if cabinet.phones is not empty %}<div><dt class="text-muted-foreground">{{ cabinet.phones|length > 1 ? 'Téléphones' : 'Téléphone' }}</dt><dd class="mt-1 space-y-2 break-words font-medium">{% for phone in cabinet.phones %}<div>{% if phoneHrefs[loop.index0] %}<a href="{{ phoneHrefs[loop.index0] }}" class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ phone }}</a>{% else %}{{ phone }}{% endif %}</div>{% endfor %}</dd></div>{% endif %}
                             {% if cabinet.websiteUrl %}<div><dt class="text-muted-foreground">Site internet</dt><dd class="mt-1 break-all font-medium">{% if websiteHref %}<a href="{{ websiteHref }}" target="_blank" rel="noopener noreferrer" class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ cabinet.websiteUrl }}</a>{% else %}{{ cabinet.websiteUrl }}{% endif %}</dd></div>{% endif %}
                         </dl>
                     </aside>

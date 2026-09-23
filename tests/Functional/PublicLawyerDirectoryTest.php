@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\Tests\Functional;
 
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
@@ -56,7 +57,7 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertSelectorExists('form[method="get"] input[name="cabinet"]');
         self::assertSelectorExists('form[method="get"] input[name="location"]');
         self::assertSelectorExists('article a[href^="/avocats/"]');
-        self::assertSelectorTextContains('body', '16 résultats');
+        self::assertSelectorTextContains('body', '17 résultats');
 
         $content = (string) $client->getResponse()->getContent();
         foreach (['private@example.test', 'suspended@example.test', 'disabled@example.test', 'non-lawyer@example.test', 'ROLE_AVOCAT'] as $privateData) {
@@ -67,11 +68,17 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertStringNotContainsString('Compte désactivé', $content);
         self::assertStringNotContainsString('Compte sans rôle avocat', $content);
         self::assertStringNotContainsString('Rôle avocat approchant', $content);
+        self::assertStringNotContainsString('Profil privé sans compte', $content);
+        self::assertStringNotContainsString('Profil suspendu sans compte', $content);
         $client->request('GET', '/avocats?name=awa', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('article', 'Awa Kouassi');
         self::assertSelectorTextNotContains('article', 'Mariam N\'Dri');
         self::assertStringContainsString('/uploads/institution/lawyers/directory-portrait.jpg', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/avocats?name=historique', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('article', 'Avocate historique autonome');
 
         $client->request('GET', '/avocats?cabinet=ivoire', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
@@ -101,7 +108,7 @@ final class PublicLawyerDirectoryTest extends WebTestCase
 
         $client->request('GET', '/avocats?page=2', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('body', '16 résultats');
+        self::assertSelectorTextContains('body', '17 résultats');
         $namesOnSecondPage = $client->getCrawler()->filter('article h3')->each(static fn ($node): string => trim($node->text()));
         self::assertContains('Mariam N\'Dri', $namesOnSecondPage);
 
@@ -123,7 +130,7 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertInstanceOf(LawyerDirectoryEntry::class, $result->items[0]);
         self::assertSame(['publicUuid', 'name', 'cabinetName', 'location', 'portraitMediaId'], array_keys(get_object_vars($result->items[0])));
         self::assertMatchesRegularExpression('/^[0-9a-f-]{36}$/', $result->items[0]->publicUuid);
-        self::assertSame(16, $result->totalItemCount);
+        self::assertSame(17, $result->totalItemCount);
         self::assertSame(12, $result->itemNumberPerPage);
     }
 
@@ -182,6 +189,29 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
+    public function testAccountlessPublicLawyerProfileUsesProfessionalDisplayName(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDirectoryDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $profile = $entityManager->getRepository(LawyerProfileEntity::class)->findOneBy(['displayName' => 'Avocate historique autonome']);
+        self::assertInstanceOf(LawyerProfileEntity::class, $profile);
+        self::assertNull($profile->getUser());
+
+        $client->request('GET', '/avocats/' . $profile->getUuidAsString(), server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Avocate historique autonome');
+
+        foreach (['privateProfile' => 'Profil privé sans compte', 'suspendedProfile' => 'Profil suspendu sans compte'] as $name) {
+            $ineligible = $entityManager->getRepository(LawyerProfileEntity::class)->findOneBy(['displayName' => $name]);
+            self::assertInstanceOf(LawyerProfileEntity::class, $ineligible);
+            self::assertNull($ineligible->getUser());
+            $client->request('GET', '/avocats/' . $ineligible->getUuidAsString(), server: ['HTTPS' => 'on']);
+            self::assertResponseStatusCodeSame(404);
+        }
+    }
+
     public function testPublicCabinetShowsOnlyEligibleMembersInStableOrder(): void
     {
         $client = $this->clientWithSchema();
@@ -189,7 +219,7 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $cabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet du Centre']);
         self::assertInstanceOf(CabinetEntity::class, $cabinet);
-        $cabinet->setAddress('12, rue des Avocats')->setPhone('+225 07 11 22')->setEmail('contact@centre.example.test')->setWebsiteUrl('javascript:alert(1)')->setDescription('Cabinet de démonstration');
+        $cabinet->setAddress('12, rue des Avocats')->setPhones(['+225 07 11 22', '01 23 45 67 89'])->setEmail('contact@centre.example.test')->setWebsiteUrl('javascript:alert(1)')->setDescription('Cabinet de démonstration');
         $this->createLawyer('public-amina@example.test', 'Amina Yao', true, true, 'ACTIVE', $cabinet);
         $this->createLawyer('hidden-member@example.test', 'Profil interne', true, false, 'ACTIVE', $cabinet);
         $this->createLawyer('suspended-member@example.test', 'Avocat suspendu du cabinet', true, true, 'SUSPENDED', $cabinet);
@@ -207,13 +237,13 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertSelectorTextContains('body', 'Mariam N\'Dri');
         self::assertSelectorTextNotContains('body', 'Profil interne');
         self::assertSelectorTextNotContains('body', 'Avocat suspendu du cabinet');
-        self::assertSelectorTextNotContains('body', 'Compte désactivé du cabinet');
         self::assertSelectorTextNotContains('body', 'Compte sans rôle du cabinet');
         self::assertSelectorExists('#directory-back[href="/avocats"]');
         self::assertSelectorExists('a[href="tel:+225071122"]');
+        self::assertSelectorExists('a[href="tel:0123456789"]');
         self::assertSelectorNotExists('a[href^="javascript:"]');
         $names = $client->getCrawler()->filter('section[aria-labelledby="cabinet-members-title"] a')->each(static fn ($node): string => trim($node->filter('span.block')->first()->text()));
-        self::assertSame(['Amina Yao', 'Mariam N\'Dri'], $names);
+        self::assertSame(['Amina Yao', 'Avocate historique autonome', 'Mariam N\'Dri'], $names);
 
         $cabinet->setDirectoryVisible(false);
         $entityManager->flush();
@@ -249,6 +279,92 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSame('/avocats', $client->getCrawler()->filter('a:contains("Trouver un avocat")')->attr('href'));
         self::assertStringNotContainsString('/#trouver-un-avocat', (string) $client->getResponse()->getContent());
+    }
+
+    public function testLegacySourceUuidsAreUniqueWhenPresentAndMayBeNull(): void
+    {
+        $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $sourceUuid = \Symfony\Component\Uid\Uuid::fromString('26a8dd88-6873-4af0-91aa-f00ef65c028d');
+
+        $firstProfile = (new LawyerProfileEntity())->setDisplayName('Profil sans compte 1')->setLegacySourceUuid($sourceUuid);
+        $secondProfile = (new LawyerProfileEntity())->setDisplayName('Profil sans compte 2');
+        $entityManager->persist($firstProfile);
+        $entityManager->persist($secondProfile);
+        $entityManager->flush();
+
+        $duplicateProfile = (new LawyerProfileEntity())->setDisplayName('Profil sans compte doublon')->setLegacySourceUuid($sourceUuid);
+        $entityManager->persist($duplicateProfile);
+        $this->expectException(UniqueConstraintViolationException::class);
+        $entityManager->flush();
+    }
+
+    public function testCabinetLegacySourceUuidIsUniqueWhenPresent(): void
+    {
+        $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $sourceUuid = \Symfony\Component\Uid\Uuid::fromString('c93c1eab-e71a-4c30-a55a-f667b1b84eaa');
+
+        $entityManager->persist((new CabinetEntity())->setName('Cabinet source 1')->setLegacySourceUuid($sourceUuid));
+        $entityManager->persist((new CabinetEntity())->setName('Cabinet sans provenance 1'));
+        $entityManager->persist((new CabinetEntity())->setName('Cabinet sans provenance 2'));
+        $entityManager->flush();
+        $entityManager->persist((new CabinetEntity())->setName('Cabinet source doublon')->setLegacySourceUuid($sourceUuid));
+
+        $this->expectException(UniqueConstraintViolationException::class);
+        $entityManager->flush();
+    }
+
+    public function testCabinetPhoneCompatibilitySetterStoresAnOrderedList(): void
+    {
+        $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $cabinet = (new CabinetEntity())->setName('Cabinet téléphones')->setPhone('+225 01 02 03');
+        self::assertSame(['+225 01 02 03'], $cabinet->getPhones());
+        $cabinet->setPhones(['', '+225 01 02 03', ' 07 08 09 10  ']);
+        $entityManager->persist($cabinet);
+        $entityManager->flush();
+        $entityManager->clear();
+
+        $reloaded = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet téléphones']);
+        self::assertInstanceOf(CabinetEntity::class, $reloaded);
+        self::assertSame(['+225 01 02 03', '07 08 09 10'], $reloaded->getPhones());
+        self::assertSame('+225 01 02 03', $reloaded->getPhone());
+    }
+
+    public function testAccountlessLawyerProfileIsNotReturnedForMemberAccount(): void
+    {
+        $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = (new User())->setEmail('member-without-lawyer-profile@example.test')->setName('Membre')->setPassword('test-password');
+        $entityManager->persist($user);
+        $entityManager->persist((new LawyerProfileEntity())->setDisplayName('Profil autonome')->setDirectoryVisible(true));
+        $entityManager->flush();
+
+        self::assertNull($entityManager->getRepository(LawyerProfileEntity::class)->findOneByUser($user));
+    }
+
+    public function testDeletingLinkedUserPreservesLawyerProfile(): void
+    {
+        $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->getConnection()->executeStatement('PRAGMA foreign_keys = ON');
+        $user = (new User())->setEmail('lawyer-to-delete@example.test')->setName('Nom du compte')->setPassword('test-password');
+        $profile = (new LawyerProfileEntity())->setUser($user)->setDisplayName('Nom professionnel');
+        $entityManager->persist($user);
+        $entityManager->persist($profile);
+        $entityManager->flush();
+        $profileId = $profile->getId();
+
+        // Simulate physical deletion: the application normally soft-deletes Users.
+        $entityManager->getConnection()->executeStatement('DELETE FROM user WHERE id = ?', [$user->getId()]);
+        $entityManager->clear();
+
+        $preservedProfile = $entityManager->getRepository(LawyerProfileEntity::class)->find($profileId);
+        self::assertInstanceOf(LawyerProfileEntity::class, $preservedProfile);
+        self::assertNull($preservedProfile->getUser());
+        self::assertSame('Nom professionnel', $preservedProfile->getDisplayName());
     }
 
     private function clientWithSchema(): KernelBrowser
@@ -289,6 +405,12 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         $this->createLawyer('public-awa@example.test', 'Awa Kouassi', true, true, 'ACTIVE', $publicCabinet, $portrait->getId());
         $this->createLawyer('public-mariam@example.test', 'Mariam N\'Dri', true, true, 'ACTIVE', $secondCabinet);
         $this->createLawyer('public-koffi@example.test', 'Koffi Indépendant', true, true, 'HONORARY', null);
+        $historicalProfile = (new LawyerProfileEntity())
+            ->setDisplayName('Avocate historique autonome')
+            ->setProfessionalStatus('UNKNOWN')
+            ->setDirectoryVisible(true)
+            ->setCabinet($secondCabinet);
+        $entityManager->persist($historicalProfile);
         for ($index = 3; $index <= 15; ++$index) {
             $this->createLawyer(sprintf('public-demo-%02d@example.test', $index), sprintf('Avocat Démo %02d', $index), true, true, 'ACTIVE', null);
         }
@@ -298,6 +420,8 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         $this->createLawyer('disabled@example.test', 'Compte désactivé', false, true, 'ACTIVE', null);
         $this->createLawyer('non-lawyer@example.test', 'Compte sans rôle avocat', true, true, 'ACTIVE', null, null, ['ROLE_USER']);
         $this->createLawyer('similar-role@example.test', 'Rôle avocat approchant', true, true, 'ACTIVE', null, null, ['ROLE_XAVOCAT']);
+        $entityManager->persist((new LawyerProfileEntity())->setDisplayName('Profil privé sans compte')->setProfessionalStatus('UNKNOWN'));
+        $entityManager->persist((new LawyerProfileEntity())->setDisplayName('Profil suspendu sans compte')->setProfessionalStatus('SUSPENDED')->setDirectoryVisible(true));
         $entityManager->flush();
     }
 
@@ -318,6 +442,7 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         $entityManager->persist($user);
         $entityManager->persist((new LawyerProfileEntity())
             ->setUser($user)
+            ->setDisplayName($name)
             ->setCabinet($cabinet)
             ->setProfessionalStatus($status)
             ->setDirectoryVisible($visible)

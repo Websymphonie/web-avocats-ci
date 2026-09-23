@@ -102,6 +102,7 @@ propriétaire.
 | CNT-010 | administrer et afficher la composition structurée du Conseil de l’Ordre | `IMPLEMENTED` — historique des membres, portraits facultatifs et bloc Page BAR |
 | BKO-CONTACT-001 | consulter les messages du formulaire Contact | `IMPLEMENTED` — liste paginée, filtres de livraison, détail immuable et retry manuel des échecs |
 | DIR-001 | préparer la publication de profils Avocat et Cabinet | `IMPLEMENTED` — UUID profil, visibilité explicite, coordonnées professionnelles, portrait protégé et règle d’éligibilité V1 |
+| DIR-002 | permettre des profils annuaire sans compte et préserver la provenance | `IMPLEMENTED` — `displayName` autonome, User nullable, statut `UNKNOWN`, UUID source privés et téléphones Cabinet multiples ; aucun import historique |
 | FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable, paginé et lié aux fiches publiques FO-DIR-002 |
 | FO-DIR-002 | consulter les fiches publiques avocat et cabinet | `IMPLEMENTED` — `/avocats/{uuid}` et `/cabinets/{uuid}`, critères DIR-001, coordonnées professionnelles et membres éligibles |
 

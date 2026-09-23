@@ -35,14 +35,14 @@ final class GetPublicCabinetProfileController extends AbstractController
         return $this->render('web/cabinets/show.html.twig', [
             'cabinet' => $cabinet,
             'memberMediaUrls' => $this->mediaUrls->resolveMany($portraitIds),
-            'phoneHref' => $this->safePhoneHref($cabinet->phone),
+            'phoneHrefs' => array_map(fn (string $phone): ?string => $this->safePhoneHref($phone), $cabinet->phones),
             'websiteHref' => $this->safeWebsiteHref($cabinet->websiteUrl),
         ]);
     }
 
-    private function safePhoneHref(?string $phone): ?string
+    private function safePhoneHref(string $phone): ?string
     {
-        if ($phone === null || !preg_match('/^\+?[0-9\s().-]+$/', $phone)) {
+        if (!preg_match('/^\+?[0-9\s().-]+$/', $phone)) {
             return null;
         }
 

@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\Cabinet\CabinetEntity;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\LawyerProfile\LawyerProfileEntity;
@@ -29,13 +30,14 @@ final class LawyerProfileFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('displayName', TextType::class, ['label' => 'Nom professionnel public', 'required' => true, 'constraints' => [new NotBlank(message: 'Le nom professionnel est obligatoire.'), new Length(max: 255)]])
             ->add('cabinet', EntityType::class, [
                 'label' => 'Cabinet', 'class' => CabinetEntity::class, 'choice_label' => 'name', 'required' => false,
                 'placeholder' => 'Sélectionner un cabinet',
                 'query_builder' => fn (CabinetRepository $repo) => $repo->createQueryBuilder('cabinet')->andWhere('cabinet.status = :status')->setParameter('status', 'ACTIVE')->orderBy('cabinet.name', 'ASC'),
             ])
             ->add('barNumber', TextType::class, ['label' => 'Numéro du Barreau', 'required' => false])
-            ->add('professionalStatus', ChoiceType::class, ['label' => 'Statut professionnel', 'choices' => ['En activité' => 'ACTIVE', 'Stagiaire' => 'TRAINEE', 'Honoraire' => 'HONORARY', 'Suspendu' => 'SUSPENDED']])
+            ->add('professionalStatus', ChoiceType::class, ['label' => 'Statut professionnel', 'choices' => ['Non vérifié' => 'UNKNOWN', 'En activité' => 'ACTIVE', 'Stagiaire' => 'TRAINEE', 'Honoraire' => 'HONORARY', 'Suspendu' => 'SUSPENDED']])
             ->add('specializationSummary', TextType::class, ['label' => 'Domaines de pratique', 'required' => false, 'attr' => ['placeholder' => 'Ex. Droit des affaires, droit du travail']])
             ->add('professionalEmail', EmailType::class, ['label' => 'Email professionnel', 'required' => false, 'constraints' => [new Email(message: 'Saisissez une adresse email professionnelle valide.'), new Length(max: 255)]])
             ->add('professionalPhone', TextType::class, ['label' => 'Téléphone professionnel', 'required' => false, 'constraints' => [new Length(max: 80), new Regex(pattern: '/^(?=.*\d)[0-9+().\/\s-]{6,80}$/D', message: 'Saisissez un numéro professionnel valide.')]])

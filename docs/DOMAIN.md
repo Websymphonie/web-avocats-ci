@@ -599,3 +599,30 @@ valides.
 DIR-001 ne crée encore ni route de listing/détail publique ni import réel de
 l’ancien annuaire. Les fixtures ajoutées sont synthétiques et servent aux
 tests de visibilité, d’éligibilité et de protection des portraits.
+
+### DIR-002 — Profils annuaire sans compte
+
+`LawyerProfile` porte désormais son identité publique dans `displayName`,
+indépendamment de `User.name`. Un profil peut être lié à un compte (`User`)
+ou exister sans compte, notamment pour représenter une fiche professionnelle
+historique. La relation utilisateur est nullable et sa suppression physique
+préserve la fiche (`ON DELETE SET NULL`). La recherche et les fiches publiques
+utilisent uniquement `displayName`; le parcours membre, lui, continue à
+retrouver son profil exclusivement par l’utilisateur authentifié. Aucun
+rattachement automatique ni flux de revendication n’est créé.
+
+La publication d’un profil lié à un compte requiert toujours `directoryVisible`,
+un compte activé, le rôle explicite `ROLE_AVOCAT` et un statut différent de
+`SUSPENDED`. Pour un profil sans compte, visibilité explicite et statut différent
+de `SUSPENDED` suffisent. `UNKNOWN` représente un statut professionnel non
+vérifié : il ne signifie pas « Actif », n’est pas attribué rétroactivement aux
+profils existants et devient le défaut des nouveaux profils.
+
+`legacySourceUuid` nullable et unique sur LawyerProfile et Cabinet conserve
+uniquement la provenance d’un futur import ; l’UUID Avocat CI reste l’identité
+publique. La provenance n’est exposée ni dans les read models publics, ni dans
+les URLs ou interfaces publiques. Les cabinets conservent leurs téléphones dans
+une liste ordonnée ; la migration convertit le téléphone historique unique en
+liste sans perte. Le formulaire Backoffice accepte un numéro par ligne et la
+fiche publique les affiche séparément. Ce changement de modèle ne réalise aucun
+import de l’ancien annuaire.

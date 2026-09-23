@@ -18,7 +18,9 @@ final readonly class LawyerProfileProvisioner
         if ($profile !== null) {
             return $profile;
         }
-        $profile = (new LawyerProfileEntity())->setUser($user);
+        $profile = (new LawyerProfileEntity())
+            ->setUser($user)
+            ->setDisplayName($user->getName());
         $this->entityManager->persist($profile);
         $this->entityManager->flush();
         return $profile;

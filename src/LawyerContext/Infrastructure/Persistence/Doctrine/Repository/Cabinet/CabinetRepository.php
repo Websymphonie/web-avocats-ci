@@ -42,9 +42,9 @@ final class CabinetRepository extends ServiceEntityRepository implements PublicC
             return null;
         }
 
-        /** @var array{publicUuid: Uuid|string, name: string, address: string|null, city: string|null, country: string, phone: string|null, email: string|null, websiteUrl: string|null, description: string|null}|null $row */
+        /** @var array{publicUuid: Uuid|string, name: string, address: string|null, city: string|null, country: string, phones: list<string>, email: string|null, websiteUrl: string|null, description: string|null}|null $row */
         $row = $this->createQueryBuilder('cabinet')
-            ->select('cabinet.uuid AS publicUuid, cabinet.name AS name, cabinet.address AS address, cabinet.city AS city, cabinet.country AS country, cabinet.phone AS phone, cabinet.email AS email, cabinet.websiteUrl AS websiteUrl, cabinet.description AS description')
+            ->select('cabinet.uuid AS publicUuid, cabinet.name AS name, cabinet.address AS address, cabinet.city AS city, cabinet.country AS country, cabinet.phones AS phones, cabinet.email AS email, cabinet.websiteUrl AS websiteUrl, cabinet.description AS description')
             ->where('cabinet.uuid = :uuid')
             ->andWhere('cabinet.status = :status')
             ->andWhere('cabinet.directoryVisible = :visible')
@@ -64,7 +64,7 @@ final class CabinetRepository extends ServiceEntityRepository implements PublicC
             address: $row['address'],
             city: $row['city'],
             country: $row['country'],
-            phone: $row['phone'],
+            phones: $row['phones'],
             email: $row['email'],
             websiteUrl: $row['websiteUrl'],
             description: $row['description'],

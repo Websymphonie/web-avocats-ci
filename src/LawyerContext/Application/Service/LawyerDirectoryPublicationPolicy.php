@@ -8,12 +8,17 @@ namespace Websymphonie\LawyerContext\Application\Service;
 final class LawyerDirectoryPublicationPolicy
 {
     /** @param list<string> $userRoles */
-    public function isLawyerEligible(bool $directoryVisible, bool $userEnabled, array $userRoles, string $professionalStatus): bool
+    public function isLawyerEligible(bool $directoryVisible, ?bool $userEnabled, array $userRoles, string $professionalStatus): bool
     {
-        return $directoryVisible
-            && $userEnabled
-            && in_array('ROLE_AVOCAT', $userRoles, true)
-            && $professionalStatus !== 'SUSPENDED';
+        if (!$directoryVisible || $professionalStatus === 'SUSPENDED') {
+            return false;
+        }
+
+        if ($userEnabled === null) {
+            return true;
+        }
+
+        return $userEnabled && in_array('ROLE_AVOCAT', $userRoles, true);
     }
 
     public function isCabinetEligible(string $status, bool $directoryVisible): bool

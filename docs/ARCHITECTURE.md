@@ -953,10 +953,15 @@ référencé par un membre. Le Backoffice est limité à la liste, au détail, �
 création et à la modification ; aucune suppression n’est exposée dans cette
 première version.
 
-## 17. Fondation annuaire — DIR-001
+## 17. Fondation annuaire — DIR-001 / DIR-002
 
 `LawyerProfile` conserve une identité publique propre (`uuid` unique, attribué
-automatiquement et rétro-rempli pour les profils existants). Les propriétés
+automatiquement et rétro-rempli pour les profils existants) ainsi qu’un nom
+professionnel `displayName`, distinct de `User.name`. La relation OneToOne à
+User est facultative (`ON DELETE SET NULL`) : les profils autonomes peuvent
+représenter des fiches professionnelles sans compte. Le Member Area ne résout
+toujours le profil que par le User connecté, et le provisioning initial copie
+`User.name` une seule fois dans `displayName`. Les propriétés
 `directoryVisible`, `professionalEmail`, `professionalPhone` et
 `portraitMediaId` complètent le profil sans relation Doctrine vers `Media`.
 L’upload réutilise `MediaUploadServiceInterface` et le stockage public persistant
@@ -981,10 +986,19 @@ entité Doctrine ni donnée de compte n’est exposée au template.
 FO-DIR-002 complète cette surface avec les fiches publiques `/avocats/{uuid}`
 et `/cabinets/{uuid}`. Les queries et projections minimales appartiennent à
 `LawyerContext`; `WebContext` rend les pages et résout les portraits par le
-service public Media existant. Une fiche avocat reprend les quatre critères
-DIR-001, et une fiche Cabinet exige `ACTIVE` et `directoryVisible`; toute
+service public Media existant. Pour un profil lié, les critères restent
+visibilité, compte activé, rôle `ROLE_AVOCAT` exact et statut différent de
+`SUSPENDED`; un profil sans User requiert visibilité explicite et statut
+différent de `SUSPENDED`. `UNKNOWN` est le défaut des nouveaux profils, sans
+réécriture des statuts existants, et n’est jamais présenté comme « Actif ».
+Une fiche Cabinet exige `ACTIVE` et `directoryVisible`; toute
 ressource non éligible répond 404. Les membres sont projetés et triés en base
 avec les mêmes critères avocat, sans charger un graphe Doctrine dans Twig.
 Les identifiants de route sont uniquement les UUID publics existants. Aucun
-schéma ni permission n’est ajouté. L’annuaire n’expose que les coordonnées
-professionnelles explicitement renseignées, et n’utilise pas l’email du compte.
+`legacySourceUuid` n’est exposé dans aucune projection ou route publique. Ces
+UUID de provenance sont nullable et uniques pour LawyerProfile et Cabinet.
+Les téléphones Cabinet sont stockés sous forme d’une liste JSON ordonnée ; la
+migration préserve l’ancien téléphone unique et le Backoffice accepte un numéro
+par ligne. L’annuaire n’expose que les coordonnées professionnelles explicitement
+renseignées, et n’utilise pas l’email du compte. Aucune donnée historique réelle
+n’est importée par DIR-002.

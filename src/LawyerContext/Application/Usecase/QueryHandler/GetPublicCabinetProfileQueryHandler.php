@@ -31,7 +31,7 @@ final readonly class GetPublicCabinetProfileQueryHandler implements QueryHandler
             address: $cabinet->address,
             city: $cabinet->city,
             country: $cabinet->country,
-            phone: $cabinet->phone,
+            phones: $cabinet->phones,
             email: $cabinet->email,
             websiteUrl: $cabinet->websiteUrl,
             description: $cabinet->description,

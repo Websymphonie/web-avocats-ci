@@ -5,6 +5,7 @@ namespace Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\Cabinet\CabinetEntity;
@@ -24,16 +25,24 @@ class LawyerProfileEntity
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     private ?Uuid $uuid = null;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom professionnel est obligatoire.')]
+    #[Assert\Length(max: 255)]
+    private string $displayName = '';
+
+    #[ORM\Column(type: UuidType::NAME, unique: true, nullable: true)]
+    private ?Uuid $legacySourceUuid = null;
+
     #[ORM\OneToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE')]
-    private User $user;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, unique: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
     #[ORM\ManyToOne(targetEntity: CabinetEntity::class)]
     #[ORM\JoinColumn(name: 'cabinet_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?CabinetEntity $cabinet = null;
     #[ORM\Column(length: 120, nullable: true)]
     private ?string $barNumber = null;
-    #[ORM\Column(length: 40, options: ['default' => 'ACTIVE'])]
-    private string $professionalStatus = 'ACTIVE';
+    #[ORM\Column(length: 40, options: ['default' => 'UNKNOWN'])]
+    private string $professionalStatus = 'UNKNOWN';
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $specializationSummary = null;
     #[ORM\Column(type: 'text', nullable: true)]
@@ -56,8 +65,12 @@ class LawyerProfileEntity
     public function getId(): ?int { return $this->id; }
     public function getUuid(): ?Uuid { return $this->uuid; }
     public function getUuidAsString(): ?string { return $this->uuid?->toRfc4122(); }
-    public function getUser(): User { return $this->user; }
-    public function setUser(User $user): self { $this->user = $user; return $this; }
+    public function getDisplayName(): string { return $this->displayName; }
+    public function setDisplayName(string $value): self { $this->displayName = trim($value); return $this; }
+    public function getLegacySourceUuid(): ?Uuid { return $this->legacySourceUuid; }
+    public function setLegacySourceUuid(?Uuid $value): self { $this->legacySourceUuid = $value; return $this; }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(?User $user): self { $this->user = $user; return $this; }
     public function getCabinet(): ?CabinetEntity { return $this->cabinet; }
     public function setCabinet(?CabinetEntity $cabinet): self { $this->cabinet = $cabinet; return $this; }
     public function getBarNumber(): ?string { return $this->barNumber; }

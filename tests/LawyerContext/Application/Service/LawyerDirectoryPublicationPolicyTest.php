@@ -22,6 +22,16 @@ final class LawyerDirectoryPublicationPolicyTest extends TestCase
         self::assertTrue((new LawyerDirectoryPublicationPolicy())->isLawyerEligible(true, true, ['ROLE_AVOCAT'], 'TRAINEE'));
     }
 
+    public function testAccountlessVisibleProfilesCanBePublishedWithUnknownOrKnownStatus(): void
+    {
+        $policy = new LawyerDirectoryPublicationPolicy();
+
+        self::assertTrue($policy->isLawyerEligible(true, null, [], 'UNKNOWN'));
+        self::assertTrue($policy->isLawyerEligible(true, null, [], 'ACTIVE'));
+        self::assertFalse($policy->isLawyerEligible(true, null, [], 'SUSPENDED'));
+        self::assertFalse($policy->isLawyerEligible(false, null, [], 'UNKNOWN'));
+    }
+
     public function testLawyerIsNotEligibleWhenAnyPublicationCriterionFails(): void
     {
         $policy = new LawyerDirectoryPublicationPolicy();

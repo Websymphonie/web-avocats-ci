@@ -18,13 +18,19 @@
                 {{ form_start(form, {attr: {class: 'mt-7 space-y-8', 'data-loading-label': 'Enregistrement…', novalidate: 'novalidate'}}) }}
                     {{ form_errors(form) }}
                     <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
-                        {% for field in [form.name, form.registrationNumber, form.address, form.city, form.country, form.phone, form.email, form.websiteUrl, form.status] %}
+                        {% for field in [form.name, form.registrationNumber, form.address, form.city, form.country, form.email, form.websiteUrl, form.status] %}
                             <div class="space-y-2">
                                 {{ form_label(field, null, {label_attr: {class: 'text-sm font-medium'}}) }}
                                 {{ form_widget(field, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
                                 <div class="text-sm text-destructive">{{ form_errors(field) }}</div>
                             </div>
                         {% endfor %}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.phones, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                        {{ form_widget(form.phones, {attr: {class: 'min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                        {% if form.phones.vars.help %}<p class="text-xs text-muted-foreground">{{ form.phones.vars.help }}</p>{% endif %}
+                        <div class="text-sm text-destructive">{{ form_errors(form.phones) }}</div>
                     </div>
                     <div class="rounded-xl border border-border bg-muted/30 p-4">
                         <div class="flex items-start gap-3">

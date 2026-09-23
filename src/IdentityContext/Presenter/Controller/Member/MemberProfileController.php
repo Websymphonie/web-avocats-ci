@@ -64,7 +64,9 @@ final class MemberProfileController extends AbstractController
         $isLawyer = in_array('ROLE_AVOCAT', $user->getRoles(), true);
         $lawyerProfile = $isLawyer ? $this->lawyerProfiles->findOneByUser($user) : null;
         if ($isLawyer && $lawyerProfile === null) {
-            $lawyerProfile = (new LawyerProfileEntity())->setUser($user);
+            $lawyerProfile = (new LawyerProfileEntity())
+                ->setUser($user)
+                ->setDisplayName($user->getName());
             $this->entityManager->persist($lawyerProfile);
             $this->entityManager->flush();
         }

@@ -45,7 +45,7 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
         $baseQuery = $this->createPublicLawyerQueryBuilder();
 
         if ($name !== '') {
-            $baseQuery->andWhere('LOWER(directoryUser.name) LIKE LOWER(:name)')
+            $baseQuery->andWhere('LOWER(profile.displayName) LIKE LOWER(:name)')
                 ->setParameter('name', '%' . $name . '%');
         }
         if ($cabinet !== '') {
@@ -62,10 +62,10 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
             ->getQuery()
             ->getSingleScalarResult();
 
-        /** @var list<array{publicUuid: Uuid|string, name: string|null, cabinetName: string|null, location: string|null, portraitMediaId: int|string|null}> $rows */
+        /** @var list<array{publicUuid: Uuid|string, name: string, cabinetName: string|null, location: string|null, portraitMediaId: int|string|null}> $rows */
         $rows = (clone $baseQuery)
-            ->select("profile.uuid AS publicUuid, directoryUser.name AS name, directoryCabinet.name AS cabinetName, CASE WHEN directoryCabinet.status = 'ACTIVE' AND directoryCabinet.directoryVisible = true THEN directoryCabinet.city ELSE '' END AS location, profile.portraitMediaId AS portraitMediaId")
-            ->orderBy('directoryUser.name', 'ASC')
+            ->select("profile.uuid AS publicUuid, profile.displayName AS name, directoryCabinet.name AS cabinetName, CASE WHEN directoryCabinet.status = 'ACTIVE' AND directoryCabinet.directoryVisible = true THEN directoryCabinet.city ELSE '' END AS location, profile.portraitMediaId AS portraitMediaId")
+            ->orderBy('profile.displayName', 'ASC')
             ->addOrderBy('profile.id', 'ASC')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
@@ -89,11 +89,11 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
             return null;
         }
 
-        /** @var array{publicUuid: Uuid|string, name: string|null, barNumber: string|null, specializationSummary: string|null, biography: string|null, professionalPhone: string|null, professionalEmail: string|null, portraitMediaId: int|string|null, cabinetName: string|null, cabinetUuid: Uuid|string|null, cabinetCity: string|null, cabinetStatus: string|null, cabinetVisible: bool|int|null}|null $row */
+        /** @var array{publicUuid: Uuid|string, name: string, barNumber: string|null, specializationSummary: string|null, biography: string|null, professionalPhone: string|null, professionalEmail: string|null, portraitMediaId: int|string|null, cabinetName: string|null, cabinetUuid: Uuid|string|null, cabinetCity: string|null, cabinetStatus: string|null, cabinetVisible: bool|int|null}|null $row */
         $row = $this->createPublicLawyerQueryBuilder()
             ->andWhere('profile.uuid = :uuid')
             ->setParameter('uuid', Uuid::fromString($uuid), UuidType::NAME)
-            ->select('profile.uuid AS publicUuid, directoryUser.name AS name, profile.barNumber AS barNumber, profile.specializationSummary AS specializationSummary, profile.bio AS biography, profile.professionalPhone AS professionalPhone, profile.professionalEmail AS professionalEmail, profile.portraitMediaId AS portraitMediaId, directoryCabinet.name AS cabinetName, directoryCabinet.uuid AS cabinetUuid, directoryCabinet.city AS cabinetCity, directoryCabinet.status AS cabinetStatus, directoryCabinet.directoryVisible AS cabinetVisible')
+            ->select('profile.uuid AS publicUuid, profile.displayName AS name, profile.barNumber AS barNumber, profile.specializationSummary AS specializationSummary, profile.bio AS biography, profile.professionalPhone AS professionalPhone, profile.professionalEmail AS professionalEmail, profile.portraitMediaId AS portraitMediaId, directoryCabinet.name AS cabinetName, directoryCabinet.uuid AS cabinetUuid, directoryCabinet.city AS cabinetCity, directoryCabinet.status AS cabinetStatus, directoryCabinet.directoryVisible AS cabinetVisible')
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -124,7 +124,7 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
             return [];
         }
 
-        /** @var list<array{publicUuid: Uuid|string, name: string|null, portraitMediaId: int|string|null}> $rows */
+        /** @var list<array{publicUuid: Uuid|string, name: string, portraitMediaId: int|string|null}> $rows */
         $rows = $this->createPublicLawyerQueryBuilder()
             ->andWhere('directoryCabinet.uuid = :cabinetUuid')
             ->andWhere('directoryCabinet.status = :activeCabinet')
@@ -132,8 +132,8 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
             ->setParameter('cabinetUuid', Uuid::fromString($cabinetUuid), UuidType::NAME)
             ->setParameter('activeCabinet', 'ACTIVE')
             ->setParameter('publicCabinet', true)
-            ->select('profile.uuid AS publicUuid, directoryUser.name AS name, profile.portraitMediaId AS portraitMediaId')
-            ->orderBy('directoryUser.name', 'ASC')
+            ->select('profile.uuid AS publicUuid, profile.displayName AS name, profile.portraitMediaId AS portraitMediaId')
+            ->orderBy('profile.displayName', 'ASC')
             ->addOrderBy('profile.id', 'ASC')
             ->getQuery()
             ->getArrayResult();
@@ -148,20 +148,20 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
     private function createPublicLawyerQueryBuilder(): QueryBuilder
     {
         $query = $this->createQueryBuilder('profile')
-            ->innerJoin('profile.user', 'directoryUser')
+            ->leftJoin('profile.user', 'directoryUser')
             ->leftJoin('profile.cabinet', 'directoryCabinet')
             ->where('profile.directoryVisible = :visible')
-            ->andWhere('directoryUser.enabled = :enabled')
             ->andWhere('profile.professionalStatus <> :suspended')
             ->setParameter('visible', true)
-            ->setParameter('enabled', true)
             ->setParameter('suspended', 'SUSPENDED');
 
         if ($this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof SQLitePlatform) {
-            $query->andWhere("directoryUser.roles LIKE :lawyerRole ESCAPE '!'")
+            $query->andWhere("(directoryUser.id IS NULL OR (directoryUser.enabled = :enabled AND directoryUser.roles LIKE :lawyerRole ESCAPE '!'))")
+                ->setParameter('enabled', true)
                 ->setParameter('lawyerRole', '%"ROLE!_AVOCAT"%');
         } else {
-            $query->andWhere('JSON_CONTAINS(directoryUser.roles, :lawyerRole) = 1')
+            $query->andWhere('(directoryUser.id IS NULL OR (directoryUser.enabled = :enabled AND JSON_CONTAINS(directoryUser.roles, :lawyerRole) = 1))')
+                ->setParameter('enabled', true)
                 ->setParameter('lawyerRole', json_encode('ROLE_AVOCAT', JSON_THROW_ON_ERROR));
         }
 

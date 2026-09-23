@@ -93,7 +93,8 @@ final class DemoDirectoryFixtures extends Fixture implements FixtureGroupInterfa
             $manager->persist($profile);
         }
 
-        $profile->setCabinet($cabinet)
+        $profile->setDisplayName($displayName)
+            ->setCabinet($cabinet)
             ->setProfessionalStatus($professionalStatus)
             ->setDirectoryVisible($directoryVisible)
             ->setProfessionalEmail($professionalEmail)

@@ -86,6 +86,11 @@
   by publication and active Enrollment checks.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED`
   documents. Backoffice uses `/admin/content/documents/{id}/download`.
+- Directory profiles display and search by the professional `displayName`, never the linked account name. A profile
+  without an account can appear publicly only when its directory visibility is explicit and its status is not
+  suspended; `UNKNOWN` is not labelled “Actif”. Member profile lookup remains account-based. Cabinet Backoffice phone
+  entry accepts one number per line; public Cabinet details render each usable number as its own `tel:` link. Legacy
+  source UUIDs remain internal and are never presented.
 
 ## Accessibility and responsive behavior
 

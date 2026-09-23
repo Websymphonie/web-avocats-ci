@@ -18,6 +18,7 @@ use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\CouncilMember\CouncilMemberEntity;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -179,6 +180,51 @@ final class PublicSearchTest extends WebTestCase
             'url' => '/le-barreau/carpa',
             'metadata' => 'Le Barreau',
         ], $payload['results'][0]);
+    }
+
+    public function testCurrentInstitutionalPagesAreSearchableButCouncilMembersAreNot(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        foreach ([
+            ['Le Bâtonnier', 'le-batonnier'],
+            ['Conseil de l’Ordre', 'conseil-de-l-ordre'],
+        ] as [$title, $slug]) {
+            $entityManager->persist((new PageEntity())
+                ->setTitle($title)
+                ->setSlug($slug)
+                ->setContent('<p>Information institutionnelle.</p>')
+                ->setGroup(PageGroup::BAR)
+                ->setStatus(PageStatus::PUBLISHED)
+                ->setPublishedAt(new DateTimeImmutable('-1 day')));
+        }
+        $entityManager->persist((new CouncilMemberEntity())
+            ->setFullName('Maître Arouna OUATTARA')
+            ->setFunction('Secrétaire de l’Ordre')
+            ->setSortOrder(20));
+        $entityManager->flush();
+
+        $client->request('GET', '/recherche/autocomplete?q=Bâtonnier', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'Le Bâtonnier',
+            'url' => '/le-barreau/le-batonnier',
+            'metadata' => 'Le Barreau',
+        ], $payload['results'][0]);
+
+        $client->request('GET', '/recherche/autocomplete?q=Conseil de l’Ordre', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('/le-barreau/conseil-de-l-ordre', $payload['results'][0]['url']);
+
+        $client->request('GET', '/recherche/autocomplete?q=Arouna OUATTARA', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([], $payload['results']);
     }
 
     public function testSearchEntryPointAndDialogAreAvailableOnThePublicLayout(): void

@@ -109,6 +109,10 @@ final class PublicPagesTest extends WebTestCase
     {
         $client = $this->clientWithSchema();
         $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), null, PageGroup::BAR, 30));
+        $entityManager->persist($this->page('Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::BAR, 40));
+        $entityManager->flush();
 
         $client->request('GET', '/le-barreau/presentation', server: ['HTTPS' => 'on']);
 
@@ -119,6 +123,8 @@ final class PublicPagesTest extends WebTestCase
         self::assertSame([
             'Présentation du Barreau',
             'Historique du Barreau',
+            'Le Bâtonnier',
+            'Conseil de l’Ordre',
         ], $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"] a')->each(static fn ($node): string => trim($node->text())));
         self::assertSame('/le-barreau/presentation', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"]')->attr('href'));
         self::assertStringContainsString('/le-barreau/historique', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->html());
@@ -131,11 +137,11 @@ final class PublicPagesTest extends WebTestCase
             ->children()
             ->each(static fn ($node): string => trim($node->filter('summary')->count() > 0 ? $node->filter('summary')->text() : $node->text()));
         self::assertSame(['Accueil', 'Le Barreau', 'Actualités'], array_slice($desktopMenuItems, 0, 3));
-        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau'], $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a')->each(static fn ($node): string => trim($node->text())));
+        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau', 'Le Bâtonnier', 'Conseil de l’Ordre'], $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a')->each(static fn ($node): string => trim($node->text())));
         self::assertSame('/le-barreau/presentation', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a[aria-current="page"]')->attr('href'));
         self::assertStringNotContainsString('Fonds de Solidarité', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
         self::assertStringNotContainsString('CARPA', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
-        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau'], $client->getCrawler()->filter('nav[aria-label="Navigation mobile"] details a')->each(static fn ($node): string => trim($node->text())));
+        self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau', 'Le Bâtonnier', 'Conseil de l’Ordre'], $client->getCrawler()->filter('nav[aria-label="Navigation mobile"] details a')->each(static fn ($node): string => trim($node->text())));
 
         $client->request('GET', '/le-barreau/historique', server: ['HTTPS' => 'on']);
 
@@ -175,6 +181,10 @@ final class PublicPagesTest extends WebTestCase
     {
         $client = $this->clientWithSchema();
         $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), null, PageGroup::BAR, 30));
+        $entityManager->persist($this->page('Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::BAR, 40));
+        $entityManager->flush();
 
         $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
 
@@ -183,6 +193,8 @@ final class PublicPagesTest extends WebTestCase
         self::assertSame([
             '/le-barreau/presentation',
             '/le-barreau/historique',
+            '/le-barreau/le-batonnier',
+            '/le-barreau/conseil-de-l-ordre',
         ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
         self::assertStringNotContainsString('/le-barreau/fonds-de-solidarite', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
@@ -239,6 +251,29 @@ final class PublicPagesTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorNotExists('#batonnier-profile-title');
         self::assertSelectorTextContains('h1', 'Le Bâtonnier');
+    }
+
+    public function testCurrentBatonnierPageDoesNotReintroduceLegacyContactDetails(): void
+    {
+        $client = $this->clientWithSchema();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::BAR, 30));
+        $entityManager->persist((new BatonnierMandateEntity())
+            ->setFullName('Me Florence LOAN épse MESSAN')
+            ->setMandateStartedAt(new DateTimeImmutable('2024-10-02'))
+            ->setMandateEndedAt(null)
+            ->setSummary('Première femme à diriger l’Ordre des Avocats de Côte d’Ivoire.'));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau/le-batonnier', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#batonnier-profile-title', 'Me Florence LOAN épse MESSAN');
+        self::assertSelectorTextContains('main', 'Mandat depuis 2024');
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString('secretariat@ordredesavocats.ci', $content);
+        self::assertStringNotContainsString('Maison de l’Avocat', $content);
+        self::assertStringNotContainsString('Écrire au Bâtonnier', $content);
     }
 
     public function testCouncilPageShowsOnlyCurrentMembersInEditorialOrder(): void

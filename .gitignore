@@ -20,6 +20,16 @@
 
 ###> symfony/asset-mapper ###
 /public/assets/
+!/public/assets/
+/public/assets/*
+!/public/assets/images/
+/public/assets/images/*
+!/public/assets/images/barreau-anciens-batonniers.png
+!/public/assets/images/institution/
+/public/assets/images/institution/*
+!/public/assets/images/institution/portraits/
+/public/assets/images/institution/portraits/*
+!/public/assets/images/institution/portraits/*.png
 /assets/vendor/
 ###< symfony/asset-mapper ###
 

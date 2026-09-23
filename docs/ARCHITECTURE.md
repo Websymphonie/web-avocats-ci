@@ -874,14 +874,21 @@ Les événements de cycle de vie réutilisent
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
 
 Les fixtures de démonstration préparent les Pages `Présentation du Barreau`
-(`presentation`) et `Historique du Barreau` (`historique`) comme Pages `BAR`
-publiées, aux ordres `10` et `20`. La Page Historique réutilise une image
-collective locale importée via `MediaContext`; les portraits individuels ne sont
-pas intégrés car le rich-text editor actuel ne gère pas les images. Aucune entrée
-historique n’est créée dans `BatonnierMandate`. La Page `Fonds de Solidarité`
-reste vide et `DRAFT` à l’ordre `30`, et la Page `CARPA` reste vide et `DRAFT`
-à l’ordre `40` ; aucun contenu institutionnel n’est présumé validé pour ces
-deux Pages. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
+(`presentation`), `Historique du Barreau` (`historique`), `Le Bâtonnier`
+(`le-batonnier`) et `Conseil de l’Ordre` (`conseil-de-l-ordre`) comme Pages `BAR`
+publiées, aux ordres `10`, `20`, `30` et `40`. La Page Historique réutilise une
+image collective locale importée via `MediaContext`. CNT-BAR-003 ajoute le
+titulaire courant Me Florence LOAN épse MESSAN avec un début de mandat au
+2 octobre 2024 et une fin nulle, ainsi que les 19 membres actuels du Conseil
+triés aux ordres `10` à `190`. Les portraits proviennent d’assets de fixtures
+locaux sous `public/assets/images/institution/portraits` et sont importés via
+`MediaContext` sous `institution/portraits`; leur chargement ne fait aucun appel
+réseau. Le portrait de Florence est partagé par ses deux enregistrements
+structurés. Les dates des membres du Conseil restent nulles, faute de source
+individuelle fiable, et aucune entrée historique de mandat ou de membre n’est
+créée par ces fixtures. Les Pages `Fonds de Solidarité` et `CARPA` restent
+vides et `DRAFT`, aux ordres `50` et `60` ; aucun contenu institutionnel n’est
+présumé validé pour ces deux Pages. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
 la query `FindPublishedPageBySlug('carpa')` ne retourne pas une Page BAR publiée
 avec une date de publication. Après publication, elle pointe automatiquement
 vers `/le-barreau/carpa`. Le hub, la navigation BAR et la recherche publique

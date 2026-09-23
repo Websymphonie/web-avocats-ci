@@ -21,6 +21,8 @@ use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Edito
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EditorialVideoCategory\EditorialVideoCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EventCategory\EventCategoryEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Batonnier\BatonnierMandateEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\CouncilMember\CouncilMemberEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\NewsCategory\NewsCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
@@ -52,6 +54,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             $this->loadEditorialVideoCategories($manager);
             $this->loadEditorialVideos($manager);
             $this->loadPages($manager);
+            $this->loadInstitutionalPeople($manager);
             $manager->flush();
         });
     }
@@ -233,6 +236,24 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             </ul>
             HTML);
 
+        $batonnierContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Bâtonnier est élu au scrutin majoritaire par ses pairs pour un mandat de trois ans. Un an avant son terme, l’assemblée générale élective élit le dauphin appelé à lui succéder.</p>
+            <h2>Un rôle de représentation et de direction</h2>
+            <p>Le Bâtonnier préside le Conseil de l’Ordre, assure la gestion de l’Ordre et le représente dans les actes de la vie civile, auprès des pouvoirs publics, des juridictions, des autorités et des tiers.</p>
+            <h2>Déontologie et règlement des différends</h2>
+            <p>Il veille au respect de la déontologie et de la discipline des avocats et exerce l’autorité de poursuite en matière disciplinaire. Il prévient, concilie et résout les différends professionnels entre les membres du Barreau et instruit les réclamations formées par des tiers contre un avocat.</p>
+            <p>Pour toute demande, le canal de contact institutionnel est la page <a href="/contact">Contact</a>.</p>
+            HTML);
+
+        $councilContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Conseil de l’Ordre est l’organe délibérant, législatif et disciplinaire du Barreau. Ses membres sont élus par l’assemblée générale élective au scrutin secret uninominal, tous les trois ans. Ses décisions sont prises par voie d’arrêtés.</p>
+            <h2>Organisation et responsabilités</h2>
+            <p>Sous la direction du Bâtonnier, le Conseil assure la réglementation intérieure du Barreau, l’administration de l’Ordre et la gestion de ses finances.</p>
+            <h2>Ses missions</h2>
+            <ul><li>Traiter les questions relatives à la tenue du Tableau : inscription, omission, démission, conditions d’exercice et honorariat.</li><li>Élaborer et tenir à jour le Règlement intérieur du Barreau.</li><li>Fixer le budget et les cotisations.</li><li>Veiller à la défense des droits des avocats ainsi qu’au respect et à l’accomplissement de leurs devoirs.</li></ul>
+            <p>La composition actuelle du Conseil est présentée séparément ci-dessous.</p>
+            HTML);
+
         /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
@@ -242,8 +263,10 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
             ['Présentation du Barreau', 'presentation', PageStatus::PUBLISHED, false, PageGroup::BAR, 10],
             ['Historique du Barreau', 'historique', PageStatus::PUBLISHED, true, PageGroup::BAR, 20],
-            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 30],
-            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 40],
+            ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
+            ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
+            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 50],
+            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 60],
         ];
         $now = new DateTimeImmutable();
 
@@ -256,6 +279,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             $content = match ($slug) {
                 'presentation' => $presentationContent,
                 'historique' => $historyContent,
+                'le-batonnier' => $batonnierContent,
+                'conseil-de-l-ordre' => $councilContent,
                 'fonds-de-solidarite', 'carpa' => '',
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
@@ -272,6 +297,62 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setSortOrder($sortOrder);
             $manager->persist($page);
             $this->addReference('demo_page_' . $slug, $page);
+        }
+    }
+
+    private function loadInstitutionalPeople(ObjectManager $manager): void
+    {
+        $florencePortraitId = $this->mediaId('demo_media_institution_portrait_florence_loan_messan');
+        $batonnierName = 'Me Florence LOAN épse MESSAN';
+        $mandate = $manager->getRepository(BatonnierMandateEntity::class)->findOneBy(['fullName' => $batonnierName]);
+        if (!$mandate instanceof BatonnierMandateEntity) {
+            $mandate = new BatonnierMandateEntity();
+        }
+        $mandate->setFullName($batonnierName)
+            ->setPortraitMediaId($florencePortraitId)
+            ->setMandateStartedAt(new DateTimeImmutable('2024-10-02'))
+            ->setMandateEndedAt(null)
+            ->setSummary('Première femme à diriger l’Ordre des Avocats de Côte d’Ivoire. Mandat annoncé pour 2024–2027.');
+        $manager->persist($mandate);
+
+        /** @var list<array{string, string, string}> $members */
+        $members = [
+            ['Maître Florence LOAN épse MESSAN', 'Bâtonnier en exercice', 'florence_loan_messan'],
+            ['Maître Arouna OUATTARA', 'Secrétaire de l’Ordre', 'arouna_ouattara'],
+            ['Bâtonnier Abbé YAO', 'Ancien Bâtonnier 2015-2018', 'abbe_yao'],
+            ['Maître Guizot Bernard TAKORE', 'Membre du Conseil de l’Ordre', 'guizot_bernard_takore'],
+            ['Maître A. Geneviève SISSOKO épse DIALLO', 'Membre du Conseil de l’Ordre', 'genevieve_sissoko_diallo'],
+            ['Maître Marie Françoise N’CHO-KATCHIRE', 'Membre du Conseil de l’Ordre', 'marie_francoise_ncho_katchire'],
+            ['Maître Souhalio Lassoman DIOMANDE', 'Membre du Conseil de l’Ordre', 'souhalio_lassoman_diomande'],
+            ['Maître Allard Marie-Ernest SENI', 'Membre du Conseil de l’Ordre', 'allard_marie_ernest_seni'],
+            ['Maître Bintou Edith ZAN épse LAGO', 'Membre du Conseil de l’Ordre', 'bintou_edith_zan_lago'],
+            ['Maître Josiane Josette KOFFI épse BREDOU', 'Membre du Conseil de l’Ordre', 'josiane_josette_koffi_bredou'],
+            ['Maître Aïssata DIABI', 'Membre du Conseil de l’Ordre', 'aissata_diabi'],
+            ['Maître Nicolas Tompieu MESSAN', 'Membre du Conseil de l’Ordre', 'nicolas_tompieu_messan'],
+            ['Maître N’Dry Claver KOUADIO', 'Membre du Conseil de l’Ordre', 'ndry_claver_kouadio'],
+            ['Maître Binta BAKAYOKO-MELSEAUX', 'Membre du Conseil de l’Ordre', 'binta_bakayoko_melseaux'],
+            ['Maître Yao Philippe GNIMAVO', 'Membre du Conseil de l’Ordre', 'yao_philippe_gnimavo'],
+            ['Maître Roseline KOUAME épse KODJO-AKA', 'Membre du Conseil de l’Ordre', 'roseline_kouame_kodjo_aka'],
+            ['Maître Maryse BOHOUSSOU', 'Membre du Conseil de l’Ordre', 'maryse_bohoussou'],
+            ['Maître Brice Tézaï MAHAN', 'Membre du Conseil de l’Ordre', 'brice_tezai_mahan'],
+            ['Maître Amadou CAMARA', 'Membre du Conseil de l’Ordre', 'amadou_camara'],
+        ];
+
+        foreach ($members as $index => [$fullName, $function, $portraitReference]) {
+            $member = $manager->getRepository(CouncilMemberEntity::class)->findOneBy(['fullName' => $fullName]);
+            if (!$member instanceof CouncilMemberEntity) {
+                $member = new CouncilMemberEntity();
+            }
+            $portraitMediaId = $portraitReference === 'florence_loan_messan'
+                ? $florencePortraitId
+                : $this->mediaId('demo_media_institution_portrait_' . $portraitReference);
+            $member->setFullName($fullName)
+                ->setFunction($function)
+                ->setPortraitMediaId($portraitMediaId)
+                ->setSortOrder(($index + 1) * 10)
+                ->setMandateStartedAt(null)
+                ->setMandateEndedAt(null);
+            $manager->persist($member);
         }
     }
 

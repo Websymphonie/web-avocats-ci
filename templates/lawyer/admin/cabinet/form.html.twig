@@ -15,7 +15,7 @@
                     <p class="mt-2 max-w-3xl text-sm text-muted-foreground">Renseignez les informations qui seront proposées aux avocats lors du rattachement de leur profil.</p>
                 </div>
 
-                {{ form_start(form, {attr: {class: 'mt-7 space-y-8', 'data-loading-label': 'Enregistrement…'}}) }}
+                {{ form_start(form, {attr: {class: 'mt-7 space-y-8', 'data-loading-label': 'Enregistrement…', novalidate: 'novalidate'}}) }}
                     {{ form_errors(form) }}
                     <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
                         {% for field in [form.name, form.registrationNumber, form.address, form.city, form.country, form.phone, form.email, form.websiteUrl, form.status] %}
@@ -25,6 +25,16 @@
                                 <div class="text-sm text-destructive">{{ form_errors(field) }}</div>
                             </div>
                         {% endfor %}
+                    </div>
+                    <div class="rounded-xl border border-border bg-muted/30 p-4">
+                        <div class="flex items-start gap-3">
+                            {{ form_widget(form.directoryVisible, {attr: {class: 'mt-1 size-4 rounded border-input text-primary focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                            <div>
+                                {{ form_label(form.directoryVisible, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                                <p class="mt-1 text-sm text-muted-foreground">L’annuaire public ne présentera ce cabinet que si son statut est Actif.</p>
+                                <div class="text-sm text-destructive">{{ form_errors(form.directoryVisible) }}</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="space-y-2">
                         {{ form_label(form.description, null, {label_attr: {class: 'text-sm font-medium'}}) }}

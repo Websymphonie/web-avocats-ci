@@ -20,4 +20,14 @@ final class LawyerProfileRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['user' => $user]);
     }
+
+    public function countPortraitMediaUsage(int $mediaId): int
+    {
+        return (int) $this->createQueryBuilder('lawyerProfile')
+            ->select('COUNT(lawyerProfile.id)')
+            ->where('lawyerProfile.portraitMediaId = :mediaId')
+            ->setParameter('mediaId', $mediaId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

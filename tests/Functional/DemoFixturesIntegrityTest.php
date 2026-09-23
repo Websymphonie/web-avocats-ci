@@ -12,6 +12,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currencies\Currencies;
+use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
@@ -34,6 +35,13 @@ use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Live
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingCategory\TrainingCategoryEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingTag\TrainingTagEntity;
+use Websymphonie\LawyerContext\Application\Service\LawyerDirectoryPublicationPolicy;
+use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\Cabinet\CabinetEntity;
+use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\LawyerProfile\LawyerProfileEntity;
+use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
+use Websymphonie\MediaContext\Application\Service\MediaUsageCheckerInterface;
+use Websymphonie\MediaContext\Domain\Exception\MediaInUseException;
+use Websymphonie\MediaContext\Domain\Repository\MediaRepositoryInterface;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Fixtures\DemoFundSolidarityResourcesFixtures;
@@ -111,13 +119,53 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(7, $entityManager->getRepository(TrainingCategoryEntity::class)->count([]));
         self::assertSame(8, $entityManager->getRepository(TrainingTagEntity::class)->count([]));
         self::assertSame(14, $entityManager->getRepository(TrainingEntity::class)->count([]));
-        self::assertSame(24, $entityManager->getRepository(MediaEntity::class)->count([]));
+        self::assertSame(25, $entityManager->getRepository(MediaEntity::class)->count([]));
+        self::assertSame(2, $entityManager->getRepository(CabinetEntity::class)->count([]));
+        self::assertSame(4, $entityManager->getRepository(LawyerProfileEntity::class)->count([]));
         self::assertSame(1, $entityManager->getRepository(BatonnierMandateEntity::class)->count([]));
         self::assertSame(19, $entityManager->getRepository(CouncilMemberEntity::class)->count([]));
         self::assertSame(6, $entityManager->getRepository(LiveTrainingDetailsEntity::class)->count([]));
         self::assertSame(21, $entityManager->getRepository(CourseModuleEntity::class)->count([]));
         self::assertSame(57, $entityManager->getRepository(LessonEntity::class)->count([]));
         self::assertSame(5, $entityManager->getRepository(TrainingOfferEntity::class)->count([]));
+
+        $directoryPolicy = new LawyerDirectoryPublicationPolicy();
+        $publicCabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['registrationNumber' => 'DEMO-PUBLIC']);
+        $privateCabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['registrationNumber' => 'DEMO-PRIVATE']);
+        self::assertInstanceOf(CabinetEntity::class, $publicCabinet);
+        self::assertInstanceOf(CabinetEntity::class, $privateCabinet);
+        self::assertTrue($directoryPolicy->isCabinetEligible($publicCabinet->getStatus(), $publicCabinet->isDirectoryVisible()));
+        self::assertFalse($directoryPolicy->isCabinetEligible($privateCabinet->getStatus(), $privateCabinet->isDirectoryVisible()));
+        $publicProfile = $this->directoryProfile($entityManager, 'directory-public-cabinet@example.test');
+        $independentProfile = $this->directoryProfile($entityManager, 'directory-public-independent@example.test');
+        $privateProfile = $this->directoryProfile($entityManager, 'directory-private@example.test');
+        $suspendedProfile = $this->directoryProfile($entityManager, 'directory-suspended@example.test');
+        self::assertNotNull($publicProfile->getUuidAsString());
+        self::assertNotSame($publicProfile->getUser()->getUuidAsString(), $publicProfile->getUuidAsString());
+        $profileUuids = array_map(static fn (LawyerProfileEntity $profile): ?string => $profile->getUuidAsString(), $entityManager->getRepository(LawyerProfileEntity::class)->findAll());
+        self::assertCount(4, array_unique($profileUuids));
+        self::assertTrue($directoryPolicy->isLawyerEligible($publicProfile->isDirectoryVisible(), $publicProfile->getUser()->getEnabled() === true, $publicProfile->getUser()->getRoles(), $publicProfile->getProfessionalStatus()));
+        self::assertTrue($directoryPolicy->isLawyerEligible($independentProfile->isDirectoryVisible(), $independentProfile->getUser()->getEnabled() === true, $independentProfile->getUser()->getRoles(), $independentProfile->getProfessionalStatus()));
+        self::assertFalse($directoryPolicy->isLawyerEligible($privateProfile->isDirectoryVisible(), $privateProfile->getUser()->getEnabled() === true, $privateProfile->getUser()->getRoles(), $privateProfile->getProfessionalStatus()));
+        self::assertFalse($directoryPolicy->isLawyerEligible($suspendedProfile->isDirectoryVisible(), $suspendedProfile->getUser()->getEnabled() === true, $suspendedProfile->getUser()->getRoles(), $suspendedProfile->getProfessionalStatus()));
+        self::assertNull($independentProfile->getCabinet());
+        self::assertSame('directory-cabinet@example.test', $publicProfile->getProfessionalEmail());
+        self::assertNotNull($publicProfile->getPortraitMediaId());
+        $portraitId = $publicProfile->getPortraitMediaId();
+        self::assertNotNull($portraitId);
+        $mediaUsage = static::getContainer()->get(MediaUsageCheckerInterface::class);
+        self::assertInstanceOf(MediaUsageCheckerInterface::class, $mediaUsage);
+        self::assertTrue($mediaUsage->isUsed($portraitId));
+        $mediaRepository = static::getContainer()->get(MediaRepositoryInterface::class);
+        $mediaUpload = static::getContainer()->get(MediaUploadServiceInterface::class);
+        self::assertInstanceOf(MediaRepositoryInterface::class, $mediaRepository);
+        self::assertInstanceOf(MediaUploadServiceInterface::class, $mediaUpload);
+        try {
+            $mediaUpload->delete($mediaRepository->getById($portraitId));
+            self::fail('Un portrait référencé ne doit pas pouvoir être supprimé.');
+        } catch (MediaInUseException) {
+            self::assertTrue($mediaUsage->isUsed($portraitId));
+        }
 
         self::assertSame(16, $entityManager->getRepository(NewsEntity::class)->count(['status' => NewsStatus::PUBLISHED]));
         self::assertSame(10, $entityManager->getRepository(EventEntity::class)->count(['status' => EventStatus::PUBLISHED]));
@@ -227,6 +275,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/content/covers');
         self::assertDirectoryExists(self::$storageDirectory . '/public/training/covers');
         self::assertDirectoryExists(self::$storageDirectory . '/public/institution/portraits');
+        self::assertDirectoryExists(self::$storageDirectory . '/public/institution/lawyers');
         self::assertFileExists(self::$storageDirectory . '/public/content/covers/' . $entityManager->getRepository(MediaEntity::class)->find($history->getCoverMediaId())->getStorageName());
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
         self::assertCount(1, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
@@ -280,5 +329,15 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(4, $entityManager->getRepository(DocumentPublicationEntity::class)->count([]));
         self::assertSame($storedFileCount, $entityManager->getRepository(StoredFileEntity::class)->count([]));
         self::assertFileExists(dirname(__DIR__, 2) . '/src/ContentContext/Infrastructure/Persistence/Doctrine/Fixtures/Files/Carpa/reglement-interieur-barreau-cote-ivoire.pdf');
+    }
+
+    private function directoryProfile(EntityManagerInterface $entityManager, string $email): LawyerProfileEntity
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        self::assertInstanceOf(User::class, $user);
+        $profile = $entityManager->getRepository(LawyerProfileEntity::class)->findOneBy(['user' => $user]);
+        self::assertInstanceOf(LawyerProfileEntity::class, $profile);
+
+        return $profile;
     }
 }

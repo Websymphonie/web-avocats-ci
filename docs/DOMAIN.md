@@ -575,3 +575,27 @@ tags génériques Content : seules les publications `PUBLISHED`, `LAWYER` portan
 le slug de tag configuré `content.fund_solidarity_tag_slug` (`fonds-de-solidarite`
 par défaut) y apparaissent. Cette classification éditoriale ne change ni les
 règles d’accès LAWYER ni le contrôle serveur au téléchargement.
+
+## DIR-001 — Fondation de l’annuaire Avocats & Cabinets
+
+`LawyerProfile` possède son propre UUID public, distinct de l’identifiant
+séquentiel et de l’UUID `User`. La publication reste opt-in (`directoryVisible`
+false par défaut). Les coordonnées publiques sont `professionalEmail` et
+`professionalPhone` ; l’email du compte et les coordonnées personnelles ne sont
+pas des sources de données publiques. Le portrait est une référence scalaire
+nullable `portraitMediaId` vers `MediaContext`, stockée dans
+`institution/lawyers` et protégée contre la suppression tant qu’elle est
+référencée.
+
+La règle de publication V1 exige simultanément le consentement de visibilité,
+un compte activé portant explicitement `ROLE_AVOCAT` et un statut professionnel
+différent de `SUSPENDED`. C’est un critère applicatif de publication, pas une
+preuve du statut ordinal officiel. `ProfessionalStatus` reste inchangé. Un
+Cabinet est publiable uniquement si `directoryVisible` est vrai et son statut
+est `ACTIVE`. La visibilité du Cabinet ne rend jamais ses avocats publics ;
+chaque fiche doit satisfaire sa règle propre. Les profils sans Cabinet restent
+valides.
+
+DIR-001 ne crée encore ni route de listing/détail publique ni import réel de
+l’ancien annuaire. Les fixtures ajoutées sont synthétiques et servent aux
+tests de visibilité, d’éligibilité et de protection des portraits.

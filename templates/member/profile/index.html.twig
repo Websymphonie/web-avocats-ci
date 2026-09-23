@@ -72,12 +72,34 @@
                     </span>
                     <div><h2 class="text-lg font-semibold text-card-foreground">Profil professionnel</h2><p class="mt-1 text-sm text-muted-foreground">Présentez votre activité et rattachez votre profil à un cabinet.</p></div>
                 </div>
-                {{ form_start(lawyerProfileForm, {attr: {class: 'mt-7 space-y-6'}}) }}
+                {{ form_start(lawyerProfileForm, {attr: {class: 'mt-7 space-y-6', novalidate: 'novalidate'}}) }}
                     <div class="grid gap-5 md:grid-cols-2">
                         <div class="space-y-2">{{ form_label(lawyerProfileForm.cabinet, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.cabinet, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.cabinet) }}</div>
                         <div class="space-y-2">{{ form_label(lawyerProfileForm.barNumber, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.barNumber, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.barNumber) }}</div>
                         <div class="space-y-2">{{ form_label(lawyerProfileForm.professionalStatus, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.professionalStatus, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.professionalStatus) }}</div>
                         <div class="space-y-2">{{ form_label(lawyerProfileForm.specializationSummary, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.specializationSummary, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.specializationSummary) }}</div>
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.professionalEmail, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.professionalEmail, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30', autocomplete: 'work email'}}) }}{{ form_errors(lawyerProfileForm.professionalEmail) }}</div>
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.professionalPhone, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.professionalPhone, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30', autocomplete: 'work tel'}}) }}{{ form_errors(lawyerProfileForm.professionalPhone) }}</div>
+                    </div>
+                    <div class="rounded-xl border border-border bg-muted/30 p-4">
+                        <div class="flex items-start gap-3">
+                            {{ form_widget(lawyerProfileForm.directoryVisible, {attr: {class: 'mt-1 size-4 rounded border-input text-primary focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                            <div>
+                                {{ form_label(lawyerProfileForm.directoryVisible, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                                <p class="mt-1 text-sm text-muted-foreground">Seules vos coordonnées professionnelles seront destinées à l’annuaire. L’adresse email de votre compte reste privée.</p>
+                                <div class="text-sm text-destructive">{{ form_errors(lawyerProfileForm.directoryVisible) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        {{ form_label(lawyerProfileForm.portrait, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                        {% if portraitUrl %}<img src="{{ portraitUrl }}" alt="Portrait professionnel actuel" class="size-24 rounded-xl border border-border object-cover">{% endif %}
+                        {{ form_widget(lawyerProfileForm.portrait, {attr: {class: 'block w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground file:mr-3 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                        <p class="text-xs text-muted-foreground">JPEG, PNG ou WebP · 5 Mio maximum.</p>
+                        <div class="text-sm text-destructive">{{ form_errors(lawyerProfileForm.portrait) }}</div>
+                        {% if portraitUrl %}
+                            <div class="flex items-center gap-2">{{ form_widget(lawyerProfileForm.removePortrait, {attr: {class: 'size-4 rounded border-input text-primary focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_label(lawyerProfileForm.removePortrait, null, {label_attr: {class: 'text-sm text-muted-foreground'}}) }}</div>
+                        {% endif %}
                     </div>
                     <div class="space-y-2">
                         {{ form_label(lawyerProfileForm.bio, null, {label_attr: {class: 'text-sm font-medium'}}) }}

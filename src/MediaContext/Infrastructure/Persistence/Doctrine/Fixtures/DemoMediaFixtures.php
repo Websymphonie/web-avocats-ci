@@ -50,6 +50,7 @@ final class DemoMediaFixtures extends Fixture implements FixtureGroupInterface
             'institution_portrait_maryse_bohoussou' => dirname(__DIR__, 6) . '/public/assets/images/institution/portraits/maryse-bohoussou.png',
             'institution_portrait_brice_tezai_mahan' => dirname(__DIR__, 6) . '/public/assets/images/institution/portraits/brice-tezai-mahan.png',
             'institution_portrait_amadou_camara' => dirname(__DIR__, 6) . '/public/assets/images/institution/portraits/amadou-camara.png',
+            'institution_lawyer_directory_demo' => dirname(__DIR__, 6) . '/public/assets/avatar.png',
         ];
 
         foreach ($sources as $reference => $source) {
@@ -59,7 +60,7 @@ final class DemoMediaFixtures extends Fixture implements FixtureGroupInterface
 
             $storagePrefix = str_starts_with($reference, 'learning')
                 ? 'training/covers'
-                : (str_starts_with($reference, 'institution_portrait_') ? 'institution/portraits' : 'content/covers');
+                : (str_starts_with($reference, 'institution_portrait_') ? 'institution/portraits' : (str_starts_with($reference, 'institution_lawyer_') ? 'institution/lawyers' : 'content/covers'));
             $media = $this->uploadCopy($source, $reference, $storagePrefix);
             $entity = $manager->getRepository(MediaEntity::class)->find($media->id);
             if (!$entity instanceof MediaEntity) {

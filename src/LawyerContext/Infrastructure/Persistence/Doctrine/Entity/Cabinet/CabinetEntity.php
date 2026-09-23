@@ -11,6 +11,7 @@ use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\UuidT
 
 #[ORM\Entity(repositoryClass: CabinetRepository::class)]
 #[ORM\Table(name: 'cabinet')]
+#[ORM\Index(name: 'idx_cabinet_directory_visible', columns: ['directory_visible'])]
 #[ORM\HasLifecycleCallbacks]
 class CabinetEntity
 {
@@ -38,6 +39,8 @@ class CabinetEntity
     private ?string $description = null;
     #[ORM\Column(length: 20, options: ['default' => 'ACTIVE'])]
     private string $status = 'ACTIVE';
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $directoryVisible = false;
 
     public function getName(): string { return $this->name; }
     public function setName(string $value): self { $this->name = trim($value); return $this; }
@@ -60,6 +63,8 @@ class CabinetEntity
     public function getStatus(): string { return $this->status; }
     public function setStatus(string $value): self { $this->status = $value; return $this; }
     public function isActive(): bool { return $this->status === 'ACTIVE'; }
+    public function isDirectoryVisible(): bool { return $this->directoryVisible; }
+    public function setDirectoryVisible(bool $value): self { $this->directoryVisible = $value; return $this; }
     public function __toString(): string { return $this->name; }
 }
                                  

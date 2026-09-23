@@ -952,3 +952,22 @@ et le vérificateur composite Media bloque toute suppression d’un média encor
 référencé par un membre. Le Backoffice est limité à la liste, au détail, à la
 création et à la modification ; aucune suppression n’est exposée dans cette
 première version.
+
+## 17. Fondation annuaire — DIR-001
+
+`LawyerProfile` conserve une identité publique propre (`uuid` unique, attribué
+automatiquement et rétro-rempli pour les profils existants). Les propriétés
+`directoryVisible`, `professionalEmail`, `professionalPhone` et
+`portraitMediaId` complètent le profil sans relation Doctrine vers `Media`.
+L’upload réutilise `MediaUploadServiceInterface` et le stockage public persistant
+configuré par `APP_STORAGE_DIR`, sous `institution/lawyers`; validation MIME et
+image décodable, nom de stockage généré et suppression protégée restent
+responsabilités de `MediaContext`.
+
+Le formulaire professionnel existant de l’espace avocat gère ses données de
+profil ; le formulaire Cabinet Backoffice existant expose la visibilité du
+Cabinet. Aucun nouveau droit ou route publique n’est introduit.
+`LawyerDirectoryPublicationPolicy` centralise les critères applicatifs V1 pour
+les futures queries ; il ne certifie pas une inscription ordinale. Les fixtures
+`demo` ajoutent quelques profils et cabinets synthétiques et une image de
+démonstration, sans reprendre de données authentiques de l’ancien annuaire.

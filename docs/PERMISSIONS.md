@@ -456,6 +456,14 @@ pas accordées à `ROLE_AVOCAT` ni à `ROLE_USER`. Les contrôleurs utilisent
 également `HasGroupAccess(RoleGroupEnum::COUNCIL_MEMBERS)`. Aucune permission
 de suppression n’est exposée afin de préserver l’historique institutionnel.
 
+### Fondation annuaire Avocats & Cabinets — DIR-001
+
+Aucune permission d’annuaire n’est ajoutée. L’opt-in du profil est modifiable
+dans le formulaire professionnel déjà accessible à l’avocat connecté ; les
+coordonnées de compte restent distinctes. Le champ de visibilité Cabinet reste
+dans le formulaire Backoffice existant et est protégé par ses contrôles Cabinet
+actuels. Ces indicateurs ne créent pas de route publique dans DIR-001.
+
 ### Messages de contact — BKO-CONTACT-001
 
 `CONTACT_MESSAGE_LIST`, `CONTACT_MESSAGE_VIEW` et `CONTACT_MESSAGE_RETRY` sont accordées par défaut à

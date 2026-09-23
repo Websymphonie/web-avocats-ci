@@ -7,6 +7,7 @@ namespace Websymphonie\IdentityContext\Presenter\Controller\Member;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,9 @@ use Websymphonie\IdentityContext\Presenter\Form\User\ProfileFormType;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\LawyerProfile\LawyerProfileEntity;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Repository\LawyerProfile\LawyerProfileRepository;
 use Websymphonie\LawyerContext\Presenter\Form\LawyerProfileFormType;
+use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
+use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
+use Websymphonie\MediaContext\Domain\Repository\MediaRepositoryInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -35,6 +39,9 @@ final class MemberProfileController extends AbstractController
         private readonly LawyerProfileRepository $lawyerProfiles,
         private readonly EntityManagerInterface $entityManager,
         private readonly RichTextSanitizerInterface $richTextSanitizer,
+        private readonly MediaUploadServiceInterface $mediaUpload,
+        private readonly MediaRepositoryInterface $mediaRepository,
+        private readonly MediaPublicUrlResolverInterface $mediaUrls,
     )
     {
     }
@@ -66,8 +73,45 @@ final class MemberProfileController extends AbstractController
         $lawyerProfileForm?->handleRequest($request);
 
         if ($lawyerProfileForm?->isSubmitted() && $lawyerProfileForm->isValid()) {
-            $lawyerProfile?->setBio($this->richTextSanitizer->sanitize($lawyerProfile->getBio() ?? ''));
-            $this->entityManager->flush();
+            $oldPortraitMediaId = $lawyerProfile?->getPortraitMediaId();
+            $portrait = $lawyerProfileForm->get('portrait')->getData();
+            $removePortrait = $lawyerProfileForm->get('removePortrait')->getData() === true;
+            $uploadedMedia = null;
+
+            try {
+                if ($portrait instanceof UploadedFile) {
+                    $uploadedMedia = $this->mediaUpload->upload($portrait, 'institution/lawyers');
+                    $lawyerProfile?->setPortraitMediaId($uploadedMedia->id);
+                } elseif ($removePortrait) {
+                    $lawyerProfile?->setPortraitMediaId(null);
+                }
+
+                $lawyerProfile?->setBio($this->richTextSanitizer->sanitize($lawyerProfile->getBio() ?? ''));
+                $this->entityManager->flush();
+            } catch (Throwable $exception) {
+                if ($uploadedMedia !== null) {
+                    try { $this->mediaUpload->delete($uploadedMedia); } catch (Throwable) {}
+                }
+                if ($exception instanceof UserFacingError) {
+                    $this->flash()->errorFromException($exception);
+                    $portraitUrls = $oldPortraitMediaId !== null ? $this->mediaUrls->resolveMany([$oldPortraitMediaId]) : [];
+                    return $this->render('member/profile/index.html.twig', [
+                        'title' => 'Mon profil',
+                        'command' => $command,
+                        'form' => $form->createView(),
+                        'lawyerProfileForm' => $lawyerProfileForm->createView(),
+                        'isLawyer' => $isLawyer,
+                        'portraitUrl' => $portraitUrls[$oldPortraitMediaId] ?? null,
+                    ]);
+                }
+
+                throw $exception;
+            }
+
+            if ($oldPortraitMediaId !== null && ($uploadedMedia !== null || $removePortrait)) {
+                try { $this->mediaUpload->delete($this->mediaRepository->getById($oldPortraitMediaId)); } catch (Throwable) {}
+            }
+
             $this->flash()->success('Profil professionnel mis à jour avec succès.');
             return $this->redirectToRoute('member_profile');
         }
@@ -87,12 +131,16 @@ final class MemberProfileController extends AbstractController
             ));
         }
 
+        $portraitMediaId = $lawyerProfile?->getPortraitMediaId();
+        $portraitUrls = $portraitMediaId !== null ? $this->mediaUrls->resolveMany([$portraitMediaId]) : [];
+
         return $this->render('member/profile/index.html.twig', [
             'title' => 'Mon profil',
             'command' => $command,
             'form' => $form->createView(),
             'lawyerProfileForm' => $lawyerProfileForm?->createView(),
             'isLawyer' => $isLawyer,
+            'portraitUrl' => $portraitMediaId !== null ? ($portraitUrls[$portraitMediaId] ?? null) : null,
         ]);
     }
 }

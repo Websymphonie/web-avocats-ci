@@ -201,6 +201,7 @@ CNT-BAR-004 — Fonds de Solidarité & ressources avocat    IMPLEMENTED — Page
 CNT-BAR-005 — CARPA & ressources validées                IMPLEMENTED — Page BAR publiée à l’ordre 60, règlement général du Barreau distinct en PUBLIC ; ressources CARPA dédiées non retrouvées exclues
 FO-FUND-002 Surface publique du Fonds de Solidarité      DONE — Page BAR publiée, contenu CARE et CTA vers l’espace avocat
 BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste paginée, statuts, détail immuable et retry manuel audité
+DIR-001 Fondation de publication de l’annuaire Avocats/Cabinets DONE — données, opt-in, critères V1 et fixtures synthétiques ; aucun listing public ni import réel
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés

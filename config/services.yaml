@@ -157,6 +157,8 @@ services:
 
   Websymphonie\LearningContext\Application\Service\TrainingMediaUsageChecker:
     tags: [ 'app.media_usage_checker' ]
+  Websymphonie\LawyerContext\Application\Service\LawyerProfileMediaUsageChecker:
+    tags: [ 'app.media_usage_checker' ]
 
   Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\MediaPublicUrlResolver

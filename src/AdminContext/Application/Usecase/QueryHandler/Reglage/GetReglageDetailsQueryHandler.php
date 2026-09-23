@@ -5,6 +5,8 @@ namespace Websymphonie\AdminContext\Application\Usecase\QueryHandler\Reglage;
 
 use Websymphonie\AdminContext\Application\Usecase\Query\Reglage\GetReglageDetailsQuery;
 use Websymphonie\AdminContext\Domain\Repository\Reglage\ReglageModelRepository;
+use Websymphonie\AdminContext\Domain\Model\Reglage\ReglageModel;
+use Websymphonie\AdminContext\Application\Service\SystemBootstrapData;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Factory\ReglageFactory;
 use Websymphonie\AdminContext\Presenter\ViewModel\Reglage\ReglageDetailViewModel;
 use Websymphonie\SharedContext\Application\Service\Messaging\QueryHandler;
@@ -27,7 +29,15 @@ final readonly class GetReglageDetailsQueryHandler implements QueryHandler
         $tags = [CacheEnum::CACHE_LIST_REGLAGE->value];
 
         return $this->cacheService->getCache($cacheKey, function () use ($query) {
-            $reglageModel = ReglageFactory::fromEntity($this->repository->getValue($query->name));
+            $entity = $this->repository->getValue($query->name);
+            $reglageModel = $entity === null
+                ? new ReglageModel(
+                    name: $query->name,
+                    label: $query->name,
+                    value: SystemBootstrapData::fallbackSettingValue($query->name),
+                    type: 'text',
+                )
+                : ReglageFactory::fromEntity($entity);
             return new ReglageDetailViewModel($reglageModel);
         }, $tags);
     }

@@ -56,6 +56,21 @@ class ImagesRepository extends ServiceEntityRepository implements ImageModelRepo
             ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult();
+
+        if (!$image instanceof Images) {
+            $defaultParameter = match ($name) {
+                'app_logo' => 'app.logo_default',
+                'app_favicon' => 'app.favicon',
+                default => 'app.image_default',
+            };
+
+            return new ImageModel(
+                name: $name,
+                label: $name,
+                url: $this->helper->getDefaultImagePath($defaultParameter),
+            );
+        }
+
         return ImageFactory::fromEntity($image, $this->helper);
     }
 

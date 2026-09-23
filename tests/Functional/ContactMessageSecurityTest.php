@@ -30,9 +30,14 @@ final class ContactMessageSecurityTest extends WebTestCase
 
     public static function setUpBeforeClass(): void
     {
-        putenv('DATABASE_URL=sqlite:///:memory:');
-        $_ENV['DATABASE_URL'] = 'sqlite:///:memory:';
-        $_SERVER['DATABASE_URL'] = 'sqlite:///:memory:';
+        foreach ([
+            'DATABASE_URL' => 'sqlite:///:memory:',
+            'MAILER_DSN' => 'null://null',
+        ] as $name => $value) {
+            putenv($name . '=' . $value);
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
         parent::setUpBeforeClass();
     }
 
@@ -141,6 +146,80 @@ final class ContactMessageSecurityTest extends WebTestCase
         $client->request('GET', '/admin/contact/messages', server: ['HTTPS' => 'on']);
 
         self::assertResponseRedirects('/auth/login');
+    }
+
+    public function testAnonymousVisitorCanOpenPublicContactForm(): void
+    {
+        $client = $this->clientWithSchema();
+        $client->request('GET', '/contact', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorExists('form');
+    }
+
+    public function testAnonymousContactPostUsesCsrfAndHoneypotWithoutExternalMail(): void
+    {
+        $client = $this->clientWithSchema();
+        $client->disableReboot();
+        $crawler = $client->request('GET', '/contact', server: ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.10']);
+        $form = $crawler->selectButton('Envoyer le message')->form([
+            'contact_message[fullName]' => 'Visiteur de test',
+            'contact_message[email]' => 'visiteur@example.test',
+            'contact_message[phone]' => '',
+            'contact_message[subject]' => 'Test public isolé',
+            'contact_message[message]' => 'Message envoyé sur un transport de test.',
+            'contact_message[consent]' => '1',
+            'contact_message[antispam][phone]' => '',
+            'contact_message[antispam][faxNumber]' => '',
+        ]);
+        $client->submit($form, [], ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.10']);
+
+        self::assertResponseRedirects('/contact');
+        $message = static::getContainer()->get('doctrine')->getRepository(ContactMessageEntity::class)->findOneBy([
+            'subject' => 'Test public isolé',
+        ]);
+        self::assertInstanceOf(ContactMessageEntity::class, $message);
+        self::assertSame(ContactMessageDeliveryStatus::SENT, $message->getDeliveryStatus());
+
+        $crawler = $client->request('GET', '/contact', server: ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.11']);
+        $spamForm = $crawler->selectButton('Envoyer le message')->form([
+            'contact_message[fullName]' => 'Robot de test',
+            'contact_message[email]' => 'robot@example.test',
+            'contact_message[subject]' => 'Soumission honeypot',
+            'contact_message[message]' => 'Ne doit pas être persisté.',
+            'contact_message[consent]' => '1',
+            'contact_message[antispam][phone]' => 'robot',
+            'contact_message[antispam][faxNumber]' => '',
+        ]);
+        $client->submit($spamForm, [], ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.11']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        self::assertNull(static::getContainer()->get('doctrine')->getRepository(ContactMessageEntity::class)->findOneBy([
+            'subject' => 'Soumission honeypot',
+        ]));
+    }
+
+    public function testAnonymousContactPostWithInvalidCsrfTokenIsNotPersisted(): void
+    {
+        $client = $this->clientWithSchema();
+        $client->disableReboot();
+        $crawler = $client->request('GET', '/contact', server: ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.12']);
+        $form = $crawler->selectButton('Envoyer le message')->form([
+            'contact_message[fullName]' => 'Visiteur sans CSRF valide',
+            'contact_message[email]' => 'csrf@example.test',
+            'contact_message[subject]' => 'CSRF invalide',
+            'contact_message[message]' => 'Ce message ne doit pas être enregistré.',
+            'contact_message[consent]' => '1',
+            'contact_message[antispam][phone]' => '',
+            'contact_message[antispam][faxNumber]' => '',
+            'contact_message[_token]' => 'invalid-token',
+        ]);
+        $client->submit($form, [], ['HTTPS' => 'on', 'REMOTE_ADDR' => '192.0.2.12']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertNull(static::getContainer()->get('doctrine')->getRepository(ContactMessageEntity::class)->findOneBy([
+            'subject' => 'CSRF invalide',
+        ]));
     }
 
     /** @return iterable<string, array{string}> */

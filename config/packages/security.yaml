@@ -60,6 +60,7 @@ security:
     - { path: ^/auth/password-reset, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/auth/user-email-verify$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/auth/account/activate, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/contact$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/(actualites|evenements|videos|galeries|formations|lives|avocats|cabinets)(/|$), roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/le-barreau$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/le-barreau/[a-z0-9]+(?:-[a-z0-9]+)*$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }

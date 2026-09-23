@@ -23,7 +23,7 @@ class CouncilMemberEntity
     #[ORM\Column(length: 255)]
     private string $fullName = '';
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'member_function', length: 255)]
     private string $function = '';
 
     #[ORM\Column(type: 'integer', nullable: true)]

@@ -12,8 +12,9 @@ use Websymphonie\ContactContext\Application\Service\ContactThrottleInterface;
 use Websymphonie\ContactContext\Application\Usecase\Command\SubmitContactMessageCommand;
 use Websymphonie\ContactContext\Domain\Model\ContactMessage;
 use Websymphonie\ContactContext\Domain\Repository\ContactMessageRepositoryInterface;
+use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 
-final readonly class SubmitContactMessageHandler
+final readonly class SubmitContactMessageHandler implements CommandHandler
 {
     public function __construct(
         private ContactMessageRepositoryInterface $repository,

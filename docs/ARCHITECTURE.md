@@ -839,6 +839,31 @@ aucun document métier ni image persistante. Les sauvegardes doivent inclure
 `$APP_STORAGE_DIR` avec la base de données, et toute restauration doit
 reconstituer les deux sous-répertoires avant de rendre l’application active.
 
+### Bootstrap initial Frontoffice V1 — REL-V1-003
+
+Sur une nouvelle installation, configurer d’abord `DATABASE_URL` et
+`APP_STORAGE_DIR` vers des ressources propres à l’installation, puis exécuter
+les étapes suivantes dans cet ordre. Aucune fixture `demo` n’est nécessaire :
+
+```bash
+php bin/console doctrine:migrations:migrate --no-interaction
+./scripts/provision-public-storage.sh
+php bin/console app:data:bootstrap-system
+php bin/console app:data:bootstrap-institutional-content
+```
+
+Les deux commandes `app:data:bootstrap-*` sont idempotentes. La première
+crée seulement les réglages et références d’assets système absents ; les assets
+doivent être présents sous `public/assets`. La seconde crée ou met à jour les
+pages institutionnelles canoniques et la composition structurée du Barreau,
+sans comptes ni contenu synthétique. Le contenu « Devenir avocat » reste en
+brouillon. Pour l’annuaire historique uniquement, les commandes explicites
+`app:data:import-legacy-directory --write` puis
+`app:data:import-legacy-directory-portraits --write` sont optionnelles et
+doivent être exécutées après validation de la base cible. Elles ne sont pas
+appelées par les bootstraps et ne doivent jamais viser une base de production
+sans décision et procédure d’import dédiées.
+
 ## 14. Pages statiques — CNT-006
 
 `Page` appartient à `ContentContext` et est persistée dans la table `page`.

@@ -51,6 +51,9 @@ final class GetPublicPageDetailsController extends AbstractController
         if ($page->group === PageGroup::BAR) {
             return $this->redirectToRoute('web_bar_page_detail', ['slug' => $slug], Response::HTTP_MOVED_PERMANENTLY);
         }
+        if ($page->group === PageGroup::PROFESSION) {
+            return $this->redirectToRoute('web_profession_become_lawyer', status: Response::HTTP_MOVED_PERMANENTLY);
+        }
 
         return $this->renderPage($page);
     }
@@ -94,6 +97,17 @@ final class GetPublicPageDetailsController extends AbstractController
     {
         $page = $this->findPublishedPage('assistance-violences-domestiques');
         if ($page === null || $page->group !== null) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->renderPage($page);
+    }
+
+    #[Route('/devenir-avocat', name: 'web_profession_become_lawyer', methods: ['GET'])]
+    public function becomeLawyerPage(): Response
+    {
+        $page = $this->findPublishedPage('devenir-avocat', PageGroup::PROFESSION);
+        if ($page === null) {
             throw $this->createNotFoundException();
         }
 

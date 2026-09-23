@@ -8,6 +8,7 @@ enum PageGroup: string
 {
     case LEGAL = 'LEGAL';
     case BAR = 'BAR';
+    case PROFESSION = 'PROFESSION';
     case LBC = 'LBC';
     case CARPA = 'CARPA';
     case ACCOUNT = 'ACCOUNT';
@@ -17,6 +18,7 @@ enum PageGroup: string
         return match ($this) {
             self::LEGAL => 'Informations légales',
             self::BAR => 'Le Barreau',
+            self::PROFESSION => 'Devenir avocat',
             self::LBC => 'LBC/FT/FP',
             self::CARPA => 'La CARPA',
             self::ACCOUNT => 'Compte et confidentialité',

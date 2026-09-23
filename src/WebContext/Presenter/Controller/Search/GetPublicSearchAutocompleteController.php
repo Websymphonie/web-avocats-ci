@@ -64,7 +64,15 @@ final class GetPublicSearchAutocompleteController extends AbstractController
             return $this->generateUrl('web_domestic_violence_assistance');
         }
 
-        $route = $suggestion->isCarpaPage ? 'web_carpa_page_detail' : ($suggestion->isBarPage ? 'web_bar_page_detail' : 'web_information_detail');
+        if ($suggestion->isProfessionPage) {
+            return $this->generateUrl('web_profession_become_lawyer');
+        }
+
+        $route = match (true) {
+            $suggestion->isCarpaPage => 'web_carpa_page_detail',
+            $suggestion->isBarPage => 'web_bar_page_detail',
+            default => 'web_information_detail',
+        };
 
         return $this->generateUrl($route, ['slug' => $suggestion->slug]);
     }

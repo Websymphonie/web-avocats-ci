@@ -78,6 +78,7 @@ CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + dé
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
 CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
+CNT-PROFESSION-001 — Devenir avocat          IN PROGRESS — Page `PROFESSION` préparée en DRAFT ; validation éditoriale requise avant publication
 CNT-LEGAL-001 — Migration Vie privée & Mentions légales IMPLEMENTED — Pages LEGAL existantes publiées et contenu source migré ; anciennes URL WordPress à évaluer dans une passe SEO distincte
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 CNT-BAR-002 — Migration Présentation & Historique IMPLEMENTED — contenus de démonstration publiés avec couverture historique locale
@@ -175,6 +176,7 @@ CNT-006  Static Pages                               DONE — Backoffice + détai
 CNT-006A Optional static page cover                 DONE — Backoffice + rendu public
 CNT-006B Editorial page groups                      DONE — classification + sidebar publique dynamique
 CNT-006C Editorial page ordering                    DONE — ordre Backoffice + tri public
+CNT-PROFESSION-001 Devenir avocat                    IN PROGRESS — Page `PROFESSION` en DRAFT, validation éditoriale requise avant publication
 WEB-001  Shell Frontoffice                         PLANNED
 CNT-001  Actualités                                IMPLEMENTED — Backoffice + première verticale publique FO-002
 FO-002   Actualités publiques dynamiques             DONE — liste, détail, pagination, catégories, tags et covers

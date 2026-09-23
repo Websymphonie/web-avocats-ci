@@ -236,6 +236,39 @@ final class PublicSearchTest extends WebTestCase
         ], $payload['results'][0]);
     }
 
+    public function testBecomeLawyerPageIsSearchableOnlyAfterPublicationAndUsesCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $page = (new PageEntity())
+            ->setTitle('Devenir avocat')
+            ->setSlug('devenir-avocat')
+            ->setContent('<p>Accès à la profession, stage et inscription au Barreau.</p>')
+            ->setGroup(PageGroup::PROFESSION)
+            ->setStatus(PageStatus::DRAFT);
+        $entityManager->persist($page);
+        $entityManager->flush();
+
+        $client->request('GET', '/recherche/autocomplete?q=Devenir avocat', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame([], json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['results']);
+
+        $page->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+        $client->request('GET', '/recherche/autocomplete?q=Devenir avocat', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'Devenir avocat',
+            'url' => '/devenir-avocat',
+            'metadata' => 'Devenir avocat',
+        ], $payload['results'][0]);
+    }
+
     public function testCurrentInstitutionalPagesAreSearchableButCouncilMembersAreNot(): void
     {
         $client = $this->clientWithSchema();

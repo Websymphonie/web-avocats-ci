@@ -94,6 +94,7 @@ propriétaire.
 | CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice + rendu public réutilisé, sans galerie |
 | CNT-006B | classer les Pages statiques par groupes éditoriaux | `IMPLEMENTED` — groupes facultatifs et sidebar publique dynamique |
 | CNT-006C | contrôler l’ordre des Pages dans un groupe éditorial | `IMPLEMENTED` — ordre Backoffice et tri public déterministe |
+| CNT-PROFESSION-001 | préparer la page institutionnelle « Devenir avocat » | `DISCOVERY` — Page `PROFESSION` préparée en `DRAFT`; validation éditoriale requise avant publication |
 | CNT-LEGAL-001 | migrer Vie privée et Mentions légales depuis la source institutionnelle | `IMPLEMENTED` — contenus source dans les Pages LEGAL existantes, publiées sous leurs URL canoniques |
 | CNT-BAR-002 | migrer Présentation et Historique du Barreau | `IMPLEMENTED` — contenus de démonstration publiés avec couverture locale de l’Historique |
 | CNT-BAR-003 | migrer le Bâtonnier et le Conseil de l’Ordre actuels | `IMPLEMENTED` — Pages BAR publiées, titulaire courant, 19 membres ordonnés et portraits intégrés aux fixtures locales |

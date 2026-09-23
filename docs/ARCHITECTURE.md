@@ -835,7 +835,8 @@ queries de page restent séparées du modèle Doctrine ; le Backoffice utilise
 `HasGroupAccess(RoleGroupEnum::PAGES)` et les permissions `CONTENT_PAGE_*`.
 
 Depuis CNT-006B, une Page peut aussi porter une classification éditoriale
-nullable `PageGroup` (`LEGAL`, `BAR` ou `ACCOUNT`). Cette classification est
+nullable `PageGroup` (`LEGAL`, `BAR`, `ACCOUNT`, `LBC`, `CARPA` ou
+`PROFESSION`). Cette classification est
 persistée sans relation Doctrine supplémentaire et ne modifie aucune règle de
 publication ou d'autorisation.
 
@@ -854,8 +855,8 @@ aperçu, remplacement et retrait. Le vérificateur d'usage Content empêche la
 suppression d'un média encore utilisé par une Page.
 
 Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`
-pour les groupes autres que `BAR`. Les Pages du groupe `BAR` utilisent la route
-canonique `/le-barreau/{slug}` ; une demande de la même Page via
+pour les groupes sans route institutionnelle dédiée. Les Pages du groupe `BAR`
+utilisent la route canonique `/le-barreau/{slug}` ; une demande de la même Page via
 `/informations/{slug}` effectue une redirection permanente. Le hub public
 `/le-barreau` liste les Pages `BAR` publiées dans l’ordre éditorial et ne
 remplace pas un listing générique des autres groupes. La sidebar est
@@ -872,6 +873,14 @@ présent. Elle expose un résultat `Information` vers `web_bar_page_detail` pour
 les Pages BAR et vers `web_information_detail` pour les autres Pages ; le
 `PageGroup` sert uniquement à sélectionner la route canonique et comme metadata,
 et ne devient pas un filtre de recherche.
+
+La Page institutionnelle « Devenir avocat » réutilise `Page` sous le groupe
+isolé `PROFESSION`, sans hub ni entrée de navigation. Sa fixture est maintenue
+en `DRAFT` à l’ordre `10` tant que les informations historiques relatives aux
+conditions d’accès, au stage et à l’inscription n’ont pas reçu de validation
+éditoriale. Après publication, sa route canonique est `/devenir-avocat` et la
+recherche publique générique peut la proposer ; la route historique générique
+`/informations/devenir-avocat` redirige alors vers cette URL.
 
 La Page publique du Bureau d’Assistance aux Victimes de Violence Domestique
 réutilise `Page` sans `PageGroup` spécialisé, car elle est une entrée

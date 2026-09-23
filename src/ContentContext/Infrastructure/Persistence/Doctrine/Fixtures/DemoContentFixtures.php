@@ -361,6 +361,40 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             <p>Pour toute demande d’information, veuillez <a href="/contact">contacter le Barreau</a>.</p>
             HTML);
 
+        $becomeLawyerContent = $this->sanitizer->sanitize(<<<'HTML'
+            <h2>Conditions d’accès</h2>
+            <ul>
+                <li>Être titulaire d’un Master II en droit reconnu par le Conseil Africain Malgache de l’Enseignement Supérieur (CAMES), d’une Maîtrise en droit ou d’un diplôme reconnu équivalent.</li>
+                <li>Être titulaire du Certificat d’Aptitude à la Profession d’Avocat (CAPA).</li>
+                <li>Être âgé de 21 ans au moins.</li>
+                <li>Être de bonne moralité.</li>
+            </ul>
+            <p>Sont dispensés de justifier du CAPA les magistrats ayant accompli au moins dix années de pratique professionnelle en juridiction et ayant préalablement démissionné de leur fonction, ainsi que les professeurs agrégés des facultés de droit.</p>
+            <p>Ces deux catégories doivent, avant la prestation de serment, suivre des cours de déontologie et de pratique professionnelle d’avocat pendant une période de six mois, suivant les modalités définies par le Bâtonnier.</p>
+            <h2>Demande d’admission sur la liste de stage</h2>
+            <p>La source historique mentionne les pièces suivantes :</p>
+            <ul>
+                <li>un extrait d’acte de naissance ;</li>
+                <li>un extrait de casier judiciaire datant de moins de trois mois ;</li>
+                <li>les pièces établissant la nationalité d’un État membre de l’UEMOA ;</li>
+                <li>le diplôme de Master II en droit reconnu par le CAMES, la Maîtrise en droit ou un diplôme équivalent ;</li>
+                <li>le CAPA ;</li>
+                <li>une attestation d’un avocat inscrit au Tableau ayant prêté serment depuis au moins sept ans, s’engageant à assurer dans son cabinet la formation effective du stagiaire.</li>
+            </ul>
+            <h2>Obligations et responsabilité du stagiaire</h2>
+            <ul>
+                <li>fréquentation obligatoire des audiences ;</li>
+                <li>travail effectif rattaché à un cabinet d’avocat ;</li>
+                <li>participation aux travaux de la Conférence du Stage dans les Barreaux qui l’ont instituée ;</li>
+                <li>assiduité aux cours de stage.</li>
+            </ul>
+            <p>La source indique que l’avocat stagiaire accomplit les actes de sa profession pour le compte et sous la responsabilité de l’avocat dans le cabinet duquel il est admis.</p>
+            <h2>Durée et fin du stage</h2>
+            <p>La source historique indique une durée de stage de trois ans, susceptible d’être prorogée deux fois d’une année. Elle mentionne la délivrance d’un certificat de fin de stage à son terme.</p>
+            <h2>Inscription au Tableau de l’Ordre</h2>
+            <p>La source historique mentionne les conditions suivantes : avoir effectué trois années de stage, être âgé d’au moins 24 ans, être en possession du certificat de fin de stage et être de bonne moralité.</p>
+            HTML);
+
         $lbcContent = $this->sanitizer->sanitize(<<<'HTML'
             <p>Le Conseil de l’Ordre des Avocats est responsable du contrôle des Avocats titulaires de Cabinet, des Sociétés Civiles Professionnelles d’Avocats et des Associations d’Avocats aux fins de la lutte contre le blanchiment de capitaux et le financement du terrorisme (LBC/FT). Les ressources suivantes sont destinées à aider ces entités déclarantes à comprendre et à respecter leurs obligations en matière de LBC/FT.</p>
             <h2>FORMATION ET CONTROLE THEMATIQUE SUR LES MESURES DE VIGILANCE AUPRES DE LA CLIENTELE</h2>
@@ -451,6 +485,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
             ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
+            ['Devenir avocat', 'devenir-avocat', PageStatus::DRAFT, false, PageGroup::PROFESSION, 10],
             ['Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)', 'lbc-ft-fp', PageStatus::PUBLISHED, false, PageGroup::LBC, 10],
             ['Présentation', 'presentation', PageStatus::PUBLISHED, false, PageGroup::CARPA, 10],
             ['Bureau d’Assistance aux Victimes de Violence Domestique', 'assistance-violences-domestiques', PageStatus::PUBLISHED, false, null, 0],
@@ -471,6 +506,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 [PageGroup::BAR, 'le-batonnier'] => $batonnierContent,
                 [PageGroup::BAR, 'conseil-de-l-ordre'] => $councilContent,
                 [PageGroup::BAR, 'fonds-de-solidarite'] => $fundContent,
+                [PageGroup::PROFESSION, 'devenir-avocat'] => $becomeLawyerContent,
                 [PageGroup::LBC, 'lbc-ft-fp'] => $lbcContent,
                 [null, 'assistance-violences-domestiques'] => $assistanceContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),

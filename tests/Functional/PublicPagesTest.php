@@ -454,6 +454,48 @@ final class PublicPagesTest extends WebTestCase
         self::assertSame('/le-barreau/presentation', $client->getResponse()->headers->get('Location'));
     }
 
+    public function testBecomeLawyerPageRemainsDraftAndIsolatedFromBarNavigation(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/devenir-avocat', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $client->request('GET', '/informations/devenir-avocat', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertStringNotContainsString('Devenir avocat', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/le-barreau/presentation', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertStringNotContainsString('Devenir avocat', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->text());
+        self::assertStringNotContainsString('Devenir avocat', $client->getCrawler()->filter('nav[aria-label="Navigation principale"]')->text());
+        self::assertStringNotContainsString('Devenir avocat', $client->getCrawler()->filter('nav[aria-label="Navigation mobile"]')->text());
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $page = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'devenir-avocat', 'editorialGroup' => PageGroup::PROFESSION]);
+        self::assertInstanceOf(PageEntity::class, $page);
+        $page->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+
+        $client->request('GET', '/devenir-avocat', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Devenir avocat');
+        self::assertSelectorNotExists('aside[aria-label="Navigation : Devenir avocat"]');
+        self::assertStringNotContainsString('Devenir avocat', $client->getCrawler()->filter('nav[aria-label="Navigation principale"]')->text());
+        self::assertStringNotContainsString('Devenir avocat', $client->getCrawler()->filter('nav[aria-label="Navigation mobile"]')->text());
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertStringNotContainsString('Devenir avocat', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/informations/devenir-avocat', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/devenir-avocat', Response::HTTP_MOVED_PERMANENTLY);
+    }
+
     public function testFooterContainsOnlyTheExpectedPublishedLegalPages(): void
     {
         $client = $this->clientWithSchema();
@@ -562,10 +604,11 @@ final class PublicPagesTest extends WebTestCase
         $fundDraft = $this->page('Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, null, null, PageGroup::BAR, 20)->setContent('');
         $carpaDraft = $this->page('CARPA', 'presentation', PageStatus::DRAFT, null, null, PageGroup::CARPA, 30)->setContent('');
         $barWithoutPublicationDate = $this->page('Page BAR sans date', 'bar-without-publication-date', PageStatus::PUBLISHED, null, null, PageGroup::BAR, 40);
+        $professionDraft = $this->page('Devenir avocat', 'devenir-avocat', PageStatus::DRAFT, null, null, PageGroup::PROFESSION, 10);
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
         $withoutGroup = $this->page('Page sans groupe', 'page-sans-groupe', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'));
 
-        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $sameOrder, $accountPolicy, $draft, $barPresentation, $barHistory, $barDraft, $fundDraft, $carpaDraft, $barWithoutPublicationDate, $withoutPublicationDate, $withoutGroup] as $page) {
+        foreach ([$publishedWithCover, $confidentiality, $legalNotice, $sameOrder, $accountPolicy, $draft, $barPresentation, $barHistory, $barDraft, $fundDraft, $carpaDraft, $barWithoutPublicationDate, $professionDraft, $withoutPublicationDate, $withoutGroup] as $page) {
             $entityManager->persist($page);
         }
         $entityManager->flush();

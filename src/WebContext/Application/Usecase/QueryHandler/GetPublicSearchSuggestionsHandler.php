@@ -93,6 +93,7 @@ final readonly class GetPublicSearchSuggestionsHandler implements QueryHandler
             metadata: $page->group?->label() ?? 'Informations',
             isBarPage: $page->group === PageGroup::BAR,
             isCarpaPage: $page->group === PageGroup::CARPA,
+            isProfessionPage: $page->group === PageGroup::PROFESSION,
         );
     }
 

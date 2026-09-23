@@ -115,7 +115,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertNotNull($entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']));
         self::assertSame(24, $entityManager->getRepository(NewsEntity::class)->count([]));
         self::assertSame(18, $entityManager->getRepository(EventEntity::class)->count([]));
-        self::assertSame(13, $entityManager->getRepository(PageEntity::class)->count([]));
+        self::assertSame(14, $entityManager->getRepository(PageEntity::class)->count([]));
         $assistancePage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'assistance-violences-domestiques']);
         self::assertInstanceOf(PageEntity::class, $assistancePage);
         self::assertSame(PageStatus::PUBLISHED, $assistancePage->getStatus());
@@ -180,6 +180,15 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(5, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LBC]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::CARPA]));
+        self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::PROFESSION]));
+        $becomeLawyerPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'devenir-avocat', 'editorialGroup' => PageGroup::PROFESSION]);
+        self::assertInstanceOf(PageEntity::class, $becomeLawyerPage);
+        self::assertSame(PageStatus::DRAFT, $becomeLawyerPage->getStatus());
+        self::assertNull($becomeLawyerPage->getPublishedAt());
+        self::assertSame(10, $becomeLawyerPage->getSortOrder());
+        self::assertStringContainsString('Conditions d’accès', $becomeLawyerPage->getContent());
+        self::assertStringNotContainsString('CAPA 2023', $becomeLawyerPage->getContent());
+        self::assertStringNotContainsString('<a ', $becomeLawyerPage->getContent());
         $privacyPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite', 'editorialGroup' => PageGroup::LEGAL]);
         self::assertInstanceOf(PageEntity::class, $privacyPage);
         self::assertSame('Vie privée', $privacyPage->getTitle());
@@ -316,7 +325,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/institution/lawyers');
         self::assertFileExists(self::$storageDirectory . '/public/content/covers/' . $entityManager->getRepository(MediaEntity::class)->find($history->getCoverMediaId())->getStorageName());
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
-        self::assertCount(1, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+        self::assertCount(2, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
 
         $fundDocuments = $entityManager->getRepository(DocumentPublicationEntity::class)->findBy(['accessLevel' => DocumentAccessLevel::LAWYER, 'status' => DocumentStatus::PUBLISHED]);
         self::assertCount(3, $fundDocuments);

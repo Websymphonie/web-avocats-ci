@@ -516,6 +516,16 @@ anciennes URL WordPress `/vie-privee/` et `/mentions-legales/` ne sont pas
 redirigées dans cette tranche ; leur traitement éventuel relève d’une passe
 SEO dédiée.
 
+La Page « Devenir avocat » est préparée sous `PageGroup::PROFESSION`, avec le
+slug `devenir-avocat`, l’ordre `10` et le statut `DRAFT`. Sa route dédiée
+`/devenir-avocat` reste inaccessible tant qu’elle n’est pas publiée ; après
+publication, `/informations/devenir-avocat` redirige vers l’URL canonique et la
+recherche publique générique peut la proposer. Le groupe ne crée ni hub ni
+navigation. Le contenu vient des sources historiques retenues pour la
+migration ; les conditions d’accès, de stage et d’inscription restent soumises
+à validation éditoriale avant publication. Aucun parcours de candidature en
+ligne n’est créé.
+
 ### CNT-006A — Couverture facultative des pages
 
 Une `Page` peut référencer une couverture image publique via le seul identifiant

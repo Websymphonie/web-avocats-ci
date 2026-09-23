@@ -81,6 +81,7 @@ CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Content + bloc public sur `le-batonnier`
 CNT-010 — Conseil de l’Ordre structuré         IMPLEMENTED — historique Content + bloc public sur `conseil-de-l-ordre`
+CNT-CARPA-001 — Préparer Page institutionnelle CARPA IMPLEMENTED — fixture BAR vide en DRAFT et lien homepage avec fallback hub
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de

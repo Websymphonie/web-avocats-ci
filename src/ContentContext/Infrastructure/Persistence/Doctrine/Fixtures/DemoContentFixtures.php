@@ -183,6 +183,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
             ['Présentation du Barreau', 'presentation', PageStatus::DRAFT, false, PageGroup::BAR, 10],
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 20],
+            ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 30],
         ];
         $now = new DateTimeImmutable();
 
@@ -192,7 +193,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 $page = new PageEntity();
             }
             $notice = 'Contenu de démonstration — à valider et adapter juridiquement avant mise en production.';
-            $content = $slug === 'fonds-de-solidarite'
+            $content = in_array($slug, ['fonds-de-solidarite', 'carpa'], true)
                 ? ''
                 : $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice));
             $page->setTitle($title)

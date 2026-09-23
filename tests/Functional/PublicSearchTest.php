@@ -137,6 +137,38 @@ final class PublicSearchTest extends WebTestCase
         self::assertSame('Politique de confidentialité', $payload['results'][0]['title']);
     }
 
+    public function testCarpaPageIsExcludedWhileDraft(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+
+        $client->request('GET', '/recherche/autocomplete?q=CARPA', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame([], json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)['results']);
+    }
+
+    public function testPublishedCarpaPageIsSearchableAtItsCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        self::assertInstanceOf(PageEntity::class, $carpaPage);
+        $carpaPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+
+        $client->request('GET', '/recherche/autocomplete?q=CARPA', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'CARPA',
+            'url' => '/le-barreau/carpa',
+            'metadata' => 'Le Barreau',
+        ], $payload['results'][0]);
+    }
+
     public function testSearchEntryPointAndDialogAreAvailableOnThePublicLayout(): void
     {
         $client = $this->clientWithSchema();
@@ -242,6 +274,12 @@ final class PublicSearchTest extends WebTestCase
             ->setContent('<p>Brouillon.</p>')
             ->setGroup(PageGroup::LEGAL)
             ->setStatus(PageStatus::DRAFT);
+        $carpaPage = (new PageEntity())
+            ->setTitle('CARPA')
+            ->setSlug('carpa')
+            ->setContent('')
+            ->setGroup(PageGroup::BAR)
+            ->setStatus(PageStatus::DRAFT);
         $unpublishedPage = (new PageEntity())
             ->setTitle('Information non publiée')
             ->setSlug('information-nonpubliee')
@@ -261,7 +299,7 @@ final class PublicSearchTest extends WebTestCase
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
 
-        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $unpublishedPage, $ungroupedPage, $barPage] as $item) {
+        foreach ([$news, $draftNews, $event, $training, $memberTraining, $legalPage, $accountPage, $draftPage, $carpaPage, $unpublishedPage, $ungroupedPage, $barPage] as $item) {
             $entityManager->persist($item);
         }
         $entityManager->flush();

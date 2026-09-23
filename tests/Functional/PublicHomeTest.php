@@ -13,8 +13,11 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\ContentContext\Domain\Enum\EventFormat;
 use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
+use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -62,6 +65,8 @@ final class PublicHomeTest extends WebTestCase
         self::assertStringNotContainsString('Événement brouillon', $content);
         self::assertStringContainsString('/evenements/evenement-le-plus-proche', $content);
         self::assertStringNotContainsString('/#evenement-', $content);
+        self::assertSame('/le-barreau', $client->getCrawler()->filter('#carpa')->attr('href'));
+        self::assertStringNotContainsString('/#carpa', $content);
 
         $newsTitles = $client->getCrawler()->filter('#actualites [data-homepage-event-carousel-target="slide"] h3')->each(static fn ($node): string => trim($node->text()));
         self::assertSame('Actualité la plus récente', $newsTitles[0]);
@@ -69,6 +74,22 @@ final class PublicHomeTest extends WebTestCase
         $eventTitles = $client->getCrawler()->filter('#evenements [data-homepage-event-carousel-target="slide"] h3')->each(static fn ($node): string => trim($node->text()));
         self::assertSame('Événement le plus proche', $eventTitles[0]);
         self::assertSame('Événement suivant', $eventTitles[1]);
+    }
+
+    public function testHomepageLinksDirectlyToPublishedCarpaPage(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        self::assertInstanceOf(PageEntity::class, $carpaPage);
+
+        $carpaPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+
+        $client->request('GET', '/', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame('/le-barreau/carpa', $client->getCrawler()->filter('#carpa')->attr('href'));
     }
 
     public function testHomepageShowsProfessionalEmptyStatesWithoutFakeContent(): void
@@ -129,6 +150,14 @@ final class PublicHomeTest extends WebTestCase
         ] as $event) {
             $entityManager->persist($event);
         }
+
+        $entityManager->persist((new PageEntity())
+            ->setTitle('CARPA')
+            ->setSlug('carpa')
+            ->setContent('')
+            ->setStatus(PageStatus::DRAFT)
+            ->setGroup(PageGroup::BAR)
+            ->setSortOrder(30));
 
         $entityManager->flush();
     }

@@ -1,4 +1,4 @@
-<nav class="border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale" data-controller="public-navbar">
+<nav class="relative z-50 border-b border-border bg-background/95 backdrop-blur" aria-label="Navigation principale" data-controller="public-navbar">
     {% set currentRoute = app.request.attributes.get('_route')|default('') %}
     {% set isBarSection = currentRoute starts with 'web_barreau_' or currentRoute == 'web_bar_page_detail' %}
     <div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">

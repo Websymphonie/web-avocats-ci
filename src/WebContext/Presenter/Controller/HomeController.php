@@ -5,8 +5,11 @@ namespace Websymphonie\WebContext\Presenter\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Websymphonie\ContentContext\Application\Model\PublishedPage;
 use Websymphonie\ContentContext\Application\Usecase\Query\Event\GetPublishedEventsListQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\News\GetPublishedNewsListQuery;
+use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPageBySlugQuery;
+use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Model\EventListResult;
 use Websymphonie\ContentContext\Domain\Model\NewsListResult;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
@@ -25,6 +28,11 @@ final class HomeController extends AbstractController
         $news = $this->handleQuery(new GetPublishedNewsListQuery(limit: 5));
         /** @var EventListResult $events */
         $events = $this->handleQuery(new GetPublishedEventsListQuery(limit: 5));
+        /** @var PublishedPage|null $carpaPage */
+        $carpaPage = $this->handleQuery(new FindPublishedPageBySlugQuery('carpa'));
+        $carpaUrl = $carpaPage !== null && $carpaPage->group === PageGroup::BAR
+            ? $this->generateUrl('web_bar_page_detail', ['slug' => $carpaPage->slug])
+            : $this->generateUrl('web_barreau_index');
 
         $mediaIds = [];
         foreach ($news->items as $item) {
@@ -42,6 +50,7 @@ final class HomeController extends AbstractController
             'title' => 'Accueil',
             'homepageNews' => $news->items,
             'homepageEvents' => $events->items,
+            'carpaUrl' => $carpaUrl,
             'mediaUrls' => $this->mediaUrls->resolveMany(array_values(array_unique($mediaIds))),
         ]);
     }

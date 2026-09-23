@@ -873,6 +873,14 @@ Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
 
+La fixture de démonstration prépare une Page `CARPA` vide, `DRAFT`, de groupe
+`BAR` et d’ordre éditorial `30` ; aucun texte institutionnel n’est présumé
+validé. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
+la query `FindPublishedPageBySlug('carpa')` ne retourne pas une Page BAR publiée
+avec une date de publication. Après publication, elle pointe automatiquement
+vers `/le-barreau/carpa`. Le hub, la navigation BAR et la recherche publique
+continuent d’appliquer leurs filtres de publication existants.
+
 ## 15. Donnée structurée du Bâtonnier — CNT-009
 
 `BatonnierMandate` est un modèle métier de `ContentContext`, persisté dans

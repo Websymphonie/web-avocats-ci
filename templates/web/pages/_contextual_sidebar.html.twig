@@ -1,5 +1,5 @@
 <aside class="h-fit lg:sticky lg:top-6" aria-label="Navigation : {{ currentPage.group.label }}">
-    {% set pageRoute = currentPage.group.value == 'BAR' ? 'web_bar_page_detail' : 'web_information_detail' %}
+    {% set pageRoute = currentPage.group.value == 'BAR' ? 'web_bar_page_detail' : (currentPage.group.value == 'CARPA' ? 'web_carpa_page_detail' : 'web_information_detail') %}
     <div class="border border-border bg-card p-6 shadow-sm">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Navigation éditoriale</p>
         <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">{{ currentPage.group.label }}</h2>

@@ -15,6 +15,7 @@ use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\UuidT
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[ORM\Table(name: 'page')]
+#[ORM\UniqueConstraint(name: 'UNIQ_PAGE_GROUP_SLUG', columns: ['editorial_group', 'slug'])]
 #[ORM\HasLifecycleCallbacks]
 class PageEntity
 {
@@ -25,7 +26,7 @@ class PageEntity
     #[ORM\Column(length: 255)]
     private string $title = '';
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private string $slug = '';
 
     #[ORM\Column(type: 'text')]

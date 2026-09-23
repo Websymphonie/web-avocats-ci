@@ -50,7 +50,7 @@ final class GetPublicPageDetailsController extends AbstractController
     #[Route('/le-barreau/{slug}', name: 'web_bar_page_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
     public function barPage(string $slug): Response
     {
-        $page = $this->findPublishedPage($slug);
+        $page = $this->findPublishedPage($slug, PageGroup::BAR);
         if ($page === null || $page->group !== PageGroup::BAR) {
             throw $this->createNotFoundException();
         }
@@ -66,10 +66,27 @@ final class GetPublicPageDetailsController extends AbstractController
         return $this->renderPage($page, $mandate, $portraitUrl, $councilMembers, $councilPortraitUrls);
     }
 
-    private function findPublishedPage(string $slug): ?PublishedPage
+    #[Route('/carpa/{slug}', name: 'web_carpa_page_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
+    public function carpaPage(string $slug): Response
+    {
+        $page = $this->findPublishedPage($slug, PageGroup::CARPA);
+        if ($page === null) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->renderPage($page);
+    }
+
+    #[Route('/le-barreau/carpa', name: 'web_bar_legacy_carpa', priority: 10, methods: ['GET'])]
+    public function legacyCarpa(): Response
+    {
+        return $this->redirectToRoute('web_carpa_page_detail', ['slug' => 'presentation'], Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    private function findPublishedPage(string $slug, ?PageGroup $group = null): ?PublishedPage
     {
         /** @var PublishedPage|null $page */
-        $page = $this->handleQuery(new FindPublishedPageBySlugQuery($slug));
+        $page = $this->handleQuery(new FindPublishedPageBySlugQuery($slug, $group));
 
         return $page;
     }

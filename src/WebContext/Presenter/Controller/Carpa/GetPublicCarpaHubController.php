@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Websymphonie\WebContext\Presenter\Controller\Barreau;
+namespace Websymphonie\WebContext\Presenter\Controller\Carpa;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,8 +12,8 @@ use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
-#[Route('/le-barreau', name: 'web_barreau_')]
-final class GetPublicBarreauHubController extends AbstractController
+#[Route('/carpa', name: 'web_carpa_')]
+final class GetPublicCarpaHubController extends AbstractController
 {
     public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
     {
@@ -23,8 +23,7 @@ final class GetPublicBarreauHubController extends AbstractController
     public function __invoke(): Response
     {
         /** @var list<PublishedPage> $pages */
-        $pages = $this->handleQuery(new FindPublishedPagesByGroupQuery(PageGroup::BAR));
-
+        $pages = $this->handleQuery(new FindPublishedPagesByGroupQuery(PageGroup::CARPA));
         $mediaIds = array_values(array_unique(array_filter(
             array_map(static fn (PublishedPage $page): ?int => $page->coverMediaId, $pages),
             static fn (?int $mediaId): bool => $mediaId !== null,
@@ -33,7 +32,7 @@ final class GetPublicBarreauHubController extends AbstractController
         return $this->render('web/barreau/index.html.twig', [
             'pages' => $pages,
             'coverUrls' => $this->mediaUrls->resolveMany($mediaIds),
-            'section' => 'BAR',
+            'section' => 'CARPA',
         ]);
     }
 }

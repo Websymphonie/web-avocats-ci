@@ -65,7 +65,7 @@ final class PublicHomeTest extends WebTestCase
         self::assertStringNotContainsString('Événement brouillon', $content);
         self::assertStringContainsString('/evenements/evenement-le-plus-proche', $content);
         self::assertStringNotContainsString('/#evenement-', $content);
-        self::assertSame('/le-barreau', $client->getCrawler()->filter('#carpa')->attr('href'));
+        self::assertSame('/carpa', $client->getCrawler()->filter('#carpa')->attr('href'));
         self::assertStringNotContainsString('/#carpa', $content);
 
         $newsTitles = $client->getCrawler()->filter('#actualites [data-homepage-event-carousel-target="slide"] h3')->each(static fn ($node): string => trim($node->text()));
@@ -81,8 +81,9 @@ final class PublicHomeTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createDataset();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
-        self::assertInstanceOf(PageEntity::class, $carpaPage);
+        $carpaPage = new PageEntity();
+        $carpaPage->setTitle('Présentation')->setSlug('presentation')->setGroup(PageGroup::CARPA);
+        $entityManager->persist($carpaPage);
 
         $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
             ->setStatus(PageStatus::PUBLISHED)
@@ -91,7 +92,7 @@ final class PublicHomeTest extends WebTestCase
 
         $client->request('GET', '/', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
-        self::assertSame('/le-barreau/carpa', $client->getCrawler()->filter('#carpa')->attr('href'));
+        self::assertSame('/carpa/presentation', $client->getCrawler()->filter('#carpa')->attr('href'));
     }
 
     public function testHomepageShowsProfessionalEmptyStatesWithoutFakeContent(): void
@@ -155,10 +156,10 @@ final class PublicHomeTest extends WebTestCase
 
         $entityManager->persist((new PageEntity())
             ->setTitle('CARPA')
-            ->setSlug('carpa')
+            ->setSlug('presentation')
             ->setContent('')
             ->setStatus(PageStatus::DRAFT)
-            ->setGroup(PageGroup::BAR)
+            ->setGroup(PageGroup::CARPA)
             ->setSortOrder(30));
 
         $entityManager->flush();

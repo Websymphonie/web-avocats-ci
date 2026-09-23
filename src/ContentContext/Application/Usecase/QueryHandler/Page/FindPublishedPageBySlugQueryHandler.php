@@ -15,7 +15,7 @@ final readonly class FindPublishedPageBySlugQueryHandler implements QueryHandler
 
     public function __invoke(FindPublishedPageBySlugQuery $query): ?PublishedPage
     {
-        $page = $this->repository->findPublishedBySlug(trim($query->slug));
+        $page = $this->repository->findPublishedBySlug(trim($query->slug), $query->group);
         return $page === null ? null : new PublishedPage($page->uuid, $page->title, $page->slug, $page->content, $page->publishedAt, $page->coverMediaId, $page->group);
     }
 }

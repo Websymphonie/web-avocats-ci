@@ -79,7 +79,7 @@ final class PublicPagesTest extends WebTestCase
             self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, $slug);
         }
 
-        $client->request('GET', '/le-barreau/carpa', server: ['HTTPS' => 'on']);
+        $client->request('GET', '/carpa/presentation', server: ['HTTPS' => 'on']);
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
@@ -88,7 +88,7 @@ final class PublicPagesTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createPageDataset();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation', 'editorialGroup' => PageGroup::CARPA]);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
 
         $carpaPage->setContent('<p>La Caisse Autonome de Règlement Pécuniaire des Avocats participe au cadre institutionnel du Barreau.</p><p><a href="/contact">Contacter le Barreau</a></p>')
@@ -96,15 +96,15 @@ final class PublicPagesTest extends WebTestCase
             ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();
 
-        $client->request('GET', '/le-barreau/carpa', server: ['HTTPS' => 'on']);
+        $client->request('GET', '/carpa/presentation', server: ['HTTPS' => 'on']);
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertSelectorTextContains('h1', 'CARPA');
-        self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"][href="/le-barreau/carpa"]');
+        self::assertSelectorTextContains('nav[aria-label="Fil d’Ariane"]', 'La CARPA');
 
         $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
-        self::assertStringContainsString('/le-barreau/carpa', (string) $client->getResponse()->getContent());
-        self::assertSelectorExists('nav[aria-label="Navigation principale"] a[href="/le-barreau/carpa"]');
-        self::assertSelectorExists('nav[aria-label="Navigation mobile"] a[href="/le-barreau/carpa"]');
+        self::assertStringNotContainsString('/carpa/presentation', (string) $client->getResponse()->getContent());
+        self::assertSelectorExists('nav[aria-label="Navigation principale"] a[href="/carpa"]');
+        self::assertSelectorExists('nav[aria-label="Navigation mobile"] a[href="/carpa"]');
     }
 
     public function testPublishedBarPageUsesCanonicalRouteAndContextualNavigation(): void
@@ -138,7 +138,7 @@ final class PublicPagesTest extends WebTestCase
             ->filter('nav[aria-label="Navigation principale"] div.hidden.items-center')
             ->children()
             ->each(static fn ($node): string => trim($node->filter('summary')->count() > 0 ? $node->filter('summary')->text() : $node->text()));
-        self::assertSame(['Accueil', 'Le Barreau', 'Actualités'], array_slice($desktopMenuItems, 0, 3));
+        self::assertSame(['Accueil', 'Le Barreau', 'La CARPA'], array_slice($desktopMenuItems, 0, 3));
         self::assertSame(['Vue d’ensemble', 'Présentation du Barreau', 'Historique du Barreau', 'Le Bâtonnier', 'Conseil de l’Ordre'], $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a')->each(static fn ($node): string => trim($node->text())));
         self::assertSame('/le-barreau/presentation', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details a[aria-current="page"]')->attr('href'));
         self::assertStringNotContainsString('Fonds de Solidarité', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] div.hidden.items-center details')->text());
@@ -193,7 +193,7 @@ final class PublicPagesTest extends WebTestCase
         $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
         self::assertInstanceOf(PageEntity::class, $fundPage);
         $fundPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'))->setSortOrder(50);
-        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation', 'editorialGroup' => PageGroup::CARPA]);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
         $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
             ->setStatus(PageStatus::PUBLISHED)
@@ -211,7 +211,6 @@ final class PublicPagesTest extends WebTestCase
             '/le-barreau/le-batonnier',
             '/le-barreau/conseil-de-l-ordre',
             '/le-barreau/fonds-de-solidarite',
-            '/le-barreau/carpa',
         ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
         self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/mentions-legales', (string) $client->getResponse()->getContent());
@@ -448,7 +447,7 @@ final class PublicPagesTest extends WebTestCase
         $barHistory = $this->page('Historique du Barreau', 'historique', PageStatus::PUBLISHED, new DateTimeImmutable('-7 days'), $cover->getId(), PageGroup::BAR, 20);
         $barDraft = $this->page('Page BAR brouillon', 'bar-draft', PageStatus::DRAFT, null, null, PageGroup::BAR, 30);
         $fundDraft = $this->page('Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, null, null, PageGroup::BAR, 20)->setContent('');
-        $carpaDraft = $this->page('CARPA', 'carpa', PageStatus::DRAFT, null, null, PageGroup::BAR, 30)->setContent('');
+        $carpaDraft = $this->page('CARPA', 'presentation', PageStatus::DRAFT, null, null, PageGroup::CARPA, 30)->setContent('');
         $barWithoutPublicationDate = $this->page('Page BAR sans date', 'bar-without-publication-date', PageStatus::PUBLISHED, null, null, PageGroup::BAR, 40);
         $withoutPublicationDate = $this->page('Page sans date', 'page-sans-date', PageStatus::PUBLISHED, null);
         $withoutGroup = $this->page('Page sans groupe', 'page-sans-groupe', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'));

@@ -168,7 +168,7 @@ final class PublicSearchTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createDataset();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation', 'editorialGroup' => PageGroup::CARPA]);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
         $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
             ->setStatus(PageStatus::PUBLISHED)
@@ -181,9 +181,9 @@ final class PublicSearchTest extends WebTestCase
         self::assertCount(1, $payload['results']);
         self::assertSame([
             'type' => 'information',
-            'title' => 'CARPA',
-            'url' => '/le-barreau/carpa',
-            'metadata' => 'Le Barreau',
+            'title' => 'Présentation',
+            'url' => '/carpa/presentation',
+            'metadata' => 'La CARPA',
         ], $payload['results'][0]);
     }
 
@@ -382,10 +382,10 @@ final class PublicSearchTest extends WebTestCase
             ->setGroup(PageGroup::LEGAL)
             ->setStatus(PageStatus::DRAFT);
         $carpaPage = (new PageEntity())
-            ->setTitle('CARPA')
-            ->setSlug('carpa')
+            ->setTitle('Présentation')
+            ->setSlug('presentation')
             ->setContent('')
-            ->setGroup(PageGroup::BAR)
+            ->setGroup(PageGroup::CARPA)
             ->setStatus(PageStatus::DRAFT);
         $unpublishedPage = (new PageEntity())
             ->setTitle('Information non publiée')

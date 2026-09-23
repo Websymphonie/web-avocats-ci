@@ -18,7 +18,7 @@ interface PageRepositoryInterface
     /** @param list<Page> $pages */
     public function deleteMany(array $pages): void;
     public function countMediaUsage(int $mediaId): int;
-    public function slugExists(string $slug, ?int $exceptId = null): bool;
+    public function slugExists(string $slug, ?int $exceptId = null, ?PageGroup $group = null): bool;
 
     /**
      * @param list<int> $ids
@@ -27,7 +27,7 @@ interface PageRepositoryInterface
     public function findByIds(array $ids): array;
 
     public function list(?string $search, ?PageStatus $status, int $page, int $limit): PageListResult;
-    public function findPublishedBySlug(string $slug): ?Page;
+    public function findPublishedBySlug(string $slug, ?PageGroup $group = null): ?Page;
 
     /**
      * @return list<Page>

@@ -29,10 +29,10 @@ final class HomeController extends AbstractController
         /** @var EventListResult $events */
         $events = $this->handleQuery(new GetPublishedEventsListQuery(limit: 5));
         /** @var PublishedPage|null $carpaPage */
-        $carpaPage = $this->handleQuery(new FindPublishedPageBySlugQuery('carpa'));
-        $carpaUrl = $carpaPage !== null && $carpaPage->group === PageGroup::BAR
-            ? $this->generateUrl('web_bar_page_detail', ['slug' => $carpaPage->slug])
-            : $this->generateUrl('web_barreau_index');
+        $carpaPage = $this->handleQuery(new FindPublishedPageBySlugQuery('presentation', PageGroup::CARPA));
+        $carpaUrl = $carpaPage !== null
+            ? $this->generateUrl('web_carpa_page_detail', ['slug' => $carpaPage->slug])
+            : $this->generateUrl('web_carpa_index');
 
         $mediaIds = [];
         foreach ($news->items as $item) {

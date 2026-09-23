@@ -96,7 +96,7 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
             ->getQuery()->getSingleScalarResult();
     }
 
-    public function slugExists(string $slug, ?int $exceptId = null): bool
+    public function slugExists(string $slug, ?int $exceptId = null, ?PageGroup $group = null): bool
     {
         $query = $this->createQueryBuilder('page')
             ->select('COUNT(page.id)')
@@ -104,6 +104,9 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
             ->setParameter('slug', $slug);
         if ($exceptId !== null) {
             $query->andWhere('page.id != :exceptId')->setParameter('exceptId', $exceptId);
+        }
+        if ($group !== null) {
+            $query->andWhere('page.editorialGroup = :group')->setParameter('group', $group);
         }
         return (int) $query->getQuery()->getSingleScalarResult() > 0;
     }
@@ -139,15 +142,18 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
         return new PageListResult(array_map(fn (PageEntity $entity): Page => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
     }
 
-    public function findPublishedBySlug(string $slug): ?Page
+    public function findPublishedBySlug(string $slug, ?PageGroup $group = null): ?Page
     {
-        $entity = $this->createQueryBuilder('page')
+        $query = $this->createQueryBuilder('page')
             ->andWhere('page.slug = :slug')
             ->andWhere('page.status = :status')
             ->andWhere('page.publishedAt IS NOT NULL')
             ->setParameter('slug', $slug)
-            ->setParameter('status', PageStatus::PUBLISHED)
-            ->getQuery()->getOneOrNullResult();
+            ->setParameter('status', PageStatus::PUBLISHED);
+        if ($group !== null) {
+            $query->andWhere('page.editorialGroup = :group')->setParameter('group', $group);
+        }
+        $entity = $query->getQuery()->getOneOrNullResult();
         return $entity instanceof PageEntity ? $this->factory->fromEntity($entity) : null;
     }
 
@@ -162,7 +168,7 @@ final class PageRepository extends ServiceEntityRepository implements PageReposi
         $entities = $this->createQueryBuilder('page')
             ->where('page.status = :status')
             ->andWhere('page.publishedAt IS NOT NULL')
-            ->andWhere('(LOWER(page.title) LIKE LOWER(:term) OR LOWER(page.slug) LIKE LOWER(:term))')
+            ->andWhere('(LOWER(page.title) LIKE LOWER(:term) OR LOWER(page.slug) LIKE LOWER(:term) OR LOWER(page.content) LIKE LOWER(:term))')
             ->setParameter('status', PageStatus::PUBLISHED)
             ->setParameter('term', '%' . $term . '%')
             ->orderBy('LOWER(page.title)', 'ASC')

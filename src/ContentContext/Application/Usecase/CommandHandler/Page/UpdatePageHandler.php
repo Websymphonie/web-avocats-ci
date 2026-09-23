@@ -30,7 +30,7 @@ final readonly class UpdatePageHandler implements CommandHandler
     {
         $page = $this->repository->getById($command->id);
         $slug = strtolower($this->slugger->slug(trim($command->slug !== '' ? $command->slug : $command->title))->toString());
-        if ($this->repository->slugExists($slug, $page->id)) {
+        if ($this->repository->slugExists($slug, $page->id, $command->group)) {
             throw new PageSlugAlreadyExistsException(sprintf('Le slug « %s » est déjà utilisé.', $slug));
         }
 

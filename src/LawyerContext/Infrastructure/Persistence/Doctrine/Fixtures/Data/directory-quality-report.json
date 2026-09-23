@@ -1,0 +1,4097 @@
+{
+    "extractedAt": "2026-09-23T10:10:39+00:00",
+    "sourceBaseUrl": "https://app.ordredesavocats-ci.net",
+    "extractorVersion": "1.0.0",
+    "complete": false,
+    "lawyers": {
+        "listingCount": 605,
+        "listingPagesDetected": 51,
+        "listingEntriesRead": 605,
+        "uniqueEntriesExported": 605,
+        "detailsSucceeded": 605,
+        "detailsFailed": 0,
+        "withoutCabinet": 5,
+        "withoutPortrait": 2,
+        "withoutPhone": 6,
+        "withoutEmail": 59,
+        "withoutBarNumber": 0,
+        "missingDisplayName": 0,
+        "duplicateSourceUuids": [],
+        "possibleDuplicateNames": []
+    },
+    "cabinets": {
+        "listingCount": 377,
+        "listingPagesDetected": 32,
+        "listingEntriesRead": 377,
+        "uniqueEntriesExported": 377,
+        "detailsSucceeded": 370,
+        "detailsFailed": 7,
+        "withoutMembers": 7,
+        "withoutEmail": 11,
+        "withMultiplePhones": 300,
+        "withoutTypeRaw": 37,
+        "duplicateSourceUuids": []
+    },
+    "relations": {
+        "lawyerCabinetUnresolved": [],
+        "cabinetMembersWithoutLawyer": [],
+        "lawyerCabinetMembershipMismatch": [
+            {
+                "lawyerSourceUuid": "75d65b4c-4065-48d2-9e5b-945ee2cfaabc",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            },
+            {
+                "lawyerSourceUuid": "fdbc1252-2fbc-4fdc-a6ae-e9e0b2f75dfa",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            },
+            {
+                "lawyerSourceUuid": "1c9f233e-bf88-4121-ad89-1dc96a831441",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            },
+            {
+                "lawyerSourceUuid": "6bb38690-ae22-48fe-b9c3-670bfb0ecb7b",
+                "cabinetSourceUuid": "4c398716-f820-46d9-bb3d-6b6f002b840d"
+            },
+            {
+                "lawyerSourceUuid": "3cf527a8-2b77-413d-9660-8d4d8ea6e4ee",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            },
+            {
+                "lawyerSourceUuid": "a502ed15-7592-4199-b0a5-79a634eff27f",
+                "cabinetSourceUuid": "4c398716-f820-46d9-bb3d-6b6f002b840d"
+            },
+            {
+                "lawyerSourceUuid": "3f327239-0f45-4f3c-91a9-80d15799176c",
+                "cabinetSourceUuid": "4c398716-f820-46d9-bb3d-6b6f002b840d"
+            },
+            {
+                "lawyerSourceUuid": "a4964b30-833f-4278-b3c3-5e6b597b0f20",
+                "cabinetSourceUuid": "4c398716-f820-46d9-bb3d-6b6f002b840d"
+            },
+            {
+                "lawyerSourceUuid": "0bf791ab-f59e-49c4-b980-9ed21c59281c",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            },
+            {
+                "lawyerSourceUuid": "f7d84ec0-42a9-463d-8c8d-2ac7164dc0f8",
+                "cabinetSourceUuid": "4adb7f91-7243-43c4-aee2-80547718ce0b"
+            }
+        ]
+    },
+    "consistencyIssues": [
+        {
+            "sourceUuid": "b56e06c7-9ebe-4417-9f8c-6e5d4b28d6a8",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLEDE DOHORA André-Frédéric",
+            "detailValue": "Cabinet CABINET BLEDE DOHORA André-Frédéric"
+        },
+        {
+            "sourceUuid": "ceee51a2-7d2f-47dc-ac37-5074e658ace2",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "b340d183-1bdd-40ef-9aa1-4d7bbe2c0865",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "e2bb0007-268c-4b3e-84e9-20f3884110d1",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "093f7fb0-e076-4475-914b-b9704cdb3ef9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "d46f0c00-a4a9-4cf3-bf7d-5736be11f69b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "c6950cdf-3012-4308-9cc8-1120d7921551",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "e7048930-3fd3-49d9-bc18-ad0fce23d79f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KASSI Abel",
+            "detailValue": "Cabinet CABINET KASSI Abel"
+        },
+        {
+            "sourceUuid": "6e1043a5-2c89-4cec-90fc-55e7889f7cde",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "e2393c67-080d-4be8-9090-d9258a117b15",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO EMMANUEL",
+            "detailValue": "Cabinet CABINET YAO EMMANUEL"
+        },
+        {
+            "sourceUuid": "ea23d481-3e1b-411f-aff4-105213c9af51",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLEDE DOHORA André-Frédéric",
+            "detailValue": "Cabinet CABINET BLEDE DOHORA André-Frédéric"
+        },
+        {
+            "sourceUuid": "6d204f4c-3f49-4775-b55a-54b41c581b95",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "769d1696-f25f-4dc8-93bc-7b5788c78b9b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COWPPLI-BONY Kwassi Béatrice",
+            "detailValue": "Cabinet CABINET COWPPLI-BONY Kwassi Béatrice"
+        },
+        {
+            "sourceUuid": "c79cfff1-6ebd-4470-9578-801d199cc037",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "beed0e53-131a-4a7c-b8dc-c00c30aecefe",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "c777ad2f-99b8-4f1b-bfe2-47ba468211e9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "afcc03fa-8e41-4d29-96db-d29fdb6dd824",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLEDE DOHORA André-Frédéric",
+            "detailValue": "Cabinet CABINET BLEDE DOHORA André-Frédéric"
+        },
+        {
+            "sourceUuid": "4ca8484b-a35d-4b31-993c-07a44d2c30b7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCP AVOCATS CONSEILS ASSOCIES / ACAs",
+            "detailValue": "Cabinet SCP AVOCATS CONSEILS ASSOCIES / ACAs"
+        },
+        {
+            "sourceUuid": "76b142cb-b04f-4b91-8048-9c05e637c61e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "a169aa27-038a-451b-8c6b-b8da94bbe1fd",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PAUL KOUASSI ET ASSOCIES",
+            "detailValue": "Cabinet SCPA PAUL KOUASSI ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "39a7f711-d8d9-45cf-9c39-b13ce84e3403",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO-SITIONON & Associés",
+            "detailValue": "Cabinet SCPA SORO-SITIONON & Associés"
+        },
+        {
+            "sourceUuid": "4dc68d92-d21f-4d4d-82b6-cb9d1a208014",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "38cf68e2-2507-489e-ac0d-8883bddfa466",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'GATTA Essy",
+            "detailValue": "Cabinet CABINET N'GATTA Essy"
+        },
+        {
+            "sourceUuid": "ae3a072b-ef21-4d43-89ef-6480292d687b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "1bd34edc-c2c5-410b-8713-e180b27c8bb1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOFFRI Marie-France épse KOUAME KRA",
+            "detailValue": "Cabinet CABINET GOFFRI Marie-France épse KOUAME KRA"
+        },
+        {
+            "sourceUuid": "fe9f335c-cb43-4dbc-b713-db4727d44546",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUIRO Mamadou",
+            "detailValue": "Cabinet CABINET GUIRO Mamadou"
+        },
+        {
+            "sourceUuid": "09230951-aa63-45db-8d3a-bce7dff1633b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TAKORE, KONAN et Associés",
+            "detailValue": "Cabinet SCPA TAKORE, KONAN et Associés"
+        },
+        {
+            "sourceUuid": "cfd6838f-f495-4999-9f21-759b618870a9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA",
+            "detailValue": "Cabinet SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA"
+        },
+        {
+            "sourceUuid": "f0a40819-4c14-4da0-8a0e-3bb813b06320",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N'GOAN, ASMAN et Associés",
+            "detailValue": "Cabinet SCPA N'GOAN, ASMAN et Associés"
+        },
+        {
+            "sourceUuid": "f7b52aa2-c0c3-4bc0-88d1-e95952f93371",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA OUANGUI-VE & Associés",
+            "detailValue": "Cabinet SCPA OUANGUI-VE & Associés"
+        },
+        {
+            "sourceUuid": "33c0215c-3ae6-4b75-80ae-94c53e3c06c1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKOI Ahizi Paul",
+            "detailValue": "Cabinet CABINET AKOI Ahizi Paul"
+        },
+        {
+            "sourceUuid": "7d1bed9a-63e5-4556-9a43-37e299ee93ba",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PARIS-VILLAGE",
+            "detailValue": "Cabinet SCPA PARIS-VILLAGE"
+        },
+        {
+            "sourceUuid": "8b4b85b5-5186-4299-9682-640f35b076fa",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "bc736985-b7f2-44f1-9c4e-673d9cebc296",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET WACOUBOUE Ozoua Marie Thérèse",
+            "detailValue": "Cabinet CABINET WACOUBOUE Ozoua Marie Thérèse"
+        },
+        {
+            "sourceUuid": "9e182f82-5958-44dc-b24c-cc04523498fb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DJIGBENOU Daignon Antoine",
+            "detailValue": "Cabinet CABINET DJIGBENOU Daignon Antoine"
+        },
+        {
+            "sourceUuid": "8dc72da3-8c5a-41fb-b7f6-6418ac1f575c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOURE Kadidia",
+            "detailValue": "Cabinet CABINET TOURE Kadidia"
+        },
+        {
+            "sourceUuid": "42005089-0bf2-43e0-8180-345220a008bd",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DADIE-SANGARET Lynda",
+            "detailValue": "Cabinet CABINET DADIE-SANGARET Lynda"
+        },
+        {
+            "sourceUuid": "068760aa-eca6-422e-b0af-ec2b97b07197",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAPO Eugène N'Guessan",
+            "detailValue": "Cabinet CABINET YAPO Eugène N'Guessan"
+        },
+        {
+            "sourceUuid": "5d3a8fcd-e809-4850-8e57-c9ca18f69fba",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI Kouamé Francis",
+            "detailValue": "Cabinet CABINET KOFFI Kouamé Francis"
+        },
+        {
+            "sourceUuid": "531e9a43-be2c-46c2-8c1c-b042ada138f0",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUASSI Madeleine Adjaoua",
+            "detailValue": "Cabinet CABINET KOUASSI Madeleine Adjaoua"
+        },
+        {
+            "sourceUuid": "28f886f6-f669-4322-944f-daa68b351355",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADJE, ASSI, METAN",
+            "detailValue": "Cabinet SCPA ADJE, ASSI, METAN"
+        },
+        {
+            "sourceUuid": "23710efc-c63f-4a71-a3ac-08fb9476f345",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADOU Viviane",
+            "detailValue": "Cabinet CABINET ADOU Viviane"
+        },
+        {
+            "sourceUuid": "1447c088-5466-4e7b-820c-1f94fcb74c82",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AHUIMAH N'Dri Yao Julien",
+            "detailValue": "Cabinet CABINET AHUIMAH N'Dri Yao Julien"
+        },
+        {
+            "sourceUuid": "7fbf633c-d305-4e76-8ed4-24f79897ef43",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PARIS-VILLAGE",
+            "detailValue": "Cabinet SCPA PARIS-VILLAGE"
+        },
+        {
+            "sourceUuid": "e0b838aa-c1b4-4afd-8930-3ec22673df54",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADJOUSSOU-THIAM N'Deye N'Galla",
+            "detailValue": "Cabinet CABINET ADJOUSSOU-THIAM N'Deye N'Galla"
+        },
+        {
+            "sourceUuid": "df541424-50e5-44da-bf2d-35fb1ff5b600",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOKRA Michel",
+            "detailValue": "Cabinet CABINET KOKRA Michel"
+        },
+        {
+            "sourceUuid": "b7d15ff0-d23d-422a-9c56-c090c6ed3383",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE-N'GUESSAN-KIGNELMAN",
+            "detailValue": "Cabinet SCPA KONE-N'GUESSAN-KIGNELMAN"
+        },
+        {
+            "sourceUuid": "a04eba87-bc59-4d67-af50-1279c1b589ac",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AYEPO Vincent",
+            "detailValue": "Cabinet CABINET AYEPO Vincent"
+        },
+        {
+            "sourceUuid": "c025ddcd-2224-4f87-bda9-5ff570ee57a4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADJE, ASSI, METAN",
+            "detailValue": "Cabinet SCPA ADJE, ASSI, METAN"
+        },
+        {
+            "sourceUuid": "3c4f0a1d-426d-4cb2-a9d9-b51b1cddf8ef",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DJEDJRHO Lasme Pierre",
+            "detailValue": "Cabinet CABINET DJEDJRHO Lasme Pierre"
+        },
+        {
+            "sourceUuid": "777fd520-7306-4b12-93f1-682329dd2139",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET Van Alphonse",
+            "detailValue": "Cabinet CABINET Van Alphonse"
+        },
+        {
+            "sourceUuid": "141759b6-2e54-4fdb-8813-419b391b0d0f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUAME Faustin",
+            "detailValue": "Cabinet CABINET KOUAME Faustin"
+        },
+        {
+            "sourceUuid": "449c83ba-b4a4-4cbd-9e7d-623ad818aee9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N'GOAN, ASMAN et Associés",
+            "detailValue": "Cabinet SCPA N'GOAN, ASMAN et Associés"
+        },
+        {
+            "sourceUuid": "7176f1c2-7207-4a4a-a6a7-b566e20090b8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "b6598430-7522-4313-a455-c4a91ddb1f6e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TIDOU Sanogo Ladji",
+            "detailValue": "Cabinet CABINET TIDOU Sanogo Ladji"
+        },
+        {
+            "sourceUuid": "cd5986d3-0e0e-43b2-ba9e-d02462047073",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUAKOU N'Gatta Henri III",
+            "detailValue": "Cabinet CABINET KOUAKOU N'Gatta Henri III"
+        },
+        {
+            "sourceUuid": "160e303c-9a25-4a08-b7b3-894f59bbfdd7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "a54fd6cc-2a22-40fb-843f-00f24f078760",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE DE MESSE ZINSOU Anna",
+            "detailValue": "Cabinet CABINET KONE DE MESSE ZINSOU Anna"
+        },
+        {
+            "sourceUuid": "48fd16ef-a72a-48c8-a809-0d19b6d65c54",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "9ed9e3ae-04a8-49b6-adae-4e068daf7768",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OBENG-KOFI FIAN",
+            "detailValue": "Cabinet CABINET OBENG-KOFI FIAN"
+        },
+        {
+            "sourceUuid": "ea187913-439b-4414-8809-257818835f4d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YEKINI Bahiralai",
+            "detailValue": "Cabinet CABINET YEKINI Bahiralai"
+        },
+        {
+            "sourceUuid": "da096298-f67f-4067-8173-884b86e762b1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BONFIN Edmond",
+            "detailValue": "Cabinet CABINET BONFIN Edmond"
+        },
+        {
+            "sourceUuid": "86883aba-28f2-4f6c-9e6a-8de49a0c73db",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FAYE",
+            "detailValue": "Cabinet CABINET FAYE"
+        },
+        {
+            "sourceUuid": "c5058547-f6a3-43f4-8103-f88951e91229",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUSSEMON née PADONOU Jeanne Françoise",
+            "detailValue": "Cabinet CABINET KOUSSEMON née PADONOU Jeanne Françoise"
+        },
+        {
+            "sourceUuid": "0aab4f66-19f3-4e05-a659-4c2649fafd98",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TIABOU Issa",
+            "detailValue": "Cabinet CABINET TIABOU Issa"
+        },
+        {
+            "sourceUuid": "9c1789b5-2abe-4b5c-9cb0-6c8006aa9fa9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "cce55fce-9e27-40a9-82da-de5db001084e",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "266a6aef-5d83-4879-837a-faf0c6739a56",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAUDJHIS-OFFOUMOU Françoise",
+            "detailValue": "Cabinet CABINET KAUDJHIS-OFFOUMOU Françoise"
+        },
+        {
+            "sourceUuid": "6f4db1d6-0a79-4a4f-8e60-793bbf236140",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ETTE Michel",
+            "detailValue": "Cabinet CABINET ETTE Michel"
+        },
+        {
+            "sourceUuid": "431ec0e2-2b7a-42a3-bd12-5786929146aa",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Tiémogo",
+            "detailValue": "Cabinet CABINET COULIBALY Tiémogo"
+        },
+        {
+            "sourceUuid": "ec8bb1fa-e368-4780-afd9-15612d8edb4e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUNKANRIN",
+            "detailValue": "Cabinet CABINET HOUNKANRIN"
+        },
+        {
+            "sourceUuid": "861d60ac-b1c6-4063-a694-1ef439ff301d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOSSOUGRO",
+            "detailValue": "Cabinet CABINET KOSSOUGRO"
+        },
+        {
+            "sourceUuid": "dc443a5c-5caf-4e87-bed6-9528b5f58ca3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN ANTOINE GEOFFROY",
+            "detailValue": "Cabinet CABINET KONAN ANTOINE GEOFFROY"
+        },
+        {
+            "sourceUuid": "c5c81052-d78d-4770-a3c8-bf5f3aa49342",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKE Benoît",
+            "detailValue": "Cabinet CABINET AKE Benoît"
+        },
+        {
+            "sourceUuid": "fcb9a4cd-5f93-45fe-8a22-aa8ce2922f65",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET VIRTUS",
+            "detailValue": "Cabinet CABINET VIRTUS"
+        },
+        {
+            "sourceUuid": "1d1b892c-896d-4033-af30-2ed92d4dc255",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ASSAMOI Alain Lucien",
+            "detailValue": "Cabinet CABINET ASSAMOI Alain Lucien"
+        },
+        {
+            "sourceUuid": "59ec9528-39e3-43d8-9174-437ba1de467d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DOUMBIA Ibrahima",
+            "detailValue": "Cabinet CABINET DOUMBIA Ibrahima"
+        },
+        {
+            "sourceUuid": "4db4e563-148f-45f8-8bff-a2b4bb4d47f8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BLESSY & BLESSY",
+            "detailValue": "Cabinet SCPA BLESSY & BLESSY"
+        },
+        {
+            "sourceUuid": "eaafe5b5-7e44-44ef-9f23-cbb02360e2b7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TAKORE, KONAN et Associés",
+            "detailValue": "Cabinet SCPA TAKORE, KONAN et Associés"
+        },
+        {
+            "sourceUuid": "0ab63cb2-1b62-4b78-8efe-4aa4961c08ca",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KASSI Magne Hubertine épse ADJOUSSOU",
+            "detailValue": "Cabinet CABINET KASSI Magne Hubertine épse ADJOUSSOU"
+        },
+        {
+            "sourceUuid": "68ea868f-b856-4193-a778-3e1883ddab60",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NIANGADOU Aliou",
+            "detailValue": "Cabinet CABINET NIANGADOU Aliou"
+        },
+        {
+            "sourceUuid": "244b043b-95c9-4f82-88af-adc8cd945e0b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OUATTARA Adama",
+            "detailValue": "Cabinet CABINET OUATTARA Adama"
+        },
+        {
+            "sourceUuid": "4dc609af-379f-46d5-8f10-cebb4c25c463",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KANGA, OLAYE et Associés",
+            "detailValue": "Cabinet SCPA KANGA, OLAYE et Associés"
+        },
+        {
+            "sourceUuid": "548c822e-8cf1-4fdf-9c01-fbab6e0b189f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'GUESSAN Yao",
+            "detailValue": "Cabinet CABINET N'GUESSAN Yao"
+        },
+        {
+            "sourceUuid": "52693688-f8dc-4f03-9fe8-1189389233c8",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N’GUETTA GERARD",
+            "detailValue": "Cabinet CABINET N’GUETTA GERARD"
+        },
+        {
+            "sourceUuid": "a09d84db-e773-45cb-9f62-7d20a82def3b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOKOLA LYDIE CHANTAL",
+            "detailValue": "Cabinet CABINET BOKOLA LYDIE CHANTAL"
+        },
+        {
+            "sourceUuid": "e33e917f-ece7-405b-9be6-ddb5ca2ab30e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "eec0f80d-e3ab-4b49-a432-9862b998759d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MEDAFE Marie-Chantal",
+            "detailValue": "Cabinet CABINET MEDAFE Marie-Chantal"
+        },
+        {
+            "sourceUuid": "4789b2e3-0bd5-4c57-a49c-6d0c715bf857",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SARASSORO Hyacinthe",
+            "detailValue": "Cabinet CABINET SARASSORO Hyacinthe"
+        },
+        {
+            "sourceUuid": "78876604-8025-4adf-a909-dad10d389a9e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COMA Aminata",
+            "detailValue": "Cabinet CABINET COMA Aminata"
+        },
+        {
+            "sourceUuid": "db3b09ba-4756-4a53-8407-ac922a40ae49",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SOUMAHORO Abou",
+            "detailValue": "Cabinet CABINET SOUMAHORO Abou"
+        },
+        {
+            "sourceUuid": "71105a6e-d492-49b2-8fd1-cddd385b504a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUASSI-ADEH Loukou Marie-Pascale",
+            "detailValue": "Cabinet CABINET KOUASSI-ADEH Loukou Marie-Pascale"
+        },
+        {
+            "sourceUuid": "48af8a24-f4c7-49fc-9cd7-63ad83dbfe7c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET VIRTUS",
+            "detailValue": "Cabinet CABINET VIRTUS"
+        },
+        {
+            "sourceUuid": "142d590a-46e0-4a25-8723-e56cb0ff8b5f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUAME-BI Iritié",
+            "detailValue": "Cabinet CABINET KOUAME-BI Iritié"
+        },
+        {
+            "sourceUuid": "a6658b0c-317f-47a3-a066-ceaf79007712",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET VIEIRA Patrick-Georges Kadher",
+            "detailValue": "Cabinet CABINET VIEIRA Patrick-Georges Kadher"
+        },
+        {
+            "sourceUuid": "53cfd24f-3bc4-4541-bc78-ba5e7865143b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "029c3f99-4ada-4ae2-89de-535b5f06b3b8",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOULOUFOUA Yvonne",
+            "detailValue": "Cabinet CABINET KOULOUFOUA Yvonne"
+        },
+        {
+            "sourceUuid": "801c9153-d224-4721-82f3-b30580d994bb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET VIRTUS",
+            "detailValue": "Cabinet CABINET VIRTUS"
+        },
+        {
+            "sourceUuid": "ebb2a4de-4333-416a-b2a6-040ddb2274ef",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMANY KOUAME",
+            "detailValue": "Cabinet CABINET AMANY KOUAME"
+        },
+        {
+            "sourceUuid": "9a5ef76e-e052-443b-a1f9-f903fed2ab56",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI FRANCIS",
+            "detailValue": "Cabinet CABINET KOFFI FRANCIS"
+        },
+        {
+            "sourceUuid": "eac20c5d-1477-45e0-84c6-a49d041b0425",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLAY Charles Guezoha",
+            "detailValue": "Cabinet CABINET BLAY Charles Guezoha"
+        },
+        {
+            "sourceUuid": "a933833c-9bd8-4346-a018-761a2a386654",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OLOUFOUMI Séry Jour-Venance Bankolé",
+            "detailValue": "Cabinet CABINET OLOUFOUMI Séry Jour-Venance Bankolé"
+        },
+        {
+            "sourceUuid": "75a396c4-b336-4ebf-b7cf-f6e1b7d23a18",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOURE épse BAMBA Hassanatou",
+            "detailValue": "Cabinet CABINET TOURE épse BAMBA Hassanatou"
+        },
+        {
+            "sourceUuid": "7530744d-34d2-4516-84cc-da8fd1709edd",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOUAH YAO Danielle",
+            "detailValue": "Cabinet CABINET BOUAH YAO Danielle"
+        },
+        {
+            "sourceUuid": "f913758b-9f1e-46e2-b0e7-2555e9022a8b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO EMMANUEL",
+            "detailValue": "Cabinet CABINET YAO EMMANUEL"
+        },
+        {
+            "sourceUuid": "203f9345-e9d0-4b93-9075-f9f4aa008d4c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAMA Corinne",
+            "detailValue": "Cabinet CABINET KAMA Corinne"
+        },
+        {
+            "sourceUuid": "bd165a60-f721-492d-80c4-8e84f3bbc0e9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOURE Marame",
+            "detailValue": "Cabinet CABINET TOURE Marame"
+        },
+        {
+            "sourceUuid": "c106cbcd-6c51-4f0a-a7ca-39f7fe8014db",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOHOU-LEBAILLY Gisèle",
+            "detailValue": "Cabinet CABINET KOHOU-LEBAILLY Gisèle"
+        },
+        {
+            "sourceUuid": "19a0c647-36bc-4485-9a08-7cc487d1c82b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SAKHO-YAPOBI-FOFANA & Associés",
+            "detailValue": "Cabinet SCPA SAKHO-YAPOBI-FOFANA & Associés"
+        },
+        {
+            "sourceUuid": "e5a08aa9-b88f-41f8-9fcb-f0b7a5598bbb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAKOU Gnadjé Jean",
+            "detailValue": "Cabinet CABINET KAKOU Gnadjé Jean"
+        },
+        {
+            "sourceUuid": "1e1dddc2-1858-471f-8599-af349d29ad25",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KANGA, OLAYE et Associés",
+            "detailValue": "Cabinet SCPA KANGA, OLAYE et Associés"
+        },
+        {
+            "sourceUuid": "18789233-b4ce-4c2f-878c-92a0bf55b12c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KASSI Abel",
+            "detailValue": "Cabinet CABINET KASSI Abel"
+        },
+        {
+            "sourceUuid": "73521601-82f0-4a03-9933-591933fe3af7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUDOU Gbaté Philippe",
+            "detailValue": "Cabinet CABINET KOUDOU Gbaté Philippe"
+        },
+        {
+            "sourceUuid": "af48d0cb-dd68-4394-bc2d-930c53b427c1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MOULARE Thomas-Casimir",
+            "detailValue": "Cabinet CABINET MOULARE Thomas-Casimir"
+        },
+        {
+            "sourceUuid": "3ed2b74b-4b58-4756-9176-bde537ed7da3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOGBA Loussou Louise",
+            "detailValue": "Cabinet CABINET TOGBA Loussou Louise"
+        },
+        {
+            "sourceUuid": "ca9f0e8b-2be2-4954-a6ca-53c85456cd24",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FOLQUET-DIALLO Paule Irma",
+            "detailValue": "Cabinet CABINET FOLQUET-DIALLO Paule Irma"
+        },
+        {
+            "sourceUuid": "13f3f166-28fb-43b5-a590-05a2922cf131",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "ebdb493b-72f7-4565-932f-d92d4d56bfc4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA NOMEL & BOBRE",
+            "detailValue": "Cabinet SCPA NOMEL & BOBRE"
+        },
+        {
+            "sourceUuid": "afd1dee0-5232-4be0-ab1d-75dbfacd4c7b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SONTE Diomandé Emile Narcisse",
+            "detailValue": "Cabinet CABINET SONTE Diomandé Emile Narcisse"
+        },
+        {
+            "sourceUuid": "01044fee-4d6a-424d-af5b-7c3b3db1bd18",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET EMERITUS",
+            "detailValue": "Cabinet CABINET EMERITUS"
+        },
+        {
+            "sourceUuid": "a968fa53-8938-47b0-a018-bd9d25644bf3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE Catherine",
+            "detailValue": "Cabinet CABINET KONE Catherine"
+        },
+        {
+            "sourceUuid": "9e84c9c7-ac59-41b2-b0a7-531f518e1f52",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOUAH-KAMON Michel",
+            "detailValue": "Cabinet CABINET BOUAH-KAMON Michel"
+        },
+        {
+            "sourceUuid": "51ec14f7-9e26-4f44-a31a-c9ae0f1762cf",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TABA Franck",
+            "detailValue": "Cabinet CABINET TABA Franck"
+        },
+        {
+            "sourceUuid": "0e18fa70-518f-40bd-abc3-f9bfd0de9026",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUASSI Kouadio Pierre",
+            "detailValue": "Cabinet CABINET KOUASSI Kouadio Pierre"
+        },
+        {
+            "sourceUuid": "7d198d70-fa67-4faa-9829-860e348ccf59",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO Michel",
+            "detailValue": "Cabinet CABINET YAO Michel"
+        },
+        {
+            "sourceUuid": "c0893674-1e8d-4776-8d37-7b0d3288544b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "46a32f22-19a5-4880-a3b7-fdb76153b3bb",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SAKHO-YAPOBI-FOFANA & Associés",
+            "detailValue": "Cabinet SCPA SAKHO-YAPOBI-FOFANA & Associés"
+        },
+        {
+            "sourceUuid": "52747050-fe03-45af-9b11-71168fb6cbb1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIARRASSOUBA Mamadou Lamine",
+            "detailValue": "Cabinet CABINET DIARRASSOUBA Mamadou Lamine"
+        },
+        {
+            "sourceUuid": "fd467350-9681-4dee-9615-bb8ce5fcc566",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUADIO Kouadio Alexandre",
+            "detailValue": "Cabinet CABINET KOUADIO Kouadio Alexandre"
+        },
+        {
+            "sourceUuid": "b3b83e5c-1cf3-486a-85a6-9ca5ef503a05",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET EMERITUS",
+            "detailValue": "Cabinet CABINET EMERITUS"
+        },
+        {
+            "sourceUuid": "36d4ce54-90b6-4ca0-be90-9b0535c31d9e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET LOGBO Guédé Laurent",
+            "detailValue": "Cabinet CABINET LOGBO Guédé Laurent"
+        },
+        {
+            "sourceUuid": "ee851379-88e6-488e-9b50-01ffe284f325",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SAKHO-YAPOBI-FOFANA & Associés",
+            "detailValue": "Cabinet SCPA SAKHO-YAPOBI-FOFANA & Associés"
+        },
+        {
+            "sourceUuid": "fc267ff0-17fa-447e-8bc2-ca3be7ed91d6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET PARTNER",
+            "detailValue": "Cabinet CABINET PARTNER"
+        },
+        {
+            "sourceUuid": "c122649e-1eef-4dbb-a56e-a565943edc63",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ESSIS Cyprien",
+            "detailValue": "Cabinet CABINET ESSIS Cyprien"
+        },
+        {
+            "sourceUuid": "9e0bc592-562b-4e9c-99d7-363dfad0b07f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAH Jeanne-d’Arc",
+            "detailValue": "Cabinet CABINET KAH Jeanne-d’Arc"
+        },
+        {
+            "sourceUuid": "2edfc692-950e-42f4-925c-cc971d57e7ad",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'DRI Zé Thomas",
+            "detailValue": "Cabinet CABINET N'DRI Zé Thomas"
+        },
+        {
+            "sourceUuid": "1b40192f-75c2-43a2-ab01-ee9b92696e77",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOHOUSSOU Henri Valentin",
+            "detailValue": "Cabinet CABINET BOHOUSSOU Henri Valentin"
+        },
+        {
+            "sourceUuid": "25bb0b0e-1422-404a-95bf-2506b6cb2966",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI épse KOUASSI Adjoua Anne Dominique",
+            "detailValue": "Cabinet CABINET KOFFI épse KOUASSI Adjoua Anne Dominique"
+        },
+        {
+            "sourceUuid": "eca18111-9cfe-42ad-9a76-7738b3e4e0ca",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA RAUX-AMIEN et Associés",
+            "detailValue": "Cabinet SCPA RAUX-AMIEN et Associés"
+        },
+        {
+            "sourceUuid": "8ce9ffa3-6faf-434c-ae65-a9f1625c158b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LES OSCARS",
+            "detailValue": "Cabinet SCPA LES OSCARS"
+        },
+        {
+            "sourceUuid": "bb7baf10-e4fd-4035-828a-a44e81c89eb0",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKA FOUFOUE Félix",
+            "detailValue": "Cabinet CABINET AKA FOUFOUE Félix"
+        },
+        {
+            "sourceUuid": "efe55bbd-b0bf-4e23-b0ca-09d75a5137f9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIDIER Z. OYOUROU",
+            "detailValue": "Cabinet CABINET DIDIER Z. OYOUROU"
+        },
+        {
+            "sourceUuid": "d9579f39-af8e-4f4a-ac4e-69246f1896f0",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SYLLA Idrissa",
+            "detailValue": "Cabinet CABINET SYLLA Idrissa"
+        },
+        {
+            "sourceUuid": "f6ed9692-5947-4e4b-9f4b-a5fcfbe7f6ce",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Nambégué Désiré",
+            "detailValue": "Cabinet CABINET COULIBALY Nambégué Désiré"
+        },
+        {
+            "sourceUuid": "84ff568e-99f1-4eb6-b133-f6976dc1d11e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAMBA Katty Micheline Gnépadé",
+            "detailValue": "Cabinet CABINET BAMBA Katty Micheline Gnépadé"
+        },
+        {
+            "sourceUuid": "2b69966b-f9b8-4ed8-ae10-85a74e9dfafd",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YOBOUET Konan Jacques",
+            "detailValue": "Cabinet CABINET YOBOUET Konan Jacques"
+        },
+        {
+            "sourceUuid": "50dbbfed-2910-483a-8c02-c3a312952493",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOA Olivier Thierry",
+            "detailValue": "Cabinet CABINET BOA Olivier Thierry"
+        },
+        {
+            "sourceUuid": "c3044a48-5b73-4559-a0c9-50c138ebb760",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADOU Pascal N'Doua",
+            "detailValue": "Cabinet CABINET ADOU Pascal N'Doua"
+        },
+        {
+            "sourceUuid": "2776f505-371c-4e68-ad9e-246f7cb1de05",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "0ceee8df-dc2a-414f-8267-65df4b5f34b3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKRE-TCHAKRE Paul Evariste",
+            "detailValue": "Cabinet CABINET AKRE-TCHAKRE Paul Evariste"
+        },
+        {
+            "sourceUuid": "e92f5c3f-41da-45aa-aeb3-de28ad6bd652",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA NOMEL & BOBRE",
+            "detailValue": "Cabinet SCPA NOMEL & BOBRE"
+        },
+        {
+            "sourceUuid": "0cef232f-a5a5-4a77-8462-e3fa16296b3f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MENTENON",
+            "detailValue": "Cabinet CABINET MENTENON"
+        },
+        {
+            "sourceUuid": "3452fd4e-f3da-439b-a3ef-cec519bc057d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOEGAH & ETTE",
+            "detailValue": "Cabinet CABINET HOEGAH & ETTE"
+        },
+        {
+            "sourceUuid": "cdfa2368-7177-4f97-a5a1-d0d95e338767",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AVLESSI Jules Dogon",
+            "detailValue": "Cabinet CABINET AVLESSI Jules Dogon"
+        },
+        {
+            "sourceUuid": "067a9b3e-97c8-4686-9345-d6db66931999",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KAKOU-DOUMBIA-NIANG",
+            "detailValue": "Cabinet SCPA KAKOU-DOUMBIA-NIANG"
+        },
+        {
+            "sourceUuid": "8b74588d-0a43-4d06-963c-9e85244e7e58",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'CHO Marie-Françoise épse DOFFOU-N'GUESSAN",
+            "detailValue": "Cabinet CABINET N'CHO Marie-Françoise épse DOFFOU-N'GUESSAN"
+        },
+        {
+            "sourceUuid": "c7bc641c-d7a3-4dcf-bf27-9ff7053b426a",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TIEMELE-EBIELE & Associés",
+            "detailValue": "Cabinet SCPA TIEMELE-EBIELE & Associés"
+        },
+        {
+            "sourceUuid": "23e1f9c6-da29-4b98-8fa9-5b85ed93ceaf",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMON N'Guessan Sévérin",
+            "detailValue": "Cabinet CABINET AMON N'Guessan Sévérin"
+        },
+        {
+            "sourceUuid": "ca3c0258-71fc-4494-ad86-31fb78170ee9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUESSENND Kouassi Valéry",
+            "detailValue": "Cabinet CABINET GUESSENND Kouassi Valéry"
+        },
+        {
+            "sourceUuid": "85d0ae96-d165-45ec-85c2-b7d431160131",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KASSI Abel",
+            "detailValue": "Cabinet CABINET KASSI Abel"
+        },
+        {
+            "sourceUuid": "c89f74bb-73f3-4b9a-b702-75d74a42364b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ASSAMOI N'Guessan Alexandre",
+            "detailValue": "Cabinet CABINET ASSAMOI N'Guessan Alexandre"
+        },
+        {
+            "sourceUuid": "7b4566dd-ba99-496e-b046-81fe8c549dfe",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUASSI NANGO Marie-Laure",
+            "detailValue": "Cabinet CABINET KOUASSI NANGO Marie-Laure"
+        },
+        {
+            "sourceUuid": "86cc14f0-fc6f-49eb-9719-449361adb12d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKO KOUASSI Cho Pauline",
+            "detailValue": "Cabinet CABINET AKO KOUASSI Cho Pauline"
+        },
+        {
+            "sourceUuid": "4f3f3b87-2544-4c43-9cac-0e40b150efcb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLEOUE Aka Blaise",
+            "detailValue": "Cabinet CABINET BLEOUE Aka Blaise"
+        },
+        {
+            "sourceUuid": "1e9b1cd2-b6a8-40d0-9e78-256ad89530ea",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SIAGBE TRE Germain",
+            "detailValue": "Cabinet CABINET SIAGBE TRE Germain"
+        },
+        {
+            "sourceUuid": "a1f857a5-58ed-4a83-9308-a1117fb801fb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TAPE Manakalé Ernest",
+            "detailValue": "Cabinet CABINET TAPE Manakalé Ernest"
+        },
+        {
+            "sourceUuid": "5cacdbdb-1543-41d8-b65c-8437cb3303bc",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ALPHA 2000",
+            "detailValue": "Cabinet SCPA ALPHA 2000"
+        },
+        {
+            "sourceUuid": "654c584a-a1c1-40bf-88f1-04deef516b98",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI Kouassi Gilbert",
+            "detailValue": "Cabinet CABINET KOFFI Kouassi Gilbert"
+        },
+        {
+            "sourceUuid": "d189a707-a3ff-4bdc-8f08-122609a722d0",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ALPHA 2000",
+            "detailValue": "Cabinet SCPA ALPHA 2000"
+        },
+        {
+            "sourceUuid": "cc22460d-d9e6-4728-87d5-3d86220f8b19",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET CHAUVEAU",
+            "detailValue": "Cabinet CABINET CHAUVEAU"
+        },
+        {
+            "sourceUuid": "33752098-7299-483f-bd7f-ef1a9b84e442",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KIGNIMA Koné Charles",
+            "detailValue": "Cabinet CABINET KIGNIMA Koné Charles"
+        },
+        {
+            "sourceUuid": "9b8ca822-fbcf-44e9-9625-f9168a3e50f8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADJE, ASSI, METAN",
+            "detailValue": "Cabinet SCPA ADJE, ASSI, METAN"
+        },
+        {
+            "sourceUuid": "474b4d0c-afbd-41fb-8bca-c99be71b70a6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAGUY Landry Anastase",
+            "detailValue": "Cabinet CABINET BAGUY Landry Anastase"
+        },
+        {
+            "sourceUuid": "02bf3405-6a31-41d7-9a6f-546c3cae488d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET LIADE Koré Augustin",
+            "detailValue": "Cabinet CABINET LIADE Koré Augustin"
+        },
+        {
+            "sourceUuid": "fa6d5d9e-116a-4c4c-81af-d930903f4943",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FLAN Goueu Gonné Lambert",
+            "detailValue": "Cabinet CABINET FLAN Goueu Gonné Lambert"
+        },
+        {
+            "sourceUuid": "0c2af6af-a3d0-4fce-be9e-ffb2ce5eb004",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ZAGO Franck-Orly",
+            "detailValue": "Cabinet CABINET ZAGO Franck-Orly"
+        },
+        {
+            "sourceUuid": "9c5a1183-a60c-4bb6-8366-f31b94e52ada",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YEO Massékro",
+            "detailValue": "Cabinet CABINET YEO Massékro"
+        },
+        {
+            "sourceUuid": "c0a44c0b-4881-44fa-b96c-649e217f8708",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SARR & ALLARD",
+            "detailValue": "Cabinet SCPA SARR & ALLARD"
+        },
+        {
+            "sourceUuid": "5b47bbaf-28e4-4147-a34e-2f5d7f834a02",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "1571dec2-0f75-4bcc-bb0e-627022c972aa",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "a20b90c2-37a9-4c26-8182-51e816853423",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOUANOU Gouet Séraphin",
+            "detailValue": "Cabinet CABINET GOUANOU Gouet Séraphin"
+        },
+        {
+            "sourceUuid": "364d700d-fdab-4acc-a354-c5b4cd7c87d6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET PARTNER",
+            "detailValue": "Cabinet CABINET PARTNER"
+        },
+        {
+            "sourceUuid": "ea1ce978-16db-4e07-a466-b51aa4ac66ac",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TOURE-AMANI-YAO et Associés",
+            "detailValue": "Cabinet SCPA TOURE-AMANI-YAO et Associés"
+        },
+        {
+            "sourceUuid": "4a468cb0-4808-4c88-9a20-766258b48af9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LOLO-DIOMANDE-OUATTARA & Associés",
+            "detailValue": "Cabinet SCPA LOLO-DIOMANDE-OUATTARA & Associés"
+        },
+        {
+            "sourceUuid": "72ee643a-4a26-4460-94f5-e0220b020219",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SARR & ALLARD",
+            "detailValue": "Cabinet SCPA SARR & ALLARD"
+        },
+        {
+            "sourceUuid": "2ca20ebe-670a-4aa2-9975-3367872f8d44",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOUADJO François & Associés",
+            "detailValue": "Cabinet SCPA KOUADJO François & Associés"
+        },
+        {
+            "sourceUuid": "a57dbc12-b7ca-4443-a733-aeaaa98655f8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LAGO & DOUKA",
+            "detailValue": "Cabinet SCPA LAGO & DOUKA"
+        },
+        {
+            "sourceUuid": "56d48492-bb13-4875-8bd4-fe0a1de1e71f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DABLE Octave Marie",
+            "detailValue": "Cabinet CABINET DABLE Octave Marie"
+        },
+        {
+            "sourceUuid": "9c1470fd-bdf1-4b15-b1b1-bdec64ec3d8c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PAUL KOUASSI ET ASSOCIES",
+            "detailValue": "Cabinet SCPA PAUL KOUASSI ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "58aa559b-b36f-4235-b6d4-8185538e6b55",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KAMARA KONAN & KONE / SCPA 3K",
+            "detailValue": "Cabinet SCPA KAMARA KONAN & KONE / SCPA 3K"
+        },
+        {
+            "sourceUuid": "4afef6c5-6d29-4206-b0e3-680d419d567b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA de l’INDENIÉ",
+            "detailValue": "Cabinet SCPA de l’INDENIÉ"
+        },
+        {
+            "sourceUuid": "0c0dd88f-171a-4419-94ec-f4788e0c85b5",
+            "field": "sourceCabinetName",
+            "listingValue": "SCP D’AVOCATS CONSEILS REUNIS",
+            "detailValue": "Cabinet SCP D’AVOCATS CONSEILS REUNIS"
+        },
+        {
+            "sourceUuid": "656617a7-0e9b-4573-bfb2-252e146287e7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA GOLE-ACKA & Associés",
+            "detailValue": "Cabinet SCPA GOLE-ACKA & Associés"
+        },
+        {
+            "sourceUuid": "761f6a32-d7a8-4d6b-a473-3bfe45b87cde",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ALLOUKO Acka Fiankan Jean-Jacques",
+            "detailValue": "Cabinet CABINET ALLOUKO Acka Fiankan Jean-Jacques"
+        },
+        {
+            "sourceUuid": "356a184f-60dd-4c36-bd2e-d329f5e7b394",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TOURE-AMANI-YAO et Associés",
+            "detailValue": "Cabinet SCPA TOURE-AMANI-YAO et Associés"
+        },
+        {
+            "sourceUuid": "a2d17d8c-6dce-4497-8de6-1ee25d5e655e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET CHAUVEAU",
+            "detailValue": "Cabinet CABINET CHAUVEAU"
+        },
+        {
+            "sourceUuid": "e3fba908-4722-45b7-8a04-1d5f8b670b34",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA AKRE & KOUYATE",
+            "detailValue": "Cabinet SCPA AKRE & KOUYATE"
+        },
+        {
+            "sourceUuid": "2206b30c-ab3e-4193-9443-f27fa7c4a788",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MENSAH AKEH Brigitte épse ROGER-GOURIA",
+            "detailValue": "Cabinet CABINET MENSAH AKEH Brigitte épse ROGER-GOURIA"
+        },
+        {
+            "sourceUuid": "c46acd8e-25fa-46c2-967a-1abd43549e8c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AFFOUM Armand Lambert",
+            "detailValue": "Cabinet CABINET AFFOUM Armand Lambert"
+        },
+        {
+            "sourceUuid": "4390b340-a8ad-4715-b71b-27095f5d8c1a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUADIO Yao Dominique",
+            "detailValue": "Cabinet CABINET KOUADIO Yao Dominique"
+        },
+        {
+            "sourceUuid": "ce5cf808-60e9-4ed6-9410-e321241c3d43",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BAMBAOULE-DOUMBIA et Associés",
+            "detailValue": "Cabinet SCPA BAMBAOULE-DOUMBIA et Associés"
+        },
+        {
+            "sourceUuid": "33423846-8013-480c-b033-7e4b2d902569",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BENE KOUAME Lambert",
+            "detailValue": "Cabinet CABINET BENE KOUAME Lambert"
+        },
+        {
+            "sourceUuid": "bda69be8-aebb-4006-b002-89f9687002a1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BELLO Sophia",
+            "detailValue": "Cabinet CABINET BELLO Sophia"
+        },
+        {
+            "sourceUuid": "d0b10df7-6492-4e90-a740-452d8c5854a1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N’GUETTA GERARD",
+            "detailValue": "Cabinet CABINET N’GUETTA GERARD"
+        },
+        {
+            "sourceUuid": "b6094ef4-e809-4eb8-a65b-fe8117d01aa2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAH Frédéric Florent",
+            "detailValue": "Cabinet CABINET DAH Frédéric Florent"
+        },
+        {
+            "sourceUuid": "b7e5a3e7-13be-4ba6-8329-82759aa70ae5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BEUGRE Adou Marcel",
+            "detailValue": "Cabinet CABINET BEUGRE Adou Marcel"
+        },
+        {
+            "sourceUuid": "16bb6c08-b856-413f-82ed-b577969d1921",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ALLEGRA Kouassi Mathias",
+            "detailValue": "Cabinet CABINET ALLEGRA Kouassi Mathias"
+        },
+        {
+            "sourceUuid": "cc32dadd-afb6-43cd-abbc-065a791a9dbb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE Katinan Arsène",
+            "detailValue": "Cabinet CABINET KONE Katinan Arsène"
+        },
+        {
+            "sourceUuid": "2cfd00b2-fece-4f29-b7c6-e96706f65dc6",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "603583a5-11d2-4c16-944c-8dfeaef15fb5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAKOU Alain Claude",
+            "detailValue": "Cabinet CABINET KAKOU Alain Claude"
+        },
+        {
+            "sourceUuid": "6f6bffed-794e-4f4f-bab6-3af77590fce8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BLESSY & BLESSY",
+            "detailValue": "Cabinet SCPA BLESSY & BLESSY"
+        },
+        {
+            "sourceUuid": "e5c4500f-e36d-4911-b6d2-cfd4db69c592",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA AKRE & KOUYATE",
+            "detailValue": "Cabinet SCPA AKRE & KOUYATE"
+        },
+        {
+            "sourceUuid": "0aae3346-2992-4806-afda-ea85655816e1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOTY Biligoe",
+            "detailValue": "Cabinet CABINET BOTY Biligoe"
+        },
+        {
+            "sourceUuid": "6366aa2d-4ba5-4a35-b4c3-51e248bdb7e2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OUATTARA-BOGUI- DJETE & ASSOCIES",
+            "detailValue": "Cabinet CABINET OUATTARA-BOGUI- DJETE & ASSOCIES"
+        },
+        {
+            "sourceUuid": "8278660e-8286-48bb-8bc0-14bf64eff72c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AYEKOUE Teby",
+            "detailValue": "Cabinet CABINET AYEKOUE Teby"
+        },
+        {
+            "sourceUuid": "51442750-9532-40ff-a65f-979a9f2adbf6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BILE Kouamé Félix",
+            "detailValue": "Cabinet CABINET BILE Kouamé Félix"
+        },
+        {
+            "sourceUuid": "7c92adcd-f079-4b19-832b-18070a519a6f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'ZI Affroumou Clément",
+            "detailValue": "Cabinet CABINET N'ZI Affroumou Clément"
+        },
+        {
+            "sourceUuid": "97f021b4-0e13-40ac-89c5-cb4b1a858eed",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "4a6ab86c-247d-4c1b-be62-d449a8488fcb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SANGARE Minata",
+            "detailValue": "Cabinet CABINET SANGARE Minata"
+        },
+        {
+            "sourceUuid": "fac503d4-3157-4f97-bc70-54a12c553f3d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KAKOU-DOUMBIA-NIANG",
+            "detailValue": "Cabinet SCPA KAKOU-DOUMBIA-NIANG"
+        },
+        {
+            "sourceUuid": "23cedd96-9432-4f6e-989f-6e1c52b27211",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DJAMA Dominique Alain",
+            "detailValue": "Cabinet CABINET DJAMA Dominique Alain"
+        },
+        {
+            "sourceUuid": "fac1a7bd-6862-4566-8663-f8e492f74b3c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "5063494f-6a1b-4d7d-8141-e97fd98ac32e",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "e0a4554b-fd99-47d1-b1a3-632b42036a58",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "3ea703cd-6820-46fa-bfe4-84fc5baa502e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAGO Bolé Alain Sem Hacagui",
+            "detailValue": "Cabinet CABINET DAGO Bolé Alain Sem Hacagui"
+        },
+        {
+            "sourceUuid": "f44434ca-57c1-4386-8340-d905b1709941",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NIANG Ibrahima",
+            "detailValue": "Cabinet CABINET NIANG Ibrahima"
+        },
+        {
+            "sourceUuid": "69f09071-3b69-4c62-8b1d-8d3258e968e3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AONON-DRO Barbara Bintou Germaine",
+            "detailValue": "Cabinet CABINET AONON-DRO Barbara Bintou Germaine"
+        },
+        {
+            "sourceUuid": "2dafa632-35ec-4fee-bd94-cac778cf097f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET VARLET Jean-Luc Dieudonné",
+            "detailValue": "Cabinet CABINET VARLET Jean-Luc Dieudonné"
+        },
+        {
+            "sourceUuid": "44793e9c-0f3d-4bd0-b570-f09ef89872d0",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YABLAI Annick Isabelle épse N'GORAN",
+            "detailValue": "Cabinet CABINET YABLAI Annick Isabelle épse N'GORAN"
+        },
+        {
+            "sourceUuid": "3a29f866-d2fb-4c59-81e4-2a5bcdff6dc7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COMLAN Adigbé Pacôme",
+            "detailValue": "Cabinet CABINET COMLAN Adigbé Pacôme"
+        },
+        {
+            "sourceUuid": "929fe47a-0427-4ead-b0bc-28b77498087b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'GUESSAN Assi Georges",
+            "detailValue": "Cabinet CABINET N'GUESSAN Assi Georges"
+        },
+        {
+            "sourceUuid": "fb89c91b-c38c-4cb8-a06b-4ed8456bf852",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "ab7adaaa-a718-4058-a47f-e12c04683510",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Climanlo Jerôme",
+            "detailValue": "Cabinet CABINET COULIBALY Climanlo Jerôme"
+        },
+        {
+            "sourceUuid": "46df506a-6f65-4850-b16c-75b59205e8c7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'TAPKE Gboto Daniel",
+            "detailValue": "Cabinet CABINET N'TAPKE Gboto Daniel"
+        },
+        {
+            "sourceUuid": "23994a50-0037-4677-9444-85ffd37549f5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOA OLIVIER",
+            "detailValue": "Cabinet CABINET BOA OLIVIER"
+        },
+        {
+            "sourceUuid": "b90e3c09-f873-4b71-a8ae-621ffc19933c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUIRO Mamadou",
+            "detailValue": "Cabinet CABINET GUIRO Mamadou"
+        },
+        {
+            "sourceUuid": "188d3eba-a088-4885-85dc-2b7328a8bb0c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BAMBAOULE-DOUMBIA et Associés",
+            "detailValue": "Cabinet SCPA BAMBAOULE-DOUMBIA et Associés"
+        },
+        {
+            "sourceUuid": "a058f520-3fa5-4c88-9602-c6b0a600e124",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA NAMBEYA, DOGBEMIN et Associés",
+            "detailValue": "Cabinet SCPA NAMBEYA, DOGBEMIN et Associés"
+        },
+        {
+            "sourceUuid": "57d6d8c6-1b50-4b5a-9589-532fd98fa52e",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA NAMBEYA, DOGBEMIN et Associés",
+            "detailValue": "Cabinet SCPA NAMBEYA, DOGBEMIN et Associés"
+        },
+        {
+            "sourceUuid": "cba38de2-bb1f-430d-9e77-dc509dd5529e",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TIEMELE-EBIELE & Associés",
+            "detailValue": "Cabinet SCPA TIEMELE-EBIELE & Associés"
+        },
+        {
+            "sourceUuid": "c5831dd1-8e66-4d03-87d2-79c278c9f04b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA RAUX-AMIEN et Associés",
+            "detailValue": "Cabinet SCPA RAUX-AMIEN et Associés"
+        },
+        {
+            "sourceUuid": "b9f60ff9-6a0b-4b44-ac53-1ad60ed0eeb7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ODEHOURI-KOUDOU Géraldine",
+            "detailValue": "Cabinet CABINET ODEHOURI-KOUDOU Géraldine"
+        },
+        {
+            "sourceUuid": "9b1201e2-73d3-4f8e-9fcb-5a329413b22d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO, BAKO et Associés",
+            "detailValue": "Cabinet SCPA SORO, BAKO et Associés"
+        },
+        {
+            "sourceUuid": "1829f59b-d0af-45e7-a885-7c22f740d50d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET PARTNER",
+            "detailValue": "Cabinet CABINET PARTNER"
+        },
+        {
+            "sourceUuid": "f5ca1989-3ebf-487a-949a-e23f1a2598e2",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO, BAKO et Associés",
+            "detailValue": "Cabinet SCPA SORO, BAKO et Associés"
+        },
+        {
+            "sourceUuid": "fb20576d-8486-4c6d-b281-6287949133b9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KACOU Simone Anic",
+            "detailValue": "Cabinet CABINET KACOU Simone Anic"
+        },
+        {
+            "sourceUuid": "f7944317-335d-485a-bfef-627fa57ba28f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ATOH BI Kouadio Raymond",
+            "detailValue": "Cabinet CABINET ATOH BI Kouadio Raymond"
+        },
+        {
+            "sourceUuid": "1f8f3aef-d2b4-43ad-b53d-cdc7d05f79aa",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAPI Kotchi Pascal",
+            "detailValue": "Cabinet CABINET YAPI Kotchi Pascal"
+        },
+        {
+            "sourceUuid": "ec293a19-73a6-4929-8a92-541cfbe0ba75",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TAKORE, KONAN et Associés",
+            "detailValue": "Cabinet SCPA TAKORE, KONAN et Associés"
+        },
+        {
+            "sourceUuid": "401ec140-8f63-4bcf-9f23-7d5d680c06f9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET CAMARA Fatou épse SANOGHO",
+            "detailValue": "Cabinet CABINET CAMARA Fatou épse SANOGHO"
+        },
+        {
+            "sourceUuid": "fe15a15a-5912-4490-9581-1825413fd475",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FOFANA Na Mariam",
+            "detailValue": "Cabinet CABINET FOFANA Na Mariam"
+        },
+        {
+            "sourceUuid": "61d502e1-b423-44b4-87bd-645387e95aff",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIALLO Amoussou Myriam",
+            "detailValue": "Cabinet CABINET DIALLO Amoussou Myriam"
+        },
+        {
+            "sourceUuid": "cf0bfdad-98b6-40c8-a5fb-3df291ea32f6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OBENG-KOFI FIAN",
+            "detailValue": "Cabinet CABINET OBENG-KOFI FIAN"
+        },
+        {
+            "sourceUuid": "eadb909a-e2d7-4ac6-ad50-952604b9940a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ABOA Alain Cyrille",
+            "detailValue": "Cabinet CABINET ABOA Alain Cyrille"
+        },
+        {
+            "sourceUuid": "8c0d0c6c-3024-4057-9352-3c9140eaf34f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BEIRA EHI Marc",
+            "detailValue": "Cabinet CABINET BEIRA EHI Marc"
+        },
+        {
+            "sourceUuid": "3c57feb7-f0e9-4762-817d-fd3654714687",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ORE-DIALLO & Associés",
+            "detailValue": "Cabinet SCPA ORE-DIALLO & Associés"
+        },
+        {
+            "sourceUuid": "c35c0bb2-1afe-4f3a-a913-e6203d6bf497",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "92b6f1d6-c5a6-4ca1-9bc3-230bc1deb2d0",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUAME-KETE Ahou Rosine",
+            "detailValue": "Cabinet CABINET KOUAME-KETE Ahou Rosine"
+        },
+        {
+            "sourceUuid": "46f5d768-6039-430f-8ddf-a4b0d4b1da10",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KAMIL Tarek",
+            "detailValue": "Cabinet CABINET KAMIL Tarek"
+        },
+        {
+            "sourceUuid": "7ed9eb10-4339-4b97-8e3e-cd2fbfd7e45e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AJAVON Marie-Elise",
+            "detailValue": "Cabinet CABINET AJAVON Marie-Elise"
+        },
+        {
+            "sourceUuid": "883e9677-fca2-4677-8edc-4620d6ed25fe",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SAKHO-YAPOBI-FOFANA & Associés",
+            "detailValue": "Cabinet SCPA SAKHO-YAPOBI-FOFANA & Associés"
+        },
+        {
+            "sourceUuid": "c0f6ef41-129b-4ae8-8f05-74232ab4b834",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOUASSI Roger & Associés",
+            "detailValue": "Cabinet SCPA KOUASSI Roger & Associés"
+        },
+        {
+            "sourceUuid": "13a6d0fd-8a3f-4b48-b674-f1b20ea3546b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA FORTUNA",
+            "detailValue": "Cabinet SCPA FORTUNA"
+        },
+        {
+            "sourceUuid": "a55c967e-6972-45f1-891f-c038a301297b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIBY N'Da Koffi Moïse",
+            "detailValue": "Cabinet CABINET DIBY N'Da Koffi Moïse"
+        },
+        {
+            "sourceUuid": "94976c6a-07fd-431d-8489-227ae61d05c5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MINTA Daouda Traoré",
+            "detailValue": "Cabinet CABINET MINTA Daouda Traoré"
+        },
+        {
+            "sourceUuid": "c1750368-e045-4f09-a04e-08c5979b5e85",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIOP Cheick Oumar",
+            "detailValue": "Cabinet CABINET DIOP Cheick Oumar"
+        },
+        {
+            "sourceUuid": "4e3e2bb8-d71d-41a7-adfd-97b6072d5288",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOEGAH & ETTE",
+            "detailValue": "Cabinet CABINET HOEGAH & ETTE"
+        },
+        {
+            "sourceUuid": "4e286634-82df-4a85-a1c7-56307296378f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ABOA Jean-Pierre Serge",
+            "detailValue": "Cabinet CABINET ABOA Jean-Pierre Serge"
+        },
+        {
+            "sourceUuid": "d8e4cbe0-b056-4de6-b286-36921bab3940",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET LATTE Okon Wesley",
+            "detailValue": "Cabinet CABINET LATTE Okon Wesley"
+        },
+        {
+            "sourceUuid": "d042f95b-0958-448e-a8f4-41c5bd0e713b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAKO & GUEU",
+            "detailValue": "Cabinet CABINET DAKO & GUEU"
+        },
+        {
+            "sourceUuid": "34f37e98-b0b5-41a9-86b6-e05449b81a15",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI épse BREDOU Josiane Josette",
+            "detailValue": "Cabinet CABINET KOFFI épse BREDOU Josiane Josette"
+        },
+        {
+            "sourceUuid": "de1cc3b1-22e9-42c0-8531-c97b3ec439e2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUOTO-ATABI Honoré",
+            "detailValue": "Cabinet CABINET KOUOTO-ATABI Honoré"
+        },
+        {
+            "sourceUuid": "664973a3-b438-4fa6-8a51-1061fce8e8ab",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN épse TIA Amoin Hélène",
+            "detailValue": "Cabinet CABINET KONAN épse TIA Amoin Hélène"
+        },
+        {
+            "sourceUuid": "ea8c996b-32d5-4597-8afa-cccd46c429f9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LE PARACLET",
+            "detailValue": "Cabinet SCPA LE PARACLET"
+        },
+        {
+            "sourceUuid": "4ca5312f-9e6f-4dcd-a551-07d04a1bc64a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLE Martin",
+            "detailValue": "Cabinet CABINET BLE Martin"
+        },
+        {
+            "sourceUuid": "41dcc8dd-8345-499b-9a5a-3e62746ce265",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOIZO ANGE DANIELLE",
+            "detailValue": "Cabinet CABINET BOIZO ANGE DANIELLE"
+        },
+        {
+            "sourceUuid": "649de8af-0ec5-4649-a984-9443783bb076",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA JURIS FORTIS",
+            "detailValue": "Cabinet SCPA JURIS FORTIS"
+        },
+        {
+            "sourceUuid": "ff323391-382e-4a0e-b8e6-a2378f21b803",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAGO Roger",
+            "detailValue": "Cabinet CABINET DAGO Roger"
+        },
+        {
+            "sourceUuid": "2cf8c234-2b14-40fa-8b3d-10f22fcd332e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO Bouatenin Joseph",
+            "detailValue": "Cabinet CABINET YAO Bouatenin Joseph"
+        },
+        {
+            "sourceUuid": "a88ac353-f257-4709-a88f-e947314ba536",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOUASSI Roger & Associés",
+            "detailValue": "Cabinet SCPA KOUASSI Roger & Associés"
+        },
+        {
+            "sourceUuid": "8494e4aa-2927-46e5-a76c-4a7880303517",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA 2YK et Associés",
+            "detailValue": "Cabinet SCPA 2YK et Associés"
+        },
+        {
+            "sourceUuid": "1387086c-9db7-444d-bd68-8ff5f4da2ef8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LOLO-DIOMANDE-OUATTARA & Associés",
+            "detailValue": "Cabinet SCPA LOLO-DIOMANDE-OUATTARA & Associés"
+        },
+        {
+            "sourceUuid": "df03758b-fe7f-4487-b83f-a4187f3c1189",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADOU & BAGUI",
+            "detailValue": "Cabinet SCPA ADOU & BAGUI"
+        },
+        {
+            "sourceUuid": "50c0c633-1494-4819-bad8-1dfc57d5627e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUEU Deuyoueu Patrice",
+            "detailValue": "Cabinet CABINET GUEU Deuyoueu Patrice"
+        },
+        {
+            "sourceUuid": "4ba410e9-d866-410f-b137-af7c3e29766a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SORO Wignan Idrissa Fulbert",
+            "detailValue": "Cabinet CABINET SORO Wignan Idrissa Fulbert"
+        },
+        {
+            "sourceUuid": "afe46638-653a-4890-a51f-f05b58efcd9e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAKO & GUEU",
+            "detailValue": "Cabinet CABINET DAKO & GUEU"
+        },
+        {
+            "sourceUuid": "deb7b827-9677-4dce-a499-86d78850e815",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET WACOUBOUE MARIE-PASCALE",
+            "detailValue": "Cabinet CABINET WACOUBOUE MARIE-PASCALE"
+        },
+        {
+            "sourceUuid": "04199dd2-a35b-4fe9-a438-b56d88abdd11",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ANDJEMIAN Serge-Eric",
+            "detailValue": "Cabinet CABINET ANDJEMIAN Serge-Eric"
+        },
+        {
+            "sourceUuid": "877da8e0-e708-49cf-aa09-d8e198d735c2",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA JURIS FORTIS",
+            "detailValue": "Cabinet SCPA JURIS FORTIS"
+        },
+        {
+            "sourceUuid": "c7227790-7cc3-4c4d-90f7-6a0d2ed12a7c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N'GOAN, ASMAN et Associés",
+            "detailValue": "Cabinet SCPA N'GOAN, ASMAN et Associés"
+        },
+        {
+            "sourceUuid": "ae65ab8b-cdd7-415e-88d9-282ecf2274af",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TRAORE Drissa",
+            "detailValue": "Cabinet CABINET TRAORE Drissa"
+        },
+        {
+            "sourceUuid": "f4b1e598-40d9-4cfb-a471-f7acac864710",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOHI-BI Irhiet Raoul",
+            "detailValue": "Cabinet CABINET GOHI-BI Irhiet Raoul"
+        },
+        {
+            "sourceUuid": "67da37a6-5e12-4203-8b54-f1b4a0c6bef4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUADIO Ahou Blandine épse KONE",
+            "detailValue": "Cabinet CABINET KOUADIO Ahou Blandine épse KONE"
+        },
+        {
+            "sourceUuid": "5724dc5f-e72d-493c-a5ac-03b28c5d2ad1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Soungalo",
+            "detailValue": "Cabinet CABINET COULIBALY Soungalo"
+        },
+        {
+            "sourceUuid": "d14aeea9-103e-49f0-b4f0-5d340f5c8b58",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KAMARA KONAN & KONE / SCPA 3K",
+            "detailValue": "Cabinet SCPA KAMARA KONAN & KONE / SCPA 3K"
+        },
+        {
+            "sourceUuid": "73ae000f-34f1-49a4-b3b6-854ece76bfbf",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOGUI Simon-Pierre",
+            "detailValue": "Cabinet CABINET BOGUI Simon-Pierre"
+        },
+        {
+            "sourceUuid": "7a7e1be4-f787-4fd0-b95c-97c5c7363acc",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADOU & BAGUI",
+            "detailValue": "Cabinet SCPA ADOU & BAGUI"
+        },
+        {
+            "sourceUuid": "7ab73670-53e3-4f7a-966e-0cd72eb48014",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LES OSCARS",
+            "detailValue": "Cabinet SCPA LES OSCARS"
+        },
+        {
+            "sourceUuid": "a3e69b3d-92f9-4659-9474-fd4ecf415d71",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "2ff52b36-76a7-4421-aaa4-92fb95b3f933",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE & ASSOCIES",
+            "detailValue": "Cabinet CABINET KONE & ASSOCIES"
+        },
+        {
+            "sourceUuid": "ac5d355d-61bc-42ea-9ac3-149022c7591b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ALLA Yao Affeli Gaston",
+            "detailValue": "Cabinet CABINET ALLA Yao Affeli Gaston"
+        },
+        {
+            "sourceUuid": "16d085ac-4920-49ed-86dc-caafa852f41b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KROU N'Doua Stéphanie",
+            "detailValue": "Cabinet CABINET KROU N'Doua Stéphanie"
+        },
+        {
+            "sourceUuid": "2485ce30-f628-450e-90e4-ff4b2a431455",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "798ac271-7648-4c1a-a12b-798470015a4a",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "a565dc59-3d84-4365-8cfe-d7433c59b367",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "8b923793-e798-4b32-8c5d-23bd04bdd2c4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SINGO Tia Paul Oumar",
+            "detailValue": "Cabinet CABINET SINGO Tia Paul Oumar"
+        },
+        {
+            "sourceUuid": "ed30c0e5-397f-4129-82d3-7f9a6e40ffc1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OBENG-KOFI FIAN",
+            "detailValue": "Cabinet CABINET OBENG-KOFI FIAN"
+        },
+        {
+            "sourceUuid": "3cc6cb9a-c421-44ba-9a91-c2da1b6bfce6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ESSOUO Ehouman Serge Sylvestre",
+            "detailValue": "Cabinet CABINET ESSOUO Ehouman Serge Sylvestre"
+        },
+        {
+            "sourceUuid": "932c4b43-2576-4719-ba3e-7e437de1ab3a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET Ayssata COULIBALY-DIABI",
+            "detailValue": "Cabinet CABINET Ayssata COULIBALY-DIABI"
+        },
+        {
+            "sourceUuid": "3dbf5702-dec6-4a9b-8f21-160ce2e02900",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET LEVRY Abolouho Fabien",
+            "detailValue": "Cabinet CABINET LEVRY Abolouho Fabien"
+        },
+        {
+            "sourceUuid": "d4225abb-f7f4-4ffb-a49e-f3a274170f01",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PAUL KOUASSI ET ASSOCIES",
+            "detailValue": "Cabinet SCPA PAUL KOUASSI ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "7d312d0a-81e7-4e4a-a030-7d52966826b7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "efbc3096-a8d6-4544-9511-677e5dbc1da8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA 2YK et Associés",
+            "detailValue": "Cabinet SCPA 2YK et Associés"
+        },
+        {
+            "sourceUuid": "80ed7d1b-e0c7-4bf8-80b8-01174e6c52fe",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BARRY Thierno Amadou Yero",
+            "detailValue": "Cabinet CABINET BARRY Thierno Amadou Yero"
+        },
+        {
+            "sourceUuid": "1718cc62-68b7-4e6c-8a74-d668e8ff388c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "878b0160-f44b-4656-a436-247fe3ab4fe3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GBOUGNON Jean Serge",
+            "detailValue": "Cabinet CABINET GBOUGNON Jean Serge"
+        },
+        {
+            "sourceUuid": "3d47072d-af70-42e9-8390-393e28a631cf",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LE PARACLET",
+            "detailValue": "Cabinet SCPA LE PARACLET"
+        },
+        {
+            "sourceUuid": "aeb24b9e-8e64-4c81-9673-c78cd1d1c947",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE, AYAMA & Associés",
+            "detailValue": "Cabinet SCPA KONE, AYAMA & Associés"
+        },
+        {
+            "sourceUuid": "813e975f-3f17-4d2a-bf08-3fe897bedf28",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAUBAUD Aka Noël",
+            "detailValue": "Cabinet CABINET YAUBAUD Aka Noël"
+        },
+        {
+            "sourceUuid": "c2267dd1-da46-4a72-924f-fdc5e427cb96",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE-BOUABRE et Associés",
+            "detailValue": "Cabinet SCPA KONE-BOUABRE et Associés"
+        },
+        {
+            "sourceUuid": "8bdee698-5afe-40d8-ada6-687d1aef8d32",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SOLO-DOUZOUO David",
+            "detailValue": "Cabinet CABINET SOLO-DOUZOUO David"
+        },
+        {
+            "sourceUuid": "2519bdc7-afb3-49e7-9a3f-fd4412d9a7bf",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ENOKOU Kodjalé Gustave",
+            "detailValue": "Cabinet CABINET ENOKOU Kodjalé Gustave"
+        },
+        {
+            "sourceUuid": "4544d6ba-3358-4f17-aee6-ee0b847bfcf3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MENTENON",
+            "detailValue": "Cabinet CABINET MENTENON"
+        },
+        {
+            "sourceUuid": "5337f824-c91b-4db6-95f3-b25e3181b154",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LAGO & DOUKA",
+            "detailValue": "Cabinet SCPA LAGO & DOUKA"
+        },
+        {
+            "sourceUuid": "513c800e-d30f-4f8c-9a80-4fb4ac747680",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUAKOU Kouassi Luc-Ervé",
+            "detailValue": "Cabinet CABINET KOUAKOU Kouassi Luc-Ervé"
+        },
+        {
+            "sourceUuid": "79f02b8b-e6f9-4caa-ba38-0fd4b5e84a9b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN N'Dri Marie-Ange",
+            "detailValue": "Cabinet CABINET KONAN N'Dri Marie-Ange"
+        },
+        {
+            "sourceUuid": "b1da783e-c3af-4267-97c3-b13b31bcb180",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOUAMENE Somené Hervé",
+            "detailValue": "Cabinet CABINET GOUAMENE Somené Hervé"
+        },
+        {
+            "sourceUuid": "8a10d236-c519-49b0-acea-f24467ba8739",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAPO Aba Pierre Delvis",
+            "detailValue": "Cabinet CABINET YAPO Aba Pierre Delvis"
+        },
+        {
+            "sourceUuid": "9985cdc0-b1e8-4161-912a-2dc2ae272d6f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SANOGO Yaya",
+            "detailValue": "Cabinet CABINET SANOGO Yaya"
+        },
+        {
+            "sourceUuid": "04d295af-5a56-4f87-8c58-ba80ab52060c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOFFI-OUATTARA-TAPE",
+            "detailValue": "Cabinet SCPA KOFFI-OUATTARA-TAPE"
+        },
+        {
+            "sourceUuid": "e4f01bee-353b-4742-8020-a22574dfde65",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADONGON Ayékpa Damase",
+            "detailValue": "Cabinet CABINET ADONGON Ayékpa Damase"
+        },
+        {
+            "sourceUuid": "15220db9-5359-4f2b-abd5-8ca806324e63",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE Mamadou",
+            "detailValue": "Cabinet CABINET KONE Mamadou"
+        },
+        {
+            "sourceUuid": "606e3615-8850-4534-add2-d02c129ff058",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO Kobena Innocent",
+            "detailValue": "Cabinet CABINET YAO Kobena Innocent"
+        },
+        {
+            "sourceUuid": "39e9221a-ab62-4cdb-97ca-50c9841e69d4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DJETE GOLI Marie-Josiane",
+            "detailValue": "Cabinet CABINET DJETE GOLI Marie-Josiane"
+        },
+        {
+            "sourceUuid": "43859f76-3587-40a7-8add-84ab82f114a9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAGUY Régis Victorien",
+            "detailValue": "Cabinet CABINET BAGUY Régis Victorien"
+        },
+        {
+            "sourceUuid": "49cf02d9-7a65-4b45-8197-74e3788146c2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOMENAN Porquet Angèle-Denise",
+            "detailValue": "Cabinet CABINET KOMENAN Porquet Angèle-Denise"
+        },
+        {
+            "sourceUuid": "987464a6-df00-4db0-9dac-6283f6f4d64a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET EL ASSAD Adham",
+            "detailValue": "Cabinet CABINET EL ASSAD Adham"
+        },
+        {
+            "sourceUuid": "4efe0e69-846f-45ed-a37b-adb3b1f8ec7e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUNKANRIN",
+            "detailValue": "Cabinet CABINET HOUNKANRIN"
+        },
+        {
+            "sourceUuid": "8229b38f-dd9f-4fe8-8dce-d57b7d29f3bd",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA FORTUNA",
+            "detailValue": "Cabinet SCPA FORTUNA"
+        },
+        {
+            "sourceUuid": "26ff8fb2-7cc4-4115-818f-ba08232d6b51",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NIAHOUA Serge Pamphile",
+            "detailValue": "Cabinet CABINET NIAHOUA Serge Pamphile"
+        },
+        {
+            "sourceUuid": "cf1965d7-ca5e-455e-8b02-cd937887c5c8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOFFI-OUATTARA-TAPE",
+            "detailValue": "Cabinet SCPA KOFFI-OUATTARA-TAPE"
+        },
+        {
+            "sourceUuid": "bf5832ee-7a74-4d53-93c4-195641216329",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAGNON Zaourou Léon",
+            "detailValue": "Cabinet CABINET BAGNON Zaourou Léon"
+        },
+        {
+            "sourceUuid": "f50a24e8-f8c3-4cfd-ad1a-0db97b3f4223",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MESSAN TOMPIEU, YAPI & Associés",
+            "detailValue": "Cabinet SCPA MESSAN TOMPIEU, YAPI & Associés"
+        },
+        {
+            "sourceUuid": "f381eca1-d2ad-4ced-83a6-52dc14b3cb1d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCP D’AVOCATS CONSEILS REUNIS",
+            "detailValue": "Cabinet SCP D’AVOCATS CONSEILS REUNIS"
+        },
+        {
+            "sourceUuid": "27ffa4f3-8a83-46ff-b0e0-09dc74116a7b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA C.L.K.A.",
+            "detailValue": "Cabinet SCPA C.L.K.A."
+        },
+        {
+            "sourceUuid": "9df2376e-e178-43d1-846f-a2e1fb4c2b4f",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MESSAN TOMPIEU, YAPI & Associés",
+            "detailValue": "Cabinet SCPA MESSAN TOMPIEU, YAPI & Associés"
+        },
+        {
+            "sourceUuid": "b25ebc29-3d71-410f-b034-38d0423b4f62",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ABIE Modeste",
+            "detailValue": "Cabinet CABINET ABIE Modeste"
+        },
+        {
+            "sourceUuid": "49245ec6-a51e-48c0-b7db-7a801071fdf5",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MAR BONNY-ALLEY et Associés",
+            "detailValue": "Cabinet SCPA MAR BONNY-ALLEY et Associés"
+        },
+        {
+            "sourceUuid": "d02ba4a0-463f-4a5d-8f26-44be1747c7d7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUADIO N'Dry Claver",
+            "detailValue": "Cabinet CABINET KOUADIO N'Dry Claver"
+        },
+        {
+            "sourceUuid": "dc228145-8219-4aee-b3da-d50ed35dd1c4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO Aman Ingride",
+            "detailValue": "Cabinet CABINET YAO Aman Ingride"
+        },
+        {
+            "sourceUuid": "08cfa96c-88de-486c-8511-329af499c91f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DADJE Babo Rodrigue",
+            "detailValue": "Cabinet CABINET DADJE Babo Rodrigue"
+        },
+        {
+            "sourceUuid": "d9529179-2f39-49ea-b39f-f46b9cd0c7ac",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "dfea36c1-5b5e-4dc9-904e-6fcaf24e6af4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HOUPHOUET-SORO-KONE et Associés",
+            "detailValue": "Cabinet SCPA HOUPHOUET-SORO-KONE et Associés"
+        },
+        {
+            "sourceUuid": "f8d220d4-e505-4d2a-9ebd-b473f9cf6dd5",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA GOLE-ACKA & Associés",
+            "detailValue": "Cabinet SCPA GOLE-ACKA & Associés"
+        },
+        {
+            "sourceUuid": "498368a5-38cc-4dd0-a170-c59a8b444113",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE-BOUABRE et Associés",
+            "detailValue": "Cabinet SCPA KONE-BOUABRE et Associés"
+        },
+        {
+            "sourceUuid": "c3d8a980-1b5b-4f25-babd-b42c93425829",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOUMBIA BAMBA-KODJO-AKA et Associés",
+            "detailValue": "Cabinet SCPA DOUMBIA BAMBA-KODJO-AKA et Associés"
+        },
+        {
+            "sourceUuid": "71657c86-b0bd-474b-aa20-7dc224cc03d6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FIAN Assouakon Effreim",
+            "detailValue": "Cabinet CABINET FIAN Assouakon Effreim"
+        },
+        {
+            "sourceUuid": "685f01b8-46c0-4091-8a9c-b1951fa578e1",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOFFI-OUATTARA-TAPE",
+            "detailValue": "Cabinet SCPA KOFFI-OUATTARA-TAPE"
+        },
+        {
+            "sourceUuid": "067a8565-0521-4b48-ae9b-76c2eda25291",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA EFFI ET ASSOCIES",
+            "detailValue": "Cabinet SCPA EFFI ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "bcd31297-90c4-48f1-a675-daa58f00f473",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'ZI Jean-Claude",
+            "detailValue": "Cabinet CABINET N'ZI Jean-Claude"
+        },
+        {
+            "sourceUuid": "8edb8541-97e4-463e-8785-040a38c76f96",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ALIMAN John Benjamin N'Da",
+            "detailValue": "Cabinet CABINET ALIMAN John Benjamin N'Da"
+        },
+        {
+            "sourceUuid": "9050c9f8-544b-41f7-8566-dab636bfc898",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI Alain Jean",
+            "detailValue": "Cabinet CABINET KOFFI Alain Jean"
+        },
+        {
+            "sourceUuid": "54822c1f-6810-42a9-a9bb-9eeb15b3ccc7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GNAPI Arnold",
+            "detailValue": "Cabinet CABINET GNAPI Arnold"
+        },
+        {
+            "sourceUuid": "e8766c88-c2c8-4288-b1ca-6ca08a2effd8",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SUY-BI Gohoré Emile",
+            "detailValue": "Cabinet CABINET SUY-BI Gohoré Emile"
+        },
+        {
+            "sourceUuid": "3a3d7415-c2b1-4ee8-92f5-009f9c2424a5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOICOU Hangban Kouamé Césaire",
+            "detailValue": "Cabinet CABINET KOICOU Hangban Kouamé Césaire"
+        },
+        {
+            "sourceUuid": "41a6dd36-e697-44d0-847b-a5f7aeed7dfa",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOUMBIA BAMBA-KODJO-AKA et Associés",
+            "detailValue": "Cabinet SCPA DOUMBIA BAMBA-KODJO-AKA et Associés"
+        },
+        {
+            "sourceUuid": "2ad7c386-e3e7-4d3f-acc7-1d8ad84b9a7a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIAVATCHE Tanoh Pierre",
+            "detailValue": "Cabinet CABINET DIAVATCHE Tanoh Pierre"
+        },
+        {
+            "sourceUuid": "be9d4d74-7784-4fc3-8bd4-42abc7295546",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKESSE Kouassi Charles Camille",
+            "detailValue": "Cabinet CABINET AKESSE Kouassi Charles Camille"
+        },
+        {
+            "sourceUuid": "8b1d73ac-25b9-47fc-8b98-9cad852cdaa7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BALLE Yabo Joseph",
+            "detailValue": "Cabinet CABINET BALLE Yabo Joseph"
+        },
+        {
+            "sourceUuid": "8c9b4416-321e-4cbf-b591-5c5d462bcdf7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MAR BONNY-ALLEY et Associés",
+            "detailValue": "Cabinet SCPA MAR BONNY-ALLEY et Associés"
+        },
+        {
+            "sourceUuid": "b5a879e2-5ec1-4ffb-8363-a2fea50f4d84",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAKAYOKO Binta Nany",
+            "detailValue": "Cabinet CABINET BAKAYOKO Binta Nany"
+        },
+        {
+            "sourceUuid": "f4115809-b820-4be7-a769-0a055948f4fe",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TOURE & PONGATHIE",
+            "detailValue": "Cabinet SCPA TOURE & PONGATHIE"
+        },
+        {
+            "sourceUuid": "47337ab6-eaad-46da-8f59-5e5764959498",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET Arouna Ouattara",
+            "detailValue": "Cabinet CABINET Arouna Ouattara"
+        },
+        {
+            "sourceUuid": "704756c3-ddb3-4efb-8553-167419c4d735",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADAE-DIRABOU Abenan Josephine",
+            "detailValue": "Cabinet CABINET ADAE-DIRABOU Abenan Josephine"
+        },
+        {
+            "sourceUuid": "95a7ed0a-21e0-46e4-9695-bbf50f82f725",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET PONGATHIE Mohamed Sanogo",
+            "detailValue": "Cabinet CABINET PONGATHIE Mohamed Sanogo"
+        },
+        {
+            "sourceUuid": "74a4c2b6-5694-4790-8128-c6651becbd34",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DIRABOU & Associés",
+            "detailValue": "Cabinet SCPA DIRABOU & Associés"
+        },
+        {
+            "sourceUuid": "b11e0188-a547-4e55-a460-8ef77c8806c7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DIRABOU & Associés",
+            "detailValue": "Cabinet SCPA DIRABOU & Associés"
+        },
+        {
+            "sourceUuid": "a792968c-26d6-454d-a305-af99d4122712",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KPAKOTE Tété Ehimomo",
+            "detailValue": "Cabinet CABINET KPAKOTE Tété Ehimomo"
+        },
+        {
+            "sourceUuid": "c0d28569-56fb-4d24-ad4a-d7a07d795b4b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "3f0d7c2c-b535-4569-9d56-4dde5d4f21e7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKE Koffi Raymond Marcellin",
+            "detailValue": "Cabinet CABINET AKE Koffi Raymond Marcellin"
+        },
+        {
+            "sourceUuid": "a34098c8-e4ad-49d1-b897-124a45d0e2ac",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAHI épse GOBA Pulcherie Olga",
+            "detailValue": "Cabinet CABINET BAHI épse GOBA Pulcherie Olga"
+        },
+        {
+            "sourceUuid": "19ba5523-fac1-4c0a-8525-d7343b830135",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N’GORAN-KAMA",
+            "detailValue": "Cabinet SCPA N’GORAN-KAMA"
+        },
+        {
+            "sourceUuid": "6615cabe-31d1-460e-ad83-0d6e3c0dafb6",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N’GORAN-KAMA",
+            "detailValue": "Cabinet SCPA N’GORAN-KAMA"
+        },
+        {
+            "sourceUuid": "cf5e13ca-47ba-47a7-b428-20a019f44657",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KRA-IMBOUA N'Dri Aline",
+            "detailValue": "Cabinet CABINET KRA-IMBOUA N'Dri Aline"
+        },
+        {
+            "sourceUuid": "e214faef-77a3-44d2-9b1b-8ffee4c97ac1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N’GUETTA GERARD",
+            "detailValue": "Cabinet CABINET N’GUETTA GERARD"
+        },
+        {
+            "sourceUuid": "655216fd-04cb-4e87-bd43-e7e5256ff08b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "77d43681-0461-4783-b8cb-20617af707ef",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOUADIO Angaman Georges",
+            "detailValue": "Cabinet CABINET KOUADIO Angaman Georges"
+        },
+        {
+            "sourceUuid": "ac00a7d1-8b65-4431-8ee1-a2aeffeb42fa",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN Achille N'Dri",
+            "detailValue": "Cabinet CABINET KONAN Achille N'Dri"
+        },
+        {
+            "sourceUuid": "211632f6-ab34-4813-9f0a-8145f81c23ca",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA EFFI ET ASSOCIES",
+            "detailValue": "Cabinet SCPA EFFI ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "c7dbab52-f73a-42a7-913e-db2c9c223004",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AYIE NIANGORAN",
+            "detailValue": "Cabinet CABINET AYIE NIANGORAN"
+        },
+        {
+            "sourceUuid": "febf19ec-7f73-4ab5-87e2-aa483fc0f096",
+            "field": "sourceCabinetName",
+            "listingValue": "SOCIÉTÉ D’AVOCATS LIKANE & OMEPIEU",
+            "detailValue": "Cabinet SOCIÉTÉ D’AVOCATS LIKANE & OMEPIEU"
+        },
+        {
+            "sourceUuid": "e5d6c053-e9cf-4271-9460-ac2e09a17f4b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OBENG-KOFI FIAN",
+            "detailValue": "Cabinet CABINET OBENG-KOFI FIAN"
+        },
+        {
+            "sourceUuid": "73918d20-cd8d-45d5-b8c1-e545e05de5b1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KORE Ange Alain Claude",
+            "detailValue": "Cabinet CABINET KORE Ange Alain Claude"
+        },
+        {
+            "sourceUuid": "6911ed8a-61a0-4636-a0f3-0102a8d06c62",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NIAMIEN Armand",
+            "detailValue": "Cabinet CABINET NIAMIEN Armand"
+        },
+        {
+            "sourceUuid": "cb6c8615-670f-4d6d-a7ff-0cf5dc460a20",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NANA Henri",
+            "detailValue": "Cabinet CABINET NANA Henri"
+        },
+        {
+            "sourceUuid": "a17e76b5-07e9-4809-a8da-ecdfa631fcaf",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HOUPHOUET-SORO-KONE et Associés",
+            "detailValue": "Cabinet SCPA HOUPHOUET-SORO-KONE et Associés"
+        },
+        {
+            "sourceUuid": "9a99ffd5-af8e-46f7-83e7-e66c49fa2714",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BLEDE DOHORA André-Frédéric",
+            "detailValue": "Cabinet CABINET BLEDE DOHORA André-Frédéric"
+        },
+        {
+            "sourceUuid": "3f9760f9-bbab-42e3-b3b2-bf96de15dba5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ZEBE Guillaume",
+            "detailValue": "Cabinet CABINET ZEBE Guillaume"
+        },
+        {
+            "sourceUuid": "b4138a97-a6b4-40fe-97bb-0612946289c5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SANGARE Bema",
+            "detailValue": "Cabinet CABINET SANGARE Bema"
+        },
+        {
+            "sourceUuid": "c8ffbb03-2738-4e8c-87ed-c33c411ff7b0",
+            "field": "sourceCabinetName",
+            "listingValue": "SCP AVOCATS CONSEILS ASSOCIES / ACAs",
+            "detailValue": "Cabinet SCP AVOCATS CONSEILS ASSOCIES / ACAs"
+        },
+        {
+            "sourceUuid": "1e85ded5-3c1b-474e-81e6-34a0541d67a1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TRAORE Bakari",
+            "detailValue": "Cabinet CABINET TRAORE Bakari"
+        },
+        {
+            "sourceUuid": "aed3137d-e4eb-413b-a160-7ec27d211d63",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BEIRA",
+            "detailValue": "Cabinet CABINET BEIRA"
+        },
+        {
+            "sourceUuid": "d40f1961-b315-4763-b09e-5e6d8b8d225a",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "13803d0e-56b1-452f-aea7-06351ec9ff24",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUYONNET Paul",
+            "detailValue": "Cabinet CABINET GUYONNET Paul"
+        },
+        {
+            "sourceUuid": "1bcf41c8-ddad-4c72-9b44-0c4bbbce3907",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BOUAFFON Didier",
+            "detailValue": "Cabinet CABINET BOUAFFON Didier"
+        },
+        {
+            "sourceUuid": "db0606a7-adb5-45c0-8a47-bb60c9ba2cc5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOGO Lokpo Achille",
+            "detailValue": "Cabinet CABINET GOGO Lokpo Achille"
+        },
+        {
+            "sourceUuid": "31c1ea2b-4837-4e00-b35a-6694d91e56eb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KODJO AKA Emmanuel",
+            "detailValue": "Cabinet CABINET KODJO AKA Emmanuel"
+        },
+        {
+            "sourceUuid": "efa5c6f4-6be8-4ee1-bc72-596ec794d276",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "d4e9cf5b-79cf-42a0-90d6-41d9636d640f",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BEDI & GNIMAVO",
+            "detailValue": "Cabinet SCPA BEDI & GNIMAVO"
+        },
+        {
+            "sourceUuid": "042d4399-fff3-4237-a4d1-82eb8389c8fe",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "77d53641-578f-4d5e-9d97-0eb376c0f03e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BABLY Gnaoré Eric",
+            "detailValue": "Cabinet CABINET BABLY Gnaoré Eric"
+        },
+        {
+            "sourceUuid": "2599f77f-c5b4-4a62-b78a-4a5f54a9fd95",
+            "field": "sourceCabinetName",
+            "listingValue": "CB BARRISTERS ET ASSOCIES",
+            "detailValue": "Cabinet CB BARRISTERS ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "cea2914a-2df8-4be8-b146-2afea769b373",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIARRE-KOUAME Avocats Associés",
+            "detailValue": "Cabinet CABINET DIARRE-KOUAME Avocats Associés"
+        },
+        {
+            "sourceUuid": "1d322096-14a9-42d3-92c5-db9e7f3acd90",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOFFI Olivier",
+            "detailValue": "Cabinet CABINET KOFFI Olivier"
+        },
+        {
+            "sourceUuid": "487966fe-1ab5-44b2-b808-bdbfd87deb8b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'GUESSAN Noubissié Charlotte épse KADIE",
+            "detailValue": "Cabinet CABINET N'GUESSAN Noubissié Charlotte épse KADIE"
+        },
+        {
+            "sourceUuid": "3c09e5ef-0373-4607-8ede-ef124f541cd3",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BEDI & GNIMAVO",
+            "detailValue": "Cabinet SCPA BEDI & GNIMAVO"
+        },
+        {
+            "sourceUuid": "fbe0d5f5-97f1-4bff-aa60-b68c099a3979",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIARRE-KOUAME Avocats Associés",
+            "detailValue": "Cabinet CABINET DIARRE-KOUAME Avocats Associés"
+        },
+        {
+            "sourceUuid": "c56c3033-2f64-4906-a59f-45f46dcd22c1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOURE Neyeboulman Sosthène",
+            "detailValue": "Cabinet CABINET TOURE Neyeboulman Sosthène"
+        },
+        {
+            "sourceUuid": "e56e9186-ec22-4f2b-a720-043672eb6ca9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PARIS-VILLAGE",
+            "detailValue": "Cabinet SCPA PARIS-VILLAGE"
+        },
+        {
+            "sourceUuid": "a0d87e3b-b0f2-4314-b551-be7a6cf28fe6",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ZEBEYOUX Dahihon Monique",
+            "detailValue": "Cabinet CABINET ZEBEYOUX Dahihon Monique"
+        },
+        {
+            "sourceUuid": "46e1fe8b-6392-4c48-9c3a-a3c264bd9557",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ABLI Jean Uberson",
+            "detailValue": "Cabinet CABINET ABLI Jean Uberson"
+        },
+        {
+            "sourceUuid": "0ec08da3-cd2e-4dde-b68b-f8c2f295d299",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA C.L.K.A.",
+            "detailValue": "Cabinet SCPA C.L.K.A."
+        },
+        {
+            "sourceUuid": "f9a01570-f562-4b7d-bd4a-696e79f0a86a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BEIRA",
+            "detailValue": "Cabinet CABINET BEIRA"
+        },
+        {
+            "sourceUuid": "1d0a32a0-0ff2-4ef8-a718-d48a79141d96",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FAYE",
+            "detailValue": "Cabinet CABINET FAYE"
+        },
+        {
+            "sourceUuid": "9efbd0a3-15d6-4ef9-9f99-0e1a1dafd901",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA CSA-AVOCATS",
+            "detailValue": "Cabinet SCPA CSA-AVOCATS"
+        },
+        {
+            "sourceUuid": "ee10338e-b2d4-45c3-a954-a956f17a47bd",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA N’DRI & WOGNIN",
+            "detailValue": "Cabinet SCPA N’DRI & WOGNIN"
+        },
+        {
+            "sourceUuid": "3ed146cb-63c1-4849-b265-0778d8630cc9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Panfolhié",
+            "detailValue": "Cabinet CABINET COULIBALY Panfolhié"
+        },
+        {
+            "sourceUuid": "0c179018-725d-4986-8d73-8d8810c37ab9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE, AYAMA & Associés",
+            "detailValue": "Cabinet SCPA KONE, AYAMA & Associés"
+        },
+        {
+            "sourceUuid": "954d09fb-a741-4766-b6ad-2e2edc0ec701",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "45a91c23-e268-40c1-92f9-15546fe0e7ed",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OBENG-KOFI FIAN",
+            "detailValue": "Cabinet CABINET OBENG-KOFI FIAN"
+        },
+        {
+            "sourceUuid": "0ad4bf81-3b4e-4d31-a59a-06221ba3110e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAGBO Dobli Esther Désirée",
+            "detailValue": "Cabinet CABINET DAGBO Dobli Esther Désirée"
+        },
+        {
+            "sourceUuid": "cf3a9f56-9320-4c58-bd31-3b4e5cd81a33",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "aff95409-0b83-40bc-984d-34a6f1788fae",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOEGAH & ETTE",
+            "detailValue": "Cabinet CABINET HOEGAH & ETTE"
+        },
+        {
+            "sourceUuid": "93feae07-3d91-4154-bf5c-a24de60c8b93",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET NANGO Innocent",
+            "detailValue": "Cabinet CABINET NANGO Innocent"
+        },
+        {
+            "sourceUuid": "2ca59440-3072-4941-a22d-df46540d8ce9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KADI Dago Raymond",
+            "detailValue": "Cabinet CABINET KADI Dago Raymond"
+        },
+        {
+            "sourceUuid": "092de8c4-e7f6-43b8-a4a9-23d8d962a8d8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BLESSY & BLESSY",
+            "detailValue": "Cabinet SCPA BLESSY & BLESSY"
+        },
+        {
+            "sourceUuid": "0c56b92d-2bb8-4c5a-8fee-e83a9e6187b7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMALAMAN OLIVIER",
+            "detailValue": "Cabinet CABINET AMALAMAN OLIVIER"
+        },
+        {
+            "sourceUuid": "d71806bb-4ce9-47cc-bdd5-837dbf88ce32",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ABI Koffi Marius",
+            "detailValue": "Cabinet CABINET ABI Koffi Marius"
+        },
+        {
+            "sourceUuid": "d42eb5c0-eb97-4869-afa8-d519c455e441",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GAHOUA Martial",
+            "detailValue": "Cabinet CABINET GAHOUA Martial"
+        },
+        {
+            "sourceUuid": "de2b75e1-055b-4dbe-aef9-2a24d4d31c0a",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HILLAH & HORO CONSEILS",
+            "detailValue": "Cabinet SCPA HILLAH & HORO CONSEILS"
+        },
+        {
+            "sourceUuid": "0479466a-0c51-41da-a960-364b291d0277",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HILLAH & HORO CONSEILS",
+            "detailValue": "Cabinet SCPA HILLAH & HORO CONSEILS"
+        },
+        {
+            "sourceUuid": "792f49c0-f0cb-4fbb-8502-e71dd426439a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DJEBI Tokoré Gbété Francis",
+            "detailValue": "Cabinet CABINET DJEBI Tokoré Gbété Francis"
+        },
+        {
+            "sourceUuid": "2ecb70e9-4ac3-43d4-8b28-ce36467efbc0",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "cee0ce36-0739-4675-be54-5a46842228dd",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET WOGNIN Houa Jean-Claude",
+            "detailValue": "Cabinet CABINET WOGNIN Houa Jean-Claude"
+        },
+        {
+            "sourceUuid": "fb798a96-437b-4745-b855-60625d5b4017",
+            "field": "sourceCabinetName",
+            "listingValue": "SOCIÉTÉ D’AVOCATS LIKANE & OMEPIEU",
+            "detailValue": "Cabinet SOCIÉTÉ D’AVOCATS LIKANE & OMEPIEU"
+        },
+        {
+            "sourceUuid": "3d1e1b49-ec7d-4ba1-87e5-7e87e7db677d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET D'AVOCATS KOUABENAN",
+            "detailValue": "Cabinet CABINET D'AVOCATS KOUABENAN"
+        },
+        {
+            "sourceUuid": "669bd115-67de-4b39-8b84-42ece013460d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET D'AVOCATS KOUABENAN",
+            "detailValue": "Cabinet CABINET D'AVOCATS KOUABENAN"
+        },
+        {
+            "sourceUuid": "14495986-081d-4d23-bb6a-2328a1a98b34",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA C.L.K.A.",
+            "detailValue": "Cabinet SCPA C.L.K.A."
+        },
+        {
+            "sourceUuid": "6bfe8b28-596e-45ba-a38a-7aab2d9f1b2a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DIARRA Aboubacar Sydick",
+            "detailValue": "Cabinet CABINET DIARRA Aboubacar Sydick"
+        },
+        {
+            "sourceUuid": "5bd48ab8-bc7c-480d-b4da-05526236a4b1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOHO Tapé",
+            "detailValue": "Cabinet CABINET TOHO Tapé"
+        },
+        {
+            "sourceUuid": "06b5e8bc-e0ea-450a-ab55-f2b3975c8aa7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SOYA Keiba François",
+            "detailValue": "Cabinet CABINET SOYA Keiba François"
+        },
+        {
+            "sourceUuid": "8a35777d-a76d-49ef-97c0-de0bf3476d91",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE, AYAMA & Associés",
+            "detailValue": "Cabinet SCPA KONE, AYAMA & Associés"
+        },
+        {
+            "sourceUuid": "f6b2542f-0c7a-4b47-ac49-c1bc4cc1a2d5",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO-SITIONON & Associés",
+            "detailValue": "Cabinet SCPA SORO-SITIONON & Associés"
+        },
+        {
+            "sourceUuid": "e6aae165-105f-49b3-817d-eb3809dee178",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OUATTARA-BOGUI- DJETE & ASSOCIES",
+            "detailValue": "Cabinet CABINET OUATTARA-BOGUI- DJETE & ASSOCIES"
+        },
+        {
+            "sourceUuid": "715d9230-16eb-4173-9a13-656424b619d3",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE-N'GUESSAN-KIGNELMAN",
+            "detailValue": "Cabinet SCPA KONE-N'GUESSAN-KIGNELMAN"
+        },
+        {
+            "sourceUuid": "cfffdc3c-c177-4f95-a790-502940d7b95d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "0d9eea2d-0716-4178-ae04-2ba31e37cb7c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "4bff1ad7-6731-4cb5-8653-8c52322e4b51",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "696ac8b7-fffc-483c-9dba-c7804b9abac2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOEGAH & ETTE",
+            "detailValue": "Cabinet CABINET HOEGAH & ETTE"
+        },
+        {
+            "sourceUuid": "35998bc2-dabd-4239-8e2e-bf9538aca8da",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMADOU CAMARA",
+            "detailValue": "Cabinet CABINET AMADOU CAMARA"
+        },
+        {
+            "sourceUuid": "edc290ab-51cb-4a07-a2d6-6b532ad318a5",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO-SITIONON & Associés",
+            "detailValue": "Cabinet SCPA SORO-SITIONON & Associés"
+        },
+        {
+            "sourceUuid": "555dfcc2-f53f-4933-a3ac-ae7434cae63a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "9e4c4a74-3aa0-404b-a4e5-31e19e0dc56d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOGOUA Mady Emmanuel Arthur",
+            "detailValue": "Cabinet CABINET GOGOUA Mady Emmanuel Arthur"
+        },
+        {
+            "sourceUuid": "21aece7a-713c-4799-ac6c-2ab34c579da8",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOMA Gonkanou",
+            "detailValue": "Cabinet CABINET TOMA Gonkanou"
+        },
+        {
+            "sourceUuid": "75d65b4c-4065-48d2-9e5b-945ee2cfaabc",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "498492ce-d815-4561-a96e-7e7475f7d35d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "8f3dd0cf-4a73-44c7-8aff-3ce4450d9403",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SORO Siriki Fangnigué",
+            "detailValue": "Cabinet CABINET SORO Siriki Fangnigué"
+        },
+        {
+            "sourceUuid": "fdbc1252-2fbc-4fdc-a6ae-e9e0b2f75dfa",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "55a0c266-1d04-4ec6-88c1-9cba61296bdc",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ASSI Bénié",
+            "detailValue": "Cabinet CABINET ASSI Bénié"
+        },
+        {
+            "sourceUuid": "09f74184-6e0d-425d-9401-6845b355aa59",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "9a3aa7ac-0854-4aa9-be97-653e37688e1d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ASSOKO Héraclès Mayé",
+            "detailValue": "Cabinet CABINET ASSOKO Héraclès Mayé"
+        },
+        {
+            "sourceUuid": "540a60e2-e0d2-4ff3-9809-12e801c41450",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "54509994-3f85-448b-a3df-adeb463d1375",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SERITOUBA Gnangue",
+            "detailValue": "Cabinet CABINET SERITOUBA Gnangue"
+        },
+        {
+            "sourceUuid": "69313546-6fff-4197-9dcb-2cfb10604bc7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAGBO Godé Pierre",
+            "detailValue": "Cabinet CABINET DAGBO Godé Pierre"
+        },
+        {
+            "sourceUuid": "aec13d4e-f3ea-4d0f-ae7a-7a8bf98b95e3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUIBESSONGUI N'Datien Koné Séverin",
+            "detailValue": "Cabinet CABINET GUIBESSONGUI N'Datien Koné Séverin"
+        },
+        {
+            "sourceUuid": "e434c477-16f4-4148-bbc0-a762e07507c7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ESMEL Calixte",
+            "detailValue": "Cabinet CABINET ESMEL Calixte"
+        },
+        {
+            "sourceUuid": "38efbb50-ae0b-4be8-9452-76fbe5fb9271",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TIERAUD Salé Serge-Arnaud",
+            "detailValue": "Cabinet CABINET TIERAUD Salé Serge-Arnaud"
+        },
+        {
+            "sourceUuid": "28f8da22-2f53-4272-a3b9-0bdfcba4a623",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA de l’INDENIÉ",
+            "detailValue": "Cabinet SCPA de l’INDENIÉ"
+        },
+        {
+            "sourceUuid": "ca908b94-5e76-41d6-9b8d-8185b079999d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DOGO Koudou Martin",
+            "detailValue": "Cabinet CABINET DOGO Koudou Martin"
+        },
+        {
+            "sourceUuid": "9bb6dfb0-2207-47b4-bdf2-3d068a2ec47a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SUY-BI Gohoré Emile",
+            "detailValue": "Cabinet CABINET SUY-BI Gohoré Emile"
+        },
+        {
+            "sourceUuid": "4fd36403-b58d-41fa-b2a2-355ff6a1588c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "ff2b347a-947d-4816-9205-a7317f7f4026",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA IMBOUA-KOUAO-TELLA & Associés",
+            "detailValue": "Cabinet SCPA IMBOUA-KOUAO-TELLA & Associés"
+        },
+        {
+            "sourceUuid": "4eb9abdb-93dc-4a23-8e03-94b9a5cb34fd",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TAOUA Koffi Yeboua",
+            "detailValue": "Cabinet CABINET TAOUA Koffi Yeboua"
+        },
+        {
+            "sourceUuid": "e1d57336-6006-4adb-9697-417ef197b30d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TRAORE Drissa",
+            "detailValue": "Cabinet CABINET TRAORE Drissa"
+        },
+        {
+            "sourceUuid": "c1ec0ffe-fc67-4832-bbc8-387383c2180a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY N’Golo Daouda",
+            "detailValue": "Cabinet CABINET COULIBALY N’Golo Daouda"
+        },
+        {
+            "sourceUuid": "915c77c3-2e85-4a39-badf-a6443f621333",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOUALLY Sylvain",
+            "detailValue": "Cabinet CABINET TOUALLY Sylvain"
+        },
+        {
+            "sourceUuid": "316d70ee-8c68-44d5-b21b-1a55fd27df2f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET SAKI Eric Innocent",
+            "detailValue": "Cabinet CABINET SAKI Eric Innocent"
+        },
+        {
+            "sourceUuid": "7e338bd1-f791-4b7f-b459-465fe685fb73",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "eec847c4-1421-4cbb-83da-0c6891fae953",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUDA",
+            "detailValue": "Cabinet CABINET HOUDA"
+        },
+        {
+            "sourceUuid": "1c9f233e-bf88-4121-ad89-1dc96a831441",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "216c5bc4-b23b-4e5f-a1a4-7cd434394e1a",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ACCESS-AVOCATS AFRICA",
+            "detailValue": "Cabinet SCPA ACCESS-AVOCATS AFRICA"
+        },
+        {
+            "sourceUuid": "5f2ac441-0e93-4431-a184-578719a5c9a9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET D'AVOCATS BAKO & COULIBALY",
+            "detailValue": "Cabinet CABINET D'AVOCATS BAKO & COULIBALY"
+        },
+        {
+            "sourceUuid": "33edb393-3d55-4b29-bc3a-48b079138238",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET D'AVOCATS BAKO & COULIBALY",
+            "detailValue": "Cabinet CABINET D'AVOCATS BAKO & COULIBALY"
+        },
+        {
+            "sourceUuid": "239617a2-553b-4ba0-9272-20ecfceaec7e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MARC LEBOUATH",
+            "detailValue": "Cabinet CABINET MARC LEBOUATH"
+        },
+        {
+            "sourceUuid": "1ba4bf1e-daa7-44b0-af5b-707f9ff4819c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MENTENON",
+            "detailValue": "Cabinet CABINET MENTENON"
+        },
+        {
+            "sourceUuid": "75788659-f2f3-42a3-abdd-1885c478ba1b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOUADJO François & Associés",
+            "detailValue": "Cabinet SCPA KOUADJO François & Associés"
+        },
+        {
+            "sourceUuid": "7deba2d4-f384-460a-8108-a94f88431888",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N’GUETTA GERARD",
+            "detailValue": "Cabinet CABINET N’GUETTA GERARD"
+        },
+        {
+            "sourceUuid": "c2765ef4-3e94-4c1a-bd5c-9fc7cdee3628",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KEBE M. El Habib",
+            "detailValue": "Cabinet CABINET KEBE M. El Habib"
+        },
+        {
+            "sourceUuid": "026f568c-72fb-48e3-9283-2cbce73f867b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUDA",
+            "detailValue": "Cabinet CABINET HOUDA"
+        },
+        {
+            "sourceUuid": "118abd20-9d35-436b-8f76-444d1b5f31a8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA",
+            "detailValue": "Cabinet SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA"
+        },
+        {
+            "sourceUuid": "91afcb47-2edf-421b-982d-c2e819302d5e",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMOUSSOU Medegbe Jean",
+            "detailValue": "Cabinet CABINET AMOUSSOU Medegbe Jean"
+        },
+        {
+            "sourceUuid": "8da8d5fa-c04b-4d2b-8070-fc7b4ef39cb4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "8cb34a35-5b93-4e3d-a197-11bb29b57fa4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET APATCHO EPALE",
+            "detailValue": "Cabinet CABINET APATCHO EPALE"
+        },
+        {
+            "sourceUuid": "55e13fe6-da3e-4b48-8f09-745acb47fc02",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA CSA-AVOCATS",
+            "detailValue": "Cabinet SCPA CSA-AVOCATS"
+        },
+        {
+            "sourceUuid": "f4c399aa-9752-4bbd-825a-53e3a89ae39f",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONE-N'GUESSAN-KIGNELMAN",
+            "detailValue": "Cabinet SCPA KONE-N'GUESSAN-KIGNELMAN"
+        },
+        {
+            "sourceUuid": "7238ae78-c5bf-461e-820e-09789f2c9ca4",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONATE Aenza",
+            "detailValue": "Cabinet CABINET KONATE Aenza"
+        },
+        {
+            "sourceUuid": "1d22d488-7b1b-45da-9ea4-9b8cd2c7276f",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FOFANA Na Mariam",
+            "detailValue": "Cabinet CABINET FOFANA Na Mariam"
+        },
+        {
+            "sourceUuid": "127a830b-18ff-44a8-b000-7b3137a88d75",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA OUANGUI-VE & Associés",
+            "detailValue": "Cabinet SCPA OUANGUI-VE & Associés"
+        },
+        {
+            "sourceUuid": "53f6a645-839e-42b9-8113-f1726ba6ada3",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA OUANGUI-VE & Associés",
+            "detailValue": "Cabinet SCPA OUANGUI-VE & Associés"
+        },
+        {
+            "sourceUuid": "695981d6-5aac-43d7-abc3-b36b303a7988",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA C.L.K.A.",
+            "detailValue": "Cabinet SCPA C.L.K.A."
+        },
+        {
+            "sourceUuid": "32046892-6126-4f16-99c0-1dcc8fbd458b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "70be38a7-9027-4e93-b143-33b5597e1f0a",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GNOMBLEI Clémence épse DIE",
+            "detailValue": "Cabinet CABINET GNOMBLEI Clémence épse DIE"
+        },
+        {
+            "sourceUuid": "2d3debbe-b85b-4850-b673-316c8e19b7c0",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KOUASSI Roger & Associés",
+            "detailValue": "Cabinet SCPA KOUASSI Roger & Associés"
+        },
+        {
+            "sourceUuid": "7e2a1915-fd85-40d1-a04f-1d303418d84b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BEIRA",
+            "detailValue": "Cabinet CABINET BEIRA"
+        },
+        {
+            "sourceUuid": "5e1bf07a-c947-4806-a23d-061d5b740208",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE KARNON JEAN-BAPTISTE",
+            "detailValue": "Cabinet CABINET KONE KARNON JEAN-BAPTISTE"
+        },
+        {
+            "sourceUuid": "48fb3fe9-4cf7-474e-a26b-cc9a35e1a227",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Soungalo",
+            "detailValue": "Cabinet CABINET COULIBALY Soungalo"
+        },
+        {
+            "sourceUuid": "ad3d53b4-e1b7-416e-a91f-b8d6d2eafeb4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "ad5ca9c7-5f4a-472c-8a5f-6cecf549a7bf",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA",
+            "detailValue": "Cabinet SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA"
+        },
+        {
+            "sourceUuid": "44506ca1-67d9-4db1-b530-87d121fe7ec9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ACCESS-AVOCATS AFRICA",
+            "detailValue": "Cabinet SCPA ACCESS-AVOCATS AFRICA"
+        },
+        {
+            "sourceUuid": "195fc983-9fc4-4973-8b74-197b225d00c8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA",
+            "detailValue": "Cabinet SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA"
+        },
+        {
+            "sourceUuid": "0c979ff9-5cca-4b89-ac89-820e2206d20d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TAPI Dakouri Sylvain",
+            "detailValue": "Cabinet CABINET TAPI Dakouri Sylvain"
+        },
+        {
+            "sourceUuid": "4f942482-4ab6-47e6-b459-dcb8e6cc3805",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAH-LEROUX Vanessa",
+            "detailValue": "Cabinet CABINET BAH-LEROUX Vanessa"
+        },
+        {
+            "sourceUuid": "755e86fe-848b-4951-9895-8a473980baeb",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET OUEDRAOGO Arnaud",
+            "detailValue": "Cabinet CABINET OUEDRAOGO Arnaud"
+        },
+        {
+            "sourceUuid": "928dfa1a-9e81-4e6d-842d-6404d1fbf574",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUDA",
+            "detailValue": "Cabinet CABINET HOUDA"
+        },
+        {
+            "sourceUuid": "3cf84bac-d106-493c-ae2d-19a60f170daa",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ALLA KOFFI ETIENNE",
+            "detailValue": "Cabinet CABINET ALLA KOFFI ETIENNE"
+        },
+        {
+            "sourceUuid": "0eaa6545-a27e-48d3-876c-a49161ee1b73",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LOLO-DIOMANDE-OUATTARA & Associés",
+            "detailValue": "Cabinet SCPA LOLO-DIOMANDE-OUATTARA & Associés"
+        },
+        {
+            "sourceUuid": "92c0caa4-b270-47e2-8c2b-2a3ccd65619b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUDA",
+            "detailValue": "Cabinet CABINET HOUDA"
+        },
+        {
+            "sourceUuid": "dc8a3b75-e93c-4a6d-ad52-e6ac54365679",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "62c36fd1-aaca-4c2e-bf54-69b158c6bec3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOUDA",
+            "detailValue": "Cabinet CABINET HOUDA"
+        },
+        {
+            "sourceUuid": "93e10b77-38a8-4469-ab75-b92f18900177",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SAKHO-YAPOBI-FOFANA & Associés",
+            "detailValue": "Cabinet SCPA SAKHO-YAPOBI-FOFANA & Associés"
+        },
+        {
+            "sourceUuid": "4d8263b4-d2be-4e52-ae6c-74d0d2366fe6",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BOTO-OUPOH & Associés",
+            "detailValue": "Cabinet SCPA BOTO-OUPOH & Associés"
+        },
+        {
+            "sourceUuid": "50fa7f17-e1b2-4428-92ac-290ec6a265d1",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "62e8c30b-f0b7-413c-9ca8-de05a02fac25",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN Yao Barthélemy",
+            "detailValue": "Cabinet CABINET KONAN Yao Barthélemy"
+        },
+        {
+            "sourceUuid": "65d71757-5e65-4516-a3c9-c86c40e5397d",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONE & ASSOCIES",
+            "detailValue": "Cabinet CABINET KONE & ASSOCIES"
+        },
+        {
+            "sourceUuid": "f91156c8-8f48-48b0-a5f8-595ed46816a0",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BOTO-OUPOH & Associés",
+            "detailValue": "Cabinet SCPA BOTO-OUPOH & Associés"
+        },
+        {
+            "sourceUuid": "6a3f0fb8-f685-4baf-b154-3f2b371b0937",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        },
+        {
+            "sourceUuid": "791d4e37-c93f-409f-be34-fc38b0de28e2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DEGRE Kouassi Prosper",
+            "detailValue": "Cabinet CABINET DEGRE Kouassi Prosper"
+        },
+        {
+            "sourceUuid": "9877e215-babd-4abb-b69e-c91122b787a2",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET COULIBALY Soungalo",
+            "detailValue": "Cabinet CABINET COULIBALY Soungalo"
+        },
+        {
+            "sourceUuid": "ae893561-7e74-4af3-bd7d-fa22a695ac40",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET HOEGAH & ETTE",
+            "detailValue": "Cabinet CABINET HOEGAH & ETTE"
+        },
+        {
+            "sourceUuid": "325536ee-5413-4921-9bac-ad4fb8d66e01",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YEO Kelemassa",
+            "detailValue": "Cabinet CABINET YEO Kelemassa"
+        },
+        {
+            "sourceUuid": "4fd1d554-8835-45fe-bc62-d51438fcfa48",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GOLLY Moïse N'daihahué",
+            "detailValue": "Cabinet CABINET GOLLY Moïse N'daihahué"
+        },
+        {
+            "sourceUuid": "00bbd8b4-a14b-4677-9a91-86f65615b575",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET MENTENON",
+            "detailValue": "Cabinet CABINET MENTENON"
+        },
+        {
+            "sourceUuid": "cd935d4d-05e4-4aac-aa5a-762a2740565d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ORE-DIALLO & Associés",
+            "detailValue": "Cabinet SCPA ORE-DIALLO & Associés"
+        },
+        {
+            "sourceUuid": "e73a28d1-1a51-4a60-8937-4e19aa629ac3",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET CHAUVEAU",
+            "detailValue": "Cabinet CABINET CHAUVEAU"
+        },
+        {
+            "sourceUuid": "d14f13f1-b1de-4a6b-98ba-b62a313103d5",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKA-SERIKPA Amoin Roseline",
+            "detailValue": "Cabinet CABINET AKA-SERIKPA Amoin Roseline"
+        },
+        {
+            "sourceUuid": "00d298ff-128a-42fc-8aac-d53c6d224af9",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KOSSOUGRO",
+            "detailValue": "Cabinet CABINET KOSSOUGRO"
+        },
+        {
+            "sourceUuid": "a6a7d41d-f5dd-487c-b884-b54726afbeaa",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "ab982448-2bb0-40c5-922a-411c054c1115",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ESMEL Beraudy Gnamba Paulin",
+            "detailValue": "Cabinet CABINET ESMEL Beraudy Gnamba Paulin"
+        },
+        {
+            "sourceUuid": "42190ab2-3d3d-4178-8708-af031cc4c1f2",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HOUPHOUET-SORO-KONE et Associés",
+            "detailValue": "Cabinet SCPA HOUPHOUET-SORO-KONE et Associés"
+        },
+        {
+            "sourceUuid": "b249d92a-69f7-45db-af46-66c2cbca1247",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TOH GOULEHI JEAN AYMAR",
+            "detailValue": "Cabinet CABINET TOH GOULEHI JEAN AYMAR"
+        },
+        {
+            "sourceUuid": "c16553e3-299d-4277-bd4e-6fad604b1a6e",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "4a05820a-719d-4345-892f-3ad6c0d248da",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TÉRÈSA AMOA-BOUAFFON",
+            "detailValue": "Cabinet CABINET TÉRÈSA AMOA-BOUAFFON"
+        },
+        {
+            "sourceUuid": "1049cbe4-a1c3-4b0f-ac5f-84b6577bc753",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET N'ZI Jean-Claude",
+            "detailValue": "Cabinet CABINET N'ZI Jean-Claude"
+        },
+        {
+            "sourceUuid": "ffa3a6d3-20ad-416a-af78-52864a785d54",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET YAO EMMANUEL",
+            "detailValue": "Cabinet CABINET YAO EMMANUEL"
+        },
+        {
+            "sourceUuid": "8275b143-2c1e-4e34-94d2-987387d384ab",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA CSA-AVOCATS",
+            "detailValue": "Cabinet SCPA CSA-AVOCATS"
+        },
+        {
+            "sourceUuid": "13bca69a-129e-44f9-b750-4ed5f7d66b67",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA OUANGUI-VE & Associés",
+            "detailValue": "Cabinet SCPA OUANGUI-VE & Associés"
+        },
+        {
+            "sourceUuid": "d045a025-616d-4c5e-a152-ae6ec7f1bbb8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "463e61a2-08bb-4cff-85fb-c224733c2226",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "dc9c9d30-6323-4d60-a648-29c0a048fb07",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ADJE, ASSI, METAN",
+            "detailValue": "Cabinet SCPA ADJE, ASSI, METAN"
+        },
+        {
+            "sourceUuid": "7d92a3d5-b722-4431-b416-0f1545ea8647",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KONAN ANTOINE GEOFFROY",
+            "detailValue": "Cabinet CABINET KONAN ANTOINE GEOFFROY"
+        },
+        {
+            "sourceUuid": "982d2ce7-7d22-46c6-938f-46f44cf9c896",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "6bb38690-ae22-48fe-b9c3-670bfb0ecb7b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "f5ab8cc3-5fe2-45a2-a35b-a54bfadad856",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "3cf527a8-2b77-413d-9660-8d4d8ea6e4ee",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "60ecab43-8874-4a04-b9c4-8c61efb9547b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "9b2fdcd7-6873-4fea-beb3-73a499ce609b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET FDKA",
+            "detailValue": "Cabinet CABINET FDKA"
+        },
+        {
+            "sourceUuid": "a502ed15-7592-4199-b0a5-79a634eff27f",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "f983b988-8f14-4390-acb7-0ff8b9b6675c",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET H. KANO BLE",
+            "detailValue": "Cabinet CABINET H. KANO BLE"
+        },
+        {
+            "sourceUuid": "f81c2a5e-999f-45b2-aba3-9c283533e492",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET CHAUVEAU",
+            "detailValue": "Cabinet CABINET CHAUVEAU"
+        },
+        {
+            "sourceUuid": "e58f63f3-1f8b-4476-8328-e0ef2d5009b7",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "58f58a73-06ea-4252-9474-cd5c0bb27692",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés",
+            "detailValue": "Cabinet SCPA MOISE-BAZIE, KOYO, ASSA-AKOH et Associés"
+        },
+        {
+            "sourceUuid": "1a962255-0277-4916-afe5-67e17f735cb7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET DAGBO Godé Pierre",
+            "detailValue": "Cabinet CABINET DAGBO Godé Pierre"
+        },
+        {
+            "sourceUuid": "3f327239-0f45-4f3c-91a9-80d15799176c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "438ba243-bdef-401a-a82b-889fc2867630",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET GUIRO Mamadou",
+            "detailValue": "Cabinet CABINET GUIRO Mamadou"
+        },
+        {
+            "sourceUuid": "16c1c55f-af2e-4ea2-9e55-845de8d2416c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "b8c4679f-0b6f-43a2-8b9b-dc14557bcbe1",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOUMBIA BAMBA-KODJO-AKA et Associés",
+            "detailValue": "Cabinet SCPA DOUMBIA BAMBA-KODJO-AKA et Associés"
+        },
+        {
+            "sourceUuid": "02fbb3ec-4bd4-4b6d-88e5-9b5912d72795",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA LEX WAYS",
+            "detailValue": "Cabinet SCPA LEX WAYS"
+        },
+        {
+            "sourceUuid": "0c013843-f8b0-434c-97fc-a638958cb5cc",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "9e393dc7-e3a7-4d27-acfd-af02f8453aa9",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KONAN-LOAN & Associés",
+            "detailValue": "Cabinet SCPA KONAN-LOAN & Associés"
+        },
+        {
+            "sourceUuid": "4071a019-40a2-46bc-b815-343c672957dd",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA PARIS-VILLAGE",
+            "detailValue": "Cabinet SCPA PARIS-VILLAGE"
+        },
+        {
+            "sourceUuid": "1cb0460d-9932-4383-a885-6d8096297fef",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KEBET & MEITE",
+            "detailValue": "Cabinet SCPA KEBET & MEITE"
+        },
+        {
+            "sourceUuid": "4e162678-9179-42ad-bdfb-999f3489007b",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA ANTHONY-FOFANA ET ASSOCIES",
+            "detailValue": "Cabinet SCPA ANTHONY-FOFANA ET ASSOCIES"
+        },
+        {
+            "sourceUuid": "1a0371af-6c53-4321-bd54-d9171cd83f2c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "a4964b30-833f-4278-b3c3-5e6b597b0f20",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA DOGUE, ABBE YAO et Associés",
+            "detailValue": "Cabinet SCPA DOGUE, ABBE YAO et Associés"
+        },
+        {
+            "sourceUuid": "0bf791ab-f59e-49c4-b980-9ed21c59281c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "133296ea-c605-4982-a0b0-7386e95155f4",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA OUANGUI-VE & Associés",
+            "detailValue": "Cabinet SCPA OUANGUI-VE & Associés"
+        },
+        {
+            "sourceUuid": "a37c8312-6af8-46bb-bb59-f2df7be2b792",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AMADOU CAMARA",
+            "detailValue": "Cabinet CABINET AMADOU CAMARA"
+        },
+        {
+            "sourceUuid": "63d9f0aa-3fee-4ef8-8c93-499ca338ae96",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET BAKAYOKO Binta Nany",
+            "detailValue": "Cabinet CABINET BAKAYOKO Binta Nany"
+        },
+        {
+            "sourceUuid": "b51579ae-076a-48d2-8cbb-4f8ede3ccf27",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA TOURE-AMANI-YAO et Associés",
+            "detailValue": "Cabinet SCPA TOURE-AMANI-YAO et Associés"
+        },
+        {
+            "sourceUuid": "bf08c643-62df-475d-89b5-1dc3b1c93813",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA KSK",
+            "detailValue": "Cabinet SCPA KSK"
+        },
+        {
+            "sourceUuid": "8fd7f712-0566-4e98-91b0-067f447ac9e7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET ADAE-DIRABOU Abenan Josephine",
+            "detailValue": "Cabinet CABINET ADAE-DIRABOU Abenan Josephine"
+        },
+        {
+            "sourceUuid": "b6184c9a-0b2c-43b1-a6f2-b5ae4db5f3b1",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AKESSE Kouassi Charles Camille",
+            "detailValue": "Cabinet CABINET AKESSE Kouassi Charles Camille"
+        },
+        {
+            "sourceUuid": "0816af58-ad60-469d-ae73-1ab78fc7b08c",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SORO, BAKO et Associés",
+            "detailValue": "Cabinet SCPA SORO, BAKO et Associés"
+        },
+        {
+            "sourceUuid": "9d806230-7b1d-4c55-ad1b-87eb32f92226",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA CSA-AVOCATS",
+            "detailValue": "Cabinet SCPA CSA-AVOCATS"
+        },
+        {
+            "sourceUuid": "010a4b18-5e5f-40c2-ada2-feab05779d2d",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA HIVAT & Associés",
+            "detailValue": "Cabinet SCPA HIVAT & Associés"
+        },
+        {
+            "sourceUuid": "b3ff4651-5d29-41af-8ebc-0570eb5f9c04",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET TIERAUD Salé Serge-Arnaud",
+            "detailValue": "Cabinet CABINET TIERAUD Salé Serge-Arnaud"
+        },
+        {
+            "sourceUuid": "fe69b8c6-9f47-4d6a-bee7-6d6ea12d986f",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA",
+            "detailValue": "Cabinet SCPA SOMBO-KOUAO-AKE-AWANAN / SCPA SKAA"
+        },
+        {
+            "sourceUuid": "f7d84ec0-42a9-463d-8c8d-2ac7164dc0f8",
+            "field": "sourceCabinetName",
+            "listingValue": "SCPA BILE-AKA, BRIZOUA et Associés",
+            "detailValue": "Cabinet SCPA BILE-AKA, BRIZOUA et Associés"
+        },
+        {
+            "sourceUuid": "caaa01e6-ca4a-4c33-b313-a1cec54cf8f7",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET AVLESSI Jules Dogon",
+            "detailValue": "Cabinet CABINET AVLESSI Jules Dogon"
+        },
+        {
+            "sourceUuid": "dadb396c-1419-4fde-9736-8cebd4a6c53b",
+            "field": "sourceCabinetName",
+            "listingValue": "CABINET KS & ASSOCIES",
+            "detailValue": "Cabinet CABINET KS & ASSOCIES"
+        }
+    ],
+    "listingFailures": {
+        "lawyers": [],
+        "cabinets": []
+    },
+    "detailFailures": {
+        "lawyers": [],
+        "cabinets": [
+            {
+                "sourceUuid": "344c2a1f-81ef-4e1a-b06a-82daf60bd1b8",
+                "url": "https://app.ordredesavocats-ci.net/structures/344c2a1f-81ef-4e1a-b06a-82daf60bd1b8",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "8c9601a7-17c0-4efa-a34a-a6b943c6551d",
+                "url": "https://app.ordredesavocats-ci.net/structures/8c9601a7-17c0-4efa-a34a-a6b943c6551d",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "2463a306-f6b9-42cb-824b-dd883454620a",
+                "url": "https://app.ordredesavocats-ci.net/structures/2463a306-f6b9-42cb-824b-dd883454620a",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "ff652ab9-18d9-46f5-a191-83cae1563778",
+                "url": "https://app.ordredesavocats-ci.net/structures/ff652ab9-18d9-46f5-a191-83cae1563778",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "1b700442-ce8e-486c-af12-ad2860404756",
+                "url": "https://app.ordredesavocats-ci.net/structures/1b700442-ce8e-486c-af12-ad2860404756",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "2f1104a8-842f-43ba-9991-49532aa3f02a",
+                "url": "https://app.ordredesavocats-ci.net/structures/2f1104a8-842f-43ba-9991-49532aa3f02a",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            },
+            {
+                "sourceUuid": "d754f4f3-dfdf-460f-9c9b-5d2127073f00",
+                "url": "https://app.ordredesavocats-ci.net/structures/d754f4f3-dfdf-460f-9c9b-5d2127073f00",
+                "reason": "HTTP 500",
+                "attemptsBeforeTargetedRetry": 4,
+                "targetedRetryAttempts": 3,
+                "totalAttempts": 7,
+                "observations": [
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    },
+                    {
+                        "status": 500,
+                        "reason": "HTTP 500",
+                        "errorBody": "nonempty_unclassified_error_body"
+                    }
+                ]
+            }
+        ]
+    },
+    "retryCheckedAt": "2026-09-23T10:23:17+00:00",
+    "sourceLimited": true,
+    "retryHistory": [
+        {
+            "sourceUuid": "344c2a1f-81ef-4e1a-b06a-82daf60bd1b8",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/344c2a1f-81ef-4e1a-b06a-82daf60bd1b8",
+            "listingName": "CABINET BINATE Bouaké",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "8c9601a7-17c0-4efa-a34a-a6b943c6551d",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/8c9601a7-17c0-4efa-a34a-a6b943c6551d",
+            "listingName": "CABINET Brigitte AKEH MENSAH épse ROGER-GOURIA",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "2463a306-f6b9-42cb-824b-dd883454620a",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/2463a306-f6b9-42cb-824b-dd883454620a",
+            "listingName": "CABINET DALIGOU Monoko Jacques André",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "ff652ab9-18d9-46f5-a191-83cae1563778",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/ff652ab9-18d9-46f5-a191-83cae1563778",
+            "listingName": "CABINET DIARRASSOUBA Aboubakar Sidiki",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "1b700442-ce8e-486c-af12-ad2860404756",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/1b700442-ce8e-486c-af12-ad2860404756",
+            "listingName": "CABINET NOUAMA Appiah Antoine-Marie",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "2f1104a8-842f-43ba-9991-49532aa3f02a",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/2f1104a8-842f-43ba-9991-49532aa3f02a",
+            "listingName": "CABINET VAFFI Cherif",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        },
+        {
+            "sourceUuid": "d754f4f3-dfdf-460f-9c9b-5d2127073f00",
+            "sourceUrl": "https://app.ordredesavocats-ci.net/structures/d754f4f3-dfdf-460f-9c9b-5d2127073f00",
+            "listingName": "MAITRE KAKOU CABINET D'AVOCATS",
+            "previousHttpStatus": "HTTP 500",
+            "attemptsBeforeTargetedRetry": 4,
+            "targetedRetryAttempts": 3,
+            "totalAttempts": 7,
+            "recovered": false,
+            "observations": [
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                },
+                {
+                    "status": 500,
+                    "reason": "HTTP 500",
+                    "errorBody": "nonempty_unclassified_error_body"
+                }
+            ]
+        }
+    ],
+    "fallbackMemberRelations": [
+        {
+            "cabinetSourceUuid": "344c2a1f-81ef-4e1a-b06a-82daf60bd1b8",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "8c9601a7-17c0-4efa-a34a-a6b943c6551d",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "2463a306-f6b9-42cb-824b-dd883454620a",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "ff652ab9-18d9-46f5-a191-83cae1563778",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "1b700442-ce8e-486c-af12-ad2860404756",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "2f1104a8-842f-43ba-9991-49532aa3f02a",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        },
+        {
+            "cabinetSourceUuid": "d754f4f3-dfdf-460f-9c9b-5d2127073f00",
+            "source": "lawyers-directory.json entries[].sourceCabinetUuid, exact UUID match only",
+            "matchedLawyerCount": 0
+        }
+    ]
+}

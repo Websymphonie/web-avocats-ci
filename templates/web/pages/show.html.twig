@@ -15,6 +15,8 @@
                     <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
                     {% if page.group and page.group.value == 'BAR' %}
                         <a href="{{ path('web_barreau_index') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Le Barreau</a>
+                    {% elseif page.group and page.group.value == 'CARPA' %}
+                        <a href="{{ path('web_carpa_index') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">La CARPA</a>
                     {% else %}
                         <span>Informations</span>
                     {% endif %}
@@ -22,7 +24,7 @@
                     <span class="max-w-[18rem] truncate text-white" aria-current="page">{{ page.title }}</span>
                 </nav>
                 <div class="mt-7 max-w-4xl">
-                    <p class="text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Le Barreau de Côte d'Ivoire</p>
+                    <p class="text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">{{ page.group and page.group.value == 'CARPA' ? 'La Caisse Autonome de Règlement Pécuniaire des Avocats' : "Le Barreau de Côte d'Ivoire" }}</p>
                     <h1 id="page-title" class="mt-3 text-4xl font-semibold leading-[1.04] tracking-[-0.05em] sm:text-5xl lg:text-6xl">{{ page.title }}</h1>
                     {% if page.publishedAt %}
                         <p class="mt-5 text-sm text-white/65">Publié le {{ page.publishedAt|format_datetime(pattern='d MMMM Y') }}</p>

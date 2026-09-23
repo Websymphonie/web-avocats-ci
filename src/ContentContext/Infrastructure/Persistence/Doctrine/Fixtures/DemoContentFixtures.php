@@ -293,23 +293,22 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
             ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
-            ['CARPA', 'carpa', PageStatus::PUBLISHED, false, PageGroup::BAR, 60],
+            ['Présentation', 'presentation', PageStatus::PUBLISHED, false, PageGroup::CARPA, 10],
         ];
         $now = new DateTimeImmutable();
 
         foreach ($pages as $index => [$title, $slug, $status, $hasCover, $group, $sortOrder]) {
-            $page = $manager->getRepository(PageEntity::class)->findOneBy(['slug' => $slug]);
+            $page = $manager->getRepository(PageEntity::class)->findOneBy(['slug' => $slug, 'editorialGroup' => $group]);
             if (!$page instanceof PageEntity) {
                 $page = new PageEntity();
             }
             $notice = 'Contenu de démonstration — à valider et adapter juridiquement avant mise en production.';
-            $content = match ($slug) {
+            $content = $group === PageGroup::CARPA ? $carpaContent : match ($slug) {
                 'presentation' => $presentationContent,
                 'historique' => $historyContent,
                 'le-batonnier' => $batonnierContent,
                 'conseil-de-l-ordre' => $councilContent,
                 'fonds-de-solidarite' => $fundContent,
-                'carpa' => $carpaContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'

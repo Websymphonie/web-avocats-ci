@@ -26,7 +26,7 @@ final readonly class CreatePageHandler implements CommandHandler
     public function __invoke(CreatePageCommand $command): Page
     {
         $slug = $this->normalizeSlug($command->slug !== '' ? $command->slug : $command->title);
-        if ($this->repository->slugExists($slug)) {
+        if ($this->repository->slugExists($slug, group: $command->group)) {
             throw new PageSlugAlreadyExistsException(sprintf('Le slug « %s » est déjà utilisé.', $slug));
         }
 

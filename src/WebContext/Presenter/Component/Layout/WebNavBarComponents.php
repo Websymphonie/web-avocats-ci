@@ -14,6 +14,8 @@ final class WebNavBarComponents
 {
     /** @var list<PublishedPage> */
     public array $barPages = [];
+    /** @var list<PublishedPage> */
+    public array $carpaPages = [];
 
     public function __construct(private readonly QueryBus $queryBus)
     {
@@ -24,5 +26,8 @@ final class WebNavBarComponents
         /** @var list<PublishedPage> $barPages */
         $barPages = $this->queryBus->handle(new FindPublishedPagesByGroupQuery(PageGroup::BAR));
         $this->barPages = $barPages;
+        /** @var list<PublishedPage> $carpaPages */
+        $carpaPages = $this->queryBus->handle(new FindPublishedPagesByGroupQuery(PageGroup::CARPA));
+        $this->carpaPages = $carpaPages;
     }
 }

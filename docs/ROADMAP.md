@@ -189,6 +189,7 @@ LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube protégé, sans API YouTube
+MEM-FUND-001 Ressources du Fonds de Solidarité membre  DONE — documents LAWYER classés par tag et téléchargement contrôlé
 FO-004   Catalogue public des formations               DONE — liste, filtres, détails COURSE/LIVE et confidentialité LIVE
 FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations/Pages publiées
 FO-009   Contact public                                READY FOR VISUAL REVIEW — formulaire sécurisé, archivage et notification email

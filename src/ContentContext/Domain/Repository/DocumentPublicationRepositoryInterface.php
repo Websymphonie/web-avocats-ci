@@ -8,6 +8,7 @@ use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
 use Websymphonie\ContentContext\Domain\Model\DocumentPublication;
 use Websymphonie\ContentContext\Domain\Model\DocumentPublicationListResult;
+use Websymphonie\ContentContext\Domain\Model\MemberFundResourceList;
 
 interface DocumentPublicationRepositoryInterface
 {
@@ -22,5 +23,6 @@ interface DocumentPublicationRepositoryInterface
      */
     public function findByIds(array $ids): array;
     public function list(?string $search, ?DocumentStatus $status, ?DocumentAccessLevel $accessLevel, ?int $tagId, int $page, int $limit): DocumentPublicationListResult;
+    public function listPublishedLawyerResourcesByTagSlug(string $tagSlug, int $page, int $limit): MemberFundResourceList;
     public function countStoredFileUsage(int $storedFileId): int;
 }

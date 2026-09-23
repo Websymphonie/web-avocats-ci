@@ -7,6 +7,7 @@ parameters:
   app.sender_email: '%env(MAILER_SENDER_EMAIL)%'
   app.sender_name: '%env(MAILER_SENDER_NAME)%'
   contact.recipient_email: '%env(CONTACT_RECIPIENT_EMAIL)%'
+  content.fund_solidarity_tag_slug: 'fonds-de-solidarite'
   upload_dir: '/uploads'
   # Local development fallback. Deployments must provide APP_STORAGE_DIR
   # explicitly and point it to a persistent volume.
@@ -43,6 +44,7 @@ services:
       int $documentMaxSize: '%media.document.max_size%'
       int $resourceMaxSize: '%media.document.max_size%'
       string $contactRecipientEmail: '%contact.recipient_email%'
+      string $fundSolidarityTagSlug: '%content.fund_solidarity_tag_slug%'
 
   _instanceof:
     Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler:

@@ -569,3 +569,9 @@ hors de `public/` avec une clé relative (`documents/<nom>`) et une empreinte
 SHA-256. Cette
 capacité limitée aux PDF, DOCX, XLSX et PPTX n’est ni une médiathèque, ni un
 DAM, ni le stockage Learning privé.
+
+La rubrique membre du Fonds de Solidarité réutilise ces publications et les
+tags génériques Content : seules les publications `PUBLISHED`, `LAWYER` portant
+le slug de tag configuré `content.fund_solidarity_tag_slug` (`fonds-de-solidarite`
+par défaut) y apparaissent. Cette classification éditoriale ne change ni les
+règles d’accès LAWYER ni le contrôle serveur au téléchargement.

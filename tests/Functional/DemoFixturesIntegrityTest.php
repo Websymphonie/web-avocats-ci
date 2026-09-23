@@ -95,7 +95,8 @@ final class DemoFixturesIntegrityTest extends WebTestCase
 
         self::assertSame(6, $entityManager->getRepository(NewsCategoryEntity::class)->count([]));
         self::assertSame(6, $entityManager->getRepository(EventCategoryEntity::class)->count([]));
-        self::assertSame(10, $entityManager->getRepository(TagEntity::class)->count([]));
+        self::assertSame(11, $entityManager->getRepository(TagEntity::class)->count([]));
+        self::assertNotNull($entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']));
         self::assertSame(24, $entityManager->getRepository(NewsEntity::class)->count([]));
         self::assertSame(18, $entityManager->getRepository(EventEntity::class)->count([]));
         self::assertSame(6, $entityManager->getRepository(PageEntity::class)->count([]));

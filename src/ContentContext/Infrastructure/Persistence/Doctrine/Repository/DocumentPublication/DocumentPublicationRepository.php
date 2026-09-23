@@ -13,6 +13,8 @@ use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
 use Websymphonie\ContentContext\Domain\Exception\DocumentPublicationNotFoundException;
 use Websymphonie\ContentContext\Domain\Model\DocumentPublication;
 use Websymphonie\ContentContext\Domain\Model\DocumentPublicationListResult;
+use Websymphonie\ContentContext\Domain\Model\MemberFundResource;
+use Websymphonie\ContentContext\Domain\Model\MemberFundResourceList;
 use Websymphonie\ContentContext\Domain\Model\Tag;
 use Websymphonie\ContentContext\Domain\Repository\DocumentPublicationRepositoryInterface;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
@@ -77,6 +79,38 @@ final class DocumentPublicationRepository extends ServiceEntityRepository implem
         $total = (int) (clone $qb)->select('COUNT(document.id)')->getQuery()->getSingleScalarResult();
         $entities = $qb->orderBy('document.updatedAt', 'DESC')->addOrderBy('document.id', 'DESC')->setFirstResult(($page - 1) * $limit)->setMaxResults($limit)->getQuery()->getResult();
         return new DocumentPublicationListResult(array_map(fn (DocumentPublicationEntity $entity): DocumentPublication => $this->factory->fromEntity($entity), $entities), $total, $page, $limit);
+    }
+    public function listPublishedLawyerResourcesByTagSlug(string $tagSlug, int $page, int $limit): MemberFundResourceList
+    {
+        $query = $this->createQueryBuilder('document')
+            ->innerJoin('document.tags', 'resource_tag', 'WITH', 'resource_tag.slug = :tagSlug')
+            ->andWhere('document.status = :status')
+            ->andWhere('document.accessLevel = :accessLevel')
+            ->setParameter('tagSlug', $tagSlug)
+            ->setParameter('status', DocumentStatus::PUBLISHED)
+            ->setParameter('accessLevel', DocumentAccessLevel::LAWYER);
+
+        $total = (int) (clone $query)->select('COUNT(document.id)')->getQuery()->getSingleScalarResult();
+        $page = min($page, max(1, (int) ceil($total / $limit)));
+        $entities = $query
+            ->orderBy('document.publishedAt', 'DESC')
+            ->addOrderBy('document.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        $items = array_map(
+            static fn (DocumentPublicationEntity $entity): MemberFundResource => new MemberFundResource(
+                $entity->getUuidAsString() ?? '',
+                $entity->getTitle(),
+                $entity->getDescription(),
+                $entity->getPublishedAt(),
+            ),
+            $entities,
+        );
+
+        return new MemberFundResourceList($items, $total, $page, $limit);
     }
     public function countStoredFileUsage(int $storedFileId): int { return (int) $this->createQueryBuilder('document')->select('COUNT(document.id)')->where('document.storedFileId = :storedFileId')->setParameter('storedFileId', $storedFileId)->getQuery()->getSingleScalarResult(); }
 }

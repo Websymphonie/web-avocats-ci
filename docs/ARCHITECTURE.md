@@ -761,6 +761,13 @@ requiert en plus la permission dédiée et `PRIVATE` reste Backoffice. Les
 téléchargements non publics sont servis avec une politique HTTP privée et sans
 stockage cache.
 
+La page membre `/espace/ressources/fonds-de-solidarite` est présentée par
+`WebContext` et lit `ContentContext` via une query paginée dédiée. Le repository
+filtre en base les documents publiés, accessibles LAWYER et classés par le tag
+`content.fund_solidarity_tag_slug`; il ne charge pas les publications hors
+rubrique pour les masquer dans Twig. L’accès à la page réutilise la même
+vérification de compte activé et de rôle explicite que `DocumentDownloadPolicy`.
+
 ### Provisionnement du stockage persistant
 
 Chaque déploiement doit définir `APP_STORAGE_DIR` et fournir une racine

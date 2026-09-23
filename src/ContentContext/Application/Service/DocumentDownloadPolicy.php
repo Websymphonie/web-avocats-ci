@@ -23,13 +23,13 @@ final readonly class DocumentDownloadPolicy
         return match ($document->accessLevel) {
             DocumentAccessLevel::PUBLIC => true,
             DocumentAccessLevel::MEMBER => $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY'),
-            DocumentAccessLevel::LAWYER => $this->canDownloadAsLawyer(),
+            DocumentAccessLevel::LAWYER => $this->canAccessLawyerResources(),
             DocumentAccessLevel::RESTRICTED => $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY') && $this->authorizationChecker->isGranted('CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD'),
             DocumentAccessLevel::PRIVATE => false,
         };
     }
 
-    private function canDownloadAsLawyer(): bool
+    public function canAccessLawyerResources(): bool
     {
         $user = $this->currentUserProvider->user();
 

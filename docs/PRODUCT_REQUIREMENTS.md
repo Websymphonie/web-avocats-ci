@@ -52,6 +52,7 @@ son lecteur ou ses documents.
 | MEM-003 | utiliser le player COURSE membre protégé | `IMPLEMENTED` |
 | MEM-004 | accéder à ses expériences LIVE protégées | `IMPLEMENTED` — détail LIVE, contrôle d’accès et lien sécurisé |
 | MEM-005 | consulter ses paiements de formation | `IMPLEMENTED` — historique membre en lecture seule et états de fulfillment |
+| MEM-FUND-001 | consulter les ressources du Fonds de Solidarité | `IMPLEMENTED` — publications LAWYER paginées et classées avec le tag Content dédié |
 | MEM-006 | consulter une vue détaillée de sa progression | `PLANNED` |
 | MEM-007 | consulter ses certificats | `PLANNED` |
 

@@ -1,0 +1,81 @@
+{% extends 'layouts/member.html.twig' %}
+
+{% block title %}Fonds de Solidarité{% endblock %}
+{% block member_page_title %}Fonds de Solidarité{% endblock %}
+
+{% block body %}
+    <div class="space-y-8">
+        <section class="border-b border-border pb-7">
+            <p class="mb-2 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#a77d2e] dark:text-[#e0bf7d]">
+                <span class="h-px w-7 bg-[#c49b52] dark:bg-[#d8b878]"></span>
+                Espace avocat
+            </p>
+            <h1 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Fonds de Solidarité</h1>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Consultez les ressources réservées aux avocats et mises à disposition au titre du Fonds de Solidarité.</p>
+        </section>
+
+        {% if resources.items is empty %}
+            <section class="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center" aria-labelledby="empty-fund-resources-title">
+                <span class="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <twig:ux:icon name="lucide:folder-open" class="size-7" aria-hidden="true"/>
+                </span>
+                <h2 id="empty-fund-resources-title" class="mt-5 text-lg font-semibold text-card-foreground">Aucune ressource n’est disponible pour le moment.</h2>
+                <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-muted-foreground">Les documents publiés dans cette rubrique apparaîtront ici lorsqu’ils seront mis à disposition.</p>
+            </section>
+        {% else %}
+            <section aria-labelledby="fund-resources-list-title">
+                <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Ressources documentaires</p>
+                        <h2 id="fund-resources-list-title" class="mt-1 text-xl font-semibold tracking-tight text-foreground">Documents disponibles</h2>
+                    </div>
+                    <p class="text-sm text-muted-foreground">{{ resources.totalItemCount }} document{{ resources.totalItemCount > 1 ? 's' : '' }}</p>
+                </div>
+
+                <ul class="divide-y divide-border border-y border-border">
+                    {% for resource in resources.items %}
+                        <li class="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                            <div class="flex min-w-0 items-start gap-3">
+                                <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    <twig:ux:icon name="lucide:file-text" class="size-5" aria-hidden="true"/>
+                                </span>
+                                <div class="min-w-0">
+                                    <h3 class="font-semibold text-card-foreground">{{ resource.title }}</h3>
+                                    {% if resource.description is not empty %}
+                                        <p class="mt-1 line-clamp-2 whitespace-pre-line text-sm leading-6 text-muted-foreground">{{ resource.description }}</p>
+                                    {% endif %}
+                                    {% if resource.publishedAt is not null %}
+                                        <p class="mt-2 text-xs text-muted-foreground">Publié le {{ resource.publishedAt|format_datetime('long', 'none', locale='fr_FR') }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <a href="{{ path('content_document_download', {uuid: resource.uuid}) }}"
+                               class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:self-center">
+                                <twig:ux:icon name="lucide:download" class="size-4" aria-hidden="true"/>
+                                Télécharger
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            {% if resources.lastPage() > 1 %}
+                <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination des ressources du Fonds de Solidarité">
+                    {% if resources.page > 1 %}
+                        <a href="{{ path('member_fund_resources_index', {page: resources.page - 1}) }}" class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>
+                            Précédent
+                        </a>
+                    {% else %}<span></span>{% endif %}
+                    <span class="text-sm text-muted-foreground">Page {{ resources.page }} sur {{ resources.lastPage() }}</span>
+                    {% if resources.page < resources.lastPage() %}
+                        <a href="{{ path('member_fund_resources_index', {page: resources.page + 1}) }}" class="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            Suivant
+                            <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
+                        </a>
+                    {% else %}<span></span>{% endif %}
+                </nav>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Websymphonie\Tests\Functional;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
@@ -157,6 +159,81 @@ final class ContentSecurityTest extends WebTestCase
         $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testFundResourcesListContainsOnlyPublishedLawyerDocumentsWithFundTagAndIsPaginated(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $expectedUuid = '';
+        for ($index = 1; $index <= 16; ++$index) {
+            $uuid = $this->createDocumentFixture(
+                DocumentAccessLevel::LAWYER,
+                DocumentStatus::PUBLISHED,
+                false,
+                'fonds-de-solidarite',
+                sprintf('Ressource du Fonds %02d', $index),
+            );
+            $expectedUuid = $uuid;
+        }
+        $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED, false, 'autre-rubrique', 'Document avocat hors Fonds');
+        $this->createDocumentFixture(DocumentAccessLevel::PUBLIC, DocumentStatus::PUBLISHED, false, 'fonds-de-solidarite', 'Document public hors Fonds LAWYER');
+        $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::DRAFT, false, 'fonds-de-solidarite', 'Document brouillon hors Fonds publié');
+
+        $client->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Fonds de Solidarité');
+        self::assertSelectorExists('a[href="/espace/ressources/fonds-de-solidarite"]');
+        self::assertSelectorTextContains('body', 'Ressource du Fonds');
+        self::assertSelectorTextNotContains('body', 'Document avocat hors Fonds');
+        self::assertSelectorTextNotContains('body', 'Document public hors Fonds LAWYER');
+        self::assertSelectorTextNotContains('body', 'Document brouillon hors Fonds publié');
+        self::assertSelectorExists('a[href="/documents/' . $expectedUuid . '/download"]');
+        self::assertSelectorExists('a[href="/espace/ressources/fonds-de-solidarite?page=2"]');
+
+        $client->request('GET', '/espace/ressources/fonds-de-solidarite?page=2', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Ressource du Fonds');
+
+        $client->request('GET', '/espace/ressources/fonds-de-solidarite?page=99', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Page 2 sur 2');
+    }
+
+    public function testFundResourcesListDeniesRegularUser(): void
+    {
+        $userClient = $this->authenticatedClient(['ROLE_USER']);
+        $userClient->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $userClient->request('GET', '/espace', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('a[href="/espace/ressources/fonds-de-solidarite"]');
+    }
+
+    public function testFundResourcesListDeniesDisabledLawyer(): void
+    {
+        $disabledLawyerClient = $this->authenticatedClient(['ROLE_AVOCAT'], false);
+        $disabledLawyerClient->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testAnonymousVisitorIsRedirectedFromFundResourcesList(): void
+    {
+        $client = $this->clientWithSchema();
+        $client->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/auth/login');
+    }
+
+    public function testFundResourcesListShowsAnHonestEmptyState(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $client->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h2', 'Aucune ressource n’est disponible pour le moment.');
+        self::assertSelectorNotExists('a[href*="/documents/"]');
     }
 
     public function testPublishedLawyerDocumentDeniesAnonymousVisitor(): void
@@ -309,7 +386,13 @@ final class ContentSecurityTest extends WebTestCase
         yield 'super-admin' => ['ROLE_SUPER_ADMIN'];
     }
 
-    private function createDocumentFixture(DocumentAccessLevel $accessLevel, DocumentStatus $status, bool $physicalFile = true): string
+    private function createDocumentFixture(
+        DocumentAccessLevel $accessLevel,
+        DocumentStatus $status,
+        bool $physicalFile = true,
+        ?string $tagSlug = null,
+        string $title = 'Guide de test',
+    ): string
     {
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $fileName = bin2hex(random_bytes(24)) . '.pdf';
@@ -330,12 +413,21 @@ final class ContentSecurityTest extends WebTestCase
         }
 
         $document = (new DocumentPublicationEntity())
-            ->setTitle('Guide de test')
+            ->setTitle($title)
             ->setSlug('guide-de-test-' . bin2hex(random_bytes(3)))
             ->setDescription('Publication de test')
             ->setStoredFileId($file->getId() ?? 0)
             ->setAccessLevel($accessLevel)
-            ->setStatus($status);
+            ->setStatus($status)
+            ->setPublishedAt($status === DocumentStatus::PUBLISHED ? new DateTimeImmutable() : null);
+        if ($tagSlug !== null) {
+            $tag = $entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => $tagSlug]);
+            if (!$tag instanceof TagEntity) {
+                $tag = (new TagEntity())->setName($tagSlug)->setSlug($tagSlug);
+                $entityManager->persist($tag);
+            }
+            $document->getTags()->add($tag);
+        }
         $entityManager->persist($document);
         $entityManager->flush();
 

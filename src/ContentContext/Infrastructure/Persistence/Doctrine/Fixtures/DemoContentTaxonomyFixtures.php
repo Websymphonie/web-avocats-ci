@@ -67,6 +67,7 @@ final class DemoContentTaxonomyFixtures extends Fixture implements FixtureGroupI
                 "Profession d'avocat" => 'profession-avocat',
                 'Justice' => 'justice',
                 'Accès au droit' => 'acces-au-droit',
+                'Fonds de Solidarité' => 'fonds-de-solidarite',
             ] as $name => $slug) {
                 $tag = $manager->getRepository(TagEntity::class)->findOneBy(['slug' => $slug]);
                 if (!$tag instanceof TagEntity) {

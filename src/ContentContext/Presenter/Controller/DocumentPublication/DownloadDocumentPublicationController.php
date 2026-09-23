@@ -28,6 +28,7 @@ final class DownloadDocumentPublicationController extends AbstractController
         $response = new BinaryFileResponse($download->path);
         $response->headers->set('Content-Type', $download->mimeType);
         $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $this->safeFilename($download->originalName));
         return $response;
     }

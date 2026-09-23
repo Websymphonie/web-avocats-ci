@@ -15,6 +15,7 @@ use Websymphonie\IdentityContext\Domain\Service\User\UserServiceInterface;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Validator\User\AddUserValidator;
 use Websymphonie\IdentityContext\Presenter\Service\EmailVerified;
+use Websymphonie\LawyerContext\Application\Service\LawyerProfileProvisioner;
 use Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
@@ -31,6 +32,7 @@ final readonly class AddUserHandler implements CommandHandler
         private EventDispatcher              $dispatcher,
         private AccountActivationIssuer      $activationIssuer,
         private ?CurrentActorProvider        $actorProvider = null,
+        private ?LawyerProfileProvisioner     $lawyerProfileProvisioner = null,
     )
     {
     }
@@ -49,6 +51,9 @@ final readonly class AddUserHandler implements CommandHandler
         $user->setEnabled(false);
         $user->setPassword($this->hash->hash($user, bin2hex(random_bytes(32))));
         $resultUser = $this->repository->create($user);
+        if (in_array('ROLE_AVOCAT', $resultUser->getRoles(), true)) {
+            $this->lawyerProfileProvisioner?->ensureFor($resultUser);
+        }
         $issued = $this->activationIssuer->issue($resultUser);
         $this->repository->update($resultUser);
 

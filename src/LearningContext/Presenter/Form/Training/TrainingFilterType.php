@@ -30,8 +30,8 @@ final class TrainingFilterType extends AbstractType
             ->add('visibility', EnumType::class, ['label' => 'Visibilité', 'class' => TrainingVisibility::class, 'choice_label' => static fn (TrainingVisibility $value): string => $value->label(), 'required' => false, 'placeholder' => 'Toutes les visibilités'])
             ->add('accessType', EnumType::class, ['label' => 'Accès', 'class' => TrainingAccessType::class, 'choice_label' => static fn (TrainingAccessType $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les accès'])
             ->add('type', EnumType::class, ['label' => 'Type', 'class' => TrainingType::class, 'choice_label' => static fn (TrainingType $value): string => $value->label(), 'required' => false, 'placeholder' => 'Tous les types']);
-        $builder->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'placeholder' => 'Toutes les catégories', 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]])
-            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'placeholder' => 'Tous les tags', 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]]);
+        $builder->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'placeholder' => 'Toutes les catégories', 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'attr' => ['data-controller' => 'select-combobox']])
+            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'placeholder' => 'Tous les tags', 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'attr' => ['data-controller' => 'select-combobox']]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

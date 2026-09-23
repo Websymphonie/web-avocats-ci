@@ -89,6 +89,13 @@ payment_member:
   type: attribute
   prefix: '/'
 
+lawyer:
+  resource:
+    path: ../src/LawyerContext/Presenter/Controller/
+    namespace: Websymphonie\LawyerContext\Presenter\Controller
+  type: attribute
+  prefix: '/admin/lawyer'
+
 shared:
   resource:
     path: ../src/SharedContext/Presenter/Controller/

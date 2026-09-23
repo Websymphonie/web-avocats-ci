@@ -60,6 +60,9 @@ enum PermissionEnum: string
     case COUNCIL_MEMBER_VIEW = 'COUNCIL_MEMBER_VIEW';
     case COUNCIL_MEMBER_CREATE = 'COUNCIL_MEMBER_CREATE';
     case COUNCIL_MEMBER_EDIT = 'COUNCIL_MEMBER_EDIT';
+    case CABINET_VIEW = 'CABINET_VIEW';
+    case CABINET_CREATE = 'CABINET_CREATE';
+    case CABINET_EDIT = 'CABINET_EDIT';
     case LEARNING_TRAINING_VIEW = 'LEARNING_TRAINING_VIEW';
     case LEARNING_TRAINING_MANAGE = 'LEARNING_TRAINING_MANAGE';
     case LEARNING_TRAINING_PUBLISH = 'LEARNING_TRAINING_PUBLISH';
@@ -135,6 +138,9 @@ enum PermissionEnum: string
             self::COUNCIL_MEMBER_VIEW,
             self::COUNCIL_MEMBER_CREATE,
             self::COUNCIL_MEMBER_EDIT,
+            self::CABINET_VIEW,
+            self::CABINET_CREATE,
+            self::CABINET_EDIT,
             self::LEARNING_TRAINING_VIEW,
             self::LEARNING_TRAINING_MANAGE,
             self::LEARNING_TRAINING_PUBLISH,
@@ -212,6 +218,9 @@ enum PermissionEnum: string
             self::COUNCIL_MEMBER_VIEW => 'Conseil de l’Ordre : détail',
             self::COUNCIL_MEMBER_CREATE => 'Conseil de l’Ordre : création',
             self::COUNCIL_MEMBER_EDIT => 'Conseil de l’Ordre : édition',
+            self::CABINET_VIEW => 'Cabinets : lecture',
+            self::CABINET_CREATE => 'Cabinets : création',
+            self::CABINET_EDIT => 'Cabinets : édition',
             self::LEARNING_TRAINING_VIEW => 'Formations : lecture',
             self::LEARNING_TRAINING_MANAGE => 'Formations : création et édition',
             self::LEARNING_TRAINING_PUBLISH => 'Formations : publication et archivage',

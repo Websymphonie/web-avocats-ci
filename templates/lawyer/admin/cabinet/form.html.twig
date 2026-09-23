@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <main class="flex-1 bg-muted/30 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto max-w-6xl space-y-6">
+            <a href="{{ path('lawyer_admin_cabinet_list') }}" class="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <twig:ux:icon name="lucide:arrow-left" class="size-4" aria-hidden="true"/>Retour aux cabinets
+            </a>
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8 lg:p-10">
+                <div class="border-b border-border pb-6">
+                    <p class="text-sm font-medium text-muted-foreground">Espace professionnel</p>
+                    <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">{{ title }}</h1>
+                    <p class="mt-2 max-w-3xl text-sm text-muted-foreground">Renseignez les informations qui seront proposées aux avocats lors du rattachement de leur profil.</p>
+                </div>
+
+                {{ form_start(form, {attr: {class: 'mt-7 space-y-8', 'data-loading-label': 'Enregistrement…'}}) }}
+                    {{ form_errors(form) }}
+                    <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
+                        {% for field in [form.name, form.registrationNumber, form.address, form.city, form.country, form.phone, form.email, form.websiteUrl, form.status] %}
+                            <div class="space-y-2">
+                                {{ form_label(field, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                                {{ form_widget(field, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none transition focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}
+                                <div class="text-sm text-destructive">{{ form_errors(field) }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(form.description, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                        <div {{ react_component('Content/RichTextEditor', {inputId: form.description.vars.id, label: 'Présentation', value: form.description.vars.value|default(''), placeholder: 'Présentez le cabinet, ses domaines d’intervention et son équipe…', invalid: form.description.vars.errors|length > 0}) }}></div>
+                        {{ form_widget(form.description, {attr: {class: 'sr-only', tabindex: '-1', 'aria-hidden': 'true'}}) }}
+                        <div class="text-sm text-destructive">{{ form_errors(form.description) }}</div>
+                        <p class="text-xs text-muted-foreground">La mise en forme est nettoyée côté serveur.</p>
+                    </div>
+                    <div class="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
+                        <a class="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ path('lawyer_admin_cabinet_list') }}">Annuler</a>
+                        <button class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" type="submit"><twig:ux:icon name="lucide:save" class="size-4" aria-hidden="true"/>Enregistrer</button>
+                    </div>
+                {{ form_end(form) }}
+            </section>
+        </div>
+    </main>
+{% endblock %}

@@ -51,7 +51,7 @@ final class ChangeProfilePasswordController extends AbstractController
         }
         return new RedirectResponse(SafeRedirectUrlResolver::resolve(
             $request,
-            $this->generateUrl('app_user_profile_update', ['id' => $id])
+            $this->generateUrl('member_profile')
         ));
     }
 }

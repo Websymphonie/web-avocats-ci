@@ -15,6 +15,7 @@ use Websymphonie\IdentityContext\Domain\Service\User\UserServiceInterface;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\IdentityContext\Infrastructure\Security\RememberMeTokenRevoker;
 use Websymphonie\IdentityContext\Infrastructure\Validator\User\UpdateUserValidator;
+use Websymphonie\LawyerContext\Application\Service\LawyerProfileProvisioner;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
 use Websymphonie\SharedContext\Application\Service\Actor\CurrentActorProvider;
 use Websymphonie\SharedContext\Domain\Service\EventDispatcher\EventDispatcher;
@@ -31,6 +32,7 @@ final readonly class UpdateUserHandler implements CommandHandler
         private AdministrativeAccountProtection $accountProtection,
         private EventDispatcher $eventDispatcher,
         private CurrentActorProvider $actorProvider,
+        private ?LawyerProfileProvisioner $lawyerProfileProvisioner = null,
     )
     {
     }
@@ -66,6 +68,9 @@ final readonly class UpdateUserHandler implements CommandHandler
             $this->activationRepository->invalidateForUser($updated, $this->clock->now());
         }
         $result = $this->repository->update($updated);
+        if (in_array('ROLE_AVOCAT', $result->getRoles(), true)) {
+            $this->lawyerProfileProvisioner?->ensureFor($result);
+        }
         $previousRoleSet = array_values(array_unique($previousRoles));
         $currentRoleSet = array_values(array_unique($currentRoles));
 

@@ -561,7 +561,9 @@ d’un média encore utilisé.
 `DocumentPublication` appartient à `ContentContext` et porte le titre, le slug,
 la description, les tags, le statut éditorial et le niveau d’accès. Le statut
 (`DRAFT`, `PUBLISHED`, `ARCHIVED`) est séparé de `DocumentAccessLevel`
-(`PUBLIC`, `MEMBER`, `RESTRICTED`, `PRIVATE`). `StoredFile` appartient à
+(`PUBLIC`, `MEMBER`, `LAWYER`, `RESTRICTED`, `PRIVATE`). `LAWYER` requiert un
+compte activé portant explicitement `ROLE_AVOCAT` ; cette règle ne constitue
+pas une preuve de statut ordinal juridiquement actif. `StoredFile` appartient à
 `MediaContext`, ne connaît aucun consommateur métier et stocke les documents
 hors de `public/` avec une clé relative (`documents/<nom>`) et une empreinte
 SHA-256. Cette

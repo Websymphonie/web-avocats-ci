@@ -38,8 +38,7 @@ final class NewsFormType extends AbstractType
             'multiple' => true,
             'choices' => self::choices($categories),
             'placeholder' => 'Sélectionner une ou plusieurs catégories',
-            'autocomplete' => true,
-            'tom_select_options' => self::multiSelectOptions(),
+            'attr' => ['data-controller' => 'select-combobox'],
             ])
             ->add('tags', ChoiceType::class, [
                 'label' => 'Tags',
@@ -47,11 +46,10 @@ final class NewsFormType extends AbstractType
                 'multiple' => true,
                 'choices' => self::choices($tags),
                 'placeholder' => 'Sélectionner un ou plusieurs tags',
-                'autocomplete' => true,
-                'tom_select_options' => self::multiSelectOptions(),
+                'attr' => ['data-controller' => 'select-combobox'],
             ])
             ->add('cover', FileType::class, ['label' => 'Image de couverture', 'required' => false, 'mapped' => true, 'attr' => ['accept' => 'image/jpeg,image/png,image/webp'], 'constraints' => [new File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Seules les images JPEG, PNG et WebP sont acceptées.')]])
-            ->add('photoGalleryId', ChoiceType::class, ['label' => 'Galerie photo', 'required' => false, 'placeholder' => 'Aucune galerie', 'choices' => self::galleryChoices($galleries), 'autocomplete' => true, 'tom_select_options' => ['create' => false, 'copyClassesToDropdown' => true]]);
+            ->add('photoGalleryId', ChoiceType::class, ['label' => 'Galerie photo', 'required' => false, 'placeholder' => 'Aucune galerie', 'choices' => self::galleryChoices($galleries), 'attr' => ['data-controller' => 'select-combobox']]);
         if ($options['data'] instanceof UpdateNewsCommand) {
             $builder->add('removeCover', CheckboxType::class, ['label' => 'Retirer la couverture actuelle', 'required' => false]);
         }

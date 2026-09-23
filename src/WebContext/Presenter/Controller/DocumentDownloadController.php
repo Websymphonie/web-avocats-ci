@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Websymphonie\ContentContext\Application\Service\DocumentDownloadPolicy;
 use Websymphonie\ContentContext\Application\Service\DocumentDownloadService;
+use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Exception\DocumentPublicationNotFoundException;
 use Websymphonie\ContentContext\Domain\Repository\DocumentPublicationRepositoryInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -26,6 +27,9 @@ final class DocumentDownloadController extends AbstractController
         $response = new BinaryFileResponse($download->path);
         $response->headers->set('Content-Type', $download->mimeType);
         $response->headers->set('X-Content-Type-Options', 'nosniff');
+        if ($document->accessLevel !== DocumentAccessLevel::PUBLIC) {
+            $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
+        }
         $name = preg_replace('/[^A-Za-z0-9._ -]+/u', '_', basename($download->originalName)) ?: 'document';
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, trim($name) !== '' ? trim($name) : 'document');
         return $response;

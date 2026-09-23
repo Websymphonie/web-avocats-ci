@@ -21,7 +21,7 @@
         </div>
         {% if showGallery is not defined or showGallery %}<div class="space-y-3">
             {{ form_label(form.photoGalleryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}
-            {{ form_widget(form.photoGalleryId, {attr: {class: 'form-multi-select min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm'}}) }}
+            {{ form_widget(form.photoGalleryId) }}
             {{ form_errors(form.photoGalleryId) }}
             {% if photoGallery|default(null) %}
                 <div class="rounded-lg border border-border bg-background p-3 text-sm">

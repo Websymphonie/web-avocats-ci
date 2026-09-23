@@ -127,6 +127,69 @@ final class ContentSecurityTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK, $role);
     }
 
+    public function testPublishedLawyerDocumentAllowsEnabledLawyerOnly(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertStringContainsString('private', (string) $client->getResponse()->headers->get('Cache-Control'));
+        self::assertStringContainsString('no-store', (string) $client->getResponse()->headers->get('Cache-Control'));
+    }
+
+    public function testPublishedLawyerDocumentDeniesDisabledLawyer(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT'], false);
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testPublishedLawyerDocumentDeniesRegularUser(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_USER']);
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testPublishedLawyerDocumentDeniesAnonymousVisitor(): void
+    {
+        $client = $this->clientWithSchema();
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseRedirects('/auth/login');
+    }
+
+    /** @dataProvider administrativeRoles */
+    public function testPublishedLawyerDocumentDoesNotGrantAccessToAdministratorsAutomatically(string $role): void
+    {
+        $client = $this->authenticatedClient([$role]);
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::PUBLISHED);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, $role);
+    }
+
+    public function testUnpublishedLawyerDocumentIsNotDownloadable(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_AVOCAT']);
+        $uuid = $this->createDocumentFixture(DocumentAccessLevel::LAWYER, DocumentStatus::DRAFT);
+
+        $client->request('GET', '/documents/' . $uuid . '/download', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
     public function testRestrictedDocumentRequiresTheDedicatedPermission(): void
     {
         $userClient = $this->authenticatedClient(['ROLE_USER']);
@@ -182,7 +245,7 @@ final class ContentSecurityTest extends WebTestCase
     }
 
     /** @param list<string> $roles */
-    private function authenticatedClient(array $roles): KernelBrowser
+    private function authenticatedClient(array $roles, bool $enabled = true): KernelBrowser
     {
         $client = $this->clientWithSchema();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
@@ -190,7 +253,7 @@ final class ContentSecurityTest extends WebTestCase
             ->setEmail(sprintf('content-security-%d@example.test', ++self::$userSequence))
             ->setName('Content Security Test')
             ->setPassword('test-password');
-        $user->setEnabled(true);
+        $user->setEnabled($enabled);
         $user->setRoles($roles);
         $entityManager->persist($user);
         $entityManager->flush();
@@ -237,6 +300,13 @@ final class ContentSecurityTest extends WebTestCase
     {
         yield 'user' => ['ROLE_USER'];
         yield 'avocat' => ['ROLE_AVOCAT'];
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function administrativeRoles(): iterable
+    {
+        yield 'admin' => ['ROLE_ADMIN'];
+        yield 'super-admin' => ['ROLE_SUPER_ADMIN'];
     }
 
     private function createDocumentFixture(DocumentAccessLevel $accessLevel, DocumentStatus $status, bool $physicalFile = true): string

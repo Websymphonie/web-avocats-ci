@@ -83,6 +83,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/IdentityContext/Infrastructure/Persistence/Doctrine/Entity'
         prefix: 'Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity'
         alias: Identity
+      Lawyer:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/LawyerContext/Infrastructure/Persistence/Doctrine/Entity'
+        prefix: 'Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity'
+        alias: Lawyer
       Log:
         type: attribute
         is_bundle: false

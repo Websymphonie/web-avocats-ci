@@ -24,8 +24,8 @@ final class NewsFilterType extends AbstractType
     {
         $builder->add('search', TextType::class, ['label' => 'Rechercher', 'required' => false, 'attr' => ['placeholder' => 'Rechercher par titre']])
             ->add('status', EnumType::class, ['label' => 'Statut', 'class' => NewsStatus::class, 'choice_label' => static fn (NewsStatus $status): string => $status->label(), 'required' => false, 'placeholder' => 'Tous les statuts'])
-            ->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'choices' => self::choices($this->categoryRepository->list(null, 1, 200)->items), 'placeholder' => 'Toutes les catégories'])
-            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Tous les tags']);
+            ->add('categoryId', ChoiceType::class, ['label' => 'Catégorie', 'required' => false, 'choices' => self::choices($this->categoryRepository->list(null, 1, 200)->items), 'placeholder' => 'Toutes les catégories', 'attr' => ['data-controller' => 'select-combobox']])
+            ->add('tagId', ChoiceType::class, ['label' => 'Tag', 'required' => false, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'placeholder' => 'Tous les tags', 'attr' => ['data-controller' => 'select-combobox']]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

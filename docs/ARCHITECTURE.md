@@ -755,8 +755,11 @@ sous une racine hors webroot. Les documents sont dérivés sous
 (`documents/<nom>`). La suppression physique est explicite et refusée si une
 publication la référence. `DocumentDownloadPolicy` autorise uniquement les
 publications `PUBLISHED` : `PUBLIC` est anonyme, `MEMBER` requiert un compte,
-`RESTRICTED` requiert en plus la permission dédiée et `PRIVATE` reste
-Backoffice.
+`LAWYER` requiert un compte activé portant explicitement `ROLE_AVOCAT`, sans
+assimiler cette règle à un statut ordinal juridiquement actif. `RESTRICTED`
+requiert en plus la permission dédiée et `PRIVATE` reste Backoffice. Les
+téléchargements non publics sont servis avec une politique HTTP privée et sans
+stockage cache.
 
 ### Provisionnement du stockage persistant
 

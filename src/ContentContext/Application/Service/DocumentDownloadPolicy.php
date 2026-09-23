@@ -8,18 +8,34 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
 use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
 use Websymphonie\ContentContext\Domain\Model\DocumentPublication;
+use Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider;
+use Websymphonie\IdentityContext\Domain\Enum\UserRolesEnum;
 
 final readonly class DocumentDownloadPolicy
 {
-    public function __construct(private AuthorizationCheckerInterface $authorizationChecker) {}
+    public function __construct(
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private CurrentUserProvider $currentUserProvider,
+    ) {}
     public function canDownloadExternally(DocumentPublication $document): bool
     {
         if ($document->status !== DocumentStatus::PUBLISHED) { return false; }
         return match ($document->accessLevel) {
             DocumentAccessLevel::PUBLIC => true,
             DocumentAccessLevel::MEMBER => $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY'),
+            DocumentAccessLevel::LAWYER => $this->canDownloadAsLawyer(),
             DocumentAccessLevel::RESTRICTED => $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY') && $this->authorizationChecker->isGranted('CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD'),
             DocumentAccessLevel::PRIVATE => false,
         };
+    }
+
+    private function canDownloadAsLawyer(): bool
+    {
+        $user = $this->currentUserProvider->user();
+
+        return $this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')
+            && $user !== null
+            && $user->enabled === true
+            && in_array(UserRolesEnum::AVOCAT->value, $user->roles ?? [], true);
     }
 }

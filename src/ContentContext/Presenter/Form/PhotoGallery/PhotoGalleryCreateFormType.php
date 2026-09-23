@@ -24,7 +24,7 @@ final class PhotoGalleryCreateFormType extends AbstractType
     {
         $builder->add('title', TextType::class, ['label' => 'Titre', 'attr' => ['placeholder' => 'Titre de la galerie']])
             ->add('description', TextareaType::class, ['label' => 'Description', 'required' => false, 'attr' => ['rows' => 12]])
-            ->add('tags', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]])
+            ->add('tags', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->tagRepository->list(null, 1, 200)->items), 'attr' => ['data-controller' => 'select-combobox']])
             ->add('images', FileType::class, ['label' => 'Images', 'multiple' => true, 'required' => false, 'attr' => ['accept' => 'image/jpeg,image/png,image/webp', 'data-gallery-upload-target' => 'input'], 'constraints' => [new All([new File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Seules les images JPEG, PNG et WebP sont acceptées.')])]]);
     }
     public function configureOptions(OptionsResolver $resolver): void { $resolver->setDefaults(['data_class' => CreatePhotoGalleryCommand::class, 'translation_domain' => false]); }

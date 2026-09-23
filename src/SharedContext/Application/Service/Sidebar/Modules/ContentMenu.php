@@ -172,6 +172,17 @@ final class ContentMenu implements SidebarModuleInterface
                 order: 7,
             ),
             MenuFactory::item(
+                label: 'Cabinets',
+                routes: ['lawyer_admin_cabinet_list', 'lawyer_admin_cabinet_new', 'lawyer_admin_cabinet_edit'],
+                roles: [],
+                icon: 'lucide:building-2',
+                link: 'lawyer_admin_cabinet_list',
+                group: self::GROUP,
+                permission: 'CABINET_VIEW',
+                groupOrder: 2,
+                order: 8,
+            ),
+            MenuFactory::item(
                 label: 'Tags',
                 routes: [RouteEnum::CONTENT_TAG_INDEX->value, 'content_admin_tag_new', 'content_admin_tag_edit'],
                 roles: [],

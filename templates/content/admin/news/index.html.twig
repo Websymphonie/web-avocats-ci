@@ -25,10 +25,12 @@
                     <twig:ux:icon name="lucide:chevron-down"
                                   class="size-4 text-muted-foreground transition-transform group-open:rotate-180"/>
                 </summary>
-                <div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,220px)_auto]', novalidate: true}}) }}
-                    <div class="space-y-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}</div>
+                <div class="border-t border-border px-6 py-5">{{ form_start(filterForm, {attr: {class: 'grid gap-4 sm:grid-cols-2 lg:grid-cols-4', novalidate: true}}) }}
+                    <div class="space-y-2 lg:col-span-2">{{ form_label(filterForm.search, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.search, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}</div>
                     <div class="space-y-2">{{ form_label(filterForm.status, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.status, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}</div>
-                    <div class="flex items-end gap-2">
+                    <div class="space-y-2">{{ form_label(filterForm.categoryId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.categoryId) }}</div>
+                    <div class="space-y-2">{{ form_label(filterForm.tagId, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(filterForm.tagId) }}</div>
+                    <div class="flex h-10 items-center gap-2 self-end lg:mt-8">
                         <button class="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                                 type="submit">Appliquer
                         </button>

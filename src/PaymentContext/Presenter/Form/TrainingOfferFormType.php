@@ -37,7 +37,13 @@ final class TrainingOfferFormType extends AbstractType
         }
 
         $builder
-            ->add('trainingId', ChoiceType::class, ['label' => 'Formation', 'choices' => $trainingChoices, 'placeholder' => 'Sélectionner une formation payante', 'disabled' => $options['training_locked']])
+            ->add('trainingId', ChoiceType::class, [
+                'label' => 'Formation',
+                'choices' => $trainingChoices,
+                'placeholder' => 'Rechercher une formation payante',
+                'disabled' => $options['training_locked'],
+                'attr' => ['data-controller' => 'select-combobox'],
+            ])
             ->add('amount', IntegerType::class, ['label' => 'Montant', 'constraints' => [new GreaterThan(0)], 'attr' => ['min' => 1, 'placeholder' => '10000']])
             ->add('currency', ChoiceType::class, ['label' => 'Devise', 'choices' => $currencyChoices, 'placeholder' => 'Sélectionner une devise'])
             ->add('active', CheckboxType::class, ['label' => 'Tarif actif', 'required' => false]);

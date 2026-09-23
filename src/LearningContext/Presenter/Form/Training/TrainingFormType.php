@@ -69,8 +69,8 @@ final class TrainingFormType extends AbstractType
                 'choice_attr' => static fn (?TrainingAccessType $value): array => ['title' => $value?->description() ?? ''],
                 'required' => true,
             ])
-            ->add('categoryIds', ChoiceType::class, ['label' => 'Catégories', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]])
-            ->add('tagIds', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'autocomplete' => true, 'tom_select_options' => ['plugins' => ['remove_button' => ['title' => 'Retirer cette sélection']], 'create' => false, 'copyClassesToDropdown' => true]])
+            ->add('categoryIds', ChoiceType::class, ['label' => 'Catégories', 'required' => false, 'multiple' => true, 'choices' => self::choices($this->categories->list(null, 1, 200)->items), 'attr' => ['data-controller' => 'select-combobox']])
+            ->add('tagIds', ChoiceType::class, ['label' => 'Tags', 'required' => false, 'multiple' => true, 'choices' => self::tagChoices($this->tags->list(null, 1, 200)->items), 'attr' => ['data-controller' => 'select-combobox']])
             ->add('cover', FileType::class, [
                 'label' => 'Image de couverture',
                 'required' => false,

@@ -23,8 +23,8 @@
          data-event-form-target="online">{{ form_label(form.onlineUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.onlineUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(form.onlineUrl) }}</div>
 </fieldset>
 <div class="grid gap-5 md:grid-cols-2">
-    <div class="space-y-2">{{ form_label(form.categories, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.categories, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ' ~ (form.categories.vars.errors|length > 0 ? 'form-multi-select-invalid' : '')}}) }}{{ form_errors(form.categories) }}</div>
-    <div class="space-y-2">{{ form_label(form.tags, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.tags, {attr: {class: 'form-multi-select min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ' ~ (form.tags.vars.errors|length > 0 ? 'form-multi-select-invalid' : '')}}) }}{{ form_errors(form.tags) }}</div>
+    <div class="space-y-2">{{ form_label(form.categories, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.categories) }}{{ form_errors(form.categories) }}</div>
+    <div class="space-y-2">{{ form_label(form.tags, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(form.tags) }}{{ form_errors(form.tags) }}</div>
 </div>
 {% include 'content/admin/_cover_fields.html.twig' with {form: form, coverUrl: coverUrl|default(null), photoGallery: photoGallery|default(null)} only %}
 <div class="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-5"><a

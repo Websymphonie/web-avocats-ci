@@ -417,6 +417,11 @@ matrice de rôles restent prioritaires.
 
 ### Documents — CNT-005
 
+Les niveaux de diffusion documentaire sont `PUBLIC`, `MEMBER`, `LAWYER`,
+`RESTRICTED` et `PRIVATE`. `LAWYER` ne crée pas de permission supplémentaire :
+il exige côté serveur un compte activé avec `ROLE_AVOCAT`. Il ne constitue pas
+une preuve de statut ordinal juridiquement actif.
+
 Les permissions `CONTENT_DOCUMENT_VIEW`, `CONTENT_DOCUMENT_MANAGE`,
 `CONTENT_DOCUMENT_PUBLISH`, `CONTENT_DOCUMENT_DELETE` et
 `CONTENT_DOCUMENT_RESTRICTED_DOWNLOAD` sont accordées par défaut à

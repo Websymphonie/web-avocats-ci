@@ -63,5 +63,62 @@
                 {{ form_end(form) }}
             </article>
         </section>
+
+        {% if isLawyer and lawyerProfileForm %}
+            <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div class="flex items-start gap-3 border-b border-border pb-5">
+                    <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <twig:ux:icon name="lucide:briefcase-business" class="size-5" aria-hidden="true"/>
+                    </span>
+                    <div><h2 class="text-lg font-semibold text-card-foreground">Profil professionnel</h2><p class="mt-1 text-sm text-muted-foreground">Présentez votre activité et rattachez votre profil à un cabinet.</p></div>
+                </div>
+                {{ form_start(lawyerProfileForm, {attr: {class: 'mt-7 space-y-6'}}) }}
+                    <div class="grid gap-5 md:grid-cols-2">
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.cabinet, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.cabinet, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.cabinet) }}</div>
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.barNumber, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.barNumber, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.barNumber) }}</div>
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.professionalStatus, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.professionalStatus, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.professionalStatus) }}</div>
+                        <div class="space-y-2">{{ form_label(lawyerProfileForm.specializationSummary, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(lawyerProfileForm.specializationSummary, {attr: {class: 'flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30'}}) }}{{ form_errors(lawyerProfileForm.specializationSummary) }}</div>
+                    </div>
+                    <div class="space-y-2">
+                        {{ form_label(lawyerProfileForm.bio, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+                        <div {{ react_component('Content/RichTextEditor', {inputId: lawyerProfileForm.bio.vars.id, label: 'Présentation professionnelle', value: lawyerProfileForm.bio.vars.value|default(''), placeholder: 'Présentez votre parcours, vos domaines d’intervention et votre expérience…', invalid: lawyerProfileForm.bio.vars.errors|length > 0}) }}></div>
+                        {{ form_widget(lawyerProfileForm.bio, {attr: {class: 'sr-only', tabindex: '-1', 'aria-hidden': 'true'}}) }}
+                        <div class="text-sm text-destructive">{{ form_errors(lawyerProfileForm.bio) }}</div>
+                        <p class="text-xs text-muted-foreground">La mise en forme est nettoyée côté serveur.</p>
+                    </div>
+                    <div class="flex justify-end border-t border-border pt-6"><button class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" type="submit"><twig:ux:icon name="lucide:save" class="size-4"/>Enregistrer le profil professionnel</button></div>
+                {{ form_end(lawyerProfileForm) }}
+            </section>
+        {% endif %}
+
+        <section class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-start gap-3">
+                    <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <twig:ux:icon name="lucide:lock-keyhole" class="size-5" aria-hidden="true"/>
+                    </span>
+                    <div>
+                        <h2 class="text-lg font-semibold text-card-foreground">Sécurité du compte</h2>
+                        <p class="mt-1 max-w-2xl text-sm text-muted-foreground">Modifiez régulièrement votre mot de passe et choisissez un mot de passe unique.</p>
+                    </div>
+                </div>
+                <button type="button"
+                        class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        data-controller="modal"
+                        data-action="click->modal#open"
+                        data-modal-id-param="member-change-password-{{ command.id }}">
+                    <twig:ux:icon name="lucide:key-round" class="size-4" aria-hidden="true"/>
+                    Modifier le mot de passe
+                </button>
+            </div>
+        </section>
+
+        {% if command.id %}
+            {{ component('ProfilePasswordChangeModalFormComponent', {
+                id: 'member-change-password-' ~ command.id,
+                title: 'Modifier mon mot de passe',
+                urlPath: path('app_user_profile_change_password', {id: command.id})
+            }) }}
+        {% endif %}
     </div>
 {% endblock %}

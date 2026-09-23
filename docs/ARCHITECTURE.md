@@ -971,3 +971,9 @@ Cabinet. Aucun nouveau droit ou route publique n’est introduit.
 les futures queries ; il ne certifie pas une inscription ordinale. Les fixtures
 `demo` ajoutent quelques profils et cabinets synthétiques et une image de
 démonstration, sans reprendre de données authentiques de l’ancien annuaire.
+
+FO-DIR-001 expose le listing uniquement via `WebContext`, tandis que la query
+et sa projection minimale restent propriétaires de `LawyerContext`. Le filtre
+de rôle s’exécute en base (`JSON_CONTAINS` sur MySQL ; comparaison du jeton JSON
+exact dans les tests SQLite), avec comptage et pagination DB-first. Aucune
+entité Doctrine ni donnée de compte n’est exposée au template.

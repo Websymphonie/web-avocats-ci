@@ -163,6 +163,9 @@ services:
   Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\MediaPublicUrlResolver
 
+  Websymphonie\LawyerContext\Domain\Repository\LawyerDirectoryRepositoryInterface:
+    alias: Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Repository\LawyerProfile\LawyerProfileRepository
+
   Websymphonie\MediaContext\Application\Service\StoredFileStorageInterface:
     alias: Websymphonie\MediaContext\Infrastructure\Service\PrivateDocumentStorage
 

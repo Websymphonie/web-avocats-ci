@@ -1,0 +1,93 @@
+{% extends 'layouts/web.html.twig' %}
+
+{% block title %}Trouver un avocat{% endblock %}
+
+{% block body %}
+    <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
+        <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="directory-page-title">
+            <div class="absolute -right-24 -top-32 size-[28rem] rounded-full border border-white/10" aria-hidden="true"></div>
+            <div class="absolute -right-4 -top-12 size-[20rem] rounded-full border border-[#d8b878]/15" aria-hidden="true"></div>
+            <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+                <div class="max-w-4xl">
+                    <nav class="flex flex-wrap items-center gap-2 text-sm text-white/65" aria-label="Fil d’Ariane">
+                        <a href="{{ path('app_home') }}" class="transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f1d59b]">Accueil</a>
+                        <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true"/>
+                        <span class="text-white" aria-current="page">Trouver un avocat</span>
+                    </nav>
+                    <p class="mt-6 text-xs font-semibold uppercase tracking-[0.26em] text-[#f1d59b]">Le Barreau de Côte d'Ivoire</p>
+                    <h1 id="directory-page-title" class="mt-3 max-w-3xl text-4xl font-semibold leading-[0.98] tracking-[-0.055em] sm:text-5xl lg:text-6xl">Trouver un avocat</h1>
+                    <p class="mt-4 max-w-2xl text-sm leading-6 text-white/75 sm:text-base">Consultez l’annuaire des avocats ayant choisi d’y figurer.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+            <section class="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7" aria-labelledby="directory-search-title">
+                <div class="mb-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Annuaire professionnel</p>
+                    <h2 id="directory-search-title" class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">Affiner votre recherche</h2>
+                </div>
+                <form method="get" action="{{ path('web_lawyer_directory_list') }}" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.15fr_1fr_1fr_auto] lg:items-end">
+                    <div>
+                        <label for="directory-name" class="mb-1.5 block text-sm font-medium text-foreground">Nom de l’avocat</label>
+                        <input id="directory-name" name="name" type="search" value="{{ filters.name }}" autocomplete="off" placeholder="Ex. Kouassi" class="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    </div>
+                    <div>
+                        <label for="directory-cabinet" class="mb-1.5 block text-sm font-medium text-foreground">Cabinet</label>
+                        <input id="directory-cabinet" name="cabinet" type="search" value="{{ filters.cabinet }}" autocomplete="off" placeholder="Nom du cabinet" class="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    </div>
+                    <div>
+                        <label for="directory-location" class="mb-1.5 block text-sm font-medium text-foreground">Localité</label>
+                        <input id="directory-location" name="location" type="search" value="{{ filters.location }}" autocomplete="off" placeholder="Ex. Abidjan" class="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-1 lg:flex-col lg:items-stretch">
+                        <button type="submit" class="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true"/>Rechercher
+                        </button>
+                        {% if hasFilters %}<a href="{{ path('web_lawyer_directory_list') }}" class="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Effacer les filtres</a>{% endif %}
+                    </div>
+                </form>
+            </section>
+
+            <section class="mt-10" aria-labelledby="directory-results-title">
+                <div class="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Répertoire public</p>
+                        <h2 id="directory-results-title" class="mt-2 text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-3xl">Avocats</h2>
+                    </div>
+                    <p class="text-sm text-muted-foreground">{{ directory.totalItemCount }} résultat{{ directory.totalItemCount > 1 ? 's' : '' }}</p>
+                </div>
+
+                {% if directory.items is not empty %}
+                    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                        {% for lawyer in directory.items %}
+                            {% set portraitUrl = lawyer.portraitMediaId ? mediaUrls[lawyer.portraitMediaId]|default(null) : null %}
+                            <article class="flex min-w-0 items-start gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 sm:p-6">
+                                {% if portraitUrl %}
+                                    <img src="{{ portraitUrl }}" alt="Portrait professionnel de {{ lawyer.name }}" class="size-16 shrink-0 rounded-full border border-border object-cover sm:size-[4.5rem]">
+                                {% else %}
+                                    <span class="inline-flex size-16 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-lg font-semibold uppercase text-primary sm:size-[4.5rem]" aria-hidden="true">{{ lawyer.name|first }}</span>
+                                {% endif %}
+                                <div class="min-w-0 pt-1">
+                                    <h3 class="break-words text-lg font-semibold leading-snug tracking-[-0.02em] text-card-foreground">{{ lawyer.name }}</h3>
+                                    {% if lawyer.cabinetName %}<p class="mt-2 break-words text-sm text-muted-foreground">{{ lawyer.cabinetName }}</p>{% endif %}
+                                    {% if lawyer.location %}<p class="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><twig:ux:icon name="lucide:map-pin" class="size-4 shrink-0 text-primary" aria-hidden="true"/>{{ lawyer.location }}</p>{% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-8 border-t border-border pt-1">
+                        {% include 'shared/views/_list_pagination.html.twig' with {pager: directory, route: 'web_lawyer_directory_list'} only %}
+                    </div>
+                {% else %}
+                    <div class="mt-6 border-b border-border px-5 py-16 text-center sm:py-20" aria-labelledby="directory-empty-title">
+                        <twig:ux:icon name="lucide:users-round" class="mx-auto size-10 text-muted-foreground" aria-hidden="true"/>
+                        <h3 id="directory-empty-title" class="mt-4 text-lg font-semibold text-foreground">Aucun avocat ne correspond à votre recherche</h3>
+                        <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Essayez d’élargir ou de modifier vos critères.</p>
+                        {% if hasFilters %}<a href="{{ path('web_lawyer_directory_list') }}" class="mt-5 inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Effacer les filtres</a>{% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+{% endblock %}

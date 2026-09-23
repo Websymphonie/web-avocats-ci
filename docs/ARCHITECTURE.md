@@ -221,6 +221,12 @@ comme texte échappé. Un administrateur disposant de
 confirmation ; la reprise utilise un claim pessimiste et le pipeline d’audit
 métier. Aucune suppression n’est exposée.
 
+`/contact` est le canal public général retenu pour les demandes. Aucun
+formulaire distinct « écrire au Bâtonnier », formulaire générique pour
+particuliers, prise de rendez-vous ou workflow de routage n’est livré. Les
+rendez-vous professionnels éventuels relèvent des coordonnées publiées dans
+l’annuaire, sans réservation en ligne.
+
 ---
 
 ## 4. Candidate business contexts
@@ -829,7 +835,7 @@ reconstituer les deux sous-répertoires avant de rendre l’application active.
 ## 14. Pages statiques — CNT-006
 
 `Page` appartient à `ContentContext` et est persistée dans la table `page`.
-Elle possède un titre, un slug unique, un contenu riche nettoyé côté serveur,
+Elle possède un titre, un slug unique dans son groupe éditorial, un contenu riche nettoyé côté serveur,
 un statut `DRAFT` ou `PUBLISHED` et les dates éditoriales. Les commandes et
 queries de page restent séparées du modèle Doctrine ; le Backoffice utilise
 `HasGroupAccess(RoleGroupEnum::PAGES)` et les permissions `CONTENT_PAGE_*`.
@@ -839,6 +845,13 @@ nullable `PageGroup` (`LEGAL`, `BAR`, `ACCOUNT`, `LBC`, `CARPA` ou
 `PROFESSION`). Cette classification est
 persistée sans relation Doctrine supplémentaire et ne modifie aucune règle de
 publication ou d'autorisation.
+
+Les groupes déterminent les surfaces éditoriales canoniques sans créer
+automatiquement un hub : `BAR` utilise `/le-barreau/{slug}`, `CARPA` utilise
+`/carpa/{slug}` avec le hub `/carpa`, `LBC` utilise `/lbc-ft-fp`, et
+`PROFESSION` réserve `/devenir-avocat` à sa Page. `LEGAL` et `ACCOUNT` utilisent
+`/informations/{slug}`. La Page LBC est hors du hub, de la sidebar et du menu
+Barreau ; l’ancienne URL `/le-barreau/lbc-ft-fp` redirige vers `/lbc-ft-fp`.
 
 Depuis CNT-006C, `Page` possède également un `sortOrder` entier non négatif,
 initialisé à `0`. La query de navigation trie les Pages d’un même groupe par
@@ -857,9 +870,10 @@ suppression d'un média encore utilisé par une Page.
 Le Frontoffice expose le détail d’une Page publiée sous `/informations/{slug}`
 pour les groupes sans route institutionnelle dédiée. Les Pages du groupe `BAR`
 utilisent la route canonique `/le-barreau/{slug}` ; une demande de la même Page via
-`/informations/{slug}` effectue une redirection permanente. Le hub public
-`/le-barreau` liste les Pages `BAR` publiées dans l’ordre éditorial et ne
-remplace pas un listing générique des autres groupes. La sidebar est
+`/informations/{slug}` effectue une redirection permanente. Les Pages `CARPA`
+utilisent `/carpa/{slug}` et sont listées sous `/carpa`. Le hub public
+`/le-barreau` liste les Pages `BAR` publiées dans l’ordre éditorial, sans Pages
+`CARPA` ni `LBC`, et ne remplace pas un listing générique des autres groupes. La sidebar est
 construite depuis le groupe de la Page et ne contient que les Pages du même
 groupe qui sont publiées avec `publishedAt` renseigné ; ses liens utilisent la
 route canonique du groupe. Un groupe ne contenant qu'une seule Page n'affiche
@@ -869,10 +883,11 @@ de retourner qu’une page publiée avec `publishedAt` renseigné ; son DTO rest
 la couverture lorsqu'elle existe. Le contenu est sanitizé avant rendu Twig.
 La recherche globale publique interroge également `Page` sur son titre et son
 slug, uniquement lorsque le statut est `PUBLISHED` et que `publishedAt` est
-présent. Elle expose un résultat `Information` vers `web_bar_page_detail` pour
-les Pages BAR et vers `web_information_detail` pour les autres Pages ; le
-`PageGroup` sert uniquement à sélectionner la route canonique et comme metadata,
-et ne devient pas un filtre de recherche.
+présent. Le résultat `Information` utilise la route canonique du groupe : les
+Pages BAR, CARPA, LBC et PROFESSION pointent vers leurs routes institutionnelles
+respectives ; les autres Pages utilisent `/informations/{slug}`. Le `PageGroup`
+sert à sélectionner la route canonique et comme metadata, et ne devient pas un
+filtre de recherche.
 
 La Page institutionnelle « Devenir avocat » réutilise `Page` sous le groupe
 isolé `PROFESSION`, sans hub ni entrée de navigation. Sa fixture est maintenue
@@ -888,8 +903,10 @@ institutionnelle unique et n’a pas de navigation de groupe. Sa route canonique
 est `/assistance-violences-domestiques`; la recherche publique la dirige vers
 cette URL et `/informations/assistance-violences-domestiques` la redirige
 permanemment. Son contenu riche est issu des publications officielles du
-Barreau et expose uniquement les deux liens téléphoniques publiés. Aucun
-formulaire de récit, dossier d’assistance ou workflow métier n’est créé.
+Barreau et expose uniquement les deux liens téléphoniques publiés ; aucun
+service 24/7 n’est annoncé. Aucun formulaire de récit, dossier d’assistance ou
+workflow métier n’est créé. La documentation fonctionnelle ne permet pas
+d’attester une revue navigateur manuelle de cette surface.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
@@ -916,8 +933,8 @@ fixture sont conservées dans `src/ContentContext/.../Fixtures/Files/FundSolidar
 et importées par le service de stockage des fichiers privés sous
 `$APP_STORAGE_DIR/private/documents` ; aucun téléchargement HTTP n’a lieu pendant
 le chargement des fixtures. La Page Fonds conserve le CTA membre automatique.
-La Page `CARPA` est publiée à l’ordre `60` avec une présentation institutionnelle
-prudente : développement de l’appellation, rôle général dans les règlements
+La Page `CARPA` appartient au groupe `CARPA`, est publiée à l’ordre `10` et
+utilise une présentation institutionnelle prudente : développement de l’appellation, rôle général dans les règlements
 pécuniaires des avocats, supervision institutionnelle du Bâtonnier et principe
 général de reversement aux bénéficiaires. Elle ne décrit ni procédure pratique,
 ni seuil, ni contrôle LBC/FT. En l’absence de coordonnées CARPA distinctes, son
@@ -934,11 +951,9 @@ exploitables, ces ressources ne sont pas fabriquées. Aucun document `LAWYER`
 CARPA confirmé n’est donc ajouté à l’espace membre ; aucun workflow ni changement
 de `PaymentContext` n’est introduit.
 
-La carte CARPA de la homepage pointe automatiquement vers `/le-barreau/carpa`
-car la query `FindPublishedPageBySlug('carpa')` retourne maintenant une Page BAR
-publiée et datée. Le hub, la navigation BAR et la recherche publique conservent
-leurs filtres existants ; les publications documentaires ne sont pas indexées
-par la recherche globale.
+La carte CARPA de la homepage pointe vers `/carpa`. Le hub CARPA, sa navigation
+et la recherche publique utilisent les routes canoniques du groupe ; les
+publications documentaires ne sont pas indexées par la recherche globale.
 
 ## 15. Donnée structurée du Bâtonnier — CNT-009
 
@@ -996,8 +1011,9 @@ via `/cabinets`, avec contrôles `CABINET_VIEW`, `CABINET_CREATE` et
 `CABINET_EDIT`. Son entrée de menu dépend de `CABINET_VIEW`, et les actions
 visibles suivent leurs permissions propres. Aucun nouveau droit ou route
 publique n’est introduit.
-`LawyerDirectoryPublicationPolicy` centralise les critères applicatifs V1 pour
-les futures queries ; il ne certifie pas une inscription ordinale. Les fixtures
+`LawyerDirectoryPublicationPolicy` centralise les critères applicatifs V1
+utilisés par les queries de listing et de détail ; il ne certifie pas une
+inscription ordinale. Les fixtures
 `demo` ajoutent quelques profils et cabinets synthétiques et une image de
 démonstration, sans reprendre de données authentiques de l’ancien annuaire.
 
@@ -1035,6 +1051,15 @@ nom/email n’est effectué et aucun portrait n’est téléchargé. Les conflit
 d’UUID source et les correspondances potentielles sont rapportés ; les champs
 non contrôlés, dont l’UUID public, le lien User, le statut professionnel après
 création et le portrait, sont préservés.
+
+Les imports DATA-DIR-005/006 constituent un dataset prêt à importer, pas des
+données déjà déployées : aucun chargement automatique n’est effectué en
+développement, staging ou production. Toute exécution reste une opération
+explicite sur une base choisie et préparée. La validation sur une base MySQL
+temporaire isolée ne signifie pas que les données ont été importées dans les
+environnements applicatifs. Un écart du schéma de la base locale de
+développement doit être traité comme un état de cette base ; il ne prouve pas,
+à lui seul, que la chaîne de migrations est invalide.
 
 Le dataset comporte 605 avocats, 377 Cabinets, 7 Cabinets partiels, 5 profils
 sans Cabinet et 10 relations asymétriques signalées. Aucune ville fiable n’étant

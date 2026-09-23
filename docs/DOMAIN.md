@@ -2,8 +2,9 @@
 
 ## 1. Règle de lecture
 
-Ce document décrit le modèle cible sans déclarer que tous les domaines sont
-déjà implémentés.
+Ce document décrit les frontières métier et distingue les capacités réellement
+livrées des éléments encore en préparation ou en découverte ; une description
+cible ne vaut pas déclaration d’implémentation.
 
 Un Bounded Context n’est créé qu’au moment où une première fonctionnalité
 réelle justifie sa frontière. Il ne faut pas créer un contexte par entité, page,
@@ -36,8 +37,8 @@ porte sa règle.
 
 | Contexte candidat | Responsabilité cible | Statut |
 |---|---|---|
-| `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — backend/Backoffice livré, Frontoffice différé |
-| `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `IMPLEMENTED` — fondation Training COURSE + Backoffice |
+| `ContentContext` | contenus éditoriaux publics et leur administration | `IMPLEMENTED` — Backoffice et principales surfaces Frontoffice livrés ; Devenir avocat reste en brouillon éditorial |
+| `LearningContext` | formations, contenus pédagogiques, inscriptions et apprentissage | `IMPLEMENTED` — Backoffice, catalogue public et parcours membre COURSE/LIVE livrés |
 | `PaymentContext` | offres de formation, paiements et intégration des fournisseurs | `IMPLEMENTED` — KkiaPay + Fake de test, PAY-003 livré |
 | `ContributionContext` | cotisations, situations et reçus après découverte métier | `DISCOVERY` |
 | `MediaContext` | images publiques et fichiers documentaires privés minimaux | `IMPLEMENTED` — capacités CNT-004/CNT-005 |
@@ -47,20 +48,16 @@ Ces contextes ne sont pas à créer dans le cadre de DOC-001.
 
 ## 4. Content domain
 
-Le domaine Content regroupe désormais une première verticale Backoffice de
-gestion des actualités. Les contenus éditoriaux publiés sur le Frontoffice
-pourront ensuite inclure :
+`ContentContext` administre les actualités, événements, vidéos éditoriales,
+Pages institutionnelles, publications documentaires et galeries. Les surfaces
+Frontoffice livrées comprennent `/actualites`, `/evenements`, `/videos`, les
+Pages publiques et la recherche globale. Les galeries et Media restent une
+capacité Backoffice ; aucune médiathèque générale n’est exposée.
 
-- actualités ;
-- événements ;
-- vidéos éditoriales ;
-- galeries photos ;
-- documents ;
-- annonces.
-
-Le modèle pourra partager des valeurs comme le titre, le slug, le résumé, le
-statut de publication et la visibilité, tout en conservant les détails propres
-à chaque type.
+Il n’existe pas de modèle ni de verticale séparée `Announcement` : les
+communications éditoriales relèvent des actualités et les contenus datés des
+événements. Une catégorie « annonce » ou un nouveau flux ne sont pas à créer
+sans besoin métier validé.
 
 Le contenu éditorial n’est pas le contenu pédagogique :
 
@@ -81,17 +78,20 @@ sont des transitions explicites. Le slug est régénéré uniquement tant que
 l’actualité est un brouillon. `NewsCategory` et `Tag` appartiennent à
 `ContentContext`, sont reliés à `News` par des associations plusieurs-à-plusieurs
 et sont administrés sous `/admin/content/news-categories` et `/admin/content/tags`.
-Cette verticale ne livre volontairement aucune page Frontoffice, API ni image de couverture.
+Le Frontoffice expose la liste, le détail, les catégories, tags et couvertures
+sous `/actualites` ; les couvertures et galeries liées réutilisent les capacités
+Media existantes.
 
 ### CNT-002 — Event livré
 
 `Event` est le modèle éditorial des événements administrés sous
-`/admin/content/events`. Il porte un format `IN_PERSON`, `ONLINE` ou `HYBRID`,
+`/admin/content/events` et publiés sous `/evenements`. Il porte un format
+`IN_PERSON`, `ONLINE` ou `HYBRID`,
 des dates, les informations de lieu ou de participation en ligne, un statut
 `DRAFT`, `PUBLISHED`, `CANCELLED` ou `ARCHIVED`, ainsi que des catégories
 propres `EventCategory` et les tags génériques `Tag`. Les transitions de
 publication, annulation et archivage sont explicites ; aucun archivage
-automatique, Frontoffice, inscription ou lien avec `Training LIVE` n’est livré.
+automatique, système d’inscription ou lien avec `Training LIVE` n’est livré.
 
 ## 5. Learning domain
 
@@ -129,9 +129,11 @@ Un `LIVE` est une formation autonome. Il ne constitue pas automatiquement un
 module d’une formation `COURSE`.
 
 Le type est immuable après création, y compris lors du remapping Doctrine.
-Les flux Backoffice Learning et le catalogue public Frontoffice sont livrés.
-La consommation apprenante reste protégée dans l’espace membre ; les parcours
-publics d’inscription, de paiement et de découverte apprenante restent différés.
+Les flux Backoffice, le catalogue public `/formations`, les détails COURSE/LIVE
+et les expériences protégées de l’espace membre sont livrés. L’auto-inscription
+publique au catalogue n’est pas requise ; la consommation reste soumise aux
+règles d’accès et d’enrollment côté serveur. Aucun système séparé CFPA/e-learning
+n’est à créer.
 
 Les concepts cibles sont :
 
@@ -486,7 +488,8 @@ commence en `DRAFT` et passe explicitement à `PUBLISHED` via `publish()` ; elle
 peut revenir à `DRAFT` via `unpublish()`. La date `publishedAt` est renseignée
 à la première publication et conservée lors d’une republication.
 
-Le slug est normalisé et unique, mais reste éditable depuis le Backoffice. Le
+Le slug est normalisé et unique à l’intérieur de son groupe éditorial, mais
+reste éditable depuis le Backoffice. Le
 contenu est saisi avec le composant Tiptap existant et nettoyé par le sanitizer
 serveur. CNT-006 livre la gestion Backoffice, le listing paginé, les actions
 individuelles et bulk de suppression, ainsi que la lecture publique d’une Page
@@ -498,12 +501,34 @@ n’existe pas de listing Frontoffice générique des autres groupes ; les Pages
 publiées d’un même groupe peuvent afficher une sidebar contextuelle utilisant
 les URLs canoniques.
 
-La Page BAR `lbc-ft-fp` reprend [la page institutionnelle LBC/FT/FP et les
+La Page du groupe `LBC` `lbc-ft-fp` reprend [la page institutionnelle LBC/FT/FP et les
 ressources qu’elle référence](https://web.ordredesavocats.ci/lutte-contre-le-blanchiment-des-capitaux-lbc-ft-fp/),
 source éditoriale autorisée de cette migration. Elle est accessible à l’URL
 dédiée `/lbc-ft-fp`; l’ancienne forme `/le-barreau/lbc-ft-fp` redirige vers
-cette URL. Le contenu est une migration éditoriale, sans validation de
-l’actualité juridique des ressources.
+cette URL. Elle n’appartient pas au hub, à la sidebar ou au menu du Barreau. Le
+contenu est une migration éditoriale, sans validation de l’actualité juridique
+des ressources et sans transformation en Training.
+
+Les groupes éditoriaux ont des responsabilités et routes canoniques distinctes :
+
+| Groupe | Usage et surface actuelle |
+|---|---|
+| `LEGAL` | Pages légales sous `/informations/{slug}` |
+| `BAR` | Présentation, historique, Bâtonnier, Conseil et Fonds de Solidarité sous `/le-barreau/{slug}` |
+| `LBC` | Page LBC/FT/FP sous `/lbc-ft-fp`, hors navigation BAR |
+| `CARPA` | Page institutionnelle sous `/carpa/{slug}` et hub `/carpa` |
+| `ACCOUNT` | Pages d’information sous `/informations/{slug}` |
+| `PROFESSION` | « Devenir avocat » sous `/devenir-avocat`, actuellement `DRAFT` |
+
+Ces groupes ne créent pas automatiquement un hub ou un sous-menu ; seules les
+surfaces décrites comme existantes en possèdent un.
+
+`CARPA` est distinct de `BAR` : sa présentation publique est sous le hub
+`/carpa` et le détail canonique `/carpa/presentation`. La carte CARPA de la
+homepage pointe vers `/carpa`. La Page n’est pas listée ni classée dans le hub
+BAR. Les ressources institutionnelles dédiées non confirmées ne sont pas
+fabriquées ; le règlement intérieur général reste une publication `PUBLIC` et
+n’est pas présenté comme un règlement CARPA autonome.
 
 Les fixtures Content publient également les Pages légales `Mentions légales`
 (`mentions-legales`, ordre `10`) et `Vie privée`
@@ -677,6 +702,11 @@ jamais chargées depuis la source. Le `ACTIVE` imposé aux Cabinets par la polic
 de publication actuelle est une compatibilité technique, pas une vérification
 institutionnelle contemporaine. Aucun pays n’est fabriqué ; les éventuels
 défauts d’affichage restent des défauts applicatifs, pas des données source.
+
+Les imports DATA-DIR-005/006 constituent un dataset prêt à importer, pas des
+données déjà déployées : aucun chargement automatique n’est effectué en
+développement, staging ou production. Toute exécution reste une opération
+explicite sur une base choisie et préparée.
 
 DATA-DIR-006 récupère séparément les portraits disponibles via une commande
 explicite, avec validation réelle du format et association uniquement par UUID

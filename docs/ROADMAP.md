@@ -3,9 +3,12 @@
 ## 1. Convention
 
 - `DONE` : terminé et vérifiable ;
+- `COMPLETE` : capacité/verticale livrée (équivalent de `DONE`) ;
 - `IN PROGRESS` : travail engagé mais non terminé ;
 - `PLANNED` : séquencé mais non commencé ;
 - `DISCOVERY` : dépend d’une découverte ou validation métier ;
+- `DRAFT / EDITORIAL VALIDATION REQUIRED` : contenu préparé, non publiable avant validation ;
+- `NOT NEEDED` : décision produit clôturée, aucun backlog à maintenir ;
 - `OUT_OF_SCOPE` : exclu de la phase concernée.
 
 La roadmap ne transforme pas les spécifications V3 en fonctionnalités déjà
@@ -49,52 +52,55 @@ dans les producteurs.
 
 ### PHASE 1 — Documentation et fondation Web
 
-**Statut : `IN PROGRESS`**
+**Statut : `COMPLETE`**
 
-- DOC-001 — formaliser la documentation produit ;
-- WEB-001 — construire le shell Frontoffice Avocat CI ;
-- stabiliser navigation, layouts, responsive et accessibilité ;
-- conserver `/espace` comme surface Member minimale tant qu’aucun domaine
-  membre n’est livré.
+DOC-001 et WEB-001 sont livrés : documentation de référence, shell Frontoffice,
+navigation et layouts publics sont en place. Les surfaces membre ont depuis
+évolué dans leurs verticales propriétaires ; `/espace` n’est plus une simple
+surface minimale.
 
 ### PHASE 2 — ContentContext
 
 **Statut : `IN PROGRESS`**
 
-La fondation Content Backoffice est terminée et vérifiable (`DONE`) pour les
-actualités, événements, vidéos éditoriales, galeries, couvertures et documents.
-Les parcours Content Frontoffice sont livrés progressivement : Actualités,
-Événements et Vidéos éditoriales sont publics ; les galeries restent différées.
+Les surfaces publiques validées — Actualités, Événements, Vidéos, pages
+institutionnelles, recherche, Contact, formations publiques et annuaire — sont
+livrées. Les contenus sont publiés depuis leurs contextes propriétaires ; le
+seul contenu institutionnel encore préparé mais non publiable est « Devenir
+avocat », en attente de validation éditoriale. Les galeries restent une
+capacité Backoffice, sans chantier Frontoffice actif défini ici.
 
 Tickets immédiats :
 
 ```text
 CNT-001 — Actualités                         IMPLEMENTED
 CNT-001A — Catégories et tags génériques      IMPLEMENTED
-CNT-002 — Événements                         IMPLEMENTED
-CNT-003 — Vidéos éditoriales                  IMPLEMENTED — Backoffice + Frontoffice `/videos`
-CNT-007 — Catégories éditoriales des vidéos   IMPLEMENTED — CRUD Backoffice + association et filtre préparé
+CNT-002 — Événements                         COMPLETE — Backoffice + Frontoffice `/evenements`
+CNT-003 — Vidéos éditoriales                  COMPLETE — Backoffice + vidéothèque publique `/videos`
+CNT-007 — Catégories éditoriales des vidéos   COMPLETE — CRUD, association et filtre public
 CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + détail public `/informations/{slug}`
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
 CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
-CNT-PROFESSION-001 — Devenir avocat          IN PROGRESS — Page `PROFESSION` préparée en DRAFT ; validation éditoriale requise avant publication
+CNT-PROFESSION-001 — Devenir avocat          DRAFT / EDITORIAL VALIDATION REQUIRED — Page `PROFESSION` sous `/devenir-avocat`
 CNT-LEGAL-001 — Migration Vie privée & Mentions légales IMPLEMENTED — Pages LEGAL existantes publiées et contenu source migré ; anciennes URL WordPress à évaluer dans une passe SEO distincte
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 CNT-BAR-002 — Migration Présentation & Historique IMPLEMENTED — contenus de démonstration publiés avec couverture historique locale
 CNT-BAR-003 — Migration Bâtonnier & Conseil actuels IMPLEMENTED — 1 titulaire courant, 19 membres ordonnés, portraits locaux et Pages BAR publiées
 CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Content + bloc public sur `le-batonnier`
 CNT-010 — Conseil de l’Ordre structuré         IMPLEMENTED — historique Content + bloc public sur `conseil-de-l-ordre`
-CNT-CARPA-001 — Préparer Page institutionnelle CARPA IMPLEMENTED — état initial : fixture BAR DRAFT à l’ordre 60 et fallback hub ; état remplacé par CNT-BAR-005
-CNT-LBC-001 — Page institutionnelle LBC/FT/FP IMPLEMENTED — Page BAR publiée à l’URL dédiée `/lbc-ft-fp`, textes et liens issus de la source officielle sans validation de leur actualité juridique
-CNT-ASSIST-001 — Bureau d’Assistance aux Victimes de Violence Domestique IMPLEMENTED — Page Content publique sans PageGroup spécialisé, route dédiée et numéros issus des publications du Barreau
+CNT-CARPA-001 — Préparer Page institutionnelle CARPA COMPLETE — ticket préparatoire historique ; état final séparé sous `PageGroup::CARPA` et `/carpa`
+CNT-LBC-001 — Page institutionnelle LBC/FT/FP COMPLETE — `PageGroup::LBC`, route dédiée `/lbc-ft-fp`, ressources externes non Training
+CNT-ASSIST-001 — Bureau d’Assistance aux Victimes de Violence Domestique COMPLETE — Page Content publique sans PageGroup spécialisé, route dédiée et numéros issus des publications du Barreau ; revue navigateur manuelle non attestée dans la documentation consultée
 ```
 
-La suite de la phase concerne les parcours Frontoffice et les décisions de
-visibilité publique ; ces éléments restent hors de la présente fondation
-Backoffice.
+Les principales surfaces publiques prévues pour cette tranche sont livrées.
+Le seul contenu institutionnel déjà préparé mais encore non publiable est
+« Devenir avocat », en attente de validation éditoriale. Les galeries restent
+administrables au Backoffice ; aucune galerie publique n’est annoncée comme
+fonctionnalité livrée ou comme chantier actif de cette phase.
 
-### PHASE 3 — Learning Backoffice foundation
+### PHASE 3 — Learning foundation and first member/public surfaces
 
 **Statut : `COMPLETE`**
 
@@ -104,9 +110,10 @@ Ticket de départ :
 LRN-001 — Training COURSE
 ```
 
-`Training`, modules, contenus pédagogiques, `Enrollment`, taxonomies et LIVE
-sont livrés pour le Backoffice, avec les contrôles d’accès membre nécessaires.
-Le catalogue public et le parcours Learner Frontoffice restent différés.
+`LearningContext` livre COURSE et LIVE, modules/leçons, progression, ressources,
+enrollments et contrôles d’accès. Le catalogue public `/formations` et les
+expériences membre `/espace/formations`, player COURSE, LIVE et paiements sont
+également livrés. Aucun système séparé CFPA/e-learning n’est à créer.
 
 ### PHASE 4 — Payment
 
@@ -128,7 +135,7 @@ PAY-002A — certification Sandbox et hardening         PENDING — recette exte
 
 ### PHASE 5 — Learning LIVE et YouTube
 
-**Statut : `IMPLEMENTED`**
+**Statut : `COMPLETE`**
 
 Le `LIVE` est un `Training` autonome avec `LiveTrainingDetails`, programmation
 et contrôle d’accès serveur. Le `joinUrl` HTTPS est administré dans Avocat CI ;
@@ -140,9 +147,9 @@ devient l’autorité des droits d’accès.
 
 **Statut : `IN PROGRESS`**
 
-LRN-006 est livré pour la progression COURSE côté domaine, membre et
-Backoffice. Les quiz, certificats et le lecteur apprenant restent à planifier
-après validation de leurs règles précises.
+LRN-006 et le player COURSE membre MEM-003 sont livrés. Les quiz et certificats
+restent différés jusqu’à validation de leurs règles précises ; ils ne remettent
+pas en cause la progression ou la consommation COURSE déjà disponibles.
 
 ### PHASE 7 — Contribution
 
@@ -176,18 +183,18 @@ CNT-006  Static Pages                               DONE — Backoffice + détai
 CNT-006A Optional static page cover                 DONE — Backoffice + rendu public
 CNT-006B Editorial page groups                      DONE — classification + sidebar publique dynamique
 CNT-006C Editorial page ordering                    DONE — ordre Backoffice + tri public
-CNT-PROFESSION-001 Devenir avocat                    IN PROGRESS — Page `PROFESSION` en DRAFT, validation éditoriale requise avant publication
-WEB-001  Shell Frontoffice                         PLANNED
+CNT-PROFESSION-001 Devenir avocat                    DRAFT / EDITORIAL VALIDATION REQUIRED — Page `PROFESSION` en DRAFT, validation éditoriale requise avant publication
+WEB-001  Shell Frontoffice                         COMPLETE
 CNT-001  Actualités                                IMPLEMENTED — Backoffice + première verticale publique FO-002
 FO-002   Actualités publiques dynamiques             DONE — liste, détail, pagination, catégories, tags et covers
-CNT-002  Événements                                IMPLEMENTED — Backoffice uniquement
-CNT-003  Vidéos éditoriales                         IMPLEMENTED — Backoffice uniquement
+CNT-002  Événements                                COMPLETE — Backoffice + Frontoffice `/evenements`
+CNT-003  Vidéos éditoriales                         COMPLETE — Backoffice + vidéothèque publique `/videos`
 CNT-004  Galeries photos + Media public minimal     IMPLEMENTED — Backoffice uniquement
 CNT-004A Couvertures et galeries liées News/Event   IMPLEMENTED — Backoffice uniquement
 CNT-005  Documents / Publications sécurisés          IMPLEMENTED — Backoffice + téléchargements contrôlés
 Content Backoffice foundation                     DONE
-Content Frontoffice                              PARTIAL — Actualités, Événements, Vidéos, recherche globale et catalogue Formations livrés ; galeries et autres verticales différées
-LRN-001  Training COURSE                           DONE — Backoffice uniquement
+Content Frontoffice                              COMPLETE — Actualités, Événements, Vidéos, Pages publiques, recherche et téléchargements documentaires publics livrés ; Devenir avocat reste en DRAFT éditorial
+LRN-001  Training COURSE                           DONE — Backoffice, catalogue public `/formations` et consommation membre protégée
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
 LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
 LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
@@ -200,25 +207,25 @@ LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube
 MEM-FUND-001 Ressources du Fonds de Solidarité membre  DONE — documents LAWYER classés par tag et téléchargement contrôlé
 FO-004   Catalogue public des formations               DONE — liste, filtres, détails COURSE/LIVE et confidentialité LIVE
 FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations/Pages publiées
-FO-009   Contact public                                READY FOR VISUAL REVIEW — formulaire sécurisé, archivage et notification email
-FO-010   Hub public « Le Barreau »                      READY FOR VISUAL REVIEW — listing éditorial des Pages BAR et routes canoniques
+FO-009   Contact public                                COMPLETE — formulaire sécurisé, archivage et notification email
+FO-010   Hub public « Le Barreau »                      COMPLETE — listing éditorial BAR et routes canoniques
 CNT-BAR-004 — Fonds de Solidarité & ressources avocat    IMPLEMENTED — Page BAR publiée, trois ressources LAWYER chargées depuis les fixtures locales
-CNT-BAR-005 — CARPA & ressources validées                IMPLEMENTED — Page BAR publiée à l’ordre 60, règlement général du Barreau distinct en PUBLIC ; ressources CARPA dédiées non retrouvées exclues
+CNT-BAR-005 — CARPA & ressources validées                COMPLETE — Page `CARPA` distincte de `BAR`, sous `/carpa`; règlement général du Barreau reste `PUBLIC`, ressources CARPA dédiées non retrouvées exclues
 FO-FUND-002 Surface publique du Fonds de Solidarité      DONE — Page BAR publiée, contenu CARE et CTA vers l’espace avocat
 BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste paginée, statuts, détail immuable et retry manuel audité
-DIR-001 Fondation de publication de l’annuaire Avocats/Cabinets DONE — données, opt-in, critères V1 et fixtures synthétiques ; aucun listing public ni import réel
+DIR-001 Fondation de publication de l’annuaire Avocats/Cabinets DONE — profils publiables, opt-in et critères V1 ; fixtures synthétiques, sans import historique automatique
 DIR-002 Profils annuaire sans compte                     DONE — displayName, User facultatif, provenance UUID privée, statut UNKNOWN et téléphones Cabinet multiples ; validation schéma isolé et revue navigateur complétées avec DATA-DIR-005
-DATA-DIR-005 Import local idempotent de l’annuaire       DONE — dry-run par défaut, écriture explicite testée sur MySQL isolé ; 605 profils / 377 Cabinets, sans User ni portraits ; 7 partiels, 10 asymétries documentées
-DATA-DIR-006 Import des portraits historiques              DONE WITH SOURCE GAPS — 579 récupérés/associés, 24 URL en 404, 2 sans source ; environ 120 Mio de sources UUID-nommées locales, Media public, second passage sans doublons en base MySQL isolée
+DATA-DIR-005 Import local idempotent de l’annuaire       DATASET READY / NOT DEPLOYED — dry-run par défaut, écriture explicite validée sur MySQL isolé ; 605 profils / 377 Cabinets, sans User ni portraits ; 7 partiels, 10 asymétries documentées
+DATA-DIR-006 Import des portraits historiques              DATASET READY WITH SOURCE GAPS / NOT DEPLOYED — 579 récupérés, 24 sources en 404, 2 sans URL ; sources locales (~120 Mio), association testée sur MySQL isolé
 FO-DIR-001 Annuaire public Avocats                  DONE — recherche nom/cabinet/localité, liste paginée et liens vers fiches publiques
-FO-DIR-002 Fiches publiques Avocat & Cabinet        DONE — UUID publics, éligibilité DIR-001, coordonnées professionnelles et membres publiables
+FO-DIR-002 Fiches publiques Avocat & Cabinet        COMPLETE — UUID publics, éligibilité DIR-001, coordonnées professionnelles et membres publiables
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés
 NOT-001  Notifications Learning/Payment                DONE — événements in-app scalaires et déduplication persistée
 NOT-REV-002 Validation du pipeline Notification        DONE — replays, KkiaPay et best-effort vérifiés
-Learner Frontoffice                              DEFERRED — parcours apprenant public, inscription et paiement
-Public Training catalogue                       DONE — livré par FO-004 ; player et accès consommateur restent protégés
+Learner public self-enrollment                   DEFERRED — aucun parcours d’inscription publique n’est requis ; le catalogue FO-004 est livré
+Public Training catalogue                       COMPLETE — FO-004; player et accès consommateur restent protégés dans l’espace membre
 ```
 
 La spécification technique V3 conserve un backlog cible historique dont la
@@ -231,9 +238,15 @@ produit ci-dessus font foi pour l’historique réel, où YouTube Live est `LRN-
 lecture batch des références Learning depuis Payment, échappement des titres
 UI et synchronisation documentaire. Une fois ses quality gates validés,
 `CNT-006 Static Pages` est livré côté Backoffice et expose désormais le détail
-public des Pages publiées. Depuis CNT-008, les Pages `BAR` utilisent les URLs
-canoniques `/le-barreau/{slug}` et les autres Pages restent sous
+public des Pages publiées. Les groupes institutionnels ont des routes
+canoniques distinctes : `BAR` sous `/le-barreau/{slug}`, `CARPA` sous
+`/carpa/{slug}`, `LBC` sous `/lbc-ft-fp` et `PROFESSION` sous
+`/devenir-avocat`. Les Pages `LEGAL` et `ACCOUNT` restent sous
 `/informations/{slug}`, sans listing générique.
+
+Les décisions explicitement clôturées comme `NOT NEEDED` sont centralisées
+dans la section dédiée de `PRODUCT_REQUIREMENTS.md` et ne constituent pas des
+éléments de backlog actifs.
 
 Les tickets suivants ne doivent pas être anticipés dans une phase précédente.
 

@@ -8,6 +8,8 @@
 | `PLANNED` | validé comme capacité cible, non livré |
 | `DISCOVERY` | nécessite une découverte ou une décision métier |
 | `OUT_OF_SCOPE` | exclu du périmètre courant |
+| `DRAFT / EDITORIAL VALIDATION REQUIRED` | contenu préparé, non publiable avant validation éditoriale explicite |
+| `NOT NEEDED` | besoin produit examiné et non retenu |
 
 Une exigence `PLANNED` ou `DISCOVERY` ne doit pas être présentée comme une
 fonctionnalité disponible dans l’interface.
@@ -31,13 +33,14 @@ fonctionnalité disponible dans l’interface.
 |---|---|---|
 | PUB-001 | afficher une page d’accueil publique | `IMPLEMENTED` |
 | PUB-002 | consulter les actualités publiées | `IMPLEMENTED` — liste publique, détail, pagination, catégories et tags |
-| PUB-003 | consulter les événements et leurs détails | `PLANNED` |
-| PUB-004 | consulter les vidéos éditoriales publiées | `IMPLEMENTED` — liste, détail YouTube sécurisé, miniatures et accès depuis la homepage ; les galeries publiques restent planifiées |
-| PUB-005 | consulter les documents explicitement publics | `PLANNED` |
+| PUB-003 | consulter les événements et leurs détails | `IMPLEMENTED` — `/evenements`, détails publiés et navigation depuis la homepage |
+| PUB-004 | consulter les vidéos éditoriales publiées | `IMPLEMENTED` — liste, détail YouTube sécurisé, miniatures et accès depuis la homepage ; les galeries publiques restent hors scope actuel |
+| PUB-005 | télécharger les documents explicitement publics | `IMPLEMENTED` — téléchargement serveur des publications `PUBLIC`; aucun catalogue général n’est impliqué |
 | PUB-006 | parcourir le catalogue des formations | `IMPLEMENTED` — catalogue public, catégories, filtres COURSE/LIVE et accès |
 | PUB-007 | consulter une fiche de formation ou de Live publiée | `IMPLEMENTED` — détails publics, covers et données LIVE non sensibles |
 | PUB-008 | rechercher les contenus publics | `IMPLEMENTED` — recherche globale Actualités, Événements, Formations et Pages publiées, autocomplete et accès contrôlé aux seuls contenus publiés |
 | PUB-009 | fournir une base SEO, responsive et accessible | `PLANNED` |
+| FO-009 | contacter institutionnellement le Barreau | `IMPLEMENTED` — formulaire `/contact`, persistance, consentement et suivi de livraison email |
 
 Les exigences publiques ne donnent pas automatiquement accès aux contenus
 protégés. Une fiche publique peut présenter une formation payante sans exposer
@@ -82,33 +85,34 @@ propriétaire.
 
 | ID | Exigence | Statut |
 |---|---|---|
-| CNT-001 | publier et administrer les actualités | `IMPLEMENTED` — Backoffice uniquement |
+| CNT-001 | publier et administrer les actualités | `IMPLEMENTED` — Backoffice et Frontoffice `/actualites` |
 | CNT-001A | naviguer dans Content et administrer catégories d’actualités et tags génériques | `IMPLEMENTED` — Backoffice uniquement |
-| CNT-002 | publier et administrer les événements | `IMPLEMENTED` — Backoffice uniquement |
-| CNT-003 | publier et administrer les vidéos éditoriales | `IMPLEMENTED` — Backoffice uniquement |
-| CNT-007 | catégoriser les vidéos éditoriales | `IMPLEMENTED` — CRUD Backoffice, association obligatoire aux nouvelles écritures et filtre public préparé |
+| CNT-002 | publier et administrer les événements | `IMPLEMENTED` — Backoffice et Frontoffice `/evenements` |
+| CNT-003 | publier et administrer les vidéos éditoriales | `IMPLEMENTED` — Backoffice et vidéothèque publique `/videos` |
+| CNT-007 | catégoriser les vidéos éditoriales | `IMPLEMENTED` — CRUD Backoffice, catégories et filtre public |
 | CNT-004 | publier les galeries photos | `IMPLEMENTED` — Backoffice uniquement; Media public minimal, sans médiathèque ni Frontoffice |
 | CNT-004A | ajouter couvertures et galeries liées à News/Event | `IMPLEMENTED` — Backoffice uniquement, sans Frontoffice |
-| CNT-005 | publier les documents et annonces | `IMPLEMENTED` — Backoffice + téléchargement contrôlé |
-| CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice + détail public `/informations/{slug}`, sans listing |
+| CNT-005 | publier des documents / publications documentaires | `IMPLEMENTED` — Backoffice et téléchargement contrôlé selon le niveau d’accès; pas de modèle Announcement |
+| CNT-006 | administrer les pages statiques institutionnelles publiques | `IMPLEMENTED` — Backoffice, détails publics et routes canoniques par groupe (`/le-barreau`, `/carpa`, `/lbc-ft-fp`, `/devenir-avocat`), sans listing générique |
 | CNT-006A | ajouter une couverture facultative aux pages statiques | `IMPLEMENTED` — Backoffice + rendu public réutilisé, sans galerie |
 | CNT-006B | classer les Pages statiques par groupes éditoriaux | `IMPLEMENTED` — groupes facultatifs et sidebar publique dynamique |
 | CNT-006C | contrôler l’ordre des Pages dans un groupe éditorial | `IMPLEMENTED` — ordre Backoffice et tri public déterministe |
-| CNT-PROFESSION-001 | préparer la page institutionnelle « Devenir avocat » | `DISCOVERY` — Page `PROFESSION` préparée en `DRAFT`; validation éditoriale requise avant publication |
+| CNT-PROFESSION-001 | préparer la page institutionnelle « Devenir avocat » | `DRAFT / EDITORIAL VALIDATION REQUIRED` — Page `PROFESSION` préparée sous `/devenir-avocat`; conditions historiques à valider avant publication |
 | CNT-LEGAL-001 | migrer Vie privée et Mentions légales depuis la source institutionnelle | `IMPLEMENTED` — contenus source dans les Pages LEGAL existantes, publiées sous leurs URL canoniques |
 | CNT-BAR-002 | migrer Présentation et Historique du Barreau | `IMPLEMENTED` — contenus de démonstration publiés avec couverture locale de l’Historique |
 | CNT-BAR-003 | migrer le Bâtonnier et le Conseil de l’Ordre actuels | `IMPLEMENTED` — Pages BAR publiées, titulaire courant, 19 membres ordonnés et portraits intégrés aux fixtures locales |
 | CNT-BAR-004 | migrer le Fonds de Solidarité et ses ressources avocat | `IMPLEMENTED` — Page BAR publiée avec contenu CARE et trois documents LAWYER servis depuis le stockage privé |
-| CNT-BAR-005 | migrer la CARPA et ses ressources validées | `IMPLEMENTED` — Page BAR publiée à l’ordre 60 et règlement intérieur général du Barreau distinct publié `PUBLIC`; les ressources CARPA dédiées non retrouvées ne sont pas inventées |
-| CNT-LBC-001 | publier la page institutionnelle LBC/FT/FP | `IMPLEMENTED` — contenu et ressources migrés depuis la source officielle, accès dédié `/lbc-ft-fp`; aucune actualisation juridique n’est revendiquée |
-| CNT-ASSIST-001 | publier la page institutionnelle du Bureau d’Assistance aux Victimes de Violence Domestique | `IMPLEMENTED` — Page publique sans groupe éditorial, route `/assistance-violences-domestiques`, contenu issu des publications officielles du Barreau et deux liens téléphoniques dédiés |
+| CNT-BAR-005 | migrer la CARPA et ses ressources validées | `IMPLEMENTED` — Page `CARPA` distincte de `BAR`, hub `/carpa`, fiche `/carpa/presentation`; les ressources CARPA dédiées non retrouvées ne sont pas inventées |
+| CNT-LBC-001 | publier la page institutionnelle LBC/FT/FP | `IMPLEMENTED` — Page Content `PageGroup::LBC`, route `/lbc-ft-fp`, ressources externes; aucune actualisation juridique n’est revendiquée et aucun Training n’est créé |
+| CNT-ASSIST-001 | publier la page institutionnelle du Bureau d’Assistance aux Victimes de Violence Domestique | `IMPLEMENTED` — Page publique `/assistance-violences-domestiques`, numéros dédiés, sans formulaire métier ni promesse 24/7 ; revue navigateur manuelle non attestée dans la documentation consultée |
+| FO-010 | consulter le hub public « Le Barreau » | `IMPLEMENTED` — hub éditorial et fiches BAR canoniques |
 | CNT-009 | administrer et afficher la donnée structurée du Bâtonnier | `IMPLEMENTED` — historique de mandats, portrait facultatif et bloc Page BAR |
 | CNT-010 | administrer et afficher la composition structurée du Conseil de l’Ordre | `IMPLEMENTED` — historique des membres, portraits facultatifs et bloc Page BAR |
 | BKO-CONTACT-001 | consulter les messages du formulaire Contact | `IMPLEMENTED` — liste paginée, filtres de livraison, détail immuable et retry manuel des échecs |
 | DIR-001 | préparer la publication de profils Avocat et Cabinet | `IMPLEMENTED` — UUID profil, visibilité explicite, coordonnées professionnelles, portrait protégé et règle d’éligibilité V1 |
 | DIR-002 | permettre des profils annuaire sans compte et préserver la provenance | `IMPLEMENTED` — `displayName` autonome, User nullable, statut `UNKNOWN`, UUID source privés et téléphones Cabinet multiples |
-| DATA-DIR-005 | importer localement et de façon idempotente l’annuaire historique | `IMPLEMENTED` — commande explicite dry-run par défaut / `--write`, validée deux fois sur une base MySQL isolée ; 605 profils et 377 Cabinets, sans User ni portraits |
-| DATA-DIR-006 | récupérer et importer les portraits historiques disponibles | `IMPLEMENTED WITH SOURCE GAPS` — 579 portraits validés/importés, 24 URL en 404, 2 sans source ; originaux UUID-nommés locaux (~120 Mio), Media associé par UUID de provenance, fixtures sans réseau |
+| DATA-DIR-005 | importer localement et de façon idempotente l’annuaire historique | `DATASET READY / NOT DEPLOYED` — import explicite dry-run par défaut / `--write`, validé sur MySQL isolé; 605 profils et 377 Cabinets; aucun chargement automatique dev/staging/prod |
+| DATA-DIR-006 | récupérer et importer les portraits historiques disponibles | `DATASET READY WITH SOURCE GAPS / NOT DEPLOYED` — 579 portraits, 24 sources 404, 2 profils sans URL; validation MySQL isolée, aucun chargement automatique dev/staging/prod |
 | FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable, paginé et lié aux fiches publiques FO-DIR-002 |
 | FO-DIR-002 | consulter les fiches publiques avocat et cabinet | `IMPLEMENTED` — `/avocats/{uuid}` et `/cabinets/{uuid}`, critères DIR-001, coordonnées professionnelles et membres éligibles |
 
@@ -177,7 +181,19 @@ Web actuelles.
 - ajout de règles de certification, remboursement, replay ou expiration non
   validées.
 
-## 12. Références
+## 12. Décisions produit closes — NOT NEEDED
+
+| Sujet | Statut | Motif |
+|---|---|---|
+| CFPA comme système ou surface séparée | `NOT NEEDED` | Les formations et contenus e-learning relèvent de `LearningContext`; aucun `PageGroup::CFPA`, `/cfpa`, hub ou menu dédié. |
+| Commissions du Conseil de l’Ordre | `NOT NEEDED` | Le lien historique « Voir Commission » menait aux fiches des membres; aucun modèle, page ou Backoffice Commission dédié. Les commissions d’agence documentées ailleurs sont un domaine distinct. |
+| Espace Particuliers | `NOT NEEDED` | Aucun hub `/espace-particuliers` ni groupe/navigation dédiés; les fonctions retenues sont accessibles via les surfaces existantes. |
+| Newsletter | `NOT NEEDED` | Aucun besoin produit confirmé; pas d’abonnement ni de workflow Notification dédié. |
+| Prise de rendez-vous avocat | `NOT NEEDED` | L’annuaire et les coordonnées professionnelles publiées couvrent la mise en contact; aucune réservation en ligne. |
+| Annonces comme domaine éditorial séparé | `NOT NEEDED` | Les communications éditoriales passent par Actualités et les éléments datés par Événements; aucun modèle `Announcement`, route ou Backoffice dédié. |
+| Écrire au Bâtonnier / formulaires particuliers génériques | `NOT NEEDED` | Le canal institutionnel retenu est `/contact`; aucun routage dédié ni workflow séparé. |
+
+## 13. Références
 
 - [`docs/PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) ;
 - [`docs/DOMAIN.md`](DOMAIN.md) ;

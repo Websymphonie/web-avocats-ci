@@ -781,13 +781,20 @@ Chaque déploiement doit définir `APP_STORAGE_DIR` et fournir une racine
 persistante avec les droits d’écriture du processus PHP. En développement local,
 si la variable n’est pas définie, le fallback est `<project>/storage`, à la
 racine du dépôt et volontairement hors de `var/` afin de survivre au nettoyage
-du cache. Le provisionnement initial est idempotent :
+du cache. Le provisionnement initial est idempotent et peut être rejoué après
+avoir défini `APP_STORAGE_DIR` :
 
 ```bash
-mkdir -p "$APP_STORAGE_DIR/public/galleries" \
-         "$APP_STORAGE_DIR/public/content/covers" \
-         "$APP_STORAGE_DIR/private/documents"
+APP_STORAGE_DIR=/shared/storage ./scripts/provision-public-storage.sh
 ```
+
+Le script crée les répertoires publics Content, Galleries, Training et
+Institution, les emplacements privés Documents/Learning, les alias LiipImagine
+`public/uploads/{content,training,galleries}` sous la racine persistante et
+l’alias HTTP `public/uploads/institution`. Les liens sont calculés à l’exécution
+depuis `APP_STORAGE_DIR` ; aucun chemin propre à une machine n’est versionné.
+Un chemin préexistant qui n’est pas un lien symbolique n’est jamais écrasé : le
+provisioning échoue explicitement afin de préserver les anciens uploads.
 
 La configuration préférée d’un déploiement neuf est :
 

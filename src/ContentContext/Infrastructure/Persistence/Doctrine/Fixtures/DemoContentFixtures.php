@@ -347,6 +347,84 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             <p>Pour toute demande d’information, veuillez <a href="/contact">contacter le Barreau</a>.</p>
             HTML);
 
+        $lbcContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Conseil de l’Ordre des Avocats est responsable du contrôle des Avocats titulaires de Cabinet, des Sociétés Civiles Professionnelles d’Avocats et des Associations d’Avocats aux fins de la lutte contre le blanchiment de capitaux et le financement du terrorisme (LBC/FT). Les ressources suivantes sont destinées à aider ces entités déclarantes à comprendre et à respecter leurs obligations en matière de LBC/FT.</p>
+            <h2>FORMATION ET CONTROLE THEMATIQUE SUR LES MESURES DE VIGILANCE AUPRES DE LA CLIENTELE</h2>
+            <p><a href="https://youtu.be/5YZatNXc5Wg">Voir la vidéo</a></p>
+            <h2>SENSIBILISATION À LA MISE EN OEUVRE SANS DÉLAI DES SANCTIONS FINANCIÈRES CIBLÉES</h2>
+            <p><a href="https://youtu.be/0E6AMBei1n4">Voir la vidéo</a></p>
+            <h2>Autres Ressources Vidéo - Formation sur la LBC/FT</h2>
+            <ul>
+                <li><a href="https://youtu.be/jn3aEiaYFbo?si=y2kusr-7m98eTQal">🎥 Généralités en matière de LBC/FT</a></li>
+                <li><a href="https://youtu.be/NzeMCycTIY8?si=5uko5hqGz3sii1Va">🎥 Obligations des EPNFDs en matière de LBC/FT</a></li>
+                <li><a href="https://youtu.be/eTGTta-0krQ?si=ZOyEb_NgSSbUhMem">🎥 Sanctions Financières Ciblées</a></li>
+            </ul>
+            <h2>Liens utiles</h2>
+            <h3>Stratégie nationale LBC/FT et évaluation nationale des risques</h3>
+            <ul>
+                <li><a href="https://www.centif.ci/cadre-juridique/grandes-lignes-de-la-strategie-nationale-lbc-ft-2020-2030/">Grandes Lignes de la stratégie nationale LBC/FT 2020-2030</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/resume-analytique-evaluation-nationale-des-risques-lbc-ft-padm-cote-d-ivoire-decembre-2019.pdf">Résumé analytique de l’ENR LBC/FT-PADM de la Côte d’Ivoire</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/resumerisquesinherentsft.pdf">Résumé de l’analyse de risque de FT (POPR)</a></li>
+            </ul>
+            <h3>Résumé analytique de l’ESR LBC/FT-PADM de la Côte d’ivoire</h3>
+            <ol>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/RAPPORT-ESR-Agents-Promoteurs-Immobiliers-05-07-2024-VF.docx.pdf">Le secteur des agents et promoteurs immobiliers</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/RAPPORT-ESR-MANDATAIRES-JUDICIAIRES_-26-06-2024.pdf">Le secteur des mandataires judiciaires</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/RAPPORT-ESR-OBNL-vf1.docx.pdf">Les OBNL</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/RAPPORT-ESR-PSSF-REVU-04072024-1-1.docx.pdf">Le secteur des prestataires de service aux sociétés et fiducies</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/RAPPORT-ESR-AGENTS-DAFFAIRES-REVU-05-07-24-VF.docx.pdf">Le secteur des agents d’affaires</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Evaluation-des-vulnerabilites-de-BC-liees-aux-Personnes-Morales.docx.pdf">Les personnes morales</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Rapport-Final_Evaluation-Risques-BC-FT_Cote-dIvoire-Resume-Analytique_FINAL-DGDM-mines.docx.pdf">Le secteur des mines</a></li>
+            </ol>
+            <h3>Législation et réglementation</h3>
+            <p>Enquêtes et poursuites criminelles, de la saisie, de la confiscation et de la coopération internationale :</p>
+            <ol>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ORDONNANCE-N2023-875-DU-23-NOVEMBRE-2023-RELATIVE-A-LA-LUTTE-CONTRE-LES-BLANCHIMENTS-DE-CAPIT.pdf">L’Ordonnance n°2023-875 du 23 novembre 2023 relative à la lutte contre les blanchiments de capitaux</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Decision-N%C2%B021-du-21-decembre-2023-fixant-les-montants-seuils-pour-la-mise-en-oeuvre-de-la-loi-uniforme-relative-a-la-LBCFTFP.pdf">La décision n°021 du 21/12/2023/CM/UMOA</a> fixe les montants des seuils pour la mise en œuvre de la loi uniforme LBC/FT/FP dans les États membres de l’UMOA ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/BCEAO-Decision-n%C2%B0003-du-28_03_2024_CM_UMOA-fixant-les-montants-seuils-complementaires-LBCF_FT_FP-1.pdf">La décision n°003 du 28/03/2024/CM/UMOA</a> (fixe les montants de seuils complémentaires pour le secteur immobilier, les opérations de change manuel, les négociants de pierre et métaux précieux) ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ORDONNANCE-2022-237-PORTANT-REGIME-DES-SANCTIONS-ADMINISTRATIVES.pdf">L’Ordonnance n°2022-237 du 30 mars 2022 portant régime des sanctions administratives</a> applicables en matière de LBC/FT/FP et organisation du contrôle des assujettis ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Decret-2024-58-dapplication-de-lordonnance-de-2022-sur-le-controle.pdf">Le décret n°2024-58 du 14 février 2024, portant application de l’ordonnance n°2022-237 du 30 mars 2022</a> portant régime des sanctions administratives applicables en matière de LBC/FT/FP et organisation du contrôle des assujettis, désigne les autorités de supervision de chaque catégorie d’EPNFD et consacre la création de la Commission nationale des sanctions (CNS LBC/FT) qui a vocation à prononcer les sanctions administratives à l’encontre des EPNFD, des SFD et des bureaux de change manuel ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/DECRET-2024-325-du-22-mai-2024-portant-reglementation-de-lactivite-dagent-daffaires-judiciaire.pdf">Le décret n°2024-325 du 22 mai 2024</a> portant règlementation de l’activité d’agent d’affaires judiciaire ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ARRETE-0415-NOMINATION-DES-MEMBRES-DE-LA-CNS-LBC-FT.pdf">L’arrêté n°0415/MFB/CAB du 02 mai 2024</a> portant nomination des membres de la Commission Nationale de sanction et des membres du secrétariat administratif de la CNS-LBC/FT/FP ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ARRETE-023-PORTANT-TABLEAU-NATIONAL-DES-MANDATAIRES-JUDICIAIRES-AU-TITRE-DE-LANNEE-2024.pdf">L’arrêté n°023/MJDH/DSJRH du 5 février 2024</a> portant tableau national des mandataires judiciaires au titre de l’année 2024 ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ARRETE-180-PORTANT-NOMINATION-DES-MEMBRES-DE-LA-COMMISSION-DE-CONTROLE-DES-MANDATAIRES-JUDICIAIRES.pdf">L’arrêté n°180/MJDH/DSJRH du 21 juillet 2023</a> portant nomination des membres de la Commission Nationale de Contrôle des Mandataires Judiciaires (CNCMJ) ;</li>
+            </ol>
+            <h3>Sanctions Financières Ciblées (SFC)</h3>
+            <ol>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/DECRET-N%C2%B02024-216-DU-17-AVRIL-2024-SFC.pdf">Le décret n°2024-216 du 17 avril 2024 relatif à la mise en œuvre des sanctions financières ciblées</a> en matière de FT/FP (établissement d’un mécanisme juridique pour la mise en œuvre des SFC et le rôle central du Ministre chargé des Finances à cet égard) ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Arrete-0487-CCGA-07-06-2024.pdf">L’arrêté n°0487 du 7 juin 2024 portant attributions, composition et fonctionnement de la commission</a> consultative de gel administratif en abrégé «CCGA» (déléguant certaines des responsabilités du Ministre chargé des Finances à la CCGA et établissant un Secrétariat à cette fin) ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ARRETE-N-0482-DU-28-JUIN-2024-FINANCES-fixant-les-modalites-de-diffusion-des-listes-SFC-liees-au-FT-FP-1.pdf">L’arrêté interministériel n°0482/MFB/MAEIAIE du 28 Juin 2024 portant modalités de diffusion des listes de sanctions financières ciblées liées au Financement du Terrorisme et de la Prolifération des Armes de Destruction Massives</a> (décrivant le rôle des organes responsables pour certaines tâches relatives aux SFC).</li>
+            </ol>
+            <h3>Transparence de la propriété des personnes morales et constructions juridique :</h3>
+            <ol>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Loi-n%C2%B02024-362-du-11-juin-2024-portant-creation-du-registre-des-BE-effectifs-des-personnes-morales-et-des-constructions-juridiques.pdf">La loi n°2024-362 du 11 juin 2024 portant création du registre des bénéficiaires effectifs des personnes morales et des constructions juridiques</a> ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/decret-n%C2%B02024-583-du-26-juin-2024-determinant-les-modalites-.pdf">Le décret n°2024-583 du 26 juin 2024 déterminant les modalités d’accès aux informations du registre des bénéficiaires effectifs des personnes morales et des constructions juridiques</a> ;</li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Circulaire-n%C2%B0-004-MJDH-CAB-du-15-mars-2024.pdf">La circulaire n°004/MJDH/CAB du 15 mars 2024 relative au contrôle interne du registre de commerce et du crédit mobilier (RCCM)</a>.</li>
+            </ol>
+            <h3>Lignes directrices et ressources pour les assujettis</h3>
+            <ul>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/Strategie-actualisee-du-Tresor-Public_VF.pdf">Stratégie_de_contrôle_du_Trésor_Public</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/2024-06-25-Strategie-de-controle-EPNFD-revise-02-07-2024.docx.pdf">Stratégie_de_controle pour les autorités de contrôle des EPNFD</a></li>
+            </ul>
+            <h3>Déclaration de soupçon et typologies</h3>
+            <ul>
+                <li><a href="https://www.centif.ci/documents/dos-bon.doc">Modèle Word de la déclaration de soupçon</a></li>
+                <li><a href="https://www.centif.ci/typologies/">Typologies LBC/TF</a></li>
+            </ul>
+            <h3>Études de Typologies en matière de LBC/FT/FP</h3>
+            <ol>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ANALYSE-TYPOLOGIQUE-CYBERCRIMINALITE.pdf">La cybercriminalité</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ANALYSE-TYPOLOGIQUE-CORRUPTION.pdf">La corruption et les infractions assimilées</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ANALYSE-TYPOLOGIQUE-FRAUDE-FISCALE.pdf">La fraude fiscale</a></li>
+                <li><a href="https://www.centif.ci/wp-content/uploads/2025/03/ANALYSE-TYPOLOGIQUE-CRIMINALITE-ENVIRONEMENTALE.pdf">La criminalité environnementale</a></li>
+            </ol>
+            <h3>Sanctions financières ciblées TF et PF</h3>
+            <ul>
+                <li><a href="https://www.centif.ci/liens-utiles/">Ressources CENTIF TFS</a></li>
+                <li><a href="https://main.un.org/securitycouncil/fr/content/un-sc-consolidated-list">Liste des Sanctions Consolidées du Conseil de Sécurité des Nations Unies</a></li>
+            </ul>
+            HTML);
+
         /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
@@ -359,6 +437,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
             ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
+            ['Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)', 'lbc-ft-fp', PageStatus::PUBLISHED, false, PageGroup::LBC, 10],
             ['Présentation', 'presentation', PageStatus::PUBLISHED, false, PageGroup::CARPA, 10],
         ];
         $now = new DateTimeImmutable();
@@ -377,6 +456,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 [PageGroup::BAR, 'le-batonnier'] => $batonnierContent,
                 [PageGroup::BAR, 'conseil-de-l-ordre'] => $councilContent,
                 [PageGroup::BAR, 'fonds-de-solidarite'] => $fundContent,
+                [PageGroup::LBC, 'lbc-ft-fp'] => $lbcContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'

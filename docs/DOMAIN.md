@@ -498,6 +498,13 @@ n’existe pas de listing Frontoffice générique des autres groupes ; les Pages
 publiées d’un même groupe peuvent afficher une sidebar contextuelle utilisant
 les URLs canoniques.
 
+La Page BAR `lbc-ft-fp` reprend [la page institutionnelle LBC/FT/FP et les
+ressources qu’elle référence](https://web.ordredesavocats.ci/lutte-contre-le-blanchiment-des-capitaux-lbc-ft-fp/),
+source éditoriale autorisée de cette migration. Elle est accessible à l’URL
+dédiée `/lbc-ft-fp`; l’ancienne forme `/le-barreau/lbc-ft-fp` redirige vers
+cette URL. Le contenu est une migration éditoriale, sans validation de
+l’actualité juridique des ressources.
+
 Les fixtures Content publient également les Pages légales `Mentions légales`
 (`mentions-legales`, ordre `10`) et `Vie privée`
 (`politique-confidentialite`, ordre `20`) sous `PageGroup::LEGAL`. Leurs

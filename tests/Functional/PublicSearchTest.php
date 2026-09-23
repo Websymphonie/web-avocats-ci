@@ -154,6 +154,29 @@ final class PublicSearchTest extends WebTestCase
         self::assertSame('Vie privée', $payload['results'][0]['title']);
     }
 
+    public function testLbcPageSearchUsesItsDedicatedCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist((new PageEntity())
+            ->setTitle('Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)')
+            ->setSlug('lbc-ft-fp')
+            ->setContent('<p>Ressources.</p>')
+            ->setGroup(PageGroup::LBC)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day')));
+        $entityManager->flush();
+
+        $client->request('GET', '/recherche/autocomplete?q=Blanchiment', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(1, $payload['results']);
+        self::assertSame('/lbc-ft-fp', $payload['results'][0]['url']);
+        self::assertSame('LBC/FT/FP', $payload['results'][0]['metadata']);
+    }
+
     public function testCarpaPageIsExcludedWhileDraft(): void
     {
         $client = $this->clientWithSchema();

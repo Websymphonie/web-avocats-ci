@@ -174,6 +174,52 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringContainsString('/uploads/content/covers/public-page.jpg', (string) $client->getResponse()->getContent());
     }
 
+    public function testLbcPageUsesDedicatedCanonicalUrlAndPublicNavigation(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page(
+            'Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)',
+            'lbc-ft-fp',
+            PageStatus::PUBLISHED,
+            new DateTimeImmutable('-1 day'),
+            null,
+            PageGroup::LBC,
+            10,
+        ));
+        $entityManager->flush();
+
+        $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertStringNotContainsString('Lutte contre le Blanchiment', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('/le-barreau/lbc-ft-fp', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/le-barreau/presentation', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"]');
+        self::assertStringNotContainsString('LBC/FT/FP', $client->getCrawler()->filter('aside[aria-label="Navigation : Le Barreau"]')->text());
+        self::assertStringNotContainsString('LBC/FT/FP', $client->getCrawler()->filter('nav[aria-label="Navigation principale"] details')->text());
+        self::assertStringNotContainsString('LBC/FT/FP', $client->getCrawler()->filter('nav[aria-label="Navigation mobile"] details')->text());
+        self::assertSelectorExists('nav[aria-label="Navigation principale"] a[href="/lbc-ft-fp"]');
+        self::assertSelectorExists('nav[aria-label="Navigation mobile"] a[href="/lbc-ft-fp"]');
+
+        $client->request('GET', '/lbc-ft-fp', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorTextContains('h1', 'Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)');
+        self::assertSelectorExists('nav[aria-label="Navigation principale"] a[aria-current="page"][href="/lbc-ft-fp"]');
+        self::assertSelectorExists('nav[aria-label="Navigation mobile"] a[aria-current="page"][href="/lbc-ft-fp"]');
+        self::assertSelectorNotExists('aside[aria-label="Navigation : Le Barreau"]');
+        self::assertSelectorNotExists('aside[aria-label="Navigation : LBC/FT/FP"]');
+
+        $client->request('GET', '/le-barreau/lbc-ft-fp', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/lbc-ft-fp', Response::HTTP_MOVED_PERMANENTLY);
+
+        $client->request('GET', '/informations/lbc-ft-fp', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/lbc-ft-fp', Response::HTTP_MOVED_PERMANENTLY);
+    }
+
     public function testPublishedSolidarityFundPageRendersMemberResourcesCtaAndBarSidebar(): void
     {
         $client = $this->clientWithSchema();

@@ -40,6 +40,10 @@ final class GetPublicPageDetailsController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        if ($slug === 'lbc-ft-fp' && $page->group === PageGroup::LBC) {
+            return $this->redirectToRoute('web_lbc_ft_fp', status: Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         if ($page->group === PageGroup::BAR) {
             return $this->redirectToRoute('web_bar_page_detail', ['slug' => $slug], Response::HTTP_MOVED_PERMANENTLY);
         }
@@ -50,6 +54,10 @@ final class GetPublicPageDetailsController extends AbstractController
     #[Route('/le-barreau/{slug}', name: 'web_bar_page_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
     public function barPage(string $slug): Response
     {
+        if ($slug === 'lbc-ft-fp') {
+            return $this->redirectToRoute('web_lbc_ft_fp', status: Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         $page = $this->findPublishedPage($slug, PageGroup::BAR);
         if ($page === null || $page->group !== PageGroup::BAR) {
             throw $this->createNotFoundException();
@@ -64,6 +72,17 @@ final class GetPublicPageDetailsController extends AbstractController
         $councilPortraitUrls = $this->resolveCouncilPortraits($councilMembers);
 
         return $this->renderPage($page, $mandate, $portraitUrl, $councilMembers, $councilPortraitUrls);
+    }
+
+    #[Route('/lbc-ft-fp', name: 'web_lbc_ft_fp', methods: ['GET'])]
+    public function lbcPage(): Response
+    {
+        $page = $this->findPublishedPage('lbc-ft-fp', PageGroup::LBC);
+        if ($page === null) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->renderPage($page);
     }
 
     #[Route('/carpa/{slug}', name: 'web_carpa_page_detail', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]

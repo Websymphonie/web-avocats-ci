@@ -2,6 +2,92 @@ body {
   font-family: "Geist", sans-serif;
 }
 
+// Editorial HTML is rendered in the public bundle, which does not load app.scss.
+.rich-content {
+  color: var(--foreground);
+  line-height: 1.75;
+
+  > * + * {
+    margin-top: 1rem;
+  }
+
+  p {
+    min-height: 1.75rem;
+  }
+
+  h2,
+  h3 {
+    color: var(--foreground);
+    font-weight: 650;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+    margin-top: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-top: 1.4rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.5rem;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--primary);
+    background: color-mix(in oklab, var(--primary) 7%, transparent);
+    color: var(--muted-foreground);
+    padding: 0.75rem 1rem;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+  }
+
+  s {
+    text-decoration: line-through;
+  }
+}
+
 .public-search-dialog {
   color-scheme: light;
 }

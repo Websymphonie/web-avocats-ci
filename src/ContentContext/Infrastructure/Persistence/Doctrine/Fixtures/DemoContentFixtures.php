@@ -323,7 +323,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setGroup($group)
                 ->setSortOrder($sortOrder);
             $manager->persist($page);
-            $this->addReference('demo_page_' . $slug, $page);
+            $this->addReference('demo_page_' . $group->value . '_' . $slug, $page);
         }
     }
 

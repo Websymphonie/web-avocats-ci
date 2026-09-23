@@ -173,8 +173,9 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(10, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
-        self::assertSame(6, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
-        $presentation = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation']);
+        self::assertSame(5, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
+        self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::CARPA]));
+        $presentation = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation', 'editorialGroup' => PageGroup::BAR]);
         self::assertInstanceOf(PageEntity::class, $presentation);
         self::assertSame(PageStatus::PUBLISHED, $presentation->getStatus());
         self::assertSame(PageGroup::BAR, $presentation->getGroup());
@@ -223,7 +224,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
             self::assertNotNull($member->getPortraitMediaId());
             self::assertNotNull($entityManager->getRepository(MediaEntity::class)->find($member->getPortraitMediaId()));
         }
-        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite', 'editorialGroup' => PageGroup::BAR]);
         self::assertInstanceOf(PageEntity::class, $fundPage);
         self::assertSame(PageStatus::PUBLISHED, $fundPage->getStatus());
         self::assertSame(PageGroup::BAR, $fundPage->getGroup());
@@ -232,15 +233,15 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertStringContainsString('Le dispositif Yako', $fundPage->getContent());
         self::assertStringNotContainsString('FORMULAIRE DE DEMANDE DE PRÊT', $fundPage->getContent());
         self::assertSame(50, $fundPage->getSortOrder());
-        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'presentation', 'editorialGroup' => PageGroup::CARPA]);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
         self::assertSame(PageStatus::PUBLISHED, $carpaPage->getStatus());
-        self::assertSame(PageGroup::BAR, $carpaPage->getGroup());
+        self::assertSame(PageGroup::CARPA, $carpaPage->getGroup());
         self::assertStringContainsString('Caisse Autonome de Règlement Pécuniaire des Avocats', $carpaPage->getContent());
         self::assertStringContainsString('sous la supervision du Bâtonnier', $carpaPage->getContent());
         self::assertStringContainsString('href="/contact"', $carpaPage->getContent());
         self::assertNotNull($carpaPage->getPublishedAt());
-        self::assertSame(60, $carpaPage->getSortOrder());
+        self::assertSame(10, $carpaPage->getSortOrder());
         self::assertSame(10, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'mentions-legales'])->getSortOrder());
         self::assertSame(20, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite'])->getSortOrder());
         self::assertSame(30, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation'])->getSortOrder());

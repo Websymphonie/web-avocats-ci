@@ -81,11 +81,14 @@ final class PublicHomeTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createDataset();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $carpaPage = new PageEntity();
-        $carpaPage->setTitle('Présentation')->setSlug('presentation')->setGroup(PageGroup::CARPA);
-        $entityManager->persist($carpaPage);
+        $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy([
+            'slug' => 'presentation',
+            'editorialGroup' => PageGroup::CARPA,
+        ]);
+        self::assertInstanceOf(PageEntity::class, $carpaPage);
 
-        $carpaPage->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
+        $carpaPage->setTitle('Présentation')
+            ->setContent('<p>Présentation institutionnelle de la CARPA.</p>')
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();

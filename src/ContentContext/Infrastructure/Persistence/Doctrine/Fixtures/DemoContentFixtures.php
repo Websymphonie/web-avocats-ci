@@ -338,6 +338,20 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             <p>Le Barreau présente une mutuelle santé destinée aux avocats et gérée par le Fonds de Solidarité. Le guide du réseau de soins est mis à disposition dans l’espace avocat.</p>
             HTML);
 
+        $assistanceContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Barreau de Côte d’Ivoire a mis en place le Bureau d’Assistance aux Victimes de Violence Domestique.</p>
+            <h2>À qui s’adresse le Bureau ?</h2>
+            <p>Le Bureau accompagne juridiquement les femmes victimes de violence domestique.</p>
+            <h2>Un accompagnement juridique</h2>
+            <p>Les publications du Barreau présentent cet accompagnement comme allant de l’écoute à la défense.</p>
+            <h2>Disponibilité</h2>
+            <p>Le Barreau indique que le Bureau est ouvert toute l’année.</p>
+            <h2>Contacter le Bureau</h2>
+            <p>Appeler le Bureau :</p>
+            <p><a href="tel:+2250500000254">05 00 00 02 54</a></p>
+            <p><a href="tel:+2250500000255">05 00 00 02 55</a></p>
+            HTML);
+
         $carpaContent = $this->sanitizer->sanitize(<<<'HTML'
             <p>La Caisse Autonome de Règlement Pécuniaire des Avocats (CARPA) est l’organisme du Barreau associé aux règlements pécuniaires effectués par les avocats.</p>
             <h2>Une mission au service de la profession</h2>
@@ -425,7 +439,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             </ul>
             HTML);
 
-        /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
+        /** @var list<array{string, string, PageStatus, bool, ?PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
             ['Vie privée', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 20],
@@ -439,6 +453,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
             ['Lutte contre le Blanchiment des Capitaux (LBC/FT/FP)', 'lbc-ft-fp', PageStatus::PUBLISHED, false, PageGroup::LBC, 10],
             ['Présentation', 'presentation', PageStatus::PUBLISHED, false, PageGroup::CARPA, 10],
+            ['Bureau d’Assistance aux Victimes de Violence Domestique', 'assistance-violences-domestiques', PageStatus::PUBLISHED, false, null, 0],
         ];
         $now = new DateTimeImmutable();
 
@@ -457,6 +472,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 [PageGroup::BAR, 'conseil-de-l-ordre'] => $councilContent,
                 [PageGroup::BAR, 'fonds-de-solidarite'] => $fundContent,
                 [PageGroup::LBC, 'lbc-ft-fp'] => $lbcContent,
+                [null, 'assistance-violences-domestiques'] => $assistanceContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'
@@ -471,7 +487,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 ->setGroup($group)
                 ->setSortOrder($sortOrder);
             $manager->persist($page);
-            $this->addReference('demo_page_' . $group->value . '_' . $slug, $page);
+            $groupReference = $group === null ? 'UNGROUPED' : $group->value;
+            $this->addReference('demo_page_' . $groupReference . '_' . $slug, $page);
         }
     }
 

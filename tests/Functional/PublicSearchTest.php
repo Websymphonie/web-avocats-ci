@@ -177,6 +177,31 @@ final class PublicSearchTest extends WebTestCase
         self::assertSame('LBC/FT/FP', $payload['results'][0]['metadata']);
     }
 
+    public function testDomesticViolenceAssistancePageIsSearchableByItsSubjectAndUsesCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist((new PageEntity())
+            ->setTitle('Bureau d’Assistance aux Victimes de Violence Domestique')
+            ->setSlug('assistance-violences-domestiques')
+            ->setContent('<p>Le Bureau accompagne juridiquement les femmes victimes de violence domestique.</p>')
+            ->setGroup(null)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day')));
+        $entityManager->flush();
+
+        foreach (['violence', 'violence domestique', 'assistance', 'victime'] as $term) {
+            $client->request('GET', '/recherche/autocomplete', ['q' => $term], server: ['HTTPS' => 'on']);
+
+            self::assertResponseIsSuccessful();
+            $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $matches = array_values(array_filter($payload['results'], static fn (array $result): bool => $result['title'] === 'Bureau d’Assistance aux Victimes de Violence Domestique'));
+            self::assertCount(1, $matches, 'Expected a search result for: ' . $term);
+            self::assertSame('/assistance-violences-domestiques', $matches[0]['url']);
+        }
+    }
+
     public function testCarpaPageIsExcludedWhileDraft(): void
     {
         $client = $this->clientWithSchema();

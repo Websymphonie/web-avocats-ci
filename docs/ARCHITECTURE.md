@@ -872,6 +872,15 @@ présent. Elle expose un résultat `Information` vers `web_bar_page_detail` pour
 les Pages BAR et vers `web_information_detail` pour les autres Pages ; le
 `PageGroup` sert uniquement à sélectionner la route canonique et comme metadata,
 et ne devient pas un filtre de recherche.
+
+La Page publique du Bureau d’Assistance aux Victimes de Violence Domestique
+réutilise `Page` sans `PageGroup` spécialisé, car elle est une entrée
+institutionnelle unique et n’a pas de navigation de groupe. Sa route canonique
+est `/assistance-violences-domestiques`; la recherche publique la dirige vers
+cette URL et `/informations/assistance-violences-domestiques` la redirige
+permanemment. Son contenu riche est issu des publications officielles du
+Barreau et expose uniquement les deux liens téléphoniques publiés. Aucun
+formulaire de récit, dossier d’assistance ou workflow métier n’est créé.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.

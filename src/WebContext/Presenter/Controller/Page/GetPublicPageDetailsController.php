@@ -44,6 +44,10 @@ final class GetPublicPageDetailsController extends AbstractController
             return $this->redirectToRoute('web_lbc_ft_fp', status: Response::HTTP_MOVED_PERMANENTLY);
         }
 
+        if ($slug === 'assistance-violences-domestiques' && $page->group === null) {
+            return $this->redirectToRoute('web_domestic_violence_assistance', status: Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         if ($page->group === PageGroup::BAR) {
             return $this->redirectToRoute('web_bar_page_detail', ['slug' => $slug], Response::HTTP_MOVED_PERMANENTLY);
         }
@@ -79,6 +83,17 @@ final class GetPublicPageDetailsController extends AbstractController
     {
         $page = $this->findPublishedPage('lbc-ft-fp', PageGroup::LBC);
         if ($page === null) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->renderPage($page);
+    }
+
+    #[Route('/assistance-violences-domestiques', name: 'web_domestic_violence_assistance', methods: ['GET'])]
+    public function domesticViolenceAssistancePage(): Response
+    {
+        $page = $this->findPublishedPage('assistance-violences-domestiques');
+        if ($page === null || $page->group !== null) {
             throw $this->createNotFoundException();
         }
 

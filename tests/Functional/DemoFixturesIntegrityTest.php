@@ -115,7 +115,11 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertNotNull($entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']));
         self::assertSame(24, $entityManager->getRepository(NewsEntity::class)->count([]));
         self::assertSame(18, $entityManager->getRepository(EventEntity::class)->count([]));
-        self::assertSame(12, $entityManager->getRepository(PageEntity::class)->count([]));
+        self::assertSame(13, $entityManager->getRepository(PageEntity::class)->count([]));
+        $assistancePage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'assistance-violences-domestiques']);
+        self::assertInstanceOf(PageEntity::class, $assistancePage);
+        self::assertSame(PageStatus::PUBLISHED, $assistancePage->getStatus());
+        self::assertNull($assistancePage->getGroup());
         self::assertSame(7, $entityManager->getRepository(TrainingCategoryEntity::class)->count([]));
         self::assertSame(8, $entityManager->getRepository(TrainingTagEntity::class)->count([]));
         self::assertSame(14, $entityManager->getRepository(TrainingEntity::class)->count([]));
@@ -170,7 +174,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(16, $entityManager->getRepository(NewsEntity::class)->count(['status' => NewsStatus::PUBLISHED]));
         self::assertSame(10, $entityManager->getRepository(EventEntity::class)->count(['status' => EventStatus::PUBLISHED]));
         self::assertSame(9, $entityManager->getRepository(TrainingEntity::class)->count(['status' => TrainingStatus::PUBLISHED]));
-        self::assertSame(11, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
+        self::assertSame(12, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
         self::assertSame(5, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));

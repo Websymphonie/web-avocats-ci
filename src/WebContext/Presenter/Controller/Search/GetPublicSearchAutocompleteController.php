@@ -50,10 +50,22 @@ final class GetPublicSearchAutocompleteController extends AbstractController
             'news' => $this->generateUrl('web_news_detail', ['slug' => $suggestion->slug]),
             'event' => $this->generateUrl('web_events_detail', ['slug' => $suggestion->slug]),
             'training' => $this->generateUrl('web_trainings_detail', ['slug' => $suggestion->slug]),
-            'information' => $suggestion->slug === 'lbc-ft-fp'
-                ? $this->generateUrl('web_lbc_ft_fp')
-                : $this->generateUrl($suggestion->isCarpaPage ? 'web_carpa_page_detail' : ($suggestion->isBarPage ? 'web_bar_page_detail' : 'web_information_detail'), ['slug' => $suggestion->slug]),
+            'information' => $this->informationUrlFor($suggestion),
             default => throw new \LogicException('Type de résultat public inconnu.'),
         };
+    }
+
+    private function informationUrlFor(PublicSearchSuggestion $suggestion): string
+    {
+        if ($suggestion->slug === 'lbc-ft-fp') {
+            return $this->generateUrl('web_lbc_ft_fp');
+        }
+        if ($suggestion->slug === 'assistance-violences-domestiques') {
+            return $this->generateUrl('web_domestic_violence_assistance');
+        }
+
+        $route = $suggestion->isCarpaPage ? 'web_carpa_page_detail' : ($suggestion->isBarPage ? 'web_bar_page_detail' : 'web_information_detail');
+
+        return $this->generateUrl($route, ['slug' => $suggestion->slug]);
     }
 }

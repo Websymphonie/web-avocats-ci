@@ -100,6 +100,7 @@ propriétaire.
 | CNT-BAR-004 | migrer le Fonds de Solidarité et ses ressources avocat | `IMPLEMENTED` — Page BAR publiée avec contenu CARE et trois documents LAWYER servis depuis le stockage privé |
 | CNT-BAR-005 | migrer la CARPA et ses ressources validées | `IMPLEMENTED` — Page BAR publiée à l’ordre 60 et règlement intérieur général du Barreau distinct publié `PUBLIC`; les ressources CARPA dédiées non retrouvées ne sont pas inventées |
 | CNT-LBC-001 | publier la page institutionnelle LBC/FT/FP | `IMPLEMENTED` — contenu et ressources migrés depuis la source officielle, accès dédié `/lbc-ft-fp`; aucune actualisation juridique n’est revendiquée |
+| CNT-ASSIST-001 | publier la page institutionnelle du Bureau d’Assistance aux Victimes de Violence Domestique | `IMPLEMENTED` — Page publique sans groupe éditorial, route `/assistance-violences-domestiques`, contenu issu des publications officielles du Barreau et deux liens téléphoniques dédiés |
 | CNT-009 | administrer et afficher la donnée structurée du Bâtonnier | `IMPLEMENTED` — historique de mandats, portrait facultatif et bloc Page BAR |
 | CNT-010 | administrer et afficher la composition structurée du Conseil de l’Ordre | `IMPLEMENTED` — historique des membres, portraits facultatifs et bloc Page BAR |
 | BKO-CONTACT-001 | consulter les messages du formulaire Contact | `IMPLEMENTED` — liste paginée, filtres de livraison, détail immuable et retry manuel des échecs |

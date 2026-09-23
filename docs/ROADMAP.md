@@ -86,6 +86,7 @@ CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Co
 CNT-010 — Conseil de l’Ordre structuré         IMPLEMENTED — historique Content + bloc public sur `conseil-de-l-ordre`
 CNT-CARPA-001 — Préparer Page institutionnelle CARPA IMPLEMENTED — état initial : fixture BAR DRAFT à l’ordre 60 et fallback hub ; état remplacé par CNT-BAR-005
 CNT-LBC-001 — Page institutionnelle LBC/FT/FP IMPLEMENTED — Page BAR publiée à l’URL dédiée `/lbc-ft-fp`, textes et liens issus de la source officielle sans validation de leur actualité juridique
+CNT-ASSIST-001 — Bureau d’Assistance aux Victimes de Violence Domestique IMPLEMENTED — Page Content publique sans PageGroup spécialisé, route dédiée et numéros issus des publications du Barreau
 ```
 
 La suite de la phase concerne les parcours Frontoffice et les décisions de

@@ -220,6 +220,50 @@ final class PublicPagesTest extends WebTestCase
         self::assertResponseRedirects('/lbc-ft-fp', Response::HTTP_MOVED_PERMANENTLY);
     }
 
+    public function testDomesticViolenceAssistancePageIsPublicAndUsesDedicatedPhoneLinks(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager->persist($this->page(
+            'Bureau d’Assistance aux Victimes de Violence Domestique',
+            'assistance-violences-domestiques',
+            PageStatus::PUBLISHED,
+            new DateTimeImmutable('-1 day'),
+            null,
+        )->setContent(<<<'HTML'
+            <p>Le Barreau de Côte d’Ivoire a mis en place le Bureau d’Assistance aux Victimes de Violence Domestique.</p>
+            <h2>À qui s’adresse le Bureau ?</h2>
+            <p>Le Bureau accompagne juridiquement les femmes victimes de violence domestique.</p>
+            <h2>Un accompagnement juridique</h2>
+            <p>Les publications du Barreau présentent cet accompagnement comme allant de l’écoute à la défense.</p>
+            <h2>Disponibilité</h2>
+            <p>Le Barreau indique que le Bureau est ouvert toute l’année.</p>
+            <h2>Contacter le Bureau</h2>
+            <p>Appeler le Bureau :</p>
+            <p><a href="tel:+2250500000254">05 00 00 02 54</a></p>
+            <p><a href="tel:+2250500000255">05 00 00 02 55</a></p>
+            HTML));
+        $entityManager->flush();
+
+        $client->request('GET', '/assistance-violences-domestiques', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorTextContains('h1', 'Bureau d’Assistance aux Victimes de Violence Domestique');
+        self::assertSelectorTextContains('.rich-content', 'femmes victimes de violence domestique');
+        self::assertSelectorTextContains('.rich-content', 'ouvert toute l’année');
+        self::assertSelectorTextContains('.rich-content', '05 00 00 02 54');
+        self::assertSelectorTextContains('.rich-content', '05 00 00 02 55');
+        self::assertSelectorExists('.rich-content a[href="tel:+2250500000254"]');
+        self::assertSelectorExists('.rich-content a[href="tel:+2250500000255"]');
+        self::assertSelectorNotExists('form');
+        self::assertSelectorNotExists('aside[aria-label^="Navigation :"]');
+        self::assertSelectorExists('footer a[href="/assistance-violences-domestiques"]');
+
+        $client->request('GET', '/informations/assistance-violences-domestiques', server: ['HTTPS' => 'on']);
+        self::assertResponseRedirects('/assistance-violences-domestiques', Response::HTTP_MOVED_PERMANENTLY);
+    }
+
     public function testPublishedSolidarityFundPageRendersMemberResourcesCtaAndBarSidebar(): void
     {
         $client = $this->clientWithSchema();
@@ -421,6 +465,7 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringContainsString('/informations/conditions-generales-utilisation', $content);
         self::assertStringContainsString('/informations/politique-confidentialite', $content);
         self::assertStringContainsString('/informations/mentions-legales', $content);
+        self::assertStringContainsString('/assistance-violences-domestiques', $content);
         self::assertSame('Vie privée', trim($client->getCrawler()->filter('footer a[href="/informations/politique-confidentialite"]')->text()));
         self::assertSame('/le-barreau', $client->getCrawler()->filter('footer a')->first()->attr('href'));
         self::assertStringNotContainsString('/informations/politique-cookies', $content);

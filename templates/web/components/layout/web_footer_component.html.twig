@@ -1,8 +1,9 @@
 <footer class="border-t border-border bg-card">
     <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <p>Le Barreau de Côte d'Ivoire</p>
-        <nav class="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Informations légales">
+        <nav class="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Liens utiles et informations légales">
             <a href="{{ path('web_barreau_index') }}" class="font-medium text-foreground transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Le Barreau</a>
+            <a href="{{ path('web_domestic_violence_assistance') }}" class="transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Assistance aux victimes</a>
             <a href="{{ path('web_contact') }}" class="transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Contact</a>
             <a href="{{ path('web_information_detail', {slug: 'conditions-generales-utilisation'}) }}" class="transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Conditions générales d’utilisation</a>
             <a href="{{ path('web_information_detail', {slug: 'politique-confidentialite'}) }}" class="transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Vie privée</a>

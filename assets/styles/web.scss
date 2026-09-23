@@ -64,6 +64,30 @@ body {
     text-underline-offset: 0.16em;
   }
 
+  a[href^="tel:"] {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--card);
+    padding: 0.65rem 1rem;
+    font-size: 1.125rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+
+  a[href^="tel:"]:hover {
+    border-color: var(--primary);
+    background: color-mix(in oklab, var(--primary) 6%, var(--card));
+  }
+
+  a[href^="tel:"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
   hr {
     border: 0;
     border-top: 1px solid var(--border);

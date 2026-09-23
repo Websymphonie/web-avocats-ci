@@ -65,6 +65,7 @@ security:
     - { path: ^/le-barreau/[a-z0-9]+(?:-[a-z0-9]+)*$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/carpa(?:/[a-z0-9]+(?:-[a-z0-9]+)*)?$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/lbc-ft-fp$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
+    - { path: ^/assistance-violences-domestiques$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/informations/[a-z0-9]+(?:-[a-z0-9]+)*$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/recherche/autocomplete$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }
     - { path: ^/documents/[0-9a-fA-F-]+/download$, roles: PUBLIC_ACCESS, requires_channel: '%env(SECURE_SCHEME)%' }

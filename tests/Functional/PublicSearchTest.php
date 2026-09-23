@@ -107,14 +107,15 @@ final class PublicSearchTest extends WebTestCase
             'metadata' => 'Informations légales',
         ], $payload['results'][0]);
 
-        $client->request('GET', '/recherche/autocomplete?q=Confidentialité', server: ['HTTPS' => 'on']);
+        $client->request('GET', '/recherche/autocomplete?q=Vie privée', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertCount(1, $payload['results']);
         self::assertSame('information', $payload['results'][0]['type']);
-        self::assertSame('Compte et confidentialité', $payload['results'][0]['metadata']);
+        self::assertSame('Informations légales', $payload['results'][0]['metadata']);
         self::assertSame('/informations/politique-confidentialite', $payload['results'][0]['url']);
+        self::assertSame('Vie privée', $payload['results'][0]['title']);
 
         $client->request('GET', '/recherche/autocomplete?q=Présentation', server: ['HTTPS' => 'on']);
 
@@ -150,7 +151,7 @@ final class PublicSearchTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertCount(1, $payload['results']);
-        self::assertSame('Politique de confidentialité', $payload['results'][0]['title']);
+        self::assertSame('Vie privée', $payload['results'][0]['title']);
     }
 
     public function testCarpaPageIsExcludedWhileDraft(): void
@@ -369,10 +370,10 @@ final class PublicSearchTest extends WebTestCase
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
         $accountPage = (new PageEntity())
-            ->setTitle('Politique de confidentialité')
+            ->setTitle('Vie privée')
             ->setSlug('politique-confidentialite')
             ->setContent('<p>Informations de confidentialité publiques.</p>')
-            ->setGroup(PageGroup::ACCOUNT)
+            ->setGroup(PageGroup::LEGAL)
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt($publishedAt);
         $draftPage = (new PageEntity())

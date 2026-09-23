@@ -498,6 +498,17 @@ n’existe pas de listing Frontoffice générique des autres groupes ; les Pages
 publiées d’un même groupe peuvent afficher une sidebar contextuelle utilisant
 les URLs canoniques.
 
+Les fixtures Content publient également les Pages légales `Mentions légales`
+(`mentions-legales`, ordre `10`) et `Vie privée`
+(`politique-confidentialite`, ordre `20`) sous `PageGroup::LEGAL`. Leurs
+contenus reprennent les pages institutionnelles historiques, nettoyées du
+gabarit WordPress et conservées sous les routes `/informations/{slug}`. La
+source des Mentions légales affiche une version en vigueur au 3 juillet 2023 ;
+aucune validation juridique nouvelle n’est impliquée par cette migration. Les
+anciennes URL WordPress `/vie-privee/` et `/mentions-legales/` ne sont pas
+redirigées dans cette tranche ; leur traitement éventuel relève d’une passe
+SEO dédiée.
+
 ### CNT-006A — Couverture facultative des pages
 
 Une `Page` peut référencer une couverture image publique via le seul identifiant

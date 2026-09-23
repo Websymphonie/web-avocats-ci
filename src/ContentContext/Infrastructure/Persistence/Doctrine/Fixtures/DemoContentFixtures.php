@@ -236,6 +236,72 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             </ul>
             HTML);
 
+        $privacyContent = $this->sanitizer->sanitize(<<<'HTML'
+            <h2>1. Données traitées &amp; Finalités</h2>
+            <p>Vous pouvez exercer vos droits en nous contactant à l’adresse <a href="mailto:info@ordredesavocats.ci">info@ordredesavocats.ci</a>.</p>
+            <h3>1.1. Données de connexion</h3>
+            <p>Nous conservons et traitons les informations du journal de serveur Web ainsi que les données générées par l’utilisation de la Plateforme. Les serveurs consultés collectent automatiquement, entre autres, les données suivantes :</p>
+            <ul>
+                <li>l’adresse IP qui vous est attribuée lors de votre connexion ;</li>
+                <li>la date et l’heure d’accès au site ;</li>
+                <li>les pages consultées ;</li>
+                <li>le type de navigateur (browser) utilisé ;</li>
+                <li>la plate-forme et/ou le système d’exploitation installé sur le PC ;</li>
+                <li>le moteur de recherche ainsi que les mots-clés utilisés pour retrouver le site.</li>
+            </ul>
+            <p>Ces informations sont conservées et traitées afin de gérer et sécuriser le site, de mesurer le nombre de visiteurs dans les différentes sections et d’y apporter des améliorations. Elles peuvent également servir à la personnalisation des services et des expériences proposées.</p>
+            <p>En cas de violation ou de tentative de violation du système ou en cas d’activité illicite, nous pouvons également utiliser ces informations en coopération avec votre fournisseur d’accès Internet et/ou les autorités locales pour établir et documenter les infractions et en retrouver la source.</p>
+            <h3>1.2. Données de contact</h3>
+            <p>En vue d’obtenir des services complémentaires (abonnement à une lettre d’information, demande d’informations, prise de RDV, propositions et candidature à des offres d’emploi), il est possible que des informations personnelles, essentiellement des coordonnées de contact (nom, prénom, email, adresse et téléphone) vous soient demandées.</p>
+            <p>Ces données ne seront utilisées que pour traiter vos demandes, pour gérer et fournir le service concerné et assurer le suivi normal dudit service.</p>
+            <p>Elles peuvent également être utilisées pour mieux cerner vos besoins, pour améliorer le site et à des fins de statistiques internes. Le Barreau de Côte d’Ivoire peut également utiliser vos informations personnelles pour vous contacter et/ou vous fournir des informations générales, de même que des informations sur ses services, dans le cadre de ses missions.</p>
+            <h3>1.3. Données sur les utilisateurs de l’espace privé de la Plateforme</h3>
+            <p>La Plateforme du Barreau de Côte d’Ivoire offre un espace privé permettant aux adhérents du Barreau de Côte d’Ivoire ayant créé un compte d’accéder à des fonctions avancées. Ces Utilisateurs identifiés seront des personnes physiques, les données traitées sont dès lors des données à caractère personnel.</p>
+            <p>Les données traitées concernant les Utilisateurs identifiés sont les suivantes : téléphone, email, fax, date d’inscription, numéro de Toge, adresse géographique, adresse postale, ville, structure et statut.</p>
+            <p>Toutes ces données ne constituent que des données utiles dans le cadre du service d’information délivré par la Plateforme. Elles ne contiennent jamais de données sensibles ou de données soumises à des régimes de protection particuliers.</p>
+            <p>Le traitement des données à caractère personnel reprises dans la description ci-dessous est effectué dans le cadre de la gestion et l’exploitation de la Plateforme conformément à ses finalités et au service rendu par l’espace privé. Dès lors, ces informations sont strictement réservées à la fourniture de l’accès à l’espace privé et à la communication avec l’administrateur de la Plateforme.</p>
+            <h2>2. Sources des données</h2>
+            <p>Les données traitées dans le cadre des traitements décrits ci-dessous proviennent des données fournies par les Utilisateurs et les utilisateurs identifiés.</p>
+            <h2>3. Mise à jour et conservation des données</h2>
+            <p>Le Barreau de Côte d’Ivoire prend des mesures raisonnables pour s’assurer que les données qu’il traite et publie soient fiables pour l’utilisation visée, et aussi précises et complètes que nécessaires pour mener à bien les objectifs décrits dans la présente politique.</p>
+            <p>Les Utilisateurs et Utilisateurs identifiés sont par ailleurs invités à vérifier les données les concernant et à spontanément envoyer une requête en rectification en cas d’information désuète ou erronée. Vous êtes également cordialement invité à nous contacter pour toute mise à jour des données vous concernant.</p>
+            <p>Les données à caractère personnel faisant partie des traitements seront traitées et conservées pendant le même délai, à moins qu’une personne physique concernée (vous) n’émette le souhait de ne plus voir ses données reprises. Dans ce cas, vos données à caractère personnel seront supprimées dès la réception d’une requête dans ce sens. Vos données peuvent cependant être conservées si le Barreau de Côte d’Ivoire y est contraint par une obligation légale ou à des fins statistiques.</p>
+            <h2>4. Transferts et partage des données</h2>
+            <p>Le Barreau de Côte d’Ivoire peut être amené à communiquer les données des utilisateurs à des mandataires ou des sous-traitants. Ceux-ci ont interdiction d’utiliser ces données pour une finalité autre que la prestation de services pour le Barreau de Côte d’Ivoire ou dans un cadre autre que leur engagement contractuel.</p>
+            <p>Nous pouvons, par exemple, faire appel à des sous-traitants afin d’héberger nos bases de données, de traiter des données ou de vous faire envoyer des informations que vous sollicitez.</p>
+            <h2>5. Vos droits concernant le traitement de vos données à caractère personnel</h2>
+            <p>Toute personne concernée bénéficie toujours d’un droit d’accès et de rectification de ses données personnelles. Ces droits peuvent être mis en œuvre à tout moment, et vous pouvez également toujours demander la suppression de tout ou partie des données personnelles vous concernant.</p>
+            <p>Dans certains cas et à certaines conditions, vous avez également le droit de vous opposer à l’utilisation, ou de demander la limitation ou la portabilité de vos données.</p>
+            <p>Vous pouvez exercer vos droits en nous contactant en utilisant les données de contact mentionnées au point 1 ci-dessus. En aucun cas vos données ne seront utilisées à des fins de marketing direct.</p>
+            <h2>6. Sécurité</h2>
+            <p>Le Barreau de Côte d’Ivoire met en œuvre les mesures techniques, physiques, légales, contractuelles et organisationnelles nécessaires afin de remplir ses obligations légales en matière de vie privée et de protection des données.</p>
+            <p>Entre autres, le Barreau de Côte d’Ivoire utilise des services d’hébergement qui sont pourvus de précautions sécuritaires assurant une protection standard de vos données. Vos données sont stockées dans des bases de données sécurisées par des pare-feu.</p>
+            <p>Si vous avez des raisons de croire que votre usage de la Plateforme n’est plus sécurisé (par exemple, si vous avez l’impression que la sécurité de vos données a été compromise), nous vous invitons à nous contacter immédiatement via nos coordonnées de contact.</p>
+            <h2>7. Modification de la présente politique</h2>
+            <p>Le Barreau de Côte d’Ivoire se réserve le droit de porter des modifications à sa politique de protection des données à caractère personnel à tout moment, entre autres, pour prendre en compte des changements dans la finalité de la Plateforme et des exigences légales, toujours en conformité avec la Loi.</p>
+            <p>Si nécessaire, toute modification vous sera signalée et, si nous en avons connaissance, par le biais de votre messagerie électronique, ainsi que par tout autre média approprié.</p>
+            HTML);
+
+        $legalNoticeContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p><strong>Version en vigueur du 03 Juillet 2023</strong></p>
+            <p>L’Ordre des avocats de Côte d’Ivoire déclare être titulaire de l’ensemble des droits de propriété intellectuelle sur les éléments composant le site accessible via l’adresse <a href="https://web.ordredesavocats.ci">https://web.ordredesavocats.ci</a> et/ou avoir obtenu toutes les autorisations nécessaires.</p>
+            <h2>Editeur du Site</h2>
+            <p>Le site www.ordredesavocats.ci est géré par l’Ordre des avocats de Côte d’Ivoire :</p>
+            <p>Barreau de Côte d’Ivoire<br>Cocody, Les Deux Plateaux ENA, Rue J9<br>Tél. : +225 27 22 41 56 05/13<br>Email : <a href="mailto:info@ordredesavocats.ci">info@ordredesavocats.ci</a></p>
+            <h2>Responsable éditorial et de la publication</h2>
+            <p>Commission Communication de l’Ordre des Avocats de Côte d’Ivoire.</p>
+            <h2>Droits de reproduction</h2>
+            <p>L’ensemble des éléments graphiques du site est la propriété d’Ordre des avocats de Côte d’Ivoire. Toute reproduction ou adaptation des pages du site qui en reprendrait les éléments graphiques est strictement interdite. Toute utilisation des contenus à des fins commerciales est également interdite.</p>
+            <p>Toute citation ou reprise de contenus du site doit avoir obtenu l’autorisation préalable du Bâtonnier. La source www.ordredesavocats.ci et la date de la copie devront être indiquées ainsi que le Copyright de l’Ordre de avocats de Côte d’Ivoire.</p>
+            <h2>Liens vers les pages du site</h2>
+            <p>Tout site public ou privé est autorisé à établir des liens vers les pages du www.ordredesavocats.ci. Il n’y a pas à demander d’autorisation préalable.</p>
+            <p>Cependant, les pages du site www.ordredesavocats.ci ne devront pas être imbriquées à l’intérieur des pages d’un autre site. Elles devront être affichées dans une nouvelle fenêtre.</p>
+            <h2>Conception et Réalisation du site</h2>
+            <p>HARRELL GROUP<br>Abidjan, Treichville Belleville, Avenue 21, 26 BP 1512 Abidjan 26<br>Tél. : +2250708683091<br>Email : <a href="mailto:contact@group-harrell.com">contact@group-harrell.com</a><br><a href="https://www.group-harrell.com">www.group-harrell.com</a></p>
+            <h2>Hébergement</h2>
+            <p>CINETCORE-VENAME<br>Immeuble Toronto, CHU d’Angré<br>Abidjan, Côte d’ivoire<br>Tél. : +225 25 22 02 81 69<br>Email : <a href="mailto:support@vename.com">support@vename.com</a><br><a href="https://www.vename.ci">www.vename.ci</a></p>
+            HTML);
+
         $batonnierContent = $this->sanitizer->sanitize(<<<'HTML'
             <p>Le Bâtonnier est élu au scrutin majoritaire par ses pairs pour un mandat de trois ans. Un an avant son terme, l’assemblée générale élective élit le dauphin appelé à lui succéder.</p>
             <h2>Un rôle de représentation et de direction</h2>
@@ -284,7 +350,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
         /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
-            ['Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 20],
+            ['Vie privée', 'politique-confidentialite', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 20],
             ['Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, true, PageGroup::ACCOUNT, 10],
             ['Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, false, PageGroup::LEGAL, 10],
             ['Politique de cookies', 'politique-cookies', PageStatus::DRAFT, true, PageGroup::LEGAL, 40],
@@ -303,12 +369,14 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 $page = new PageEntity();
             }
             $notice = 'Contenu de démonstration — à valider et adapter juridiquement avant mise en production.';
-            $content = $group === PageGroup::CARPA ? $carpaContent : match ($slug) {
-                'presentation' => $presentationContent,
-                'historique' => $historyContent,
-                'le-batonnier' => $batonnierContent,
-                'conseil-de-l-ordre' => $councilContent,
-                'fonds-de-solidarite' => $fundContent,
+            $content = $group === PageGroup::CARPA ? $carpaContent : match ([$group, $slug]) {
+                [PageGroup::LEGAL, 'politique-confidentialite'] => $privacyContent,
+                [PageGroup::LEGAL, 'mentions-legales'] => $legalNoticeContent,
+                [PageGroup::BAR, 'presentation'] => $presentationContent,
+                [PageGroup::BAR, 'historique'] => $historyContent,
+                [PageGroup::BAR, 'le-batonnier'] => $batonnierContent,
+                [PageGroup::BAR, 'conseil-de-l-ordre'] => $councilContent,
+                [PageGroup::BAR, 'fonds-de-solidarite'] => $fundContent,
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'

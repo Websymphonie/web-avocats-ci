@@ -78,6 +78,7 @@ CNT-006 — Pages statiques                     IMPLEMENTED — Backoffice + dé
 CNT-006A — Couverture facultative des pages  IMPLEMENTED — Backoffice + rendu public
 CNT-006B — Groupes éditoriaux des Pages     IMPLEMENTED — classification + sidebar publique dynamique
 CNT-006C — Ordre éditorial des Pages         IMPLEMENTED — ordre Backoffice + tri public
+CNT-LEGAL-001 — Migration Vie privée & Mentions légales IMPLEMENTED — Pages LEGAL existantes publiées et contenu source migré ; anciennes URL WordPress à évaluer dans une passe SEO distincte
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 CNT-BAR-002 — Migration Présentation & Historique IMPLEMENTED — contenus de démonstration publiés avec couverture historique locale
 CNT-BAR-003 — Migration Bâtonnier & Conseil actuels IMPLEMENTED — 1 titulaire courant, 19 membres ordonnés, portraits locaux et Pages BAR publiées

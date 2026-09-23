@@ -65,8 +65,27 @@ final class PublicPagesTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertSelectorTextContains('h1', 'Mentions légales');
-        self::assertStringContainsString('Contenu public de la page.', (string) $client->getResponse()->getContent());
+        self::assertSelectorTextContains('.rich-content', 'Editeur du Site');
+        self::assertSelectorTextContains('.rich-content', 'HARRELL GROUP');
+        self::assertSelectorTextContains('.rich-content', 'CINETCORE-VENAME');
+        self::assertStringNotContainsString('Contenu de démonstration', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('Couverture de Mentions légales', (string) $client->getResponse()->getContent());
+    }
+
+    public function testMigratedPrivacyPageUsesTheExistingCanonicalUrl(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+
+        $client->request('GET', '/informations/politique-confidentialite', server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorTextContains('h1', 'Vie privée');
+        self::assertSelectorTextContains('.rich-content', 'Données traitées');
+        self::assertSelectorTextContains('.rich-content', 'Données de connexion');
+        self::assertSelectorTextContains('.rich-content', 'portabilité de vos données');
+        self::assertSelectorExists('.rich-content a[href="mailto:info@ordredesavocats.ci"]');
+        self::assertStringNotContainsString('Contenu de démonstration', (string) $client->getResponse()->getContent());
     }
 
     public function testDraftUnknownAndUnpublishedPagesReturnNotFound(): void
@@ -356,6 +375,7 @@ final class PublicPagesTest extends WebTestCase
         self::assertStringContainsString('/informations/conditions-generales-utilisation', $content);
         self::assertStringContainsString('/informations/politique-confidentialite', $content);
         self::assertStringContainsString('/informations/mentions-legales', $content);
+        self::assertSame('Vie privée', trim($client->getCrawler()->filter('footer a[href="/informations/politique-confidentialite"]')->text()));
         self::assertSame('/le-barreau', $client->getCrawler()->filter('footer a')->first()->attr('href'));
         self::assertStringNotContainsString('/informations/politique-cookies', $content);
         self::assertStringNotContainsString('/informations/politique-suppression-compte', $content);
@@ -370,13 +390,13 @@ final class PublicPagesTest extends WebTestCase
 
         self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"]');
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Mentions légales');
-        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Politique de confidentialité');
+        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Vie privée');
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Conditions générales d’utilisation');
         self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"] a[aria-current="page"]');
         self::assertSame([
             'Mentions légales',
             'Aide juridique',
-            'Politique de confidentialité',
+            'Vie privée',
             'Conditions générales d’utilisation',
         ], $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"] a')->each(static fn ($node): string => trim($node->text())));
         self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
@@ -438,8 +458,10 @@ final class PublicPagesTest extends WebTestCase
         $entityManager->flush();
 
         $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId(), PageGroup::LEGAL, 30);
-        $confidentiality = $this->page('Politique de confidentialité', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::LEGAL, 20);
-        $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::LEGAL, 10);
+        $confidentiality = $this->page('Vie privée', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::LEGAL, 20)
+            ->setContent('<h2>1. Données traitées &amp; Finalités</h2><h3>1.1. Données de connexion</h3><p>Nous conservons les informations du journal de serveur Web.</p><p>Vous pouvez demander la portabilité de vos données.</p><p><a href="mailto:info@ordredesavocats.ci">info@ordredesavocats.ci</a></p>');
+        $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::LEGAL, 10)
+            ->setContent('<h2>Editeur du Site</h2><p>Barreau de Côte d’Ivoire</p><h2>Conception et Réalisation du site</h2><p>HARRELL GROUP</p><h2>Hébergement</h2><p>CINETCORE-VENAME</p>');
         $sameOrder = $this->page('Aide juridique', 'aide-juridique', PageStatus::PUBLISHED, new DateTimeImmutable('-4 days'), null, PageGroup::LEGAL, 20);
         $accountPolicy = $this->page('Politique de suppression de compte', 'politique-suppression-compte', PageStatus::PUBLISHED, new DateTimeImmutable('-5 days'), $cover->getId(), PageGroup::ACCOUNT, 10);
         $draft = $this->page('Politique de cookies', 'politique-cookies', PageStatus::DRAFT, null, $cover->getId(), PageGroup::LEGAL, 40);

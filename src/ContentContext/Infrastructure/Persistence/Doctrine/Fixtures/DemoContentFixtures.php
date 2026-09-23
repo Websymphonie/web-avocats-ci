@@ -254,6 +254,24 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             <p>La composition actuelle du Conseil est présentée séparément ci-dessous.</p>
             HTML);
 
+        $fundContent = $this->sanitizer->sanitize(<<<'HTML'
+            <p>Le Fonds de Solidarité contribue à la solidarité et au bien-être des avocats. La Commission Solidarité et Bien-être du Barreau supervise ses activités, ainsi que celles de l’Observatoire des Droits Humains et de Lutte contre la Corruption et du dispositif de bien-être des avocats.</p>
+            <h2>La politique CARE</h2>
+            <p>La politique CARE (« prendre soin ») place l’humain au cœur des projets et des interactions de l’Ordre avec les avocats. Elle repose sur cinq piliers :</p>
+            <ol><li>La santé pour tous.</li><li>La lutte contre la précarité.</li><li>L’engagement en faveur des droits.</li><li>Le bien-être des avocats.</li><li>L’écoute et le dialogue.</li></ol>
+            <h3>Ses objectifs</h3>
+            <ul><li>Améliorer le bien-être et la santé des avocats, notamment par la prévention des risques psychosociaux et des maladies qui peuvent amoindrir leurs capacités professionnelles.</li><li>Favoriser un environnement professionnel positif et digne, où les avocats se sentent soutenus et écoutés.</li><li>Encourager le dialogue entre l’Ordre et les avocats et mieux identifier les besoins individuels et collectifs.</li><li>Renforcer la solidarité et le soutien mutuel au sein du Barreau.</li></ul>
+            <h2>Des actions de solidarité et de bien-être</h2>
+            <h3>Prêts sans intérêts</h3>
+            <p>Le Fonds prévoit un dispositif de prêts à taux zéro pour accompagner les avocats dans leurs projets et imprévus. Les modalités figurent dans les ressources réservées aux avocats.</p>
+            <h3>Solidarité par le don</h3>
+            <p>Un soutien par le don peut être envisagé en cas de difficultés insurmontables. Les modalités et le formulaire sont accessibles dans l’espace avocat.</p>
+            <h3>Accompagnement en cas de deuil</h3>
+            <p>Le dispositif Yako apporte un soutien financier et moral lors du décès d’un parent, d’un conjoint ou d’un enfant. Pour toute demande ou information, utilisez le <a href="/contact">formulaire de contact du Barreau</a>.</p>
+            <h3>Information sur l’assurance santé</h3>
+            <p>Le Barreau présente une mutuelle santé destinée aux avocats et gérée par le Fonds de Solidarité. Le guide du réseau de soins est mis à disposition dans l’espace avocat.</p>
+            HTML);
+
         /** @var list<array{string, string, PageStatus, bool, PageGroup, int}> $pages */
         $pages = [
             ['Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, true, PageGroup::LEGAL, 30],
@@ -265,7 +283,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
             ['Historique du Barreau', 'historique', PageStatus::PUBLISHED, true, PageGroup::BAR, 20],
             ['Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, false, PageGroup::BAR, 30],
             ['Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, false, PageGroup::BAR, 40],
-            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::DRAFT, false, PageGroup::BAR, 50],
+            ['Fonds de Solidarité', 'fonds-de-solidarite', PageStatus::PUBLISHED, false, PageGroup::BAR, 50],
             ['CARPA', 'carpa', PageStatus::DRAFT, false, PageGroup::BAR, 60],
         ];
         $now = new DateTimeImmutable();
@@ -281,7 +299,8 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
                 'historique' => $historyContent,
                 'le-batonnier' => $batonnierContent,
                 'conseil-de-l-ordre' => $councilContent,
-                'fonds-de-solidarite', 'carpa' => '',
+                'fonds-de-solidarite' => $fundContent,
+                'carpa' => '',
                 default => $this->sanitizer->sanitize(sprintf('<h2>%s</h2><p>%s</p><p>Cette page fictive sert à préparer les démonstrations et les tests d’interface.</p><ul><li>Présentation structurée du contenu.</li><li>Informations à compléter par l’équipe habilitée.</li></ul>', $title, $notice)),
             };
             $coverMediaId = $slug === 'historique'

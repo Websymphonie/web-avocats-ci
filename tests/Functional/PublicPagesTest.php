@@ -160,7 +160,7 @@ final class PublicPagesTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
         self::assertInstanceOf(PageEntity::class, $fundPage);
-        $fundPage->setContent('<p>Contenu de test uniquement.</p>')
+        $fundPage->setContent('<h2>La politique CARE</h2><ol><li>La santé pour tous</li><li>La lutte contre la précarité</li><li>L’engagement en faveur des droits</li><li>Le bien-être des avocats</li><li>L’écoute et le dialogue</li></ol><p>Le dispositif Yako accompagne les familles lors d’un deuil. Contactez le Barreau via <a href="/contact">le formulaire de contact</a>.</p>')
             ->setStatus(PageStatus::PUBLISHED)
             ->setPublishedAt(new DateTimeImmutable('-1 day'));
         $entityManager->flush();
@@ -169,6 +169,10 @@ final class PublicPagesTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertSelectorTextContains('h1', 'Fonds de Solidarité');
+        self::assertSelectorTextContains('.rich-content', 'La politique CARE');
+        self::assertSelectorTextContains('.rich-content', 'L’écoute et le dialogue');
+        self::assertSelectorTextContains('.rich-content', 'Yako');
+        self::assertSelectorExists('.rich-content a[href="/contact"]');
         self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"][href="/le-barreau/fonds-de-solidarite"]');
         self::assertSelectorExists('a[href="/espace/ressources/fonds-de-solidarite"]');
         self::assertSelectorTextContains('a[href="/espace/ressources/fonds-de-solidarite"]', 'Accéder aux ressources');
@@ -184,6 +188,9 @@ final class PublicPagesTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $entityManager->persist($this->page('Le Bâtonnier', 'le-batonnier', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), null, PageGroup::BAR, 30));
         $entityManager->persist($this->page('Conseil de l’Ordre', 'conseil-de-l-ordre', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::BAR, 40));
+        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        self::assertInstanceOf(PageEntity::class, $fundPage);
+        $fundPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'))->setSortOrder(50);
         $entityManager->flush();
 
         $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
@@ -195,8 +202,8 @@ final class PublicPagesTest extends WebTestCase
             '/le-barreau/historique',
             '/le-barreau/le-batonnier',
             '/le-barreau/conseil-de-l-ordre',
+            '/le-barreau/fonds-de-solidarite',
         ], $client->getCrawler()->filter('main a[href^="/le-barreau/"]')->each(static fn ($node): string => $node->attr('href')));
-        self::assertStringNotContainsString('/le-barreau/fonds-de-solidarite', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/bar-draft', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('/le-barreau/mentions-legales', (string) $client->getResponse()->getContent());
     }

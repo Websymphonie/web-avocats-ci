@@ -886,9 +886,17 @@ locaux sous `public/assets/images/institution/portraits` et sont importés via
 réseau. Le portrait de Florence est partagé par ses deux enregistrements
 structurés. Les dates des membres du Conseil restent nulles, faute de source
 individuelle fiable, et aucune entrée historique de mandat ou de membre n’est
-créée par ces fixtures. Les Pages `Fonds de Solidarité` et `CARPA` restent
-vides et `DRAFT`, aux ordres `50` et `60` ; aucun contenu institutionnel n’est
-présumé validé pour ces deux Pages. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
+créée par ces fixtures. La Page `Fonds de Solidarité` est publiée à l’ordre
+`50` avec la présentation CARE, ses cinq piliers et ses actions institutionnelles ;
+ses formulaires et son guide de soins ne sont pas rendus publiquement. Trois
+publications documentaires `LAWYER` (demandes de prêt et de don, guide du réseau
+de soins) utilisent le tag Content `fonds-de-solidarite`. Leurs sources de
+fixture sont conservées dans `src/ContentContext/.../Fixtures/Files/FundSolidarity`
+et importées par le service de stockage des fichiers privés sous
+`$APP_STORAGE_DIR/private/documents` ; aucun téléchargement HTTP n’a lieu pendant
+le chargement des fixtures. La Page Fonds conserve le CTA membre automatique.
+La Page `CARPA` reste vide et `DRAFT` à l’ordre `60` ; aucun contenu
+institutionnel n’est présumé validé pour cette Page. La carte CARPA de la homepage pointe vers le hub `/le-barreau` tant que
 la query `FindPublishedPageBySlug('carpa')` ne retourne pas une Page BAR publiée
 avec une date de publication. Après publication, elle pointe automatiquement
 vers `/le-barreau/carpa`. Le hub, la navigation BAR et la recherche publique

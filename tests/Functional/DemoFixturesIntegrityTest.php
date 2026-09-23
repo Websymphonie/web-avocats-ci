@@ -16,6 +16,9 @@ use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
+use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
+use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\EventCategory\EventCategoryEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
@@ -32,6 +35,8 @@ use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Trai
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingCategory\TrainingCategoryEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingTag\TrainingTagEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
+use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\StoredFileEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Fixtures\DemoFundSolidarityResourcesFixtures;
 use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\TrainingOffer\TrainingOfferEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -116,7 +121,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(16, $entityManager->getRepository(NewsEntity::class)->count(['status' => NewsStatus::PUBLISHED]));
         self::assertSame(10, $entityManager->getRepository(EventEntity::class)->count(['status' => EventStatus::PUBLISHED]));
         self::assertSame(9, $entityManager->getRepository(TrainingEntity::class)->count(['status' => TrainingStatus::PUBLISHED]));
-        self::assertSame(8, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
+        self::assertSame(9, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
         self::assertSame(6, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
@@ -171,9 +176,12 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         }
         $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
         self::assertInstanceOf(PageEntity::class, $fundPage);
-        self::assertSame(PageStatus::DRAFT, $fundPage->getStatus());
+        self::assertSame(PageStatus::PUBLISHED, $fundPage->getStatus());
         self::assertSame(PageGroup::BAR, $fundPage->getGroup());
-        self::assertSame('', $fundPage->getContent());
+        self::assertStringContainsString('politique CARE', $fundPage->getContent());
+        self::assertStringContainsString('La santé pour tous', $fundPage->getContent());
+        self::assertStringContainsString('Le dispositif Yako', $fundPage->getContent());
+        self::assertStringNotContainsString('FORMULAIRE DE DEMANDE DE PRÊT', $fundPage->getContent());
         self::assertSame(50, $fundPage->getSortOrder());
         $carpaPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'carpa']);
         self::assertInstanceOf(PageEntity::class, $carpaPage);
@@ -216,6 +224,32 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/institution/portraits');
         self::assertFileExists(self::$storageDirectory . '/public/content/covers/' . $entityManager->getRepository(MediaEntity::class)->find($history->getCoverMediaId())->getStorageName());
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
-        self::assertCount(3, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+        self::assertCount(2, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+
+        $fundDocuments = $entityManager->getRepository(DocumentPublicationEntity::class)->findBy(['accessLevel' => DocumentAccessLevel::LAWYER, 'status' => DocumentStatus::PUBLISHED]);
+        self::assertCount(3, $fundDocuments);
+        $fundTag = $entityManager->getRepository(TagEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        self::assertInstanceOf(TagEntity::class, $fundTag);
+        foreach ($fundDocuments as $document) {
+            self::assertContains($fundTag, $document->getTags()->toArray());
+            $storedFile = $entityManager->getRepository(StoredFileEntity::class)->find($document->getStoredFileId());
+            self::assertInstanceOf(StoredFileEntity::class, $storedFile);
+            self::assertStringStartsWith('documents/', $storedFile->getStorageName());
+            self::assertFileExists(self::$storageDirectory . '/private/' . $storedFile->getStorageName());
+            self::assertFileDoesNotExist(dirname(__DIR__, 2) . '/public/' . $storedFile->getStorageName());
+        }
+
+        $resourceFixture = null;
+        foreach ($fixtures as $fixture) {
+            if ($fixture instanceof DemoFundSolidarityResourcesFixtures) {
+                $resourceFixture = $fixture;
+                break;
+            }
+        }
+        self::assertInstanceOf(DemoFundSolidarityResourcesFixtures::class, $resourceFixture);
+        $storedFileCount = $entityManager->getRepository(StoredFileEntity::class)->count([]);
+        $resourceFixture->load($entityManager);
+        self::assertSame(3, $entityManager->getRepository(DocumentPublicationEntity::class)->count([]));
+        self::assertSame($storedFileCount, $entityManager->getRepository(StoredFileEntity::class)->count([]));
     }
 }

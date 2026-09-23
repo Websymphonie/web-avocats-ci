@@ -15,6 +15,9 @@ use Websymphonie\ContentContext\Domain\Enum\EventStatus;
 use Websymphonie\ContentContext\Domain\Enum\NewsStatus;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Domain\Enum\DocumentAccessLevel;
+use Websymphonie\ContentContext\Domain\Enum\DocumentStatus;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event\EventEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
@@ -199,10 +202,26 @@ final class PublicSearchTest extends WebTestCase
                 ->setStatus(PageStatus::PUBLISHED)
                 ->setPublishedAt(new DateTimeImmutable('-1 day')));
         }
+        $entityManager->persist((new PageEntity())
+            ->setTitle('Fonds de Solidarité')
+            ->setSlug('fonds-de-solidarite')
+            ->setContent('<h2>La politique CARE</h2><p>Une information institutionnelle publique.</p>')
+            ->setGroup(PageGroup::BAR)
+            ->setSortOrder(50)
+            ->setStatus(PageStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day')));
         $entityManager->persist((new CouncilMemberEntity())
             ->setFullName('Maître Arouna OUATTARA')
             ->setFunction('Secrétaire de l’Ordre')
             ->setSortOrder(20));
+        $entityManager->persist((new DocumentPublicationEntity())
+            ->setTitle('Formulaire de demande de prêt')
+            ->setSlug('fonds-solidarite-demande-pret')
+            ->setDescription('Formulaire réservé aux avocats.')
+            ->setStoredFileId(1)
+            ->setAccessLevel(DocumentAccessLevel::LAWYER)
+            ->setStatus(DocumentStatus::PUBLISHED)
+            ->setPublishedAt(new DateTimeImmutable('-1 day')));
         $entityManager->flush();
 
         $client->request('GET', '/recherche/autocomplete?q=Bâtonnier', server: ['HTTPS' => 'on']);
@@ -220,6 +239,21 @@ final class PublicSearchTest extends WebTestCase
         $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertCount(1, $payload['results']);
         self::assertSame('/le-barreau/conseil-de-l-ordre', $payload['results'][0]['url']);
+
+        $client->request('GET', '/recherche/autocomplete?q=Fonds de Solidarité', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([
+            'type' => 'information',
+            'title' => 'Fonds de Solidarité',
+            'url' => '/le-barreau/fonds-de-solidarite',
+            'metadata' => 'Le Barreau',
+        ], $payload['results'][0]);
+
+        $client->request('GET', '/recherche/autocomplete?q=Formulaire de demande de prêt', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame([], $payload['results']);
 
         $client->request('GET', '/recherche/autocomplete?q=Arouna OUATTARA', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();

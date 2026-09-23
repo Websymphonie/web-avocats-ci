@@ -11,9 +11,11 @@
                     <h1 class="mt-1 text-2xl font-semibold tracking-[-0.03em]">Gestion des cabinets</h1>
                     <p class="mt-2 text-sm text-muted-foreground">Gérez les cabinets proposés aux avocats lors de la complétion de leur profil.</p>
                 </div>
-                <a href="{{ path('lawyer_admin_cabinet_new') }}" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                    <twig:ux:icon name="lucide:plus" class="size-4" aria-hidden="true"/>Nouveau cabinet
-                </a>
+                {% if is_granted('CABINET_CREATE') %}
+                    <a href="{{ path('lawyer_admin_cabinet_new') }}" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <twig:ux:icon name="lucide:plus" class="size-4" aria-hidden="true"/>Nouveau cabinet
+                    </a>
+                {% endif %}
             </section>
 
             <section class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -30,7 +32,7 @@
                                 <td class="px-6 py-5 text-muted-foreground">{{ cabinet.city ?: '—' }}</td>
                                 <td class="px-6 py-5 text-muted-foreground">{{ cabinet.email ?: cabinet.phone ?: '—' }}</td>
                                 <td class="px-6 py-5"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ cabinet.active ? 'bg-emerald-500/10 text-emerald-600' : 'bg-muted text-muted-foreground' }}">{{ cabinet.status == 'ACTIVE' ? 'Actif' : (cabinet.status == 'ARCHIVED' ? 'Archivé' : 'Inactif') }}</span></td>
-                                <td class="px-6 py-5 text-right sm:px-8"><a href="{{ path('lawyer_admin_cabinet_edit', {id: cabinet.id}) }}" class="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-border px-3 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:pencil" class="size-4" aria-hidden="true"/>Modifier</a></td>
+                                <td class="px-6 py-5 text-right sm:px-8">{% if is_granted('CABINET_EDIT') %}<a href="{{ path('lawyer_admin_cabinet_edit', {id: cabinet.id}) }}" class="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-border px-3 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><twig:ux:icon name="lucide:pencil" class="size-4" aria-hidden="true"/>Modifier</a>{% else %}<span class="text-muted-foreground">—</span>{% endif %}</td>
                             </tr>
                         {% else %}<tr><td colspan="5" class="px-6 py-16 text-center text-muted-foreground sm:px-8">Aucun cabinet enregistré.</td></tr>{% endfor %}
                         </tbody>

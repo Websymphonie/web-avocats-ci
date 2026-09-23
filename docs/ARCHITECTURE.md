@@ -982,8 +982,11 @@ image décodable, nom de stockage généré et suppression protégée restent
 responsabilités de `MediaContext`.
 
 Le formulaire professionnel existant de l’espace avocat gère ses données de
-profil ; le formulaire Cabinet Backoffice existant expose la visibilité du
-Cabinet. Aucun nouveau droit ou route publique n’est introduit.
+profil ; le Backoffice Cabinet existant liste, crée et modifie les Cabinets
+via `/cabinets`, avec contrôles `CABINET_VIEW`, `CABINET_CREATE` et
+`CABINET_EDIT`. Son entrée de menu dépend de `CABINET_VIEW`, et les actions
+visibles suivent leurs permissions propres. Aucun nouveau droit ou route
+publique n’est introduit.
 `LawyerDirectoryPublicationPolicy` centralise les critères applicatifs V1 pour
 les futures queries ; il ne certifie pas une inscription ordinale. Les fixtures
 `demo` ajoutent quelques profils et cabinets synthétiques et une image de

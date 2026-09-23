@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Websymphonie\IdentityContext\Domain\Enum\PermissionEnum;
 use Websymphonie\IdentityContext\Domain\Enum\UserRolesEnum;
 use Websymphonie\IdentityContext\Domain\Service\User\DefaultRolePermissions;
+use Websymphonie\IdentityContext\Presenter\Service\Role\PermissionCatalog;
 
 final class DefaultRolePermissionsTest extends TestCase
 {
@@ -68,6 +69,9 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::COUNCIL_MEMBER_VIEW,
             PermissionEnum::COUNCIL_MEMBER_CREATE,
             PermissionEnum::COUNCIL_MEMBER_EDIT,
+            PermissionEnum::CABINET_VIEW,
+            PermissionEnum::CABINET_CREATE,
+            PermissionEnum::CABINET_EDIT,
             PermissionEnum::LEARNING_TRAINING_VIEW,
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
@@ -144,6 +148,9 @@ final class DefaultRolePermissionsTest extends TestCase
             PermissionEnum::COUNCIL_MEMBER_VIEW,
             PermissionEnum::COUNCIL_MEMBER_CREATE,
             PermissionEnum::COUNCIL_MEMBER_EDIT,
+            PermissionEnum::CABINET_VIEW,
+            PermissionEnum::CABINET_CREATE,
+            PermissionEnum::CABINET_EDIT,
             PermissionEnum::LEARNING_TRAINING_VIEW,
             PermissionEnum::LEARNING_TRAINING_MANAGE,
             PermissionEnum::LEARNING_TRAINING_PUBLISH,
@@ -184,6 +191,17 @@ final class DefaultRolePermissionsTest extends TestCase
         foreach ([PermissionEnum::LIST, PermissionEnum::VIEW, PermissionEnum::CREATE, PermissionEnum::EDIT, PermissionEnum::PRINT] as $permission) {
             self::assertContains($permission, $avocat);
         }
+    }
+
+    public function testCabinetPermissionsAreConfigurableInTheProfessionCatalog(): void
+    {
+        $choices = PermissionCatalog::groupedChoices()['Profession · Cabinets'];
+
+        self::assertSame([
+            'Cabinets : lecture' => PermissionEnum::CABINET_VIEW->value,
+            'Cabinets : création' => PermissionEnum::CABINET_CREATE->value,
+            'Cabinets : édition' => PermissionEnum::CABINET_EDIT->value,
+        ], $choices);
     }
 
     /**
@@ -253,6 +271,9 @@ final class DefaultRolePermissionsTest extends TestCase
         yield 'council member view' => [PermissionEnum::COUNCIL_MEMBER_VIEW, [UserRolesEnum::ADMIN]];
         yield 'council member create' => [PermissionEnum::COUNCIL_MEMBER_CREATE, [UserRolesEnum::ADMIN]];
         yield 'council member edit' => [PermissionEnum::COUNCIL_MEMBER_EDIT, [UserRolesEnum::ADMIN]];
+        yield 'cabinet view' => [PermissionEnum::CABINET_VIEW, [UserRolesEnum::ADMIN]];
+        yield 'cabinet create' => [PermissionEnum::CABINET_CREATE, [UserRolesEnum::ADMIN]];
+        yield 'cabinet edit' => [PermissionEnum::CABINET_EDIT, [UserRolesEnum::ADMIN]];
         yield 'training view' => [PermissionEnum::LEARNING_TRAINING_VIEW, [UserRolesEnum::ADMIN]];
         yield 'training manage' => [PermissionEnum::LEARNING_TRAINING_MANAGE, [UserRolesEnum::ADMIN]];
         yield 'training publish' => [PermissionEnum::LEARNING_TRAINING_PUBLISH, [UserRolesEnum::ADMIN]];

@@ -464,6 +464,15 @@ coordonnées de compte restent distinctes. Le champ de visibilité Cabinet reste
 dans le formulaire Backoffice existant et est protégé par ses contrôles Cabinet
 actuels. Ces indicateurs ne créent pas de route publique dans DIR-001.
 
+La gestion Backoffice des Cabinets est une surface existante de `LawyerContext`.
+`CABINET_VIEW` protège la liste (`lawyer_admin_cabinet_list`),
+`CABINET_CREATE` la création et `CABINET_EDIT` la modification. Ces trois
+permissions sont configurables et accordées par défaut à `ROLE_ADMIN`; le
+`ROLE_SUPER_ADMIN` les possède via son accès global. Elles ne sont pas accordées
+par défaut à `ROLE_AVOCAT` ni à `ROLE_USER`. La navigation est visible avec
+`CABINET_VIEW`; les actions de création et d’édition ne sont présentées que
+quand leur permission respective est accordée.
+
 ### Messages de contact — BKO-CONTACT-001
 
 `CONTACT_MESSAGE_LIST`, `CONTACT_MESSAGE_VIEW` et `CONTACT_MESSAGE_RETRY` sont accordées par défaut à

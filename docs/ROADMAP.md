@@ -204,6 +204,7 @@ BKO-CONTACT-001 Messages de contact Backoffice                DONE — liste pag
 DIR-001 Fondation de publication de l’annuaire Avocats/Cabinets DONE — données, opt-in, critères V1 et fixtures synthétiques ; aucun listing public ni import réel
 DIR-002 Profils annuaire sans compte                     DONE — displayName, User facultatif, provenance UUID privée, statut UNKNOWN et téléphones Cabinet multiples ; validation schéma isolé et revue navigateur complétées avec DATA-DIR-005
 DATA-DIR-005 Import local idempotent de l’annuaire       DONE — dry-run par défaut, écriture explicite testée sur MySQL isolé ; 605 profils / 377 Cabinets, sans User ni portraits ; 7 partiels, 10 asymétries documentées
+DATA-DIR-006 Import des portraits historiques              DONE WITH SOURCE GAPS — 579 récupérés/associés, 24 URL en 404, 2 sans source ; environ 120 Mio de sources UUID-nommées locales, Media public, second passage sans doublons en base MySQL isolée
 FO-DIR-001 Annuaire public Avocats                  DONE — recherche nom/cabinet/localité, liste paginée et liens vers fiches publiques
 FO-DIR-002 Fiches publiques Avocat & Cabinet        DONE — UUID publics, éligibilité DIR-001, coordonnées professionnelles et membres publiables
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning

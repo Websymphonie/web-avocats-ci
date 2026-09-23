@@ -446,10 +446,11 @@ jamais contenir le chemin absolu. Sur un déploiement neuf, la stratégie
 préférée est une seule exposition `public/uploads -> /shared/storage/public`.
 Le dépôt conserve toutefois `public/uploads` pour les anciens uploads
 Vich/Admin : jusqu’à leur migration, l’infrastructure doit exposer au minimum
-`/uploads/galleries` et `/uploads/content/covers` vers les deux sous-répertoires
-persistants. `private/` ne doit disposer d’aucun alias ou lien HTTP. Les clés
-persistées en base restent relatives (`galleries/<nom>` ou
-`content/covers/<nom>` ou `training/covers/<nom>`). Il n’introduit ni S3, ni
+`/uploads/galleries`, `/uploads/content/covers` et `/uploads/institution` vers
+les répertoires persistants correspondants. `private/` ne doit disposer d’aucun
+alias ou lien HTTP. Les clés persistées en base restent relatives
+(`galleries/<nom>`, `content/covers/<nom>`, `training/covers/<nom>` ou
+`institution/lawyers/<nom>`). Il n’introduit ni S3, ni
 médiathèque, ni relation Doctrine vers un contexte métier. Les consommateurs
 signalent leurs usages via le contrat applicatif partagé de vérification média.
 
@@ -790,7 +791,8 @@ public/uploads -> $APP_STORAGE_DIR/public
 
 Lorsque `public/uploads` contient encore les anciens uploads Vich/Admin, ne pas
 le remplacer sans migration : utiliser des alias ou liens spécialisés pour
-`/uploads/galleries` et `/uploads/content/covers`, puis planifier la migration.
+`/uploads/galleries`, `/uploads/content/covers` et `/uploads/institution`, puis
+planifier la migration.
 Les documents privés ne doivent avoir aucun alias HTTP direct.
 
 LiipImagine lit les originaux depuis `$APP_STORAGE_DIR/public`. Comme les
@@ -805,6 +807,7 @@ Checklist minimale :
 ```text
 APP_STORAGE_DIR=/shared/storage
 $APP_STORAGE_DIR/public writable
+$APP_STORAGE_DIR/public/institution/lawyers writable
 $APP_STORAGE_DIR/private writable
 public/uploads -> $APP_STORAGE_DIR/public (ou aliases spécialisés temporaires)
 $APP_STORAGE_DIR/private non exposé par le serveur web
@@ -1015,6 +1018,20 @@ création et le portrait, sont préservés.
 Le dataset comporte 605 avocats, 377 Cabinets, 7 Cabinets partiels, 5 profils
 sans Cabinet et 10 relations asymétriques signalées. Aucune ville fiable n’étant
 fournie, la recherche publique par localité reste incomplète. Les URLs de 603
-portraits sont ignorées jusqu’à DATA-DIR-006. Le statut `ACTIVE` nécessaire à
+portraits sont traitées par DATA-DIR-006. Le statut `ACTIVE` nécessaire à
 la publication des Cabinets est une exigence technique actuelle et non une
 vérification institutionnelle contemporaine.
+
+DATA-DIR-006 ajoute la commande explicite `app:data:import-legacy-directory-portraits`.
+Seule cette commande `--write` contacte séquentiellement l’hôte historique ;
+fixtures et import DATA-DIR-005 restent sans réseau. Les originaux validés sont
+conservés sous des noms UUID source dans `Data/portraits/`, puis les copies
+passent par `MediaUploadServiceInterface` vers `institution/lawyers` et sont
+associées par `legacySourceUuid`. Le manifeste de correspondance Media est un
+état local propre à la base d’import, pas un identifiant métier partageable
+entre bases. Le répertoire source n’est pas servi publiquement. Le lien
+`public/uploads/institution` expose uniquement le stockage public institutionnel.
+Sur la base MySQL temporaire validée, 579 images ont été importées ; 24 sources
+retournaient durablement 404 et deux profils ne fournissent aucune URL.
+Les originaux récupérés occupent environ 120 Mio. Aucun Cabinet ni User n’est
+créé ou enrichi par cette étape.

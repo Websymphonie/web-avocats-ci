@@ -104,6 +104,7 @@ propriétaire.
 | DIR-001 | préparer la publication de profils Avocat et Cabinet | `IMPLEMENTED` — UUID profil, visibilité explicite, coordonnées professionnelles, portrait protégé et règle d’éligibilité V1 |
 | DIR-002 | permettre des profils annuaire sans compte et préserver la provenance | `IMPLEMENTED` — `displayName` autonome, User nullable, statut `UNKNOWN`, UUID source privés et téléphones Cabinet multiples |
 | DATA-DIR-005 | importer localement et de façon idempotente l’annuaire historique | `IMPLEMENTED` — commande explicite dry-run par défaut / `--write`, validée deux fois sur une base MySQL isolée ; 605 profils et 377 Cabinets, sans User ni portraits |
+| DATA-DIR-006 | récupérer et importer les portraits historiques disponibles | `IMPLEMENTED WITH SOURCE GAPS` — 579 portraits validés/importés, 24 URL en 404, 2 sans source ; originaux UUID-nommés locaux (~120 Mio), Media associé par UUID de provenance, fixtures sans réseau |
 | FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable, paginé et lié aux fiches publiques FO-DIR-002 |
 | FO-DIR-002 | consulter les fiches publiques avocat et cabinet | `IMPLEMENTED` — `/avocats/{uuid}` et `/cabinets/{uuid}`, critères DIR-001, coordonnées professionnelles et membres éligibles |
 

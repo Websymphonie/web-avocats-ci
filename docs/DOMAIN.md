@@ -649,3 +649,10 @@ jamais chargées depuis la source. Le `ACTIVE` imposé aux Cabinets par la polic
 de publication actuelle est une compatibilité technique, pas une vérification
 institutionnelle contemporaine. Aucun pays n’est fabriqué ; les éventuels
 défauts d’affichage restent des défauts applicatifs, pas des données source.
+
+DATA-DIR-006 récupère séparément les portraits disponibles via une commande
+explicite, avec validation réelle du format et association uniquement par UUID
+de provenance. Les fichiers sources UUID-nommés restent locaux au dataset ; les
+Media publics sont créés par le service Media canonique sous `institution/lawyers`.
+Les profils sans image récupérable gardent `portraitMediaId = null` et leur
+fallback existant. La suppression d’un Media associé demeure protégée.

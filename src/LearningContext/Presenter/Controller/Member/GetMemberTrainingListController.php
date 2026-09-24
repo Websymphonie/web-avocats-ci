@@ -77,6 +77,7 @@ final class GetMemberTrainingListController extends AbstractController
             'allSummaries' => $summaries,
             'groups' => $groups,
             'view' => $view,
+            'now' => $now,
             'coverUrls' => $this->mediaUrls->resolveMany($mediaIds),
         ]);
     }

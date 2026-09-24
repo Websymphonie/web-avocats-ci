@@ -29,17 +29,28 @@ final class MemberHomeController extends AbstractController
 
         $now = new DateTimeImmutable();
         $summaries = $this->handleQuery(new GetMemberTrainingSummariesQuery($user->id));
-        $upcomingLives = array_values(array_filter(
+        $availableLives = array_values(array_filter(
             $summaries,
-            static fn ($summary): bool => $summary->training->type === TrainingType::LIVE
+            static fn (MemberTrainingSummary $summary): bool => $summary->training->type === TrainingType::LIVE
                 && $summary->training->liveDetails !== null
-                && $summary->training->liveDetails->startsAt > $now,
+        ));
+        $activeLives = array_values(array_filter(
+            $availableLives,
+            static fn (MemberTrainingSummary $summary): bool => $summary->training->liveDetails->endsAt > $now,
         ));
         usort(
-            $upcomingLives,
+            $activeLives,
             static fn ($left, $right): int => $left->training->liveDetails->startsAt <=> $right->training->liveDetails->startsAt,
         );
-        $upcomingLives = array_slice($upcomingLives, 0, 3);
+        $recentEndedLives = array_values(array_filter(
+            $availableLives,
+            static fn (MemberTrainingSummary $summary): bool => $summary->training->liveDetails->endsAt <= $now,
+        ));
+        usort(
+            $recentEndedLives,
+            static fn ($left, $right): int => $right->training->liveDetails->endsAt <=> $left->training->liveDetails->endsAt,
+        );
+        $liveSessions = array_merge(array_slice($activeLives, 0, 3), array_slice($recentEndedLives, 0, 2));
         $inProgressCourses = array_values(array_filter(
             $summaries,
             static fn (MemberTrainingSummary $summary): bool => $summary->training->type === TrainingType::COURSE
@@ -56,7 +67,7 @@ final class MemberHomeController extends AbstractController
         $continuationCourse = $inProgressCourses[0] ?? $notStartedCourses[0] ?? null;
 
         $mediaIds = [];
-        foreach (array_merge($upcomingLives, $continuationCourse !== null ? [$continuationCourse] : []) as $summary) {
+        foreach (array_merge($liveSessions, $continuationCourse !== null ? [$continuationCourse] : []) as $summary) {
             if ($summary->training->coverMediaId !== null) {
                 $mediaIds[] = $summary->training->coverMediaId;
             }
@@ -65,7 +76,8 @@ final class MemberHomeController extends AbstractController
 
         return $this->render('member/home/index.html.twig', [
             'title' => 'Tableau de bord',
-            'upcomingLives' => $upcomingLives,
+            'liveSessions' => $liveSessions,
+            'now' => $now,
             'liveCoverUrls' => $coverUrls,
             'continuationCourse' => $continuationCourse,
             'continuationCoverUrl' => $continuationCourse !== null && $continuationCourse->training->coverMediaId !== null

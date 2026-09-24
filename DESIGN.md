@@ -93,6 +93,8 @@ Symfony Forms own field rendering and validation. `AlertDialog` owns individual 
 
 Symfony UX Autocomplete with Tom Select is the canonical multi-select foundation for Backoffice taxonomy fields. The generic `form-multi-select` hook keeps the control compact, lets chips wrap naturally and gives the dropdown, search input, focus ring and selected options the same semantic token treatment in both themes. Removal stays explicit through the compact × control; inline creation and drag/drop are intentionally excluded.
 
+Single-value selects with search use the shared Twig `Combobox` and Stimulus controller rather than Tom Select. The trigger follows standard `h-11 rounded-xl` fields; the searchable popup uses semantic tokens in both themes. Remote entity lookup may use the Symfony UX autocomplete JSON endpoint while the form submits only the selected entity ID. Free-text creation is not implicit.
+
 ### Event workflow
 
 Event forms reuse the News editor and taxonomy patterns. Format is a business

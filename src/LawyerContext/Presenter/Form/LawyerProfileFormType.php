@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Websymphonie\LawyerContext\Presenter\Form;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,9 +19,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
-use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\Cabinet\CabinetEntity;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\LawyerProfile\LawyerProfileEntity;
-use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Repository\Cabinet\CabinetRepository;
 
 /** @extends AbstractType<LawyerProfileEntity> */
 final class LawyerProfileFormType extends AbstractType
@@ -31,11 +28,7 @@ final class LawyerProfileFormType extends AbstractType
     {
         $builder
             ->add('displayName', TextType::class, ['label' => 'Nom professionnel public', 'required' => true, 'constraints' => [new NotBlank(message: 'Le nom professionnel est obligatoire.'), new Length(max: 255)]])
-            ->add('cabinet', EntityType::class, [
-                'label' => 'Cabinet', 'class' => CabinetEntity::class, 'choice_label' => 'name', 'required' => false,
-                'placeholder' => 'Sélectionner un cabinet',
-                'query_builder' => fn (CabinetRepository $repo) => $repo->createQueryBuilder('cabinet')->andWhere('cabinet.status = :status')->setParameter('status', 'ACTIVE')->orderBy('cabinet.name', 'ASC'),
-            ])
+            ->add('cabinet', CabinetAutocompleteType::class, ['label' => 'Cabinet', 'required' => false])
             ->add('barNumber', TextType::class, ['label' => 'Numéro du Barreau', 'required' => false])
             ->add('professionalStatus', ChoiceType::class, ['label' => 'Statut professionnel', 'choices' => ['Non vérifié' => 'UNKNOWN', 'En activité' => 'ACTIVE', 'Stagiaire' => 'TRAINEE', 'Honoraire' => 'HONORARY', 'Suspendu' => 'SUSPENDED']])
             ->add('specializationSummary', TextType::class, ['label' => 'Domaines de pratique', 'required' => false, 'attr' => ['placeholder' => 'Ex. Droit des affaires, droit du travail']])

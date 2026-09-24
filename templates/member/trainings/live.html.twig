@@ -6,9 +6,11 @@
 {% block body %}
     {% set isUpcoming = session.startsAt > now %}
     {% set isPast = session.endsAt <= now %}
-    {% set statusLabel = isPast ? 'Session terminée' : (isUpcoming ? 'À venir' : 'Session en cours') %}
+    {% set isOngoing = not isUpcoming and not isPast %}
+    {% set hasReplay = replayEmbedUrl is not null %}
+    {% set statusLabel = hasReplay ? 'Replay disponible' : (isPast ? 'Session terminée' : (isUpcoming ? 'À venir' : 'En direct')) %}
     {% set statusClasses = isPast
-        ? 'border-border bg-muted text-muted-foreground'
+        ? (hasReplay ? 'border-primary/25 bg-primary/10 text-primary' : 'border-border bg-muted text-muted-foreground')
         : (isUpcoming ? 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300' : 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300') %}
     {% set imageUrl = coverUrl|default(default_image_url) %}
 
@@ -26,7 +28,7 @@
                     <div class="absolute inset-x-5 bottom-5 flex flex-wrap items-center gap-2 sm:inset-x-6">
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
                             <twig:ux:icon name="lucide:radio-tower" class="size-3.5" aria-hidden="true"/>
-                            Live
+                            Formation LIVE
                         </span>
                         <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm {{ statusClasses }}">
                             {{ statusLabel }}
@@ -39,10 +41,13 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ session.categoryName }}</p>
                     {% endif %}
                     <h1 class="mt-2 text-2xl font-semibold tracking-tight text-card-foreground sm:text-3xl">{{ session.title }}</h1>
-                    <p class="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Retrouvez les informations pratiques de votre session Live et son accès sécurisé.</p>
-
                     {% if liveEmbedUrl %}
-                        <div class="mt-7 aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+                        <div class="mt-6" aria-labelledby="live-player-title">
+                            <h2 id="live-player-title" class="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                                <span class="size-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                                En direct
+                            </h2>
+                            <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
                             <iframe
                                 class="size-full"
                                 src="{{ liveEmbedUrl }}"
@@ -51,17 +56,35 @@
                                 allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen
                             ></iframe>
+                            </div>
                         </div>
                     {% elseif isUpcoming %}
-                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">La diffusion en direct sera disponible à partir du {{ session.startsAt|format_datetime(pattern='d MMMM Y à HH:mm', locale='fr_FR') }}.</p>
+                        <div class="mt-6 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-4" role="status">
+                            <h2 class="text-sm font-semibold text-card-foreground">La session débutera le {{ session.startsAt|format_datetime(pattern='d MMMM Y à HH:mm', locale='fr_FR') }}</h2>
+                            <p class="mt-1 text-sm leading-5 text-muted-foreground">L’accès à la diffusion et au lien de connexion sera proposé à l’ouverture de la session.</p>
+                        </div>
                     {% elseif isPast and replayEmbedUrl %}
-                        <div class="mt-7 aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-                            <iframe class="size-full" src="{{ replayEmbedUrl }}" title="Replay — {{ session.title }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="mt-6" aria-labelledby="replay-player-title">
+                            <h2 id="replay-player-title" class="mb-3 text-sm font-semibold text-primary">Replay</h2>
+                            <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+                                <iframe class="size-full" src="{{ replayEmbedUrl }}" title="Replay — {{ session.title }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
                         </div>
                     {% elseif isPast %}
-                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">Replay indisponible pour cette session.</p>
+                        <div class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-4" role="status">
+                            <h2 class="text-sm font-semibold text-card-foreground">Session terminée</h2>
+                            <p class="mt-1 text-sm leading-5 text-muted-foreground">Replay indisponible pour cette session.</p>
+                        </div>
+                    {% elseif session.deliveryMode.value == 'IN_PERSON' %}
+                        <div class="mt-6 rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-4" role="status">
+                            <h2 class="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Session en cours</h2>
+                            <p class="mt-1 text-sm leading-5 text-muted-foreground">Cette session se déroule en présentiel. Consultez le lieu et les horaires dans les informations pratiques.</p>
+                        </div>
                     {% else %}
-                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">La diffusion en direct n’est pas disponible pour cette session.</p>
+                        <div class="mt-6 rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-4" role="status">
+                            <h2 class="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Session en cours</h2>
+                            <p class="mt-1 text-sm leading-5 text-muted-foreground">La diffusion vidéo n’est pas disponible pour le moment.</p>
+                        </div>
                     {% endif %}
 
                     <div class="mt-7 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
@@ -108,13 +131,15 @@
                     </div>
                 </dl>
 
-                {% if session.canJoin %}
+                {% if session.canJoin and isOngoing %}
                     <a href="{{ path('learning_member_live_join', {uuid: session.trainingUuid}) }}" class="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                        Accéder à la session
+                        Rejoindre la session
                         <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true"/>
                     </a>
                     <p class="mt-3 text-center text-xs leading-5 text-muted-foreground">L’accès est vérifié côté serveur pour votre inscription active.</p>
-                {% elseif session.deliveryMode.value == 'IN_PERSON' %}
+                {% elseif isUpcoming %}
+                    <p class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm leading-5 text-muted-foreground">Vous pourrez accéder à la session à partir de l’heure prévue.</p>
+                {% elseif session.deliveryMode.value == 'IN_PERSON' and isOngoing %}
                     <p class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm leading-5 text-muted-foreground">Cette session se déroule en présentiel.</p>
                 {% endif %}
             </aside>

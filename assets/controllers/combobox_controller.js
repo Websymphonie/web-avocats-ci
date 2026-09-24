@@ -11,22 +11,35 @@ export default class extends Controller {
         'hiddenInput',
         'group',
         'clearButton',
+        'empty',
     ];
 
     static values = {
         value: {type: String, default: ''},
         placeholder: {type: String, default: 'Select option...'},
+        selectedLabel: {type: String, default: ''},
+        searchUrl: {type: String, default: ''},
+        minimumCharacters: {type: Number, default: 0},
+        minimumMessage: {type: String, default: 'Continue typing to search.'},
+        loadingMessage: {type: String, default: 'Loading…'},
+        errorMessage: {type: String, default: 'Search failed. Try again.'},
+        emptyMessage: {type: String, default: 'No results found.'},
     };
 
     #activeIndex = -1;
     #isOpen = false;
     #outsideClickHandler = null;
+    #searchTimeout = null;
+    #requestController = null;
+    #requestVersion = 0;
+    #isComposing = false;
 
     connect() {
         this.#outsideClickHandler = this.#onOutsideClick.bind(this);
     }
 
     disconnect() {
+        this.#cancelRemoteSearch();
         this.#close();
     }
 
@@ -40,10 +53,20 @@ export default class extends Controller {
 
     clear(event) {
         event.stopPropagation();
+        this.selectedLabelValue = '';
         this.valueValue = '';
+        this.dispatch('change', {detail: {value: '', label: ''}, bubbles: true});
+        this.#close();
+        this.triggerTarget.focus();
     }
 
     onSearch(event) {
+        if (this.hasSearchUrlValue && this.searchUrlValue) {
+            if (this.#isComposing || event.isComposing) return;
+            this.#queueRemoteSearch(event.target.value);
+            return;
+        }
+
         const query = event.target.value.toLowerCase();
         let firstVisibleIndex = -1;
         let visibleCount = 0;
@@ -64,6 +87,18 @@ export default class extends Controller {
 
         this.emptyTarget.hidden = visibleCount > 0;
         this.#setActive(firstVisibleIndex);
+    }
+
+    onCompositionStart() {
+        this.#isComposing = true;
+        this.#cancelRemoteSearch();
+    }
+
+    onCompositionEnd(event) {
+        this.#isComposing = false;
+        if (this.hasSearchUrlValue && this.searchUrlValue) {
+            this.#queueRemoteSearch(event.target.value);
+        }
     }
 
     onSelect(event) {
@@ -98,6 +133,8 @@ export default class extends Controller {
     }
 
     onSearchKeydown(event) {
+        if (event.isComposing || this.#isComposing || event.keyCode === 229) return;
+
         switch (event.key) {
             case 'ArrowDown': {
                 event.preventDefault();
@@ -149,13 +186,18 @@ export default class extends Controller {
         this.#isOpen = true;
 
         this.searchTarget.value = '';
-        for (const option of this.optionTargets) {
-            option.hidden = false;
+        if (this.hasSearchUrlValue && this.searchUrlValue) {
+            for (const option of this.optionTargets) option.hidden = true;
+            for (const group of this.groupTargets) group.hidden = true;
+            this.emptyTarget.textContent = this.minimumCharactersValue > 0 ? this.minimumMessageValue : this.loadingMessageValue;
+            this.emptyTarget.hidden = false;
+            this.#setListBusy(false);
+            if (this.minimumCharactersValue === 0) this.#queueRemoteSearch('');
+        } else {
+            for (const option of this.optionTargets) option.hidden = false;
+            for (const group of this.groupTargets) group.hidden = false;
+            this.emptyTarget.hidden = true;
         }
-        for (const group of this.groupTargets) {
-            group.hidden = false;
-        }
-        this.emptyTarget.hidden = true;
         this.#setActive(-1);
 
         const popover = this.popoverTarget;
@@ -174,6 +216,7 @@ export default class extends Controller {
     #close() {
         if (!this.#isOpen) return;
         this.#isOpen = false;
+        this.#cancelRemoteSearch();
 
         const popover = this.popoverTarget;
         popover.hidden = true;
@@ -186,6 +229,7 @@ export default class extends Controller {
 
     #selectOption(option) {
         const {value, label} = option.dataset;
+        this.selectedLabelValue = label;
         this.valueValue = value;
         this.dispatch('change', {detail: {value, label}, bubbles: true});
         this.#close();
@@ -197,7 +241,7 @@ export default class extends Controller {
         const selected = this.hasOptionTarget
             ? this.optionTargets.find((o) => o.dataset.value === this.valueValue)
             : null;
-        const label = selected ? selected.dataset.label : '';
+        const label = this.selectedLabelValue || (selected ? selected.dataset.label : '');
         this.labelTarget.textContent = label || this.placeholderValue;
         this.labelTarget.classList.toggle('text-muted-foreground', !label);
         if (this.hasClearButtonTarget) {
@@ -210,12 +254,113 @@ export default class extends Controller {
         for (const option of this.optionTargets) {
             const selected = option.dataset.value === this.valueValue;
             option.setAttribute('aria-selected', String(selected));
-            const icon = option.querySelector('svg');
+            const icon = option.querySelector('[data-combobox-check]');
             if (icon) {
                 icon.classList.toggle('opacity-0', !selected);
                 icon.classList.toggle('opacity-100', selected);
             }
         }
+    }
+
+    #queueRemoteSearch(rawQuery) {
+        this.#cancelRemoteSearch();
+        const query = rawQuery.trim();
+        this.#clearRemoteOptions();
+        this.#setActive(-1);
+
+        if (query.length < this.minimumCharactersValue) {
+            this.emptyTarget.textContent = this.minimumMessageValue;
+            this.emptyTarget.hidden = false;
+            this.#setListBusy(false);
+            return;
+        }
+
+        this.emptyTarget.textContent = this.loadingMessageValue;
+        this.emptyTarget.hidden = false;
+        this.#setListBusy(true);
+        const requestVersion = this.#requestVersion;
+        this.#searchTimeout = window.setTimeout(() => {
+            void this.#loadRemoteResults(query, requestVersion);
+        }, 300);
+    }
+
+    async #loadRemoteResults(query, requestVersion) {
+        const controller = new AbortController();
+        this.#requestController = controller;
+
+        try {
+            const url = new URL(this.searchUrlValue, window.location.origin);
+            url.searchParams.set('query', query);
+            const response = await fetch(url, {
+                signal: controller.signal,
+                headers: {Accept: 'application/json'},
+            });
+            if (!response.ok) throw new Error(`Autocomplete request failed (${response.status}).`);
+
+            const payload = await response.json();
+            if (requestVersion !== this.#requestVersion || this.searchTarget.value.trim() !== query) return;
+
+            const results = Array.isArray(payload.results) ? payload.results : [];
+            this.#clearRemoteOptions();
+            results.forEach((result, index) => this.#appendRemoteOption(result, index));
+
+            this.emptyTarget.textContent = this.emptyMessageValue;
+            this.emptyTarget.hidden = results.length > 0;
+            this.#setListBusy(false);
+            requestAnimationFrame(() => {
+                if (requestVersion === this.#requestVersion) this.#setActive(this.#firstVisibleIndex());
+            });
+        } catch (error) {
+            if (error.name === 'AbortError' || requestVersion !== this.#requestVersion) return;
+            this.emptyTarget.textContent = this.errorMessageValue;
+            this.emptyTarget.hidden = false;
+            this.#setListBusy(false);
+        }
+    }
+
+    #appendRemoteOption(result, index) {
+        if (result?.value === undefined || result?.text === undefined) return;
+
+        const option = document.createElement('div');
+        const listboxId = this.searchTarget.getAttribute('aria-controls') || 'combobox_listbox';
+        option.id = `${listboxId}_remote_option_${index}`;
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', String(String(result.value) === this.valueValue));
+        option.dataset.comboboxTarget = 'option';
+        option.dataset.value = String(result.value);
+        option.dataset.label = String(result.text);
+        option.dataset.remoteOption = 'true';
+        option.dataset.action = 'click->combobox#onSelect mouseenter->combobox#onOptionHover';
+        option.className = 'relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[active]:bg-accent data-[active]:text-accent-foreground';
+
+        const check = document.createElement('span');
+        check.dataset.comboboxCheck = '';
+        check.setAttribute('aria-hidden', 'true');
+        check.className = `size-4 ${String(result.value) === this.valueValue ? 'opacity-100' : 'opacity-0'}`;
+        check.textContent = '✓';
+
+        const label = document.createElement('span');
+        label.textContent = String(result.text);
+        option.append(check, label);
+        this.popoverTarget.querySelector('[role="listbox"]').append(option);
+    }
+
+    #clearRemoteOptions() {
+        this.popoverTarget.querySelectorAll('[data-remote-option="true"]').forEach((option) => option.remove());
+    }
+
+    #setListBusy(isBusy) {
+        this.popoverTarget.querySelector('[role="listbox"]')?.setAttribute('aria-busy', String(isBusy));
+    }
+
+    #cancelRemoteSearch() {
+        if (this.#searchTimeout !== null) {
+            window.clearTimeout(this.#searchTimeout);
+            this.#searchTimeout = null;
+        }
+        this.#requestVersion++;
+        this.#requestController?.abort();
+        this.#requestController = null;
     }
 
     #setActive(index) {

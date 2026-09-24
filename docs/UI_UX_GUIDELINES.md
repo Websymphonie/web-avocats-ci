@@ -281,6 +281,13 @@ générique `form-multi-select` sert de convention de style : elle ne dépend pa
 de News et peut être réutilisée par de futures catégories d’événements ou de
 formations.
 
+Pour un choix d’entité unique avec recherche, réutiliser le composant Twig
+`Combobox` et son contrôleur Stimulus, sans Tom Select. Le déclencheur reprend
+la hauteur `h-11`, les coins `rounded-xl`, la bordure et l’anneau de focus des
+champs standards ; le menu et ses états utilisent les tokens sémantiques en
+thème clair comme sombre. La recherche distante est facultative ; la valeur
+soumise reste l’identifiant sélectionné et ne valide jamais du texte libre.
+
 Le contrôle conserve le label Symfony, le focus clavier et les attributs ARIA
 fournis par Tom Select. Les sélections apparaissent en chips compactes avec une
 action de retrait, les chips passent à la ligne sur les petits écrans et les

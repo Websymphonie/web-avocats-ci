@@ -12,7 +12,8 @@
 | Feedback                    | `FlashToast` through the shared flash service                                                          |
 | Forms                       | Symfony `NewsFormType` / `EventFormType`                                                               |
 | Rich text editor            | `../assets/react/controllers/Content/RichTextEditor.tsx` mounted by the Symfony News form              |
-| Multi-select / autocomplete | Symfony UX Autocomplete + Tom Select with the generic `form-multi-select` styling hook                 |
+| Select / combobox | `templates/components/Combobox.html.twig` + `assets/controllers/combobox_controller.js` for searchable single-value selection |
+| Multi-select | Symfony UX Autocomplete + Tom Select with the generic `form-multi-select` styling hook |
 | Pagination                  | `shared/views/_list_pagination.html.twig`                                                              |
 | Authorization               | server-side `IsGranted` and `is_granted` with `CONTENT_NEWS_*` / `CONTENT_EVENT_*`                     |
 | Content navigation          | `SharedContext\Application\Service\Sidebar\Modules\ContentMenu`                                        |
@@ -44,6 +45,8 @@
   this foundation.
 - Multi-select dropdowns, search inputs, selected options and focus states consume the existing semantic tokens;
   validation errors remain rendered by Symfony Forms below the field.
+- Single-value searchable selection uses the shared `Combobox` component with an `h-11 rounded-xl` trigger in both themes.
+  Optional remote lookup returns existing choices; submission carries only the selected value and never accepts free text.
 - Event lifecycle actions are state-aware: publish is available for drafts, cancel for published events, and archive for
   published or cancelled events. Event status is never a free form field.
 - Event practical fields follow the selected format visually, but date ordering, safe URL protocols and publication

@@ -141,7 +141,8 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringNotContainsString('Les rendez-vous accessibles seront affichés ici.', $content);
         self::assertStringNotContainsString($otherLive->getTitle(), $content);
         self::assertLessThan(strpos($content, $latest->getTitle()), strpos($content, $soonest->getTitle()));
-        self::assertStringContainsString('/espace/learning/trainings/' . $soonest->getUuidAsString() . '/join', $content);
+        self::assertStringContainsString('/espace/formations/' . $soonest->getUuidAsString() . '/live', $content);
+        self::assertStringContainsString('À venir', $content);
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
     }
 
@@ -226,7 +227,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringNotContainsString($live->getTitle(), $content);
     }
 
-    public function testAvocatDashboardKeepsEmptyStateWithoutUpcomingLive(): void
+    public function testAvocatDashboardShowsRecentEndedLiveWithoutReplay(): void
     {
         $client = $this->clientWithSchema();
         $avocat = $this->createUser(['ROLE_AVOCAT']);
@@ -238,7 +239,9 @@ final class LearningMemberSecurityTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
-        self::assertStringContainsString('Aucun rendez-vous à afficher', $content);
+        self::assertStringContainsString($pastLive->getTitle(), $content);
+        self::assertStringContainsString('Session terminée', $content);
+        self::assertSelectorTextContains('a[aria-label="Consulter la session : ' . $pastLive->getTitle() . '"]', 'Consulter');
         self::assertStringContainsString('Votre parcours apparaîtra ici', $content);
     }
 
@@ -457,6 +460,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED);
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
+        $client->disableReboot();
 
         $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
 
@@ -465,9 +469,17 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString($live->getTitle(), $content);
         self::assertStringContainsString('En ligne', $content);
         self::assertStringContainsString('À venir', $content);
-        self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+        self::assertStringContainsString('La session débutera le', $content);
+        self::assertStringContainsString('Vous pourrez accéder à la session à partir de l’heure prévue.', $content);
+        self::assertStringNotContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+        self::assertStringNotContainsString('<iframe', $content);
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
         self::assertStringNotContainsString('youtube-nocookie.com', $content);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('a.bg-primary[href="/espace/formations/' . $live->getUuidAsString() . '/live"]', 'Détails de la session');
+        self::assertStringNotContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', (string) $client->getResponse()->getContent());
     }
 
     public function testAvocatCanRenderYoutubeLiveWithoutExposingJoinUrl(): void
@@ -481,16 +493,23 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
+        $client->disableReboot();
 
         $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+        self::assertStringContainsString('En direct', $content);
         self::assertStringContainsString('Diffusion en direct — ' . $live->getTitle(), $content);
         self::assertStringContainsString('allowfullscreen', $content);
         self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Sessions LIVE', (string) $client->getResponse()->getContent());
+        self::assertStringContainsString('En direct', (string) $client->getResponse()->getContent());
     }
 
     public function testAvocatCanRenderYoutubeOnlyLiveWithoutJoinUrl(): void
@@ -504,6 +523,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
+        $client->disableReboot();
 
         $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
 
@@ -548,14 +568,26 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
+        $client->disableReboot();
 
         $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('Replay — ' . $live->getTitle(), $content);
+        self::assertStringContainsString('Replay disponible', $content);
         self::assertStringContainsString('youtube-nocookie.com/embed/dQw4w9WgXcQ', $content);
         self::assertStringNotContainsString('youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+        self::assertStringNotContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('a.bg-primary[href="/espace/formations/' . $live->getUuidAsString() . '/live"]', 'Voir le replay');
+        self::assertStringContainsString('Replay disponible', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('a[aria-label="Voir le replay : ' . $live->getTitle() . '"]', 'Replay');
     }
 
     public function testFinishedLiveWithoutReplayShowsUnavailableStateAndNoPlayer(): void
@@ -569,13 +601,43 @@ final class LearningMemberSecurityTest extends WebTestCase
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
+        $client->disableReboot();
 
         $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
 
         self::assertResponseIsSuccessful();
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString('Replay indisponible', $content);
+        self::assertStringContainsString('Session terminée', $content);
+        self::assertStringNotContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
         self::assertStringNotContainsString('youtube-nocookie.com', $content);
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('a.bg-primary[href="/espace/formations/' . $live->getUuidAsString() . '/live"]', 'Consulter');
+        self::assertStringContainsString('Session terminée', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('a[aria-label="Consulter la session : ' . $live->getTitle() . '"]', 'Consulter');
+    }
+
+    public function testOngoingInPersonLiveShowsLocationWithoutEmptyVideoContainer(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::IN_PERSON, TrainingStatus::PUBLISHED, null, 'Maison de l’Avocat', new DateTimeImmutable('-10 minutes'));
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Session en cours', $content);
+        self::assertStringContainsString('Maison de l’Avocat', $content);
+        self::assertStringNotContainsString('<iframe', $content);
+        self::assertStringNotContainsString('aspect-video', $content);
     }
 
     public function testLiveDetailsShowHybridLocationAndDenyUnauthorizedMembers(): void

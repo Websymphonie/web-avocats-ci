@@ -1,0 +1,24 @@
+{% block cabinet_autocomplete_widget %}
+    {% set cabinetChoices = [] %}
+    {% for choice in form.vars.choices %}
+        {% set cabinetChoices = cabinetChoices|merge([{value: choice.value, label: choice.label}]) %}
+    {% endfor %}
+
+    {{ component('Combobox', {
+        id: form.vars.id,
+        name: form.vars.full_name,
+        value: form.vars.value|default(''),
+        choices: cabinetChoices,
+        placeholder: 'Rechercher un cabinet',
+        searchPlaceholder: 'Saisir le nom du cabinet…',
+        emptyMessage: 'Aucun cabinet trouvé.',
+        minimumCharacters: 2,
+        minimumMessage: 'Saisissez au moins 2 caractères pour rechercher.',
+        loadingMessage: 'Recherche des cabinets…',
+        errorMessage: 'La recherche a échoué. Modifiez votre saisie pour réessayer.',
+        searchUrl: form.vars.attr['data-symfony--ux-autocomplete--autocomplete-url-value']|default(''),
+        clearable: not form.vars.required,
+        disabled: form.vars.disabled,
+        required: form.vars.required
+    }) }}
+{% endblock %}

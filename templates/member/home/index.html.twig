@@ -79,7 +79,9 @@
                         <span class="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">À venir</span>
                     </div>
                     <h3 class="mt-5 text-base font-semibold text-card-foreground">Prochains LIVE</h3>
-                    <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Les rendez-vous accessibles seront affichés ici.</p>
+                    {% if upcomingLives is empty %}
+                        <p class="mt-1.5 text-sm leading-5 text-muted-foreground">Les rendez-vous accessibles seront affichés ici.</p>
+                    {% endif %}
                     {% if upcomingLives is not empty %}
                         <div class="mt-4 space-y-3">
                             {% for summary in upcomingLives %}
@@ -120,6 +122,9 @@
                     {% set course = continuationCourse.training %}
                     {% set progress = continuationCourse.progress %}
                     {% set progressPercentage = progress ? progress.progressPercentage : 0 %}
+                    {% set coursePlayerUrl = progress is null or progressPercentage >= 100 or progress.lastAccessedLessonUuid is null or progress.lastAccessedLessonCompleted
+                        ? path('learning_member_course_player', {uuid: course.uuid})
+                        : path('learning_member_course_lesson', {uuid: course.uuid, lessonUuid: progress.lastAccessedLessonUuid}) %}
                     <div class="grid gap-5 p-5 sm:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] sm:p-6">
                         <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted sm:aspect-auto sm:min-h-36">
                             <img src="{{ continuationCoverUrl|default(default_image_url) }}" alt="" class="size-full object-cover" loading="lazy">
@@ -143,8 +148,8 @@
                                     <div class="h-full rounded-full bg-primary transition-all" style="width: {{ progressPercentage }}%"></div>
                                 </div>
                             </div>
-                            <a href="{{ path('learning_member_course_player', {uuid: course.uuid}) }}" class="mt-5 inline-flex min-h-10 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                                {{ progressPercentage > 0 ? 'Continuer' : 'Commencer' }}
+                            <a href="{{ coursePlayerUrl }}" class="mt-5 inline-flex min-h-10 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                {{ progress and progress.startedLessons > 0 ? 'Reprendre' : 'Commencer' }}
                                 <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
                             </a>
                         </div>

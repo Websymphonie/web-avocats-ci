@@ -15,6 +15,8 @@ final readonly class CourseProgress
         public int $completedLessons,
         public int $progressPercentage,
         public ?DateTimeImmutable $lastActivityAt,
+        public ?string $lastAccessedLessonUuid = null,
+        public bool $lastAccessedLessonCompleted = false,
     ) {}
 
     public static function empty(int $enrollmentId, int $totalLessons): self

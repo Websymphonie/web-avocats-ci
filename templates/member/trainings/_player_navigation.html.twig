@@ -7,7 +7,7 @@
                 {% for item in module.lessons %}
                     {% set isActive = item.lesson.uuid == player.activeLesson.lesson.uuid %}
                     <li>
-                        <a href="{{ path('learning_member_course_lesson', {uuid: player.training.uuid, lessonUuid: item.lesson.uuid}) }}" class="flex items-start gap-2 rounded-xl px-2.5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground' }}">
+                        <a href="{{ path('learning_member_course_lesson', {uuid: player.training.uuid, lessonUuid: item.lesson.uuid}) }}" {% if isActive %}aria-current="page"{% endif %} class="flex items-start gap-2 rounded-xl px-2.5 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground' }}">
                             <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full {{ item.isCompleted() ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : (isActive ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground') }}">
                                 {% if item.isCompleted() %}<twig:ux:icon name="lucide:check" class="size-3" aria-hidden="true"/>{% else %}{{ item.lesson.position }}{% endif %}
                             </span>

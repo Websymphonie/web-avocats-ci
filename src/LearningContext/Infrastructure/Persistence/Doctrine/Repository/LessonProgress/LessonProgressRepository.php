@@ -7,6 +7,7 @@ namespace Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Repos
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
 use Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus;
 use Websymphonie\LearningContext\Domain\Model\CourseProgress;
 use Websymphonie\LearningContext\Domain\Model\LessonProgress;
@@ -63,7 +64,7 @@ final class LessonProgressRepository extends ServiceEntityRepository implements 
         if ($totalLessonsByEnrollmentId === []) { return []; }
         $enrollmentIds = array_keys($totalLessonsByEnrollmentId);
         $rows = $this->getEntityManager()->getConnection()->executeQuery(
-            'SELECT enrollment_id, COUNT(id) AS started_lessons, SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS completed_lessons, MAX(last_accessed_at) AS last_activity_at FROM lesson_progress WHERE enrollment_id IN (?) GROUP BY enrollment_id',
+            'SELECT progress.enrollment_id, COUNT(progress.id) AS started_lessons, SUM(CASE WHEN progress.status = ? THEN 1 ELSE 0 END) AS completed_lessons, MAX(progress.last_accessed_at) AS last_activity_at, (SELECT lesson.uuid FROM lesson_progress AS last_progress INNER JOIN lesson ON lesson.id = last_progress.lesson_id WHERE last_progress.enrollment_id = progress.enrollment_id ORDER BY last_progress.last_accessed_at DESC, last_progress.id DESC LIMIT 1) AS last_accessed_lesson_uuid, (SELECT last_progress.status FROM lesson_progress AS last_progress WHERE last_progress.enrollment_id = progress.enrollment_id ORDER BY last_progress.last_accessed_at DESC, last_progress.id DESC LIMIT 1) AS last_accessed_lesson_status FROM lesson_progress AS progress WHERE progress.enrollment_id IN (?) GROUP BY progress.enrollment_id',
             [LessonProgressStatus::COMPLETED->value, $enrollmentIds],
             ['string', ArrayParameterType::INTEGER],
         )->fetchAllAssociative();
@@ -75,7 +76,16 @@ final class LessonProgressRepository extends ServiceEntityRepository implements 
             $enrollmentId = (int) $row['enrollment_id'];
             $completed = (int) $row['completed_lessons'];
             $totalLessons = $totalLessonsByEnrollmentId[$enrollmentId] ?? 0;
-            $result[$enrollmentId] = new CourseProgress($enrollmentId, $totalLessons, (int) $row['started_lessons'], $completed, $totalLessons > 0 ? (int) round($completed / $totalLessons * 100) : 0, $row['last_activity_at'] !== null ? new \DateTimeImmutable((string) $row['last_activity_at']) : null);
+            $result[$enrollmentId] = new CourseProgress(
+                $enrollmentId,
+                $totalLessons,
+                (int) $row['started_lessons'],
+                $completed,
+                $totalLessons > 0 ? (int) round($completed / $totalLessons * 100) : 0,
+                $row['last_activity_at'] !== null ? new \DateTimeImmutable((string) $row['last_activity_at']) : null,
+                $row['last_accessed_lesson_uuid'] !== null ? Uuid::fromBinary((string) $row['last_accessed_lesson_uuid'])->toRfc4122() : null,
+                $row['last_accessed_lesson_status'] === LessonProgressStatus::COMPLETED->value,
+            );
         }
         return $result;
     }

@@ -52,6 +52,9 @@
             </div>
         {% else %}
             {% set progress = summary.progress %}
+            {% set coursePlayerUrl = progress.progressPercentage >= 100 or progress.lastAccessedLessonUuid is null or progress.lastAccessedLessonCompleted
+                ? path('learning_member_course_player', {uuid: training.uuid})
+                : path('learning_member_course_lesson', {uuid: training.uuid, lessonUuid: progress.lastAccessedLessonUuid}) %}
             <div class="mt-4">
                 <div class="mb-2 flex items-center justify-between gap-3 text-xs font-medium">
                     <span class="text-muted-foreground">Progression</span>
@@ -69,8 +72,8 @@
                         Pas encore commencée
                     {% endif %}
                 </p>
-                <a href="{{ path('learning_member_course_player', {uuid: training.uuid}) }}" class="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                    {% if progress.progressPercentage >= 100 %}Revoir la formation{% elseif progress.progressPercentage > 0 %}Continuer la formation{% else %}Commencer la formation{% endif %}
+                <a href="{{ coursePlayerUrl }}" class="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    {% if progress.progressPercentage >= 100 %}Revoir la formation{% elseif progress.startedLessons > 0 %}Reprendre le parcours{% else %}Commencer la formation{% endif %}
                     <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/>
                 </a>
             </div>

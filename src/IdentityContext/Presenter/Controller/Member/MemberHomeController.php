@@ -44,7 +44,7 @@ final class MemberHomeController extends AbstractController
             $summaries,
             static fn (MemberTrainingSummary $summary): bool => $summary->training->type === TrainingType::COURSE
                 && $summary->progress !== null
-                && $summary->progress->progressPercentage > 0
+                && $summary->progress->startedLessons > 0
                 && $summary->progress->progressPercentage < 100,
         ));
         $notStartedCourses = array_values(array_filter(

@@ -138,6 +138,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         $content = (string) $client->getResponse()->getContent();
         self::assertStringContainsString($soonest->getTitle(), $content);
         self::assertStringContainsString($latest->getTitle(), $content);
+        self::assertStringNotContainsString('Les rendez-vous accessibles seront affichés ici.', $content);
         self::assertStringNotContainsString($otherLive->getTitle(), $content);
         self::assertLessThan(strpos($content, $latest->getTitle()), strpos($content, $soonest->getTitle()));
         self::assertStringContainsString('/espace/learning/trainings/' . $soonest->getUuidAsString() . '/join', $content);
@@ -279,6 +280,42 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('100 %', (string) $client->getResponse()->getContent());
         self::assertStringContainsString('Formation terminée', (string) $client->getResponse()->getContent());
+        self::assertSelectorExists('a[href="/espace/formations/' . $course->getUuidAsString() . '"]');
+        self::assertSelectorTextContains('a[href="/espace/formations/' . $course->getUuidAsString() . '"]', 'Revoir la formation');
+    }
+
+    public function testMemberResumeTargetsMostRecentlyAccessedIncompleteLesson(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $firstLesson = $this->createCourseLesson($course, 1);
+        $lastAccessedLesson = $this->createCourseLesson($course, 2);
+        $enrollment = $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        foreach ([[$firstLesson, '-2 hours'], [$lastAccessedLesson, '-1 hour']] as [$lesson, $lastAccessedAt]) {
+            $this->entityManager()->persist((new LessonProgressEntity())
+                ->setEnrollmentId($enrollment->getId() ?? 0)
+                ->setLessonId($lesson->getId() ?? 0)
+                ->setStatus(\Websymphonie\LearningContext\Domain\Enum\LessonProgressStatus::IN_PROGRESS)
+                ->setStartedAt(new DateTimeImmutable($lastAccessedAt))
+                ->setLastAccessedAt(new DateTimeImmutable($lastAccessedAt)));
+        }
+        $this->entityManager()->flush();
+        $client->loginUser($avocat);
+        $client->disableReboot();
+
+        $client->request('GET', '/espace/formations', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $resumeUrl = '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lastAccessedLesson->getUuidAsString();
+        self::assertSelectorExists('a[href="' . $resumeUrl . '"]');
+        self::assertSelectorTextContains('a[href="' . $resumeUrl . '"]', 'Reprendre le parcours');
+
+        $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('a[href="' . $resumeUrl . '"]');
+        self::assertSelectorTextContains('a[href="' . $resumeUrl . '"]', 'Reprendre');
     }
 
     public function testAvocatCanOpenCoursePlayerAndResumeFirstIncompleteLesson(): void
@@ -308,6 +345,7 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString($activeLesson->getTitle(), $content);
         self::assertStringContainsString('50 %', $content);
         self::assertStringContainsString('/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $activeLesson->getUuidAsString(), $content);
+        self::assertSelectorExists('a[aria-current="page"][href="/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $activeLesson->getUuidAsString() . '"]');
         self::assertStringNotContainsString('meet.example.test', $content);
         self::assertStringNotContainsString('youtube-nocookie.com', $content);
         self::assertStringNotContainsString('aspect-video', $content);

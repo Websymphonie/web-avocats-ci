@@ -10,10 +10,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
 use Websymphonie\IdentityContext\Application\Service\User\CurrentUserProvider;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetMemberCoursePlayerQuery;
+use Websymphonie\LearningContext\Application\Exception\VideoPlaybackUnavailableException;
+use Websymphonie\LearningContext\Application\Service\MuxPlaybackTokenSignerInterface;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 use Websymphonie\LearningContext\Domain\Exception\InvalidCourseStructureException;
 use Websymphonie\LearningContext\Domain\Exception\LessonNotFoundException;
 use Websymphonie\LearningContext\Domain\Exception\TrainingAccessDeniedException;
 use Websymphonie\LearningContext\Domain\Exception\TrainingNotFoundException;
+use Websymphonie\LearningContext\Presenter\Service\YouTubeVideoPresenter;
+use Psr\Log\LoggerInterface;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -21,7 +26,12 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 final class GetMemberCoursePlayerController extends AbstractController
 {
-    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    public function __construct(
+        private readonly MediaPublicUrlResolverInterface $mediaUrls,
+        private readonly YouTubeVideoPresenter $videoPresenter,
+        private readonly MuxPlaybackTokenSignerInterface $muxSigner,
+        private readonly LoggerInterface $logger,
+    )
     {
     }
 
@@ -58,10 +68,38 @@ final class GetMemberCoursePlayerController extends AbstractController
             ? ($this->mediaUrls->resolveMany([$player->training->coverMediaId])[$player->training->coverMediaId] ?? null)
             : null;
 
-        return $this->render('member/trainings/player.html.twig', [
+        $source = $player->activeLesson->lesson->videoSource;
+        $muxPlaybackId = $source?->provider === VideoProvider::MUX ? $source->externalId : null;
+        $muxPlaybackToken = null;
+        $videoUnavailable = false;
+
+        if ($muxPlaybackId !== null) {
+            try {
+                $muxPlaybackToken = $this->muxSigner->signPlayback($muxPlaybackId);
+            } catch (VideoPlaybackUnavailableException $exception) {
+                $this->logger->error('Unable to prepare authorized Mux course playback.', [
+                    'lesson_uuid' => $player->activeLesson->lesson->uuid,
+                    'error_type' => $exception::class,
+                ]);
+                $videoUnavailable = true;
+            }
+        }
+
+        $response = $this->render('member/trainings/player.html.twig', [
             'title' => $player->training->title,
             'player' => $player,
             'coverUrl' => $coverUrl,
+            'videoEmbedUrl' => $this->videoPresenter->embedUrl($source),
+            'muxPlaybackId' => $muxPlaybackId,
+            'muxPlaybackToken' => $muxPlaybackToken,
+            'videoUnavailable' => $videoUnavailable,
         ]);
+
+        if ($muxPlaybackToken !== null) {
+            $response->headers->set('Cache-Control', 'private, no-store, max-age=0');
+            $response->headers->set('Pragma', 'no-cache');
+        }
+
+        return $response;
     }
 }

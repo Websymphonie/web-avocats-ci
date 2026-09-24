@@ -9,14 +9,17 @@ use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Websymphonie\ContentContext\Application\Model\PublishedPage;
+use Websymphonie\ContentContext\Application\Service\DocumentDownloadPolicy;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPagesByGroupQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\FindPublishedPageBySlugQuery;
+use Websymphonie\ContentContext\Application\Usecase\Query\Page\GetPagePersonGroupsQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\Batonnier\GetCurrentBatonnierMandateQuery;
 use Websymphonie\ContentContext\Application\Usecase\Query\CouncilMember\GetCurrentCouncilMembersQuery;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Model\BatonnierMandate;
 use Websymphonie\ContentContext\Domain\Model\CouncilMember;
+use Websymphonie\ContentContext\Domain\Model\PagePersonGroup;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -25,6 +28,7 @@ final class GetPublicPageDetailsController extends AbstractController
     public function __construct(
         private readonly RichTextSanitizerInterface $sanitizer,
         private readonly MediaPublicUrlResolverInterface $mediaUrls,
+        private readonly DocumentDownloadPolicy $documentDownloadPolicy,
     ) {
     }
 
@@ -77,8 +81,10 @@ final class GetPublicPageDetailsController extends AbstractController
 
         $councilMembers = $slug === 'conseil-de-l-ordre' ? $this->handleQuery(new GetCurrentCouncilMembersQuery()) : [];
         $councilPortraitUrls = $this->resolveCouncilPortraits($councilMembers);
+        $personGroups = $slug === 'historique' ? $this->handleQuery(new GetPagePersonGroupsQuery($page->id)) : [];
+        $personPortraitUrls = $this->resolvePagePersonPortraits($personGroups);
 
-        return $this->renderPage($page, $mandate, $portraitUrl, $councilMembers, $councilPortraitUrls);
+        return $this->renderPage($page, $mandate, $portraitUrl, $councilMembers, $councilPortraitUrls, $personGroups, $personPortraitUrls);
     }
 
     #[Route('/lbc-ft-fp', name: 'web_lbc_ft_fp', methods: ['GET'])]
@@ -142,8 +148,10 @@ final class GetPublicPageDetailsController extends AbstractController
     /**
      * @param list<CouncilMember> $councilMembers
      * @param array<int, string> $councilPortraitUrls
+     * @param list<PagePersonGroup> $personGroups
+     * @param array<int, string> $personPortraitUrls
      */
-    private function renderPage(PublishedPage $page, ?BatonnierMandate $mandate = null, ?string $portraitUrl = null, array $councilMembers = [], array $councilPortraitUrls = []): Response
+    private function renderPage(PublishedPage $page, ?BatonnierMandate $mandate = null, ?string $portraitUrl = null, array $councilMembers = [], array $councilPortraitUrls = [], array $personGroups = [], array $personPortraitUrls = []): Response
     {
         $coverUrl = null;
         if ($page->coverMediaId !== null) {
@@ -159,6 +167,9 @@ final class GetPublicPageDetailsController extends AbstractController
             'portraitUrl' => $portraitUrl,
             'councilMembers' => $councilMembers,
             'councilPortraitUrls' => $councilPortraitUrls,
+            'personGroups' => $personGroups,
+            'personPortraitUrls' => $personPortraitUrls,
+            'canAccessFundResources' => $page->slug === 'fonds-de-solidarite' && $this->documentDownloadPolicy->canAccessLawyerResources(),
         ]);
     }
 
@@ -174,6 +185,24 @@ final class GetPublicPageDetailsController extends AbstractController
         }
 
         return $this->mediaUrls->resolveMany($mediaIds);
+    }
+
+    /**
+     * @param list<PagePersonGroup> $groups
+     * @return array<int, string>
+     */
+    private function resolvePagePersonPortraits(array $groups): array
+    {
+        $mediaIds = [];
+        foreach ($groups as $group) {
+            foreach ($group->entries as $entry) {
+                if ($entry->portraitMediaId !== null) {
+                    $mediaIds[] = $entry->portraitMediaId;
+                }
+            }
+        }
+
+        return $mediaIds === [] ? [] : $this->mediaUrls->resolveMany(array_values(array_unique($mediaIds)));
     }
 
     /** @return list<PublishedPage> */

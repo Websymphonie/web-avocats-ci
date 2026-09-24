@@ -1,0 +1,15 @@
+<ul class="space-y-1">
+    <li>
+        <a href="{{ path('web_trainings_list', categoryFilters) }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory is null ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if selectedCategory is null %}aria-current="page"{% endif %}>
+            Toutes les formations
+        </a>
+    </li>
+    {% for category in categories %}
+        {% set isActive = selectedCategory and selectedCategory.id == category.id %}
+        <li>
+            <a href="{{ path('web_trainings_list', categoryFilters|merge({categorie: category.slug})) }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if isActive %}aria-current="page"{% endif %}>
+                {{ category.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

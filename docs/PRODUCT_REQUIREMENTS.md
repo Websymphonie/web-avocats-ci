@@ -100,7 +100,7 @@ propriétaire.
 | CNT-PROFESSION-001 | préparer la page institutionnelle « Devenir avocat » | `DRAFT / EDITORIAL VALIDATION REQUIRED` — Page `PROFESSION` préparée sous `/devenir-avocat`; conditions historiques à valider avant publication |
 | CNT-LEGAL-001 | migrer Vie privée et Mentions légales depuis la source institutionnelle | `IMPLEMENTED` — contenus source dans les Pages LEGAL existantes, publiées sous leurs URL canoniques |
 | CNT-BAR-002 | migrer Présentation et Historique du Barreau | `IMPLEMENTED` — contenus de démonstration publiés avec couverture locale de l’Historique |
-| CNT-BAR-003 | migrer le Bâtonnier et le Conseil de l’Ordre actuels | `IMPLEMENTED` — Pages BAR publiées, titulaire courant, 19 membres ordonnés et portraits intégrés aux fixtures locales |
+| CNT-BAR-003 | structurer les personnes institutionnelles et harmoniser leurs cartes | `IMPLEMENTED` — données actuelles du Bâtonnier/Conseil conservées, anciens Bâtonniers structurés sur la Page Historique, 19 membres Conseil réutilisés et cartes harmonisées |
 | CNT-BAR-004 | migrer le Fonds de Solidarité et ses ressources avocat | `IMPLEMENTED` — Page BAR publiée avec contenu CARE et trois documents LAWYER servis depuis le stockage privé |
 | CNT-BAR-005 | migrer la CARPA et ses ressources validées | `IMPLEMENTED` — Page `CARPA` distincte de `BAR`, hub `/carpa`, fiche `/carpa/presentation`; les ressources CARPA dédiées non retrouvées ne sont pas inventées |
 | CNT-LBC-001 | publier la page institutionnelle LBC/FT/FP | `IMPLEMENTED` — Page Content `PageGroup::LBC`, route `/lbc-ft-fp`, ressources externes; aucune actualisation juridique n’est revendiquée et aucun Training n’est créé |
@@ -115,6 +115,7 @@ propriétaire.
 | DATA-DIR-006 | récupérer et importer les portraits historiques disponibles | `DATASET READY WITH SOURCE GAPS / NOT DEPLOYED` — 579 portraits, 24 sources 404, 2 profils sans URL; validation MySQL isolée, aucun chargement automatique dev/staging/prod |
 | FO-DIR-001 | rechercher et parcourir les avocats publiables | `IMPLEMENTED` — listing `/avocats` filtrable, paginé et lié aux fiches publiques FO-DIR-002 |
 | FO-DIR-002 | consulter les fiches publiques avocat et cabinet | `IMPLEMENTED` — `/avocats/{uuid}` et `/cabinets/{uuid}`, critères DIR-001, coordonnées professionnelles et membres éligibles |
+| FO-DIR-004 | ouvrir un profil avocat depuis l’annuaire sans perdre le contexte de recherche | `IMPLEMENTED` — clic principal chargé en modale depuis la même projection publique; `/avocats/{uuid}` reste la fiche canonique et le fallback sans JavaScript |
 
 ## 7. Learning
 
@@ -122,7 +123,7 @@ propriétaire.
 |---|---|---|
 | LRN-001 | introduire `Training` comme concept central | `IMPLEMENTED` — fondation + COURSE Backoffice |
 | LRN-002 | distinguer les types `COURSE` et `LIVE` | `IMPLEMENTED` — enum, frontière et type LIVE administrable |
-| LRN-003 | administrer une `COURSE`, ses modules, leçons et contenu pédagogique | `IMPLEMENTED` — éditeur riche, YouTube externe et ressources privées Backoffice |
+| LRN-003 | administrer une `COURSE`, ses modules, leçons et contenu pédagogique | `IMPLEMENTED` — éditeur riche, YouTube ou Mux signé pour les leçons, ressources privées Backoffice |
 | LRN-004 | gérer `Enrollment` et l’accès pédagogique | `IMPLEMENTED` — inscription gratuite, attribution/révocation admin et policy serveur |
 | LRN-004A | classer les formations par catégories et tags Learning | `IMPLEMENTED` — taxonomies Backoffice et filtres Training |
 | LRN-005 | gérer les détails d’un `LIVE` autonome | `IMPLEMENTED` — Backoffice, publication et accès membre sécurisé |
@@ -130,6 +131,8 @@ propriétaire.
 | LRN-006 | suivre la progression | `IMPLEMENTED` — progression COURSE, endpoints membre sécurisés et résumé Backoffice |
 | LRN-006A | réserver l’éligibilité apprenante aux avocats actifs | `IMPLEMENTED` — policy Learning réutilisée par Enrollment, accès et Payment |
 | LRN-007 | intégrer YouTube Live dans l’espace avocat sans lui déléguer l’autorisation | `IMPLEMENTED` — embed YouTube Live membre, sans API YouTube |
+| LRN-VID-001 | neutraliser le modèle vidéo Learning et distinguer diffusion/replay | `IMPLEMENTED` — sources provider-neutral, YouTube actif ; playback MUX/Cloudflare hors scope |
+| LRN-VID-002 | lire les vidéos Mux VOD signées dans les leçons COURSE membres | `IMPLEMENTED` — Mux Player Web et jeton serveur après autorisation ; Mux Live et Cloudflare restent hors scope |
 | LRN-008 | gérer quiz et certificats | `PLANNED` |
 
 Les règles de durée d’accès, de certificat, de score, de replay et de

@@ -14,6 +14,7 @@ use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryEntry;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryMember;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryResult;
 use Websymphonie\LawyerContext\Domain\Model\LawyerPublicProfile;
+use Websymphonie\LawyerContext\Domain\Model\PublicCabinetDirectoryEntry;
 use Websymphonie\LawyerContext\Domain\Repository\LawyerDirectoryRepositoryInterface;
 use Websymphonie\LawyerContext\Infrastructure\Persistence\Doctrine\Entity\LawyerProfile\LawyerProfileEntity;
 
@@ -49,8 +50,18 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
                 ->setParameter('name', '%' . $name . '%');
         }
         if ($cabinet !== '') {
-            $baseQuery->andWhere('LOWER(directoryCabinet.name) LIKE LOWER(:cabinet)')
-                ->setParameter('cabinet', '%' . $cabinet . '%');
+            if (Uuid::isValid($cabinet)) {
+                $baseQuery->andWhere('directoryCabinet.uuid = :cabinetUuid')
+                    ->andWhere('directoryCabinet.status = :activeCabinet')
+                    ->andWhere('directoryCabinet.directoryVisible = :publicCabinet')
+                    ->setParameter('cabinetUuid', Uuid::fromString($cabinet), UuidType::NAME)
+                    ->setParameter('activeCabinet', 'ACTIVE')
+                    ->setParameter('publicCabinet', true);
+            } else {
+                // Keep existing shared URLs using the historical name filter working.
+                $baseQuery->andWhere('LOWER(directoryCabinet.name) LIKE LOWER(:cabinet)')
+                    ->setParameter('cabinet', '%' . $cabinet . '%');
+            }
         }
         if ($location !== '') {
             $baseQuery->andWhere('LOWER(directoryCabinet.city) LIKE LOWER(:location)')
@@ -81,6 +92,26 @@ final class LawyerProfileRepository extends ServiceEntityRepository implements L
         ), $rows);
 
         return new LawyerDirectoryResult($items, $totalItemCount, $page, $limit);
+    }
+
+    /** @return list<PublicCabinetDirectoryEntry> */
+    public function listPublicCabinetsWithEligibleLawyers(): array
+    {
+        /** @var list<array{publicUuid: Uuid|string, name: string}> $rows */
+        $rows = $this->createPublicLawyerQueryBuilder()
+            ->andWhere('directoryCabinet.status = :activeCabinet')
+            ->andWhere('directoryCabinet.directoryVisible = :publicCabinet')
+            ->setParameter('activeCabinet', 'ACTIVE')
+            ->setParameter('publicCabinet', true)
+            ->select('DISTINCT directoryCabinet.uuid AS publicUuid, directoryCabinet.name AS name')
+            ->orderBy('directoryCabinet.name', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(fn (array $row): PublicCabinetDirectoryEntry => new PublicCabinetDirectoryEntry(
+            publicUuid: $this->uuidString($row['publicUuid']),
+            name: (string) $row['name'],
+        ), $rows);
     }
 
     public function findPublicProfileByUuid(string $uuid): ?LawyerPublicProfile

@@ -158,6 +158,19 @@ table `live_training_details` avec une unicité sur `training_id`. Les détails
 valident les dates, le mode `ONLINE`/`IN_PERSON`/`HYBRID`, le lieu requis selon
 le mode et les liens de connexion HTTPS.
 
+Les sources vidéo éventuelles sont provider-neutral :
+`ExternalVideoSource(provider, externalId)`, séparées en `liveSource` et
+`replaySource`; elles ne remplacent pas conceptuellement `joinUrl`. Le
+Backoffice V1 accepte uniquement des références YouTube HTTPS, normalisées
+hors Domain. MUX et CLOUDFLARE_STREAM sont présents dans le modèle mais leur
+lecture n’est pas intégrée.
+
+Le lecteur membre respecte le calendrier : aucun player avant `startsAt`,
+`liveSource` pendant la session, puis `replaySource` après `endsAt` si défini.
+Le flux live n’est pas réutilisé comme replay. Les anciennes valeurs vidéo
+Lesson sont préservées ; la colonne `video_url` reste historique et le nouveau
+mapping utilise `video_provider` / `external_video_id`.
+
 La publication est type-aware : une COURSE applique sa readiness modules/leçons,
 tandis qu’un LIVE exige seulement ses détails valides. Les deux types
 réutilisent `TrainingVisibility`, `TrainingAccessType`, `TrainingCategory`,
@@ -196,15 +209,18 @@ certificats et lecteur restent hors périmètre de LRN-002.
 ### LRN-003 — Contenu pédagogique des leçons
 
 Une `Lesson` peut porter un contenu HTML issu du rich-text editor partagé, une
-référence vidéo YouTube validée (`watch`, `youtu.be` ou `embed`) et des
-`LessonResource`. Les iframes et scripts ne sont pas conservés dans le contenu.
+source vidéo externe optionnelle `ExternalVideoSource(provider, externalId)` et
+des `LessonResource`. Le Domain ne connaît ni les URLs YouTube ni les formats
+d’embed. Le formulaire V1 accepte uniquement des références YouTube HTTPS
+(`watch`, `youtu.be` ou `embed`), normalisées en `VideoProvider::YOUTUBE` hors
+Domain. Les iframes et scripts ne sont pas conservés dans le contenu.
 Les ressources réutilisent `MediaContext.StoredFile` par identifiant scalaire,
 mais leurs fichiers sont stockés séparément sous la racine privée
 `private/learning/resources`. Cette capacité reste Backoffice-only jusqu’à la
 livraison de l’accès pédagogique.
 
 Une leçon est prête pour publication si elle possède un contenu significatif,
-une vidéo YouTube valide ou au moins une ressource. Une `COURSE` publiée reste
+une source vidéo valide ou au moins une ressource. Une `COURSE` publiée reste
 éditable sans versioning. Les ressources ont un titre, un ordre persistant et
 un téléchargement sécurisé réservé au Backoffice ; leur suppression détache
 la ressource puis nettoie le fichier uniquement s’il n’est plus référencé.
@@ -602,6 +618,27 @@ Le Backoffice expose la liste, le détail, la création et la modification sous
 version afin de préserver l’historique. Les portraits réutilisent le stockage
 public `institution/portraits` et le vérificateur composite bloque la suppression
 d’un média encore utilisé.
+
+## CNT-BAR-003 — Personnes institutionnelles historiques et cartes
+
+La Page BAR `historique` possède des collections relationnelles `PagePersonGroup`
+et `PagePersonEntry` (`page_person_group`, `page_person_entry`). Elles portent
+le titre, la clé stable et l’ordre du groupe, puis le nom, le rôle et la période
+textuels, la référence scalaire facultative `portraitMediaId`, le lien éventuel
+et l’ordre de chaque entrée. Les périodes restent des libellés fidèles à la
+source ; elles ne sont pas converties en mandats. Une période absente reste
+`null`. Le bootstrap institutionnel synchronise de façon idempotente le groupe
+« Les anciens Bâtonniers » depuis la source canonique et retire l’ancienne liste
+du HTML de la Page Historique sans modifier son récit.
+
+Les Pages sont administrables avec leurs groupes et entrées dans le formulaire
+Page existant. Les portraits utilisent le stockage public `MediaContext` par
+identifiant scalaire et restent protégés contre une suppression tant qu’ils sont
+référencés. La composition du Conseil continue d’utiliser exclusivement
+`CouncilMember` ; aucune entrée de Page ne la duplique. Les personnes historiques
+et les membres du Conseil partagent le composant de carte neutre réutilisé par
+l’annuaire public, sans transformer les données institutionnelles en profils
+d’avocat ni inventer de liens.
 
 ## 12. Références
 

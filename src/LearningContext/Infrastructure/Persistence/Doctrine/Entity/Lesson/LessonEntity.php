@@ -44,10 +44,14 @@ class LessonEntity
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $videoProvider = null;
 
+    /**
+     * @deprecated Kept to preserve historical data. New application code reads/writes provider + external ID only.
+     * Remove only after an explicit data audit and migration.
+     */
     #[ORM\Column(length: 2048, nullable: true)]
     private ?string $videoUrl = null;
 
-    #[ORM\Column(length: 64, nullable: true)]
+    #[ORM\Column(length: 128, nullable: true)]
     private ?string $externalVideoId = null;
 
     #[ORM\Column(type: 'integer')]

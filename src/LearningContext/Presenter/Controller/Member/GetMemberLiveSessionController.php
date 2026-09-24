@@ -16,6 +16,7 @@ use Websymphonie\LearningContext\Application\Usecase\Query\GetMemberLiveSessionQ
 use Websymphonie\LearningContext\Domain\Exception\LiveTrainingDetailsNotFoundException;
 use Websymphonie\LearningContext\Domain\Exception\TrainingAccessDeniedException;
 use Websymphonie\LearningContext\Domain\Exception\TrainingNotFoundException;
+use Websymphonie\LearningContext\Presenter\Service\YouTubeVideoPresenter;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -23,7 +24,7 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 final class GetMemberLiveSessionController extends AbstractController
 {
-    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls, private readonly YouTubeVideoPresenter $videoPresenter)
     {
     }
 
@@ -51,12 +52,21 @@ final class GetMemberLiveSessionController extends AbstractController
         $coverUrl = $session->coverMediaId !== null
             ? ($this->mediaUrls->resolveMany([$session->coverMediaId])[$session->coverMediaId] ?? null)
             : null;
+        $now = new DateTimeImmutable();
+        $liveEmbedUrl = $now >= $session->startsAt && $now < $session->endsAt
+            ? $this->videoPresenter->embedUrl($session->liveSource)
+            : null;
+        $replayEmbedUrl = $now >= $session->endsAt
+            ? $this->videoPresenter->embedUrl($session->replaySource)
+            : null;
 
         return $this->render('member/trainings/live.html.twig', [
             'title' => $session->title,
             'session' => $session,
             'coverUrl' => $coverUrl,
-            'now' => new DateTimeImmutable(),
+            'now' => $now,
+            'liveEmbedUrl' => $liveEmbedUrl,
+            'replayEmbedUrl' => $replayEmbedUrl,
         ]);
     }
 }

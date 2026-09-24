@@ -28,11 +28,11 @@
 
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
             <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
-                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: {}} only %}
 
                 <article>
                     <figure class="overflow-hidden border border-border bg-muted">
-                        <img src="{{ heroImage }}" alt="Couverture de {{ training.title }}" class="aspect-[2/1] w-full object-cover">
+                        <img src="{{ heroImage }}" data-controller="image-fallback" data-action="error->image-fallback#replace" data-image-fallback-fallback-url-value="{{ default_image_url }}" alt="Couverture de {{ training.title }}" class="aspect-[2/1] w-full object-cover">
                     </figure>
 
                     <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-16">
@@ -52,6 +52,36 @@
                         <aside class="h-fit border-t border-border pt-5 lg:border-l lg:border-t-0 lg:pl-6" aria-label="Informations sur la formation">
                             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Accès</p>
                             <p class="mt-3 text-sm font-medium text-card-foreground">{{ training.accessType.label }}</p>
+                            {% if training.accessType.value == 'PAID' %}
+                                {% if offer %}
+                                    <p class="mt-4 text-2xl font-semibold tracking-tight text-card-foreground">{{ offer.amount|price(offer.currency) }}</p>
+                                {% else %}
+                                    <p class="mt-4 text-sm leading-6 text-muted-foreground">Tarif indisponible pour le moment.</p>
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="mt-5">
+                                {% if hasActiveEnrollment %}
+                                    <a href="{{ path('learning_member_training_list') }}" class="inline-flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Accéder à mes formations <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/></a>
+                                {% elseif isEligibleLearner and training.accessType.value == 'FREE' %}
+                                    <form method="post" action="{{ path('learning_member_training_enroll', {uuid: training.uuid}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('learning_member_training_enroll_' ~ training.uuid) }}">
+                                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">S’inscrire gratuitement <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/></button>
+                                    </form>
+                                {% elseif isEligibleLearner and training.accessType.value == 'PAID' and offer %}
+                                    <form method="post" action="{{ path('payment_member_training_initiate', {uuid: training.uuid}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('payment_initiate_' ~ training.uuid) }}">
+                                        <input type="hidden" name="idempotencyKey" value="{{ paymentIdempotencyKey }}">
+                                        <button type="submit" class="inline-flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">Continuer vers le paiement <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/></button>
+                                    </form>
+                                {% elseif isAuthenticated and not isEligibleLearner %}
+                                    <p class="text-sm leading-6 text-muted-foreground">L’inscription est réservée aux avocats répondant aux conditions d’accès.</p>
+                                {% elseif not isAuthenticated %}
+                                    <a href="{{ path('app_login') }}" class="inline-flex w-full items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-semibold text-card-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Se connecter pour continuer <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/></a>
+                                {% elseif training.accessType.value == 'RESTRICTED' %}
+                                    <p class="text-sm leading-6 text-muted-foreground">Cette formation est accessible aux personnes autorisées.</p>
+                                {% endif %}
+                            </div>
                             {% if training.tagIds is not empty %}
                                 <p class="mt-7 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Mots-clés</p>
                                 <div class="mt-3 flex flex-wrap gap-x-3 gap-y-2 lg:block">{% for tagId in training.tagIds %}{% if tagById[tagId] is defined %}<span class="mr-3 inline-block text-sm text-muted-foreground">#{{ tagById[tagId].name }}</span>{% endif %}{% endfor %}</div>

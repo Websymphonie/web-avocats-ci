@@ -5,6 +5,9 @@
 {% block body %}
     {% set featured = trainings.items|first %}
     {% set secondary = trainings.items|slice(1) %}
+    {% set categoryFilters = {} %}
+    {% if selectedType %}{% set categoryFilters = categoryFilters|merge({type: selectedType.value}) %}{% endif %}
+    {% if selectedAccessType %}{% set categoryFilters = categoryFilters|merge({acces: selectedAccessType.value}) %}{% endif %}
     <main class="min-h-[calc(100svh-9rem)] bg-muted/20">
         <section class="relative isolate overflow-hidden bg-[#10233f] text-white" aria-labelledby="trainings-page-title">
             <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(216,184,120,0.24),transparent_34%),linear-gradient(120deg,#10233f_0%,#18375e_100%)]"></div>
@@ -24,7 +27,7 @@
 
         <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
             <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-14 xl:grid-cols-[19rem_minmax(0,1fr)]">
-                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory} only %}
+                {% include 'web/trainings/_category_sidebar.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
 
                 <section aria-labelledby="training-catalog-title">
                     <div class="flex flex-col gap-5 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
@@ -50,7 +53,7 @@
                         <article class="group mt-7 overflow-hidden border border-border bg-card shadow-sm sm:mt-8">
                             <div class="grid md:grid-cols-[minmax(0,0.94fr)_minmax(20rem,1.06fr)] md:items-stretch">
                                 <a href="{{ path('web_trainings_detail', {slug: featured.slug}) }}" class="relative block aspect-[16/10] overflow-hidden bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset md:h-full md:aspect-auto md:min-h-[22rem]" aria-label="Découvrir {{ featured.title }}">
-                                    <img src="{{ featured.coverMediaId ? mediaUrls[featured.coverMediaId]|default(default_image_url) : default_image_url }}" alt="Couverture de {{ featured.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
+                                    <img src="{{ featured.coverMediaId ? mediaUrls[featured.coverMediaId]|default(default_image_url) : default_image_url }}" data-controller="image-fallback" data-action="error->image-fallback#replace" data-image-fallback-fallback-url-value="{{ default_image_url }}" alt="Couverture de {{ featured.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
                                     <span class="absolute left-4 top-4 inline-flex items-center gap-2 bg-[#d8b878] px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-[#10233f]">À découvrir</span>
                                 </a>
                                 <div class="flex flex-col border-t-2 border-primary px-5 py-6 sm:px-7 sm:py-7 md:border-l-2 md:border-t-0 lg:px-8">
@@ -89,7 +92,7 @@
                                     <article class="group border-b border-border pb-5 pt-1 last:border-b-0 sm:pb-6">
                                         <div class="grid gap-5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center sm:gap-7">
                                             <a href="{{ path('web_trainings_detail', {slug: training.slug}) }}" class="block aspect-[16/10] overflow-hidden bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset" aria-label="Découvrir {{ training.title }}">
-                                                <img src="{{ training.coverMediaId ? mediaUrls[training.coverMediaId]|default(default_image_url) : default_image_url }}" alt="Couverture de {{ training.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
+                                                <img src="{{ training.coverMediaId ? mediaUrls[training.coverMediaId]|default(default_image_url) : default_image_url }}" data-controller="image-fallback" data-action="error->image-fallback#replace" data-image-fallback-fallback-url-value="{{ default_image_url }}" alt="Couverture de {{ training.title }}" class="size-full object-cover transition duration-500 group-hover:scale-[1.025]">
                                             </a>
                                             <div class="min-w-0">
                                                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.13em] text-muted-foreground">
@@ -111,8 +114,14 @@
                     {% elseif not featured %}
                         <div class="border-b border-border px-6 py-20 text-center" aria-labelledby="trainings-empty-title">
                             <twig:ux:icon name="lucide:graduation-cap" class="mx-auto size-10 text-muted-foreground" aria-hidden="true"/>
-                            <h3 id="trainings-empty-title" class="mt-4 text-lg font-semibold text-foreground">Aucune formation disponible</h3>
-                            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les prochains parcours du Barreau apparaîtront ici.</p>
+                            {% if selectedCategory or selectedType or selectedAccessType %}
+                                <h3 id="trainings-empty-title" class="mt-4 text-lg font-semibold text-foreground">Aucune formation disponible{% if selectedCategory %} dans la catégorie « {{ selectedCategory.name }} »{% endif %}{% if selectedType %} pour ce type{% endif %}{% if selectedAccessType %} avec ce mode d’accès{% endif %} pour le moment.</h3>
+                                <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Essayez une autre sélection ou revenez à l’ensemble du catalogue.</p>
+                                <a href="{{ path('web_trainings_list') }}" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Voir toutes les formations <twig:ux:icon name="lucide:arrow-right" class="size-4" aria-hidden="true"/></a>
+                            {% else %}
+                                <h3 id="trainings-empty-title" class="mt-4 text-lg font-semibold text-foreground">Aucune formation disponible</h3>
+                                <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Les prochains parcours du Barreau apparaîtront ici.</p>
+                            {% endif %}
                         </div>
                     {% endif %}
 

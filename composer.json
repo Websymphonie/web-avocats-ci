@@ -16,6 +16,7 @@
     "doctrine/doctrine-migrations-bundle": "^3.3",
     "doctrine/orm": "^3.5",
     "dragonmantank/cron-expression": "^3.4",
+    "firebase/php-jwt": "^7.1",
     "gedmo/doctrine-extensions": "^3.14",
     "google/cloud-vision": "^2.1",
     "intervention/image": "^3.7",

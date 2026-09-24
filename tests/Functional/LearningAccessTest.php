@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\Tests\Functional;
 
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,9 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Currenc
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\Images;
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\CourseModule\CourseModuleEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Lesson\LessonEntity;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class LearningAccessTest extends WebTestCase
@@ -55,6 +59,94 @@ final class LearningAccessTest extends WebTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
         self::assertSelectorTextContains('h1', 'Nouvelle formation');
         self::assertSelectorExists('form input[name$="[title]"]');
+    }
+
+    public function testBackofficeCreatesMuxLessonAndRestoresProviderAndPlaybackId(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        [$training, $module] = $this->createCourseModule();
+        $newUrl = sprintf('/admin/learning/trainings/%d/modules/%d/lessons/new', $training->getId(), $module->getId());
+        $client->request('GET', $newUrl, server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $form = $client->getCrawler()->selectButton('Enregistrer')->form();
+        $formNames = $this->lessonFormFieldNames($client);
+        $form[$formNames['title']] = 'Leçon Mux de test';
+        $form[$formNames['provider']] = 'MUX';
+        $form[$formNames['reference']] = 'TestPlaybackId0123456789';
+        $client->submit($form);
+
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+        $row = $this->lessonRowByTitle('Leçon Mux de test');
+        self::assertSame('MUX', $row['video_provider']);
+        self::assertSame('TestPlaybackId0123456789', $row['external_video_id']);
+        self::assertNull($row['video_url']);
+
+        $lesson = $this->entityManager()->getRepository(LessonEntity::class)->findOneBy(['title' => 'Leçon Mux de test']);
+        self::assertInstanceOf(LessonEntity::class, $lesson);
+        $editUrl = sprintf('/admin/learning/trainings/%d/modules/%d/lessons/%d/edit', $training->getId(), $module->getId(), $lesson->getId());
+        $client->request('GET', $editUrl, server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSame('MUX', $client->getCrawler()->filter('select[name$="[videoProvider]"] option[selected]')->attr('value'));
+        self::assertSame('TestPlaybackId0123456789', $client->getCrawler()->filter('input[name$="[videoReference]"]')->attr('value'));
+    }
+
+    public function testBackofficeCanSwitchExistingLessonBetweenYouTubeAndMuxAndClearVideo(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        [$training, $module] = $this->createCourseModule();
+        $lesson = (new LessonEntity())
+            ->setModuleId($module->getId() ?? 0)
+            ->setTitle('Leçon vidéo à modifier')
+            ->setContent('<p>Contenu de test</p>')
+            ->setVideoProvider('YOUTUBE')
+            ->setVideoUrl('https://www.youtube.com/watch?v=M7lc1UVf-VE')
+            ->setExternalVideoId('M7lc1UVf-VE')
+            ->setPosition(1);
+        $this->entityManager()->persist($lesson);
+        $this->entityManager()->flush();
+
+        $editUrl = sprintf('/admin/learning/trainings/%d/modules/%d/lessons/%d/edit', $training->getId(), $module->getId(), $lesson->getId());
+        $client->request('GET', $editUrl, server: ['HTTPS' => 'on']);
+        $form = $client->getCrawler()->selectButton('Enregistrer')->form();
+        $formNames = $this->lessonFormFieldNames($client);
+        $form[$formNames['provider']] = 'MUX';
+        $form[$formNames['reference']] = 'TestPlaybackId0123456789';
+        $client->submit($form);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+
+        $row = $this->lessonRowById($lesson->getId() ?? 0);
+        self::assertSame('MUX', $row['video_provider']);
+        self::assertSame('TestPlaybackId0123456789', $row['external_video_id']);
+
+        $client->request('GET', $editUrl, server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame('MUX', $client->getCrawler()->filter('select[name$="[videoProvider]"] option[selected]')->attr('value'));
+        self::assertSame('TestPlaybackId0123456789', $client->getCrawler()->filter('input[name$="[videoReference]"]')->attr('value'));
+
+        $form = $client->getCrawler()->selectButton('Enregistrer')->form();
+        $formNames = $this->lessonFormFieldNames($client);
+        $form[$formNames['provider']] = 'YOUTUBE';
+        $form[$formNames['reference']] = 'https://youtu.be/M7lc1UVf-VE';
+        $client->submit($form);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+
+        $row = $this->lessonRowById($lesson->getId() ?? 0);
+        self::assertSame('YOUTUBE', $row['video_provider']);
+        self::assertSame('M7lc1UVf-VE', $row['external_video_id']);
+
+        $client->request('GET', $editUrl, server: ['HTTPS' => 'on']);
+        $form = $client->getCrawler()->selectButton('Enregistrer')->form();
+        $formNames = $this->lessonFormFieldNames($client);
+        $form[$formNames['provider']] = 'MUX';
+        $form[$formNames['reference']] = '';
+        $client->submit($form);
+        self::assertResponseRedirects('/admin/learning/trainings/' . $training->getId());
+
+        $row = $this->lessonRowById($lesson->getId() ?? 0);
+        self::assertNull($row['video_provider']);
+        self::assertNull($row['external_video_id']);
     }
 
     public function testLiveFormUsesStableDeliveryModeValues(): void
@@ -145,5 +237,67 @@ final class LearningAccessTest extends WebTestCase
         $client->disableReboot();
 
         return $client;
+    }
+
+    /** @return array{TrainingEntity, CourseModuleEntity} */
+    private function createCourseModule(): array
+    {
+        $training = (new TrainingEntity())
+            ->setTitle('Formation persistance Mux')
+            ->setSlug('formation-persistance-mux-' . bin2hex(random_bytes(5)))
+            ->setSummary('Résumé')
+            ->setDescription('<p>Description</p>');
+        $this->entityManager()->persist($training);
+        $this->entityManager()->flush();
+
+        $module = (new CourseModuleEntity())
+            ->setTrainingId($training->getId() ?? 0)
+            ->setTitle('Module de test')
+            ->setPosition(1);
+        $this->entityManager()->persist($module);
+        $this->entityManager()->flush();
+
+        return [$training, $module];
+    }
+
+    /** @return array{title: string, provider: string, reference: string} */
+    private function lessonFormFieldNames(KernelBrowser $client): array
+    {
+        $crawler = $client->getCrawler();
+
+        return [
+            'title' => (string) $crawler->filter('input[name$="[title]"]')->attr('name'),
+            'provider' => (string) $crawler->filter('select[name$="[videoProvider]"]')->attr('name'),
+            'reference' => (string) $crawler->filter('input[name$="[videoReference]"]')->attr('name'),
+        ];
+    }
+
+    /** @return array{video_provider: string|null, external_video_id: string|null, video_url: string|null} */
+    private function lessonRowByTitle(string $title): array
+    {
+        $row = $this->entityManager()->getConnection()->fetchAssociative(
+            'SELECT video_provider, external_video_id, video_url FROM lesson WHERE title = :title',
+            ['title' => $title],
+        );
+        self::assertIsArray($row);
+
+        return $row;
+    }
+
+    /** @return array{video_provider: string|null, external_video_id: string|null, video_url: string|null} */
+    private function lessonRowById(int $id): array
+    {
+        $row = $this->entityManager()->getConnection()->fetchAssociative(
+            'SELECT video_provider, external_video_id, video_url FROM lesson WHERE id = :id',
+            ['id' => $id],
+        );
+        self::assertIsArray($row);
+
+        return $row;
+    }
+
+    private function entityManager(): EntityManagerInterface
+    {
+        return static::getContainer()->get('doctrine')->getManager();
     }
 }

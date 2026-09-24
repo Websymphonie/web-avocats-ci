@@ -41,17 +41,27 @@
                     <h1 class="mt-2 text-2xl font-semibold tracking-tight text-card-foreground sm:text-3xl">{{ session.title }}</h1>
                     <p class="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Retrouvez les informations pratiques de votre session Live et son accès sécurisé.</p>
 
-                    {% if session.videoEmbedUrl %}
+                    {% if liveEmbedUrl %}
                         <div class="mt-7 aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
                             <iframe
                                 class="size-full"
-                                src="{{ session.videoEmbedUrl }}"
+                                src="{{ liveEmbedUrl }}"
                                 title="Diffusion en direct — {{ session.title }}"
                                 loading="lazy"
                                 allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen
                             ></iframe>
                         </div>
+                    {% elseif isUpcoming %}
+                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">La diffusion en direct sera disponible à partir du {{ session.startsAt|format_datetime(pattern='d MMMM Y à HH:mm', locale='fr_FR') }}.</p>
+                    {% elseif isPast and replayEmbedUrl %}
+                        <div class="mt-7 aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+                            <iframe class="size-full" src="{{ replayEmbedUrl }}" title="Replay — {{ session.title }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    {% elseif isPast %}
+                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">Replay indisponible pour cette session.</p>
+                    {% else %}
+                        <p class="mt-7 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">La diffusion en direct n’est pas disponible pour cette session.</p>
                     {% endif %}
 
                     <div class="mt-7 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">

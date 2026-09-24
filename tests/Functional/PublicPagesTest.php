@@ -17,11 +17,14 @@ use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Batonnier\BatonnierMandateEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\CouncilMember\CouncilMemberEntity;
+use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class PublicPagesTest extends WebTestCase
 {
+    private static int $userSequence = 0;
+
     protected static function getKernelClass(): string
     {
         return Kernel::class;
@@ -264,7 +267,7 @@ final class PublicPagesTest extends WebTestCase
         self::assertResponseRedirects('/assistance-violences-domestiques', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    public function testPublishedSolidarityFundPageRendersMemberResourcesCtaAndBarSidebar(): void
+    public function testPublishedSolidarityFundPageHidesMemberResourcesFromAnonymousVisitors(): void
     {
         $client = $this->clientWithSchema();
         $this->createPageDataset();
@@ -285,11 +288,46 @@ final class PublicPagesTest extends WebTestCase
         self::assertSelectorTextContains('.rich-content', 'Yako');
         self::assertSelectorExists('.rich-content a[href="/contact"]');
         self::assertSelectorExists('aside[aria-label="Navigation : Le Barreau"] a[aria-current="page"][href="/le-barreau/fonds-de-solidarite"]');
-        self::assertSelectorExists('a[href="/espace/ressources/fonds-de-solidarite"]');
-        self::assertSelectorTextContains('a[href="/espace/ressources/fonds-de-solidarite"]', 'Accéder aux ressources');
+        self::assertSelectorNotExists('a[href="/espace/ressources/fonds-de-solidarite"]');
+        self::assertSelectorNotExists('section[aria-labelledby="fund-resources-title"]');
 
         $client->request('GET', '/le-barreau', server: ['HTTPS' => 'on']);
         self::assertStringContainsString('/le-barreau/fonds-de-solidarite', (string) $client->getResponse()->getContent());
+    }
+
+    public function testPublishedSolidarityFundResourcesCtaIsAvailableOnlyToActiveLawyers(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createPageDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $fundPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'fonds-de-solidarite']);
+        self::assertInstanceOf(PageEntity::class, $fundPage);
+        $fundPage->setStatus(PageStatus::PUBLISHED)->setPublishedAt(new DateTimeImmutable('-1 day'));
+        $entityManager->flush();
+
+        foreach ([
+            'ROLE_AVOCAT' => true,
+            'ROLE_ADMIN' => false,
+            'ROLE_SUPER_ADMIN' => false,
+            'ROLE_USER' => false,
+        ] as $role => $canSeeResources) {
+            $client->loginUser($this->createUser([$role]));
+            $client->request('GET', '/le-barreau/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+
+            if ($canSeeResources) {
+                self::assertSelectorExists('section[aria-labelledby="fund-resources-title"]', $role);
+                self::assertSelectorTextContains('a[href="/espace/ressources/fonds-de-solidarite"]', 'Accéder aux ressources', $role);
+            } else {
+                self::assertSelectorNotExists('section[aria-labelledby="fund-resources-title"]', $role);
+                self::assertSelectorNotExists('a[href="/espace/ressources/fonds-de-solidarite"]', $role);
+            }
+
+            if (in_array($role, ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'], true)) {
+                $client->request('GET', '/espace/ressources/fonds-de-solidarite', server: ['HTTPS' => 'on']);
+                self::assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, $role . ' must remain denied');
+            }
+        }
+
     }
 
     public function testBarreauHubListsPublishedBarPagesInEditorialOrder(): void
@@ -614,6 +652,22 @@ final class PublicPagesTest extends WebTestCase
         $entityManager->flush();
 
         return [$publishedWithCover, $confidentiality];
+    }
+
+    /** @param list<string> $roles */
+    private function createUser(array $roles): User
+    {
+        $user = (new User())
+            ->setEmail(sprintf('public-pages-%d@example.test', ++self::$userSequence))
+            ->setName('Public Pages Test')
+            ->setPassword('test-password')
+            ->setRoles($roles);
+        $user->setEnabled(true);
+
+        static::getContainer()->get('doctrine')->getManager()->persist($user);
+        static::getContainer()->get('doctrine')->getManager()->flush();
+
+        return $user;
     }
 
     private function page(string $title, string $slug, PageStatus $status, ?DateTimeImmutable $publishedAt, ?int $coverMediaId = null, ?PageGroup $group = null, int $sortOrder = 0): PageEntity

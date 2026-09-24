@@ -21,6 +21,7 @@ use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Trai
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingCategory\TrainingCategoryEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\TrainingTag\TrainingTagEntity;
 use Websymphonie\MediaContext\Infrastructure\Persistence\Doctrine\Entity\MediaEntity;
+use Websymphonie\PaymentContext\Infrastructure\Persistence\Doctrine\Entity\TrainingOffer\TrainingOfferEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
 final class PublicTrainingsTest extends WebTestCase
@@ -89,6 +90,53 @@ final class PublicTrainingsTest extends WebTestCase
         self::assertStringNotContainsString('https://example.test/learning/live/public', $content);
         self::assertStringNotContainsString('M7lc1UVf-VE', $content);
         self::assertStringNotContainsString('youtube-nocookie.com', $content);
+        self::assertStringContainsString('/assets/default.jpg', $content);
+        self::assertStringContainsString('data-controller="image-fallback"', $content);
+        self::assertStringContainsString('25 000 FCFA', $content);
+        self::assertStringContainsString('Se connecter pour continuer', $content);
+        self::assertStringNotContainsString('payment_member_training_initiate', $content);
+    }
+
+    public function testPaidTrainingWithoutActiveOfferShowsNoPriceOrPaymentAction(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createTrainingDataset();
+
+        $client->request('GET', '/formations/formation-payante-sans-offre', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Tarif indisponible pour le moment.', $content);
+        self::assertStringNotContainsString('Continuer vers le paiement', $content);
+        self::assertStringNotContainsString('payment_member_training_initiate', $content);
+    }
+
+    public function testEmptyCategoryFilterExplainsTheSelectionAndOffersAFullReset(): void
+    {
+        $client = $this->clientWithSchema();
+        [, , , , $emptyCategory] = $this->createTrainingDataset();
+
+        $client->request('GET', '/formations?categorie=' . $emptyCategory->getSlug(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h3#trainings-empty-title', 'Aucune formation disponible dans la catégorie « Droit social »');
+        self::assertSelectorExists('[aria-labelledby="trainings-empty-title"] a[href="/formations"]');
+        self::assertSelectorTextContains('[aria-labelledby="trainings-empty-title"] a[href="/formations"]', 'Voir toutes les formations');
+        self::assertSelectorExists('button[aria-expanded="false"][aria-controls="training-category-options-mobile"]');
+    }
+
+    public function testCategorySidebarUsesCompactMobileDisclosureAndPreservesDesktopNavigation(): void
+    {
+        $client = $this->clientWithSchema();
+        [, , $category] = $this->createTrainingDataset();
+
+        $client->request('GET', '/formations?categorie=' . $category->getSlug(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('button[aria-expanded="false"]');
+        self::assertSelectorTextContains('button[aria-controls="training-category-options-mobile"]', 'Pratique professionnelle');
+        self::assertSelectorTextContains('a[aria-label="Réinitialiser la catégorie"]', 'Effacer');
+        self::assertSelectorExists('aside nav[aria-label="Catégories de formations"] a[aria-current="page"]');
     }
 
     public function testDraftMemberAndUnknownTrainingsAreNotPubliclyAccessible(): void
@@ -139,12 +187,13 @@ final class PublicTrainingsTest extends WebTestCase
         return $client;
     }
 
-    /** @return array{TrainingEntity, TrainingEntity, TrainingCategoryEntity} */
+    /** @return array{TrainingEntity, TrainingEntity, TrainingCategoryEntity, TrainingCategoryEntity, TrainingCategoryEntity} */
     private function createTrainingDataset(): array
     {
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         $category = (new TrainingCategoryEntity())->setName('Pratique professionnelle')->setSlug('pratique-professionnelle');
         $otherCategory = (new TrainingCategoryEntity())->setName('Déontologie')->setSlug('deontologie');
+        $emptyCategory = (new TrainingCategoryEntity())->setName('Droit social')->setSlug('droit-social');
         $tag = (new TrainingTagEntity())->setName('Cabinet')->setSlug('cabinet');
         $cover = (new MediaEntity())
             ->setOriginalName('public-training.jpg')
@@ -154,7 +203,7 @@ final class PublicTrainingsTest extends WebTestCase
             ->setWidth(1200)
             ->setHeight(675)
             ->setStoragePath('content/covers/public-training.jpg');
-        foreach ([$category, $otherCategory, $tag, $cover] as $item) {
+        foreach ([$category, $otherCategory, $emptyCategory, $tag, $cover] as $item) {
             $entityManager->persist($item);
         }
         $entityManager->flush();
@@ -163,7 +212,8 @@ final class PublicTrainingsTest extends WebTestCase
         $live = $this->training('Live public', 'live-public', TrainingType::LIVE, TrainingStatus::PUBLISHED, TrainingVisibility::PUBLIC, TrainingAccessType::PAID, [$otherCategory]);
         $draft = $this->training('Cours brouillon', 'cours-brouillon', TrainingType::COURSE, TrainingStatus::DRAFT, TrainingVisibility::PUBLIC, TrainingAccessType::FREE, [$category]);
         $member = $this->training('Formation réservée', 'formation-reservee', TrainingType::COURSE, TrainingStatus::PUBLISHED, TrainingVisibility::MEMBER, TrainingAccessType::RESTRICTED, [$category]);
-        foreach ([$course, $live, $draft, $member] as $training) {
+        $paidWithoutOffer = $this->training('Formation payante sans offre', 'formation-payante-sans-offre', TrainingType::COURSE, TrainingStatus::PUBLISHED, TrainingVisibility::PUBLIC, TrainingAccessType::PAID, [$category]);
+        foreach ([$course, $live, $draft, $member, $paidWithoutOffer] as $training) {
             $entityManager->persist($training);
         }
         $entityManager->flush();
@@ -175,12 +225,17 @@ final class PublicTrainingsTest extends WebTestCase
             ->setEndsAt($startsAt->modify('+2 hours'))
             ->setDeliveryMode(LiveDeliveryMode::ONLINE)
             ->setJoinUrl('https://example.test/learning/live/public')
-            ->setStreamProvider(\Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider::YOUTUBE)
+            ->setStreamProvider(\Websymphonie\LearningContext\Domain\Enum\VideoProvider::YOUTUBE)
             ->setExternalStreamId('M7lc1UVf-VE');
         $entityManager->persist($liveDetails);
+        $entityManager->persist((new TrainingOfferEntity())
+            ->setTrainingId($live->getId() ?? 0)
+            ->setAmount(25000)
+            ->setCurrency('XOF')
+            ->setActive(true));
         $entityManager->flush();
 
-        return [$course, $live, $category];
+        return [$course, $live, $category, $otherCategory, $emptyCategory];
     }
 
     /** @param list<TrainingCategoryEntity> $categories @param list<TrainingTagEntity> $tags */

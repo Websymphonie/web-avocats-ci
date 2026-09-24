@@ -7,14 +7,13 @@ namespace Websymphonie\LearningContext\Application\Usecase\CommandHandler;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
 use Websymphonie\LearningContext\Application\Usecase\Command\CreateTrainingCommand;
+use Websymphonie\LearningContext\Application\Service\YouTubeSourceParser;
 use Websymphonie\LearningContext\Application\Service\TrainingClassificationValidator;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Exception\TrainingSlugAlreadyExistsException;
 use Websymphonie\LearningContext\Domain\Model\Training;
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
 use Websymphonie\LearningContext\Domain\Exception\InvalidLiveTrainingDetailsException;
-use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
-use Websymphonie\LearningContext\Domain\Model\YouTubeReference;
 use Websymphonie\LearningContext\Domain\Repository\TrainingRepositoryInterface;
 use Websymphonie\MediaContext\Application\Service\MediaUploadServiceInterface;
 use Websymphonie\SharedContext\Application\Service\Messaging\CommandHandler;
@@ -27,6 +26,7 @@ final readonly class CreateTrainingHandler implements CommandHandler
         private SluggerInterface $slugger,
         private MediaUploadServiceInterface $mediaUpload,
         private TrainingClassificationValidator $classification,
+        private YouTubeSourceParser $videoParser,
     ) {}
 
     public function __invoke(CreateTrainingCommand $command): Training
@@ -42,7 +42,8 @@ final readonly class CreateTrainingHandler implements CommandHandler
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'training/covers') : null;
             $liveDetails = null;
             if ($command->type === TrainingType::LIVE) {
-                [$streamProvider, $externalStreamId] = self::streamValues($command->youtubeStreamUrl);
+                $liveSource = $this->videoParser->parseLiveReference($command->liveVideoReferenceUrl);
+                $replaySource = $this->videoParser->parseLiveReference($command->replayVideoReferenceUrl);
                 $liveDetails = new LiveTrainingDetails(
                     id: 0,
                     uuid: '',
@@ -52,8 +53,8 @@ final readonly class CreateTrainingHandler implements CommandHandler
                     deliveryMode: $command->deliveryMode,
                     location: self::clean($command->location),
                     joinUrl: self::clean($command->joinUrl),
-                    streamProvider: $streamProvider,
-                    externalStreamId: $externalStreamId,
+                    liveSource: $liveSource,
+                    replaySource: $replaySource,
                 );
             }
             $training = new Training(
@@ -87,19 +88,4 @@ final readonly class CreateTrainingHandler implements CommandHandler
         return $value === '' ? null : $value;
     }
 
-    /** @return array{0: ?LiveStreamProvider, 1: ?string} */
-    private static function streamValues(?string $url): array
-    {
-        $url = self::clean($url);
-        if ($url === null) {
-            return [null, null];
-        }
-
-        $reference = YouTubeReference::fromHttpsUrl($url);
-        if ($reference === null) {
-            throw new InvalidLiveTrainingDetailsException('Utilisez une URL YouTube HTTPS valide de type watch, youtu.be ou embed.');
-        }
-
-        return [LiveStreamProvider::YOUTUBE, $reference->externalId];
-    }
 }

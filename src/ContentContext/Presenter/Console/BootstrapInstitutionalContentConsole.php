@@ -22,10 +22,12 @@ final class BootstrapInstitutionalContentConsole extends Command
     {
         $created = $this->bootstrapper->bootstrap();
         $output->writeln(sprintf(
-            'Bootstrap institutionnel terminé : %d page(s), %d Bâtonnier(s), %d membre(s) du Conseil et %d document(s) créé(s).',
+            'Bootstrap institutionnel terminé : %d page(s), %d Bâtonnier(s), %d membre(s) du Conseil, %d groupe(s) et %d personne(s) de page, %d document(s) créé(s).',
             $created['pages'],
             $created['batonnier'],
             $created['councilMembers'],
+            $created['personGroups'],
+            $created['personEntries'],
             $created['documents'],
         ));
 

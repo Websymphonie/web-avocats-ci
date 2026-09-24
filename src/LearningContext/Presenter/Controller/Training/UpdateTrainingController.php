@@ -17,6 +17,7 @@ use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQue
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
+use Websymphonie\LearningContext\Presenter\Service\YouTubeVideoPresenter;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
@@ -27,7 +28,10 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::TRAININGS)]
 final class UpdateTrainingController extends AbstractController
 {
-    public function __construct(private readonly MediaPublicUrlResolverInterface $mediaUrls)
+    public function __construct(
+        private readonly YouTubeVideoPresenter $videoPresenter,
+        private readonly MediaPublicUrlResolverInterface $mediaUrls,
+    )
     {
     }
 
@@ -54,9 +58,8 @@ final class UpdateTrainingController extends AbstractController
             deliveryMode: $training->liveDetails !== null ? $training->liveDetails->deliveryMode : LiveDeliveryMode::ONLINE,
             location: $training->liveDetails?->location,
             joinUrl: $training->liveDetails?->joinUrl,
-            youtubeStreamUrl: $training->liveDetails?->externalStreamId !== null
-                ? 'https://www.youtube.com/watch?v=' . $training->liveDetails->externalStreamId
-                : null,
+            liveVideoReferenceUrl: $this->videoPresenter->referenceUrl($training->liveDetails?->liveSource),
+            replayVideoReferenceUrl: $this->videoPresenter->referenceUrl($training->liveDetails?->replaySource),
         );
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);

@@ -21,6 +21,8 @@ use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Event
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\News\NewsEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\PagePerson\PagePersonEntryEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\PagePerson\PagePersonGroupEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\SeedData\InstitutionalDocumentData;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
@@ -87,15 +89,25 @@ final class ReleaseBootstrapTest extends WebTestCase
         $client->request('GET', '/auth/login', server: ['HTTPS' => 'on']);
         self::assertResponseStatusCodeSame(Response::HTTP_OK, 'login sans réglages préinstallés');
 
-        self::assertSame(['settings' => 4, 'images' => 2], $systemBootstrap->bootstrap());
+        self::assertSame(['settings' => 8, 'images' => 2], $systemBootstrap->bootstrap());
         self::assertSame(['settings' => 0, 'images' => 0], $systemBootstrap->bootstrap());
         self::assertSame([
             'pages' => 11,
             'batonnier' => 1,
             'councilMembers' => 19,
+            'personGroups' => 1,
+            'personEntries' => 26,
             'documents' => 4,
             'documentConflicts' => [],
         ], $institutionalBootstrap->bootstrap());
+
+        self::assertSame(1, $entityManager->getRepository(PagePersonGroupEntity::class)->count([]));
+        self::assertSame(26, $entityManager->getRepository(PagePersonEntryEntity::class)->count([]));
+        $historyPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'historique', 'editorialGroup' => PageGroup::BAR]);
+        self::assertInstanceOf(PageEntity::class, $historyPage);
+        self::assertStringNotContainsString('Anciens Bâtonniers mentionnés sans période', $historyPage->getContent());
+        self::assertStringNotContainsString('Noms et périodes telles qu’affichées', $historyPage->getContent());
+        self::assertStringNotContainsString('Louis Vigouroux', $historyPage->getContent());
 
         $becomeLawyer = $entityManager->getRepository(PageEntity::class)->findOneBy([
             'editorialGroup' => PageGroup::PROFESSION,
@@ -109,6 +121,8 @@ final class ReleaseBootstrapTest extends WebTestCase
             'pages' => 0,
             'batonnier' => 0,
             'councilMembers' => 0,
+            'personGroups' => 0,
+            'personEntries' => 0,
             'documents' => 0,
             'documentConflicts' => [],
         ], $institutionalBootstrap->bootstrap());
@@ -153,6 +167,7 @@ final class ReleaseBootstrapTest extends WebTestCase
             '/auth/login',
             '/le-barreau',
             '/le-barreau/presentation',
+            '/le-barreau/historique',
             '/carpa',
             '/carpa/presentation',
             '/lbc-ft-fp',
@@ -165,6 +180,22 @@ final class ReleaseBootstrapTest extends WebTestCase
             $client->request('GET', $path, server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(Response::HTTP_OK, $path);
         }
+
+        $client->request('GET', '/contact', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorTextContains('body', 'Maison de l’Avocat – Cocody, Les Deux Plateaux ENA, Rue J9');
+        self::assertSelectorExists('a[href="tel:+2252722415605"]');
+        self::assertSelectorExists('a[href="tel:+2252722415613"]');
+        self::assertSelectorExists('a[href="mailto:info@ordredesavocats.ci"]');
+        self::assertSelectorTextContains('body', 'Lun - Ven, 08:00-17:00');
+
+        $client->request('GET', '/le-barreau/historique', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', 'Les anciens Bâtonniers');
+        self::assertSelectorTextContains('body', 'Louis Vigouroux');
+        self::assertSelectorTextContains('body', '2009–2010 ; 2013–2014');
+        self::assertSelectorTextContains('body', '2003–2005 ; 2005–2007 ; 2021–2024');
+        self::assertStringNotContainsString('Louis Vigouroux', $client->getCrawler()->filter('.rich-content')->text());
 
         $client->request('GET', '/espace', server: ['HTTPS' => 'on']);
         self::assertResponseRedirects('/auth/login');

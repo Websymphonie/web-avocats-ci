@@ -19,7 +19,9 @@ use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\User
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentSource;
 use Websymphonie\LearningContext\Domain\Enum\EnrollmentStatus;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
-use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
+use Websymphonie\LearningContext\Application\Exception\VideoPlaybackUnavailableException;
+use Websymphonie\LearningContext\Application\Service\MuxPlaybackTokenSignerInterface;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -340,6 +342,76 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertLessThan($contentPosition, $videoPosition);
     }
 
+    public function testAvocatReceivesSignedMuxPlaybackOnlyAfterCourseAccessIsAuthorized(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $playbackId = 'AbCdEf0123456789_-';
+        $lesson = $this->createCourseLesson($course, 1)
+            ->setVideoProvider('MUX')
+            ->setExternalVideoId($playbackId);
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $signer = $this->createMock(MuxPlaybackTokenSignerInterface::class);
+        $signer->expects(self::once())->method('signPlayback')->with($playbackId)->willReturn('test-signed-playback-token');
+        static::getContainer()->set(MuxPlaybackTokenSignerInterface::class, $signer);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lesson->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('<mux-player', $content);
+        self::assertStringContainsString('playback-id="' . $playbackId . '"', $content);
+        self::assertStringContainsString('playback-token="test-signed-playback-token"', $content);
+        preg_match('/<mux-player\b[^>]*>/', $content, $playerElement);
+        self::assertNotEmpty($playerElement);
+        self::assertStringContainsString('title="Vidéo de la leçon ', $playerElement[0]);
+        self::assertStringNotContainsString(' autoplay', $playerElement[0]);
+        self::assertStringNotContainsString('youtube-nocookie.com', $playerElement[0]);
+        self::assertStringContainsString('no-store', (string) $client->getResponse()->headers->get('Cache-Control'));
+        self::assertStringContainsString('private', (string) $client->getResponse()->headers->get('Cache-Control'));
+    }
+
+    public function testUnauthorizedCourseMemberDoesNotCauseMuxTokenSigning(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($course, 1)
+            ->setVideoProvider('MUX')
+            ->setExternalVideoId('AbCdEf0123456789_-');
+        $signer = $this->createMock(MuxPlaybackTokenSignerInterface::class);
+        $signer->expects(self::never())->method('signPlayback');
+        static::getContainer()->set(MuxPlaybackTokenSignerInterface::class, $signer);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lesson->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testMuxSigningFailureRendersControlledUnavailableState(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $course = $this->createTraining(TrainingAccessType::FREE);
+        $lesson = $this->createCourseLesson($course, 1)
+            ->setVideoProvider('MUX')
+            ->setExternalVideoId('AbCdEf0123456789_-');
+        $this->createEnrollment($course, $avocat, EnrollmentStatus::ACTIVE);
+        $signer = $this->createMock(MuxPlaybackTokenSignerInterface::class);
+        $signer->method('signPlayback')->willThrowException(new VideoPlaybackUnavailableException('not configured'));
+        static::getContainer()->set(MuxPlaybackTokenSignerInterface::class, $signer);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $course->getUuidAsString() . '/lecons/' . $lesson->getUuidAsString(), server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Cette vidéo est temporairement indisponible.', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('<mux-player', (string) $client->getResponse()->getContent());
+    }
+
     public function testAvocatCanOpenOwnLiveDetailsWithoutExposingJoinUrl(): void
     {
         $client = $this->clientWithSchema();
@@ -357,16 +429,17 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('À venir', $content);
         self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
         self::assertStringNotContainsString('https://meet.example.test/live', $content);
+        self::assertStringNotContainsString('youtube-nocookie.com', $content);
     }
 
     public function testAvocatCanRenderYoutubeLiveWithoutExposingJoinUrl(): void
     {
         $client = $this->clientWithSchema();
         $avocat = $this->createUser(['ROLE_AVOCAT']);
-        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/live');
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, 'https://meet.example.test/live', startsAt: new DateTimeImmutable('-10 minutes'));
         $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
         self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
-        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $details->setStreamProvider(VideoProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
@@ -386,10 +459,10 @@ final class LearningMemberSecurityTest extends WebTestCase
     {
         $client = $this->clientWithSchema();
         $avocat = $this->createUser(['ROLE_AVOCAT']);
-        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, null);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, null, startsAt: new DateTimeImmutable('-10 minutes'));
         $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
         self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
-        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $details->setStreamProvider(VideoProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
@@ -405,10 +478,10 @@ final class LearningMemberSecurityTest extends WebTestCase
     {
         $client = $this->clientWithSchema();
         $avocat = $this->createUser(['ROLE_AVOCAT']);
-        $live = $this->createLive(LiveDeliveryMode::HYBRID, TrainingStatus::PUBLISHED, 'https://meet.example.test/hybrid', 'Maison de l’Avocat');
+        $live = $this->createLive(LiveDeliveryMode::HYBRID, TrainingStatus::PUBLISHED, 'https://meet.example.test/hybrid', 'Maison de l’Avocat', new DateTimeImmutable('-10 minutes'));
         $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
         self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
-        $details->setStreamProvider(LiveStreamProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $details->setStreamProvider(VideoProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
         $this->entityManager()->flush();
         $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
         $client->loginUser($avocat);
@@ -421,6 +494,50 @@ final class LearningMemberSecurityTest extends WebTestCase
         self::assertStringContainsString('https://www.youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
         self::assertStringContainsString('/espace/learning/trainings/' . $live->getUuidAsString() . '/join', $content);
         self::assertStringNotContainsString('https://meet.example.test/hybrid', $content);
+    }
+
+    public function testFinishedLiveShowsReplayInsteadOfLiveSource(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, null, startsAt: new DateTimeImmutable('-2 hours'));
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        $details->setStreamProvider(VideoProvider::YOUTUBE)
+            ->setExternalStreamId('M7lc1UVf-VE')
+            ->setReplayProvider(VideoProvider::YOUTUBE)
+            ->setReplayExternalId('dQw4w9WgXcQ');
+        $this->entityManager()->flush();
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Replay — ' . $live->getTitle(), $content);
+        self::assertStringContainsString('youtube-nocookie.com/embed/dQw4w9WgXcQ', $content);
+        self::assertStringNotContainsString('youtube-nocookie.com/embed/M7lc1UVf-VE', $content);
+    }
+
+    public function testFinishedLiveWithoutReplayShowsUnavailableStateAndNoPlayer(): void
+    {
+        $client = $this->clientWithSchema();
+        $avocat = $this->createUser(['ROLE_AVOCAT']);
+        $live = $this->createLive(LiveDeliveryMode::ONLINE, TrainingStatus::PUBLISHED, null, startsAt: new DateTimeImmutable('-2 hours'));
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $live->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        $details->setStreamProvider(VideoProvider::YOUTUBE)->setExternalStreamId('M7lc1UVf-VE');
+        $this->entityManager()->flush();
+        $this->createEnrollment($live, $avocat, EnrollmentStatus::ACTIVE);
+        $client->loginUser($avocat);
+
+        $client->request('GET', '/espace/formations/' . $live->getUuidAsString() . '/live', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $content = (string) $client->getResponse()->getContent();
+        self::assertStringContainsString('Replay indisponible', $content);
+        self::assertStringNotContainsString('youtube-nocookie.com', $content);
     }
 
     public function testLiveDetailsShowHybridLocationAndDenyUnauthorizedMembers(): void

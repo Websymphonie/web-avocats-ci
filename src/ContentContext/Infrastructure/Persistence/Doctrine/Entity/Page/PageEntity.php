@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Domain\Enum\PageStatus;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\PagePerson\PagePersonGroupEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Repository\Page\PageRepository;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\DatesTrait;
 use Websymphonie\SharedContext\Infrastructure\Persistence\Doctrine\Feature\IdTrait;
@@ -46,6 +49,38 @@ class PageEntity
 
     #[ORM\Column(name: 'sort_order', type: 'integer', options: ['default' => 0])]
     private int $sortOrder = 0;
+
+    /** @var Collection<int, PagePersonGroupEntity> */
+    #[ORM\OneToMany(mappedBy: 'page', targetEntity: PagePersonGroupEntity::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $personGroups;
+
+    public function __construct()
+    {
+        $this->personGroups = new ArrayCollection();
+    }
+
+    /** @return Collection<int, PagePersonGroupEntity> */
+    public function getPersonGroups(): Collection
+    {
+        return $this->personGroups;
+    }
+
+    public function addPersonGroup(PagePersonGroupEntity $group): self
+    {
+        if (!$this->personGroups->contains($group)) {
+            $this->personGroups->add($group);
+            $group->setPage($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonGroup(PagePersonGroupEntity $group): self
+    {
+        $this->personGroups->removeElement($group);
+
+        return $this;
+    }
 
     public function getTitle(): string
     {

@@ -11,5 +11,5 @@ interface CurrencyServiceInterface
 
     public function toLetter(int $amount): string;
 
-    public function formatCurrency(int $amount): string;
+    public function formatCurrency(int $amount, ?string $currencyCode = null): string;
 }

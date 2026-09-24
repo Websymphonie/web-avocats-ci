@@ -13,6 +13,7 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Images\
 use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglages\Reglages;
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicLawyerDirectoryQuery;
+use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicCabinetDirectoryQuery;
 use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicLawyerProfileQuery;
 use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicCabinetProfileQuery;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryEntry;
@@ -54,8 +55,12 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Trouver un avocat');
         self::assertSelectorExists('form[method="get"] input[name="name"]');
-        self::assertSelectorExists('form[method="get"] input[name="cabinet"]');
         self::assertSelectorExists('form[method="get"] input[name="location"]');
+        self::assertSelectorExists('#directory-cabinet-search-desktop');
+        self::assertSelectorExists('a[aria-current="page"]');
+        self::assertSelectorTextContains('aside', 'Cabinets');
+        self::assertSelectorTextContains('aside', 'Cabinet du Centre');
+        self::assertSelectorTextNotContains('aside', 'Cabinet Ivoire');
         self::assertSelectorExists('article a[href^="/avocats/"]');
         self::assertSelectorTextContains('body', '17 résultats');
 
@@ -84,6 +89,31 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('article', 'Awa Kouassi');
         self::assertSelectorTextContains('article', 'Cabinet Ivoire');
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $publicCabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet du Centre']);
+        $privateCabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet Ivoire']);
+        self::assertInstanceOf(CabinetEntity::class, $publicCabinet);
+        self::assertInstanceOf(CabinetEntity::class, $privateCabinet);
+        $publicCabinetUuid = (string) $publicCabinet->getUuidAsString();
+
+        $client->request('GET', '/avocats?cabinet=' . $publicCabinetUuid, server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', '2 résultats');
+        self::assertSelectorTextContains('body', 'Mariam N\'Dri');
+        self::assertSelectorTextNotContains('body', 'Awa Kouassi');
+        self::assertSelectorExists('a[href="/avocats?cabinet=' . $publicCabinetUuid . '"][aria-current="page"]');
+        self::assertSelectorExists('form input[type="hidden"][name="cabinet"][value="' . $publicCabinetUuid . '"]');
+
+        $client->request('GET', '/avocats?name=mariam&cabinet=' . $publicCabinetUuid . '&location=Bouaké', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', '1 résultat');
+        self::assertSelectorTextContains('article', 'Mariam N\'Dri');
+
+        $client->request('GET', '/avocats?cabinet=' . $privateCabinet->getUuidAsString(), server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('#directory-empty-title', 'Aucun avocat ne correspond à votre recherche');
+        self::assertSelectorNotExists('article');
 
         $client->request('GET', '/avocats?location=abidjan', server: ['HTTPS' => 'on']);
         self::assertResponseIsSuccessful();
@@ -117,6 +147,81 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertSelectorTextContains('#directory-empty-title', 'Aucun avocat ne correspond à votre recherche');
         self::assertSelectorExists('a[href="/avocats"]');
         self::assertSelectorExists('input[name="name"][value="ce-nom-nexiste-pas"]');
+    }
+
+    public function testCabinetFilterIsPreservedAcrossPaginationAndCombinedWithName(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDirectoryDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $cabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet du Centre']);
+        self::assertInstanceOf(CabinetEntity::class, $cabinet);
+
+        for ($index = 1; $index <= 13; ++$index) {
+            $this->createLawyer(
+                sprintf('directory-page-%02d@example.test', $index),
+                sprintf('Annuaire avocat %02d', $index),
+                true,
+                true,
+                'ACTIVE',
+                $cabinet,
+            );
+        }
+        $entityManager->flush();
+
+        $cabinetUuid = (string) $cabinet->getUuidAsString();
+        $client->request('GET', '/avocats?cabinet=' . $cabinetUuid . '&name=annuaire&location=Bouaké', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', '13 résultats');
+        $paginationLinks = $client->getCrawler()->filter('nav[aria-label="Pagination"] a')->each(static fn ($node): string => (string) $node->attr('href'));
+        $pageTwoLink = null;
+        foreach ($paginationLinks as $paginationLink) {
+            if (str_contains($paginationLink, 'page=2')) {
+                $pageTwoLink = $paginationLink;
+                break;
+            }
+        }
+        self::assertNotNull($pageTwoLink);
+        parse_str((string) parse_url($pageTwoLink, PHP_URL_QUERY), $pageTwoParameters);
+        self::assertSame(['cabinet' => $cabinetUuid, 'name' => 'annuaire', 'location' => 'Bouaké', 'page' => '2'], $pageTwoParameters);
+
+        $client->request('GET', '/avocats?cabinet=' . $cabinetUuid . '&name=annuaire&location=Bouaké&page=2', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('body', '13 résultats');
+        self::assertSelectorTextContains('article', 'Annuaire avocat 13');
+    }
+
+    public function testCabinetSidebarContainsOnlyEligiblePublicCabinetsInNameOrder(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDirectoryDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        $earlyCabinet = (new CabinetEntity())->setName('Cabinet Abidjan')->setDirectoryVisible(true);
+        $noMemberCabinet = (new CabinetEntity())->setName('Cabinet sans membre')->setDirectoryVisible(true);
+        $ineligibleCabinet = (new CabinetEntity())->setName('Cabinet sans avocat publiable')->setDirectoryVisible(true);
+        $entityManager->persist($earlyCabinet);
+        $entityManager->persist($noMemberCabinet);
+        $entityManager->persist($ineligibleCabinet);
+        $entityManager->flush();
+        $this->createLawyer('sidebar-public@example.test', 'Avocat public Abidjan', true, true, 'ACTIVE', $earlyCabinet);
+        $this->createLawyer('sidebar-hidden@example.test', 'Avocat non publiable', true, false, 'ACTIVE', $ineligibleCabinet);
+        $entityManager->flush();
+
+        $client->request('GET', '/avocats', server: ['HTTPS' => 'on']);
+
+        self::assertResponseIsSuccessful();
+        $cabinetNames = static::getContainer()->get(QueryBus::class)->handle(new GetPublicCabinetDirectoryQuery());
+        self::assertSame(['Cabinet Abidjan', 'Cabinet du Centre'], array_map(static fn ($cabinet): string => $cabinet->name, $cabinetNames));
+        self::assertSelectorTextContains('aside', 'Cabinet Abidjan');
+        self::assertSelectorTextContains('aside', 'Cabinet du Centre');
+        self::assertSelectorTextNotContains('aside', 'Cabinet Ivoire');
+        self::assertSelectorTextNotContains('aside', 'Cabinet sans membre');
+        self::assertSelectorTextNotContains('aside', 'Cabinet sans avocat publiable');
+        $html = (string) $client->getResponse()->getContent();
+        self::assertStringNotContainsString($ineligibleCabinet->getUuidAsString(), $html);
+        self::assertStringNotContainsString('legacySourceUuid', $html);
     }
 
     public function testDirectoryReadModelContainsOnlyPublicProjectionFields(): void
@@ -172,6 +277,11 @@ final class PublicLawyerDirectoryTest extends WebTestCase
             self::assertInstanceOf(LawyerProfileEntity::class, $ineligibleProfile);
             $client->request('GET', '/avocats/' . $ineligibleProfile->getUuidAsString(), server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(404);
+            $client->request('GET', '/avocats/' . $ineligibleProfile->getUuidAsString(), server: [
+                'HTTPS' => 'on',
+                'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+            ]);
+            self::assertResponseStatusCodeSame(404);
         }
         $publicUser = $entityManager->getRepository(User::class)->findOneBy(['email' => 'public-awa@example.test']);
         self::assertInstanceOf(User::class, $publicUser);
@@ -187,6 +297,84 @@ final class PublicLawyerDirectoryTest extends WebTestCase
         self::assertSelectorNotExists('#lawyer-cabinet-title');
         $client->request('GET', '/avocats/018f8f5e-7b2c-7abc-8def-0123456789ab', server: ['HTTPS' => 'on']);
         self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testDirectoryLawyerProfileLinkUsesAJAXModalWithThePublicProfileProjection(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDirectoryDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'public-mariam@example.test']);
+        $profile = $entityManager->getRepository(LawyerProfileEntity::class)->findOneBy(['user' => $user]);
+        self::assertInstanceOf(LawyerProfileEntity::class, $profile);
+        $profile->setBarNumber('CI-2025-014')
+            ->setSpecializationSummary('Droit social')
+            ->setBio('Présentation publique de Mariam')
+            ->setProfessionalEmail('mariam.pro@example.test')
+            ->setProfessionalPhone('+225 07 55 44 33')
+            ->setDirectoryVisible(true);
+        $entityManager->flush();
+        $uuid = (string) $profile->getUuidAsString();
+        $cabinet = $entityManager->getRepository(CabinetEntity::class)->findOneBy(['name' => 'Cabinet du Centre']);
+        self::assertInstanceOf(CabinetEntity::class, $cabinet);
+
+        $client->request('GET', '/avocats?cabinet=' . $cabinet->getUuidAsString() . '&name=mariam&location=Bouaké&page=1', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('a[href="/avocats/' . $uuid . '"][data-action="click->lawyer-profile-modal#open"]');
+        self::assertSelectorExists('a[href="/avocats/' . $uuid . '"][aria-haspopup="dialog"]');
+        self::assertStringNotContainsString('mariam.pro@example.test', (string) $client->getResponse()->getContent());
+        self::assertStringNotContainsString('Présentation publique de Mariam', (string) $client->getResponse()->getContent());
+
+        $client->request('GET', '/avocats/' . $uuid, server: [
+            'HTTPS' => 'on',
+            'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('text/html', (string) $client->getResponse()->headers->get('Content-Type'));
+        self::assertSame('X-Requested-With', $client->getResponse()->headers->get('Vary'));
+        self::assertSelectorExists('[data-lawyer-profile-fragment]');
+        self::assertSame('Mariam N\'Dri', $client->getCrawler()->filter('[data-lawyer-profile-fragment]')->attr('data-lawyer-name'));
+        self::assertSelectorTextContains('#lawyer-specialties-title', 'Droit social');
+        self::assertSelectorTextContains('section[aria-labelledby="lawyer-biography-title"]', 'Présentation publique de Mariam');
+        self::assertSelectorExists('a[href="mailto:mariam.pro@example.test"]');
+        self::assertSelectorExists('a[href="tel:+22507554433"]');
+        self::assertSelectorExists('a[href="/cabinets/' . $cabinet->getUuidAsString() . '"]');
+        self::assertSelectorNotExists('nav[aria-label="Navigation principale"]');
+
+        $html = (string) $client->getResponse()->getContent();
+        foreach (['public-mariam@example.test', 'ROLE_AVOCAT', 'legacySourceUuid', 'directoryUser', 'user_id'] as $privateValue) {
+            self::assertStringNotContainsString($privateValue, $html);
+        }
+
+        $client->request('GET', '/avocats/' . $uuid, server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('h1#lawyer-title');
+        self::assertSelectorExists('#directory-back[href="/avocats"]');
+        self::assertSelectorTextContains('section[aria-labelledby="lawyer-biography-title"]', 'Présentation publique de Mariam');
+    }
+
+    public function testLawyerProfileModalShowsPortraitFallbackAndOmitsUnavailableContacts(): void
+    {
+        $client = $this->clientWithSchema();
+        $this->createDirectoryDataset();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'public-koffi@example.test']);
+        $profile = $entityManager->getRepository(LawyerProfileEntity::class)->findOneBy(['user' => $user]);
+        self::assertInstanceOf(LawyerProfileEntity::class, $profile);
+
+        $client->request('GET', '/avocats/' . $profile->getUuidAsString(), server: [
+            'HTTPS' => 'on',
+            'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSame('Koffi Indépendant', $client->getCrawler()->filter('[data-lawyer-profile-fragment]')->attr('data-lawyer-name'));
+        self::assertSelectorNotExists('[data-lawyer-profile-fragment] img');
+        self::assertSelectorNotExists('[data-lawyer-profile-fragment] a[href^="mailto:"]');
+        self::assertSelectorNotExists('[data-lawyer-profile-fragment] a[href^="tel:"]');
+        self::assertSelectorTextContains('[data-lawyer-profile-fragment]', 'Aucune information professionnelle complémentaire');
+
     }
 
     public function testAccountlessPublicLawyerProfileUsesProfessionalDisplayName(): void

@@ -14,7 +14,9 @@ use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
 use Websymphonie\LearningContext\Application\Usecase\Command\Lesson\AddLessonResourcesCommand;
 use Websymphonie\LearningContext\Application\Usecase\Command\Lesson\UpdateLessonCommand;
 use Websymphonie\LearningContext\Application\Usecase\Query\GetLessonDetailsQuery;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 use Websymphonie\LearningContext\Presenter\Form\CourseModule\LessonFormType;
+use Websymphonie\LearningContext\Presenter\Service\YouTubeVideoPresenter;
 use Websymphonie\SharedContext\Domain\Exception\UserFacingError;
 use Websymphonie\SharedContext\Infrastructure\Attribute\HasGroupAccess;
 use Websymphonie\SharedContext\Presenter\AbstractController;
@@ -24,6 +26,10 @@ use Websymphonie\SharedContext\Presenter\AbstractController;
 #[HasGroupAccess(RoleGroupEnum::COURSE_MODULES)]
 final class UpdateLessonController extends AbstractController
 {
+    public function __construct(private readonly YouTubeVideoPresenter $videoPresenter)
+    {
+    }
+
     /**
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
@@ -33,7 +39,16 @@ final class UpdateLessonController extends AbstractController
     {
         $details = $this->handleQuery(new GetLessonDetailsQuery($trainingId, $moduleId, $lessonId));
         $lesson = $details->lesson;
-        $command = new UpdateLessonCommand($trainingId, $moduleId, $lesson->id, $lesson->title, $lesson->summary, $lesson->content, $lesson->videoUrl);
+        $command = new UpdateLessonCommand(
+            trainingId: $trainingId,
+            moduleId: $moduleId,
+            id: $lesson->id,
+            title: $lesson->title,
+            summary: $lesson->summary,
+            content: $lesson->content,
+            videoProvider: $lesson->videoSource !== null ? $lesson->videoSource->provider : VideoProvider::YOUTUBE,
+            videoReference: $this->videoPresenter->referenceForForm($lesson->videoSource),
+        );
         $form = $this->createForm(LessonFormType::class, $command)->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
@@ -47,6 +62,6 @@ final class UpdateLessonController extends AbstractController
                 $this->flash()->errorFromException($exception);
             }
         }
-        return $this->render('learning/admin/course_structure/lesson_form.html.twig', ['form' => $form->createView(), 'trainingId' => $trainingId, 'module' => $details->module, 'lesson' => $lesson, 'resources' => $details->resources, 'pageTitle' => 'Modifier la leçon']);
+        return $this->render('learning/admin/course_structure/lesson_form.html.twig', ['form' => $form->createView(), 'trainingId' => $trainingId, 'module' => $details->module, 'lesson' => $lesson, 'videoEmbedUrl' => $this->videoPresenter->embedUrl($lesson->videoSource), 'resources' => $details->resources, 'pageTitle' => 'Modifier la leçon']);
     }
 }

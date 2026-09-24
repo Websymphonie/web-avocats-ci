@@ -8,8 +8,11 @@ use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
 use Websymphonie\ContentContext\Application\Usecase\Command\Page\CreatePageCommand;
+use Websymphonie\ContentContext\Application\Model\PagePersonGroupInput;
 use Websymphonie\ContentContext\Domain\Enum\PageGroup;
 use Websymphonie\ContentContext\Presenter\Form\Page\PageFormType;
+use Websymphonie\ContentContext\Presenter\Form\Page\PagePersonEntryFormType;
+use Websymphonie\ContentContext\Presenter\Form\Page\PagePersonGroupFormType;
 
 final class PageFormTypeTest extends TypeTestCase
 {
@@ -59,5 +62,19 @@ final class PageFormTypeTest extends TypeTestCase
         ]);
 
         self::assertFalse($form->isValid());
+    }
+
+    public function testPersonGroupsCollectionExposesStructuredEntriesInPageForm(): void
+    {
+        $form = $this->factory->create(PageFormType::class, new CreatePageCommand());
+
+        self::assertTrue($form->has('personGroups'));
+        self::assertSame(PagePersonGroupFormType::class, $form->get('personGroups')->getConfig()->getOption('entry_type'));
+
+        $groupForm = $this->factory->create(PagePersonGroupFormType::class, new PagePersonGroupInput());
+        self::assertTrue($groupForm->has('entries'));
+        self::assertSame(PagePersonEntryFormType::class, $groupForm->get('entries')->getConfig()->getOption('entry_type'));
+        self::assertTrue($groupForm->get('entries')->getConfig()->getOption('allow_add'));
+        self::assertTrue($groupForm->get('entries')->getConfig()->getOption('allow_delete'));
     }
 }

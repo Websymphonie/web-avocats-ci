@@ -52,21 +52,24 @@
                         <div class="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
                             <div><p class="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Composition actuelle</p><h2 id="council-title" class="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">Le Conseil de l’Ordre</h2></div>
                         </div>
-                        <div class="mt-7 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                        <div class="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             {% for member in councilMembers %}
                                 {% set memberPortraitUrl = councilPortraitUrls[member.portraitMediaId]|default(null) %}
-                                <article class="overflow-hidden rounded-2xl border border-border bg-card">
-                                    {% if memberPortraitUrl %}<img src="{{ memberPortraitUrl }}" alt="Portrait de {{ member.fullName }}" class="aspect-[4/5] w-full object-cover">{% else %}<div class="flex aspect-[4/5] items-center justify-center bg-muted text-muted-foreground" aria-hidden="true"><twig:ux:icon name="lucide:user-round" class="size-14 opacity-40"/></div>{% endif %}
-                                    <div class="p-5"><h3 class="text-lg font-semibold tracking-[-0.02em]">{{ member.fullName }}</h3><p class="mt-1 text-sm leading-6 text-muted-foreground">{{ member.function }}</p></div>
-                                </article>
+                                {% include 'web/components/_institutional_person_card.html.twig' with {
+                                    portraitUrl: memberPortraitUrl,
+                                    portraitAlt: 'Portrait de ' ~ member.fullName,
+                                    title: member.fullName,
+                                    subtitle: member.function,
+                                    fallbackInitial: member.fullName|first
+                                } only %}
                             {% endfor %}
                         </div>
                     </section>
                 {% endif %}
 
                 {% if mandate %}
-                    <section class="mt-10 overflow-hidden rounded-2xl border border-border bg-card sm:mt-12" aria-labelledby="batonnier-profile-title">
-                        <div class="grid md:grid-cols-[11rem_minmax(0,1fr)]">
+                    <section class="{{ contextualPages is not empty and not coverUrl ? 'mt-0' : 'mt-10 sm:mt-12' }} overflow-hidden rounded-2xl border border-border bg-card" aria-labelledby="batonnier-profile-title">
+                        <div class="{{ portraitUrl ? 'grid md:grid-cols-[11rem_minmax(0,1fr)]' : '' }}">
                             {% if portraitUrl %}
                                 <img src="{{ portraitUrl }}" alt="Portrait de {{ mandate.fullName }}" class="h-64 w-full object-cover md:h-full md:min-h-64">
                             {% endif %}
@@ -84,7 +87,29 @@
                     {{ safeContent|raw }}
                 </div>
 
-                {% if page.slug == 'fonds-de-solidarite' %}
+                {% for personGroup in personGroups %}
+                    <section class="mt-12 sm:mt-14" aria-labelledby="person-group-{{ personGroup.uuid }}">
+                        <div class="border-b border-border pb-5">
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Repères institutionnels</p>
+                            <h2 id="person-group-{{ personGroup.uuid }}" class="mt-2 text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl">{{ personGroup.title }}</h2>
+                        </div>
+                        <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                            {% for entry in personGroup.entries %}
+                                {% include 'web/components/_institutional_person_card.html.twig' with {
+                                    portraitUrl: personPortraitUrls[entry.portraitMediaId]|default(null),
+                                    portraitAlt: entry.portraitMediaId ? 'Portrait de ' ~ entry.displayName : null,
+                                    title: entry.displayName,
+                                    subtitle: entry.roleLabel,
+                                    meta: entry.periodLabel,
+                                    fallbackInitial: entry.displayName|first,
+                                    actionHref: entry.linkUrl
+                                } only %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endfor %}
+
+                {% if canAccessFundResources %}
                     <section class="mt-10 rounded-2xl border border-border bg-card p-6 sm:mt-12 sm:p-8" aria-labelledby="fund-resources-title">
                         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Ressources réservées aux avocats</p>
                         <h2 id="fund-resources-title" class="mt-2 text-xl font-semibold tracking-[-0.02em] text-foreground sm:text-2xl">Consultez les ressources disponibles dans votre espace professionnel</h2>

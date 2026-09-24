@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Infrastructure\Persistence\Factory;
 
 use Websymphonie\LearningContext\Domain\Model\LiveTrainingDetails;
+use Websymphonie\LearningContext\Domain\Model\ExternalVideoSource;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails\LiveTrainingDetailsEntity;
 
 final class LiveTrainingDetailsFactory
@@ -22,8 +23,12 @@ final class LiveTrainingDetailsFactory
             joinUrl: $entity->getJoinUrl(),
             createdAt: $entity->getCreatedAt(),
             updatedAt: $entity->getUpdatedAt(),
-            streamProvider: $entity->getStreamProvider(),
-            externalStreamId: $entity->getExternalStreamId(),
+            liveSource: $entity->getStreamProvider() !== null && $entity->getExternalStreamId() !== null
+                ? new ExternalVideoSource($entity->getStreamProvider(), $entity->getExternalStreamId())
+                : null,
+            replaySource: $entity->getReplayProvider() !== null && $entity->getReplayExternalId() !== null
+                ? new ExternalVideoSource($entity->getReplayProvider(), $entity->getReplayExternalId())
+                : null,
         );
     }
 
@@ -36,7 +41,9 @@ final class LiveTrainingDetailsFactory
             ->setDeliveryMode($model->deliveryMode)
             ->setLocation($model->location)
             ->setJoinUrl($model->joinUrl)
-            ->setStreamProvider($model->streamProvider)
-            ->setExternalStreamId($model->externalStreamId);
+            ->setStreamProvider($model->liveSource?->provider)
+            ->setExternalStreamId($model->liveSource?->externalId)
+            ->setReplayProvider($model->replaySource?->provider)
+            ->setReplayExternalId($model->replaySource?->externalId);
     }
 }

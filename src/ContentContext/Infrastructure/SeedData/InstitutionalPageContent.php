@@ -43,6 +43,67 @@ final class InstitutionalPageContent
         ];
     }
 
+    /**
+     * @return list<array{key: string, title: string, sortOrder: int, entries: list<array{key: string, displayName: string, roleLabel: ?string, periodLabel: ?string, sortOrder: int}>}>
+     */
+    public static function pagePersonGroups(): array
+    {
+        $formerBatonnierNames = [
+            'Louis Vigouroux', 'Lucien Yapobi', 'Armand Josse', 'Jean Réveillé',
+        ];
+        $formerBatonnierPeriods = [
+            ['René Clarac', '1971–1973'],
+            ['Maurice Carlton', '1973–1975'],
+            ['Charles Dogue', '1975–1977'],
+            ['Camille Adam', '1977–1979'],
+            ['Jean Konan-Banny', '1979–1980'],
+            ['Maurice Kakou', '1980–1983'],
+            ['Julien Mondon-Konan', '1983–1985'],
+            ['Emile Dervin', '1985–1987'],
+            ['Amadou Fadika', '1987–1989'],
+            ['Gabriel Assamoi', '1989–1990'],
+            ['Charles Gaby Kouassi', '1991–1993'],
+            ['Lucien N’Gouin Claih', '1993–1995'],
+            ['Emmanuel Tano K.', '1995–1997'],
+            ['Essy N’Gatta', '1997–1999'],
+            ['Luc Adje Kacou', '1999–2001'],
+            ['Louis Metan', '2000–2003'],
+            ['Emmanuel Assi', '2005–2007'],
+            ['Mamadou Kone', '2009–2010 ; 2013–2014'],
+            ['Joachim Bile-Aka', '2011–2013'],
+            ['Marcel Beugre', '2014–2015'],
+            ['Thomas Zé N’Dri', '2019–2021'],
+            ['Claude Mentenon', '2003–2005 ; 2005–2007 ; 2021–2024'],
+        ];
+
+        $entries = [];
+        foreach ($formerBatonnierNames as $index => $name) {
+            $entries[] = [
+                'key' => 'former-' . ($index + 1),
+                'displayName' => $name,
+                'roleLabel' => null,
+                'periodLabel' => null,
+                'sortOrder' => $index * 10,
+            ];
+        }
+        foreach ($formerBatonnierPeriods as $index => [$name, $period]) {
+            $entries[] = [
+                'key' => 'former-' . ($index + count($formerBatonnierNames) + 1),
+                'displayName' => $name,
+                'roleLabel' => null,
+                'periodLabel' => $period,
+                'sortOrder' => ($index + count($formerBatonnierNames)) * 10,
+            ];
+        }
+
+        return [[
+            'key' => 'former-batonnier',
+            'title' => 'Les anciens Bâtonniers',
+            'sortOrder' => 10,
+            'entries' => $entries,
+        ]];
+    }
+
     /** @return list<array{fullName: string, function: string, portraitReference: string}> */
     public static function councilMembers(): array
     {
@@ -97,37 +158,6 @@ final class InstitutionalPageContent
             <h2>2014 — Harmonisation des règles professionnelles</h2>
             <p>L’ancien site mentionne le règlement n°05/CM/UEMOA du 25 septembre 2014 et l’associe à l’harmonisation des règles de la profession dans l’espace UEMOA : organisation des Barreaux nationaux, droit de plaidoirie, conditions d’accès et modalités d’exercice.</p>
             <p>Ces références sont reproduites comme des repères historiques cités par l’ancienne page. Elles ne constituent pas un résumé des règles actuellement en vigueur.</p>
-            <h2>Les anciens Bâtonniers mentionnés</h2>
-            <p>Les noms et périodes ci-dessous reprennent les indications de l’ancien site. Les périodes qui se chevauchent et les dates manquantes sont laissées visibles, sans arbitrage ni correction.</p>
-            <h3>Anciens Bâtonniers mentionnés sans période</h3>
-            <ul>
-            <li>Louis Vigouroux</li><li>Lucien Yapobi</li><li>Armand Josse</li><li>Jean Réveillé</li>
-            </ul>
-            <h3>Noms et périodes telles qu’affichées</h3>
-            <ul>
-            <li>René Clarac — 1971–1973</li>
-            <li>Maurice Carlton — 1973–1975</li>
-            <li>Charles Dogue — 1975–1977</li>
-            <li>Camille Adam — 1977–1979</li>
-            <li>Jean Konan-Banny — 1979–1980</li>
-            <li>Maurice Kakou — 1980–1983</li>
-            <li>Julien Mondon-Konan — 1983–1985</li>
-            <li>Emile Dervin — 1985–1987</li>
-            <li>Amadou Fadika — 1987–1989</li>
-            <li>Gabriel Assamoi — 1989–1990</li>
-            <li>Charles Gaby Kouassi — 1991–1993</li>
-            <li>Lucien N’Gouin Claih — 1993–1995</li>
-            <li>Emmanuel Tano K. — 1995–1997</li>
-            <li>Essy N’Gatta — 1997–1999</li>
-            <li>Luc Adje Kacou — 1999–2001</li>
-            <li>Louis Metan — 2000–2003</li>
-            <li>Emmanuel Assi — 2005–2007</li>
-            <li>Mamadou Kone — 2009–2010 ; 2013–2014</li>
-            <li>Joachim Bile-Aka — 2011–2013</li>
-            <li>Marcel Beugre — 2014–2015</li>
-            <li>Thomas Zé N’Dri — 2019–2021</li>
-            <li>Claude Mentenon — 2003–2005 ; 2005–2007 ; 2021–2024</li>
-            </ul>
             HTML),
             'privacy' => $sanitizer->sanitize(<<<'HTML'
             <h2>1. Données traitées &amp; Finalités</h2>

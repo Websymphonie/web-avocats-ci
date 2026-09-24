@@ -80,10 +80,16 @@
                 </div>
 
                 <div class="space-y-7 px-5 py-6 sm:px-7 sm:py-8">
-                    {% if activeLesson.lesson.videoEmbedUrl %}
+                    {% if videoEmbedUrl %}
                         <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-                            <iframe class="size-full" src="{{ activeLesson.lesson.videoEmbedUrl }}" title="Vidéo de la leçon {{ activeLesson.lesson.title }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe class="size-full" src="{{ videoEmbedUrl }}" title="Vidéo de la leçon {{ activeLesson.lesson.title }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
+                    {% elseif muxPlaybackId and muxPlaybackToken %}
+                        <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+                            <mux-player class="block size-full" playback-id="{{ muxPlaybackId|e('html_attr') }}" playback-token="{{ muxPlaybackToken|e('html_attr') }}" title="Vidéo de la leçon {{ activeLesson.lesson.title|e('html_attr') }}" controls playsinline data-controller="mux-player"></mux-player>
+                        </div>
+                    {% elseif videoUnavailable %}
+                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-6 text-sm text-muted-foreground" role="status">Cette vidéo est temporairement indisponible.</div>
                     {% endif %}
 
                     {% if activeLesson.lesson.content is not empty %}

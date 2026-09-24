@@ -14,6 +14,8 @@ use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Baton
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\CouncilMember\CouncilMemberEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\DocumentPublication\DocumentPublicationEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Page\PageEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\PagePerson\PagePersonEntryEntity;
+use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\PagePerson\PagePersonGroupEntity;
 use Websymphonie\ContentContext\Infrastructure\Persistence\Doctrine\Entity\Tag\TagEntity;
 use Websymphonie\ContentContext\Infrastructure\SeedData\InstitutionalDocumentData;
 use Websymphonie\MediaContext\Application\Service\StoredFileStorageInterface;
@@ -34,7 +36,7 @@ final readonly class InstitutionalContentBootstrapper
     ) {
     }
 
-    /** @return array{pages: int, batonnier: int, councilMembers: int, documents: int, documentConflicts: list<string>} */
+    /** @return array{pages: int, batonnier: int, councilMembers: int, personGroups: int, personEntries: int, documents: int, documentConflicts: list<string>} */
     public function bootstrap(): array
     {
         $contents = InstitutionalPageContent::load($this->sanitizer);
@@ -101,15 +103,74 @@ final readonly class InstitutionalContentBootstrapper
         }
 
         $this->entityManager->flush();
+        $peopleResult = $this->bootstrapPagePersonGroups();
+        $this->entityManager->flush();
         $documentResult = $this->bootstrapDocuments();
 
         return [
             'pages' => $createdPages,
             'batonnier' => $createdBatonnier,
             'councilMembers' => $createdMembers,
+            'personGroups' => $peopleResult['groups'],
+            'personEntries' => $peopleResult['entries'],
             'documents' => $documentResult['created'],
             'documentConflicts' => $documentResult['conflicts'],
         ];
+    }
+
+    /** @return array{groups: int, entries: int} */
+    private function bootstrapPagePersonGroups(): array
+    {
+        $page = $this->entityManager->getRepository(PageEntity::class)->findOneBy([
+            'editorialGroup' => \Websymphonie\ContentContext\Domain\Enum\PageGroup::BAR,
+            'slug' => 'historique',
+        ]);
+        if (!$page instanceof PageEntity) {
+            throw new \RuntimeException('La Page BAR « historique » est nécessaire pour installer les personnes institutionnelles.');
+        }
+
+        $createdGroups = 0;
+        $createdEntries = 0;
+        foreach (InstitutionalPageContent::pagePersonGroups() as $groupData) {
+            $group = $this->entityManager->getRepository(PagePersonGroupEntity::class)->findOneBy([
+                'page' => $page,
+                'key' => $groupData['key'],
+            ]);
+            if (!$group instanceof PagePersonGroupEntity) {
+                $group = (new PagePersonGroupEntity())->setPage($page)->setKey($groupData['key']);
+                $page->addPersonGroup($group);
+                $this->entityManager->persist($group);
+                ++$createdGroups;
+            }
+            $group->setTitle($groupData['title'])->setSortOrder($groupData['sortOrder']);
+
+            $expectedKeys = array_column($groupData['entries'], 'key');
+            foreach ($group->getEntries()->toArray() as $existingEntry) {
+                if (!in_array($existingEntry->getKey(), $expectedKeys, true)) {
+                    $group->removeEntry($existingEntry);
+                    $this->entityManager->remove($existingEntry);
+                }
+            }
+
+            foreach ($groupData['entries'] as $entryData) {
+                $entry = $this->entityManager->getRepository(PagePersonEntryEntity::class)->findOneBy([
+                    'group' => $group,
+                    'key' => $entryData['key'],
+                ]);
+                if (!$entry instanceof PagePersonEntryEntity) {
+                    $entry = (new PagePersonEntryEntity())->setGroup($group)->setKey($entryData['key']);
+                    $group->addEntry($entry);
+                    $this->entityManager->persist($entry);
+                    ++$createdEntries;
+                }
+                $entry->setDisplayName($entryData['displayName'])
+                    ->setRoleLabel($entryData['roleLabel'])
+                    ->setPeriodLabel($entryData['periodLabel'])
+                    ->setSortOrder($entryData['sortOrder']);
+            }
+        }
+
+        return ['groups' => $createdGroups, 'entries' => $createdEntries];
     }
 
     /** @return array{created: int, conflicts: list<string>} */

@@ -52,10 +52,16 @@
             {{ form_errors(form.joinUrl) }}
         </div>
         <div class="space-y-2">
-            {{ form_label(form.youtubeStreamUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}
-            {{ form_widget(form.youtubeStreamUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
-            {{ form_errors(form.youtubeStreamUrl) }}
-            {% if form.youtubeStreamUrl.vars.help %}<p class="text-xs text-muted-foreground">{{ form.youtubeStreamUrl.vars.help }}</p>{% endif %}
+            {{ form_label(form.liveVideoReferenceUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.liveVideoReferenceUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.liveVideoReferenceUrl) }}
+            {% if form.liveVideoReferenceUrl.vars.help %}<p class="text-xs text-muted-foreground">{{ form.liveVideoReferenceUrl.vars.help }}</p>{% endif %}
+        </div>
+        <div class="space-y-2">
+            {{ form_label(form.replayVideoReferenceUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.replayVideoReferenceUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.replayVideoReferenceUrl) }}
+            {% if form.replayVideoReferenceUrl.vars.help %}<p class="text-xs text-muted-foreground">{{ form.replayVideoReferenceUrl.vars.help }}</p>{% endif %}
         </div>
     </div>
 </fieldset>

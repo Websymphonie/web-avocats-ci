@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,6 +31,16 @@ final class PageFormType extends AbstractType
             ->add('content', TextareaType::class, ['label' => 'Contenu', 'required' => false, 'attr' => ['rows' => 18, 'data-rich-text-editor-target' => 'input']])
             ->add('group', EnumType::class, ['label' => 'Groupe', 'class' => PageGroup::class, 'choice_label' => static fn (PageGroup $value): string => $value->label(), 'required' => false, 'placeholder' => 'Aucun groupe'])
             ->add('sortOrder', IntegerType::class, ['label' => 'Ordre d’affichage', 'required' => false, 'empty_data' => 0, 'constraints' => [new PositiveOrZero()], 'help' => 'Les valeurs les plus petites apparaissent en premier dans la navigation du groupe.'])
+            ->add('personGroups', CollectionType::class, [
+                'entry_type' => PagePersonGroupFormType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'prototype' => true,
+                'prototype_name' => '__group__',
+                'label' => false,
+            ])
             ->add('cover', FileType::class, ['label' => 'Image de couverture', 'required' => false, 'mapped' => true, 'attr' => ['accept' => 'image/jpeg,image/png,image/webp'], 'constraints' => [new File(maxSize: '5M', mimeTypes: ['image/jpeg', 'image/png', 'image/webp'], mimeTypesMessage: 'Seules les images JPEG, PNG et WebP sont acceptées.')]]);
         if ($options['data'] instanceof UpdatePageCommand) {
             $builder->add('removeCover', CheckboxType::class, ['label' => 'Retirer la couverture actuelle', 'required' => false]);

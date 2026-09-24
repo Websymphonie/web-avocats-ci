@@ -1,0 +1,17 @@
+<fieldset data-collection-item class="grid gap-4 rounded-xl border border-border bg-background p-4 sm:grid-cols-2">
+    <div class="space-y-1.5">{{ form_label(entry.displayName, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(entry.displayName, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(entry.displayName) }}</div>
+    <div class="space-y-1.5">{{ form_label(entry.roleLabel, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(entry.roleLabel, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(entry.roleLabel) }}</div>
+    <div class="space-y-1.5">{{ form_label(entry.periodLabel, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(entry.periodLabel, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_help(entry.periodLabel) }}{{ form_errors(entry.periodLabel) }}</div>
+    <div class="space-y-1.5">
+        {{ form_label(entry.portrait, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+        {{ form_widget(entry.portrait, {attr: {class: 'block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-muted file:px-3 file:py-2 file:text-sm file:font-medium file:text-foreground'}}) }}
+        {{ form_errors(entry.portrait) }}
+        {% set currentPortraitMediaId = entry.vars.data.portraitMediaId|default(null) %}
+        {% set currentPortraitUrl = currentPortraitMediaId is not null ? personPortraitUrls[currentPortraitMediaId]|default(null) : null %}
+        {% if currentPortraitUrl %}<img src="{{ currentPortraitUrl }}" alt="Portrait actuel de {{ entry.vars.data.displayName }}" class="mt-2 size-14 rounded-full border border-border object-cover">{% endif %}
+        <div class="mt-2 flex items-center justify-between gap-3"><div class="flex items-center gap-2">{{ form_widget(entry.removePortrait, {attr: {class: 'size-4 rounded border-input text-primary focus:ring-ring'}}) }}{{ form_label(entry.removePortrait, null, {label_attr: {class: 'text-xs text-muted-foreground'}}) }}</div><button type="button" data-action="collection#remove" class="text-sm font-medium text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Retirer cette personne</button></div>
+    </div>
+    <div class="space-y-1.5">{{ form_label(entry.linkUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(entry.linkUrl, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}{{ form_errors(entry.linkUrl) }}</div>
+    <div class="space-y-1.5">{{ form_label(entry.sortOrder, null, {label_attr: {class: 'text-sm font-medium'}}) }}{{ form_widget(entry.sortOrder, {attr: {class: 'flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm', min: 0}}) }}{{ form_errors(entry.sortOrder) }}</div>
+    {{ form_widget(entry.key) }}
+</fieldset>

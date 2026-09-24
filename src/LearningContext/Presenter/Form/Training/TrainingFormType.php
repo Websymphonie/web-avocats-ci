@@ -98,7 +98,8 @@ final class TrainingFormType extends AbstractType
                 ])
                 ->add('location', TextType::class, ['label' => 'Lieu', 'required' => false, 'attr' => ['placeholder' => 'Adresse ou localisation']])
                 ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL HTTPS valide.')]])
-                ->add('youtubeStreamUrl', TextType::class, ['label' => 'URL YouTube Live / vidéo', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'help' => 'Optionnel. Une URL YouTube HTTPS de type watch, youtu.be ou embed.']);
+                ->add('liveVideoReferenceUrl', TextType::class, ['label' => 'Référence du direct (YouTube)', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL YouTube HTTPS valide.')], 'help' => 'Référence YouTube du direct. Les autres fournisseurs ne sont pas encore disponibles dans le Backoffice.'])
+                ->add('replayVideoReferenceUrl', TextType::class, ['label' => 'Référence du replay (YouTube)', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL YouTube HTTPS valide.')], 'help' => 'Facultatif. Le replay est distinct du direct et ne sera affiché qu’après la fin de la session.']);
         }
 
         if ($options['data'] instanceof UpdateTrainingCommand) {

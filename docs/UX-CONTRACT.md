@@ -67,8 +67,10 @@
 - The COURSE Programme is a nested module/lesson builder on the detail and edit views. Each level has a compact
   ellipsis menu; module deletion confirms that its lessons are also deleted. Ordering supports Stimulus drag/drop plus
   accessible `Monter`/`Descendre` controls and an explicit save action. Cross-module lesson movement is deferred.
-- The lesson editor uses the shared rich-text editor, validates YouTube references server-side and supports multiple
-  private PDF/DOCX/XLSX/PPTX resources. Resource titles are editable, downloads are Backoffice-only, and ordering has
+- The lesson editor uses the shared rich-text editor, validates YouTube HTTPS URLs or Mux Playback IDs server-side,
+  and supports multiple private PDF/DOCX/XLSX/PPTX resources. Mux requires a Playback ID (not an Asset ID); its
+  signed token is generated only after member course authorization and is never stored. Resource titles are editable,
+  downloads are Backoffice-only, and ordering has
   both drag/drop and `Monter`/`Descendre` controls.
 - Programme structure mutations use `LEARNING_TRAINING_MANAGE` and CSRF. Bulk selection is intentionally not exposed
   for modules or lessons.
@@ -91,6 +93,10 @@
   suspended; `UNKNOWN` is not labelled “Actif”. Member profile lookup remains account-based. Cabinet Backoffice phone
   entry accepts one number per line; public Cabinet details render each usable number as its own `tel:` link. Legacy
   source UUIDs remain internal and are never presented.
+- On `/avocats`, the primary `Voir le profil` anchor retains `/avocats/{uuid}` and opens its public profile projection
+  in the shared native Dialog on an ordinary JavaScript-enabled click. Modified clicks and no-JavaScript navigation
+  keep the canonical detail page. Closing the modal restores focus to its originating link and leaves the current
+  listing URL, filters and page untouched; public Cabinet links navigate to `/cabinets/{uuid}` without nesting dialogs.
 
 ## Accessibility and responsive behavior
 

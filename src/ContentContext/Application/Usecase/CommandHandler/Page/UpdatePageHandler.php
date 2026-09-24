@@ -6,6 +6,7 @@ namespace Websymphonie\ContentContext\Application\Usecase\CommandHandler\Page;
 
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Websymphonie\ContentContext\Application\Service\RichText\RichTextSanitizerInterface;
+use Websymphonie\ContentContext\Application\Service\PagePersonGroupCollectionService;
 use Websymphonie\ContentContext\Application\Usecase\Command\Page\UpdatePageCommand;
 use Websymphonie\ContentContext\Domain\Exception\PageSlugAlreadyExistsException;
 use Websymphonie\ContentContext\Domain\Model\Page;
@@ -23,6 +24,7 @@ final readonly class UpdatePageHandler implements CommandHandler
         private SluggerInterface $slugger,
         private MediaUploadServiceInterface $mediaUpload,
         private MediaRepositoryInterface $mediaRepository,
+        private PagePersonGroupCollectionService $personGroups,
     ) {
     }
 
@@ -47,6 +49,7 @@ final readonly class UpdatePageHandler implements CommandHandler
                 $page->setCoverMedia(null);
             }
             $saved = $this->repository->save($page);
+            $this->personGroups->synchronize($saved->id, $command->personGroups);
             if ($oldCoverId !== null && (($media !== null) || $command->removeCover)) {
                 $this->removeIfOrphaned($oldCoverId);
             }

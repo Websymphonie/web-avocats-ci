@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Websymphonie\LearningContext\Domain\Enum;
 
-enum LearningVideoProvider: string
+enum VideoProvider: string
 {
     case YOUTUBE = 'YOUTUBE';
-
-    public function label(): string
-    {
-        return 'YouTube';
-    }
+    case MUX = 'MUX';
+    case CLOUDFLARE_STREAM = 'CLOUDFLARE_STREAM';
 }

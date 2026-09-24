@@ -7,10 +7,14 @@ namespace Websymphonie\LawyerContext\Domain\Repository;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryResult;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryMember;
 use Websymphonie\LawyerContext\Domain\Model\LawyerPublicProfile;
+use Websymphonie\LawyerContext\Domain\Model\PublicCabinetDirectoryEntry;
 
 interface LawyerDirectoryRepositoryInterface
 {
     public function listPublic(string $name, string $cabinet, string $location, int $page, int $limit): LawyerDirectoryResult;
+
+    /** @return list<PublicCabinetDirectoryEntry> */
+    public function listPublicCabinetsWithEligibleLawyers(): array;
 
     public function findPublicProfileByUuid(string $uuid): ?LawyerPublicProfile;
 

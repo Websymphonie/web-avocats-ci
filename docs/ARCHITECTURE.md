@@ -487,21 +487,47 @@ drop, avec les boutons Monter et Descendre comme alternative clavier. Il
 n’introduit ni React, ni BulkSelection pour les modules/leçons. Les mutations
 sont protégées par CSRF et LEARNING_TRAINING_MANAGE.
 
-## 12.2 LearningContext — contenu pédagogique LRN-003
+## 12.2 LearningContext — contenu pédagogique LRN-003 / LRN-VID-001
 
 Le contenu d’une `Lesson` est nettoyé par le service Tiptap/sanitizer partagé.
-La vidéo est une référence externe YouTube : seul son identifiant est utilisé
-pour l’embed, sans appel API ni hébergement vidéo privé. `LessonResource`
-conserve un `storedFileId` scalaire et ne crée aucune relation Doctrine vers
+Les sources vidéo sont provider-neutral dans le Domain :
+`ExternalVideoSource(provider, externalId)`, porté par `Lesson.videoSource`,
+`LiveTrainingDetails.liveSource` ou `LiveTrainingDetails.replaySource`. Le
+parsing des références YouTube HTTPS et des Playback ID Mux de leçon est
+effectué dans Application ; le Presenter produit l’URL
+`youtube-nocookie.com/embed` uniquement pour `VideoProvider::YOUTUBE`. Pour une
+leçon COURSE Mux, l’Infrastructure signe à la demande un JWT RS256 côté serveur.
+La signature est déclenchée par le controller membre uniquement après la
+réussite de `GetMemberCoursePlayerQuery` et donc de `TrainingAccessPolicy` ;
+aucune clé privée ni aucun jeton n’est persisté. Le jeton est transmis à Mux
+Player dans la réponse membre marquée `private, no-store`. Si la configuration
+est absente ou invalide, un état indisponible est affiché sans fallback public.
+YouTube reste pris en charge et une leçon sans vidéo reste valide. Aucun appel
+API Mux, création d’asset ou stockage vidéo local n’est introduit.
+`LessonResource` conserve
+un `storedFileId` scalaire et ne crée aucune relation Doctrine vers
 `MediaContext`.
 
-Les sessions `LIVE` peuvent également porter une référence externe YouTube
-facultative (`streamProvider` et `externalStreamId`) sans relation Doctrine
-vers un fournisseur ou vers `MediaContext`. La référence est normalisée côté
-Learning et rendue dans l’espace membre via `youtube-nocookie.com/embed`; elle
-ne déclenche aucune API YouTube. Le `joinUrl` reste une destination HTTPS
-générique, résolue exclusivement par une route membre autorisée et jamais
-injectée directement dans Twig.
+Le playback COURSE Mux utilise les seules variables serveur
+`MUX_SIGNING_KEY_ID`, `MUX_SIGNING_PRIVATE_KEY`, `MUX_PLAYBACK_RESTRICTION_ID`
+(optionnelle) et `MUX_PLAYBACK_TOKEN_TTL` (défaut technique de quatre heures,
+configurable entre cinq minutes et vingt-quatre heures).
+La clé Mux est fournie en PEM encodé Base64 ou avec retours de ligne échappés.
+Les secrets résident dans `.env.local` ou le gestionnaire de secrets du
+déploiement, jamais dans Git. L’opérateur charge la vidéo depuis le dashboard
+Mux avec une politique `signed`, puis copie le Playback ID dans le formulaire
+de leçon (pas l’Asset ID). Le formulaire n’appelle pas l’API pour vérifier la
+référence. Mux Live/replay et Cloudflare Stream ne sont pas inclus.
+
+Pour un LIVE, `joinUrl` demeure une destination HTTPS distincte des sources
+vidéo. Le lecteur membre affiche `liveSource` uniquement pendant la session
+(`startsAt <= now < endsAt`), et `replaySource` seulement après `endsAt` ;
+avant le début, aucun iframe n’est rendu. L’absence de replay après la session
+produit un état « Replay indisponible ». Les URLs de réunion ne sont jamais
+injectées directement dans Twig et restent résolues par une route membre
+autorisée. La colonne historique Lesson `video_url` est conservée et n’est
+plus utilisée par le nouveau mapping applicatif ; ses valeurs existantes ne
+sont ni effacées ni migrées destructivement.
 
 Les ressources privées utilisent la racine persistante configurée
 `APP_STORAGE_DIR`, sous `private/learning/resources`; elles ne sont pas
@@ -951,6 +977,16 @@ d’attester une revue navigateur manuelle de cette surface.
 Les événements de cycle de vie réutilisent
 `ContentLifecycleEvent` et produisent les actions d’audit
 `content.page.published`, `content.page.unpublished` et `content.page.deleted`.
+
+CNT-BAR-003 ajoute à Page une association Doctrine vers `PagePersonGroup`, puis
+vers `PagePersonEntry`, sans métadonnées génériques ni dépendance Doctrine vers
+`Media`. Les périodes historiques restent des chaînes nullable non interprétées.
+Le bootstrap institutionnel synchronise le groupe des anciens Bâtonniers depuis
+la source canonique ; la requête publique charge groupes/entrées ensemble et
+résout les portraits par lot. La composition du Conseil continue de provenir
+uniquement de `CouncilMember`. Les trois surfaces de cartes (annuaire, Conseil,
+anciens Bâtonniers) réutilisent un partial de présentation neutre ; seul
+l’annuaire fournit des liens de profil.
 
 Les fixtures de démonstration préparent les Pages `Présentation du Barreau`
 (`presentation`), `Historique du Barreau` (`historique`), `Le Bâtonnier`

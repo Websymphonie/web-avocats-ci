@@ -1,25 +1,30 @@
+{% set categoryFilters = categoryFilters|default({}) %}
 <aside class="h-fit lg:sticky lg:top-6" aria-label="Navigation des formations">
-    <div class="border border-border bg-card p-6 shadow-sm">
+    <div class="mb-7 lg:hidden" data-controller="accordion" data-accordion-target="item">
+        <div class="flex items-center gap-3">
+            <button type="button" data-accordion-target="trigger" data-action="click->accordion#toggle keydown->accordion#handleKeydown" aria-expanded="false" aria-controls="training-category-options-mobile" class="flex min-h-12 min-w-0 flex-1 items-center justify-between gap-3 border border-border bg-card px-4 py-3 text-left text-sm font-medium text-card-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <span class="min-w-0 truncate"><span class="text-muted-foreground">Catégorie :</span> {{ selectedCategory ? selectedCategory.name : 'Toutes les formations' }}</span>
+                <twig:ux:icon name="lucide:chevron-down" class="size-4 shrink-0 text-muted-foreground" aria-hidden="true"/>
+            </button>
+            {% if selectedCategory %}
+                <a href="{{ path('web_trainings_list', categoryFilters) }}" class="shrink-0 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Réinitialiser la catégorie">Effacer</a>
+            {% endif %}
+        </div>
+        <div id="training-category-options-mobile" data-accordion-target="content" aria-hidden="true" class="hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out">
+            <div class="min-h-0 overflow-hidden border-x border-b border-border bg-card px-3 py-2">
+                {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden border border-border bg-card p-6 shadow-sm lg:block">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Explorer</p>
         <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">Catégories</h2>
         <nav class="mt-5" aria-label="Catégories de formations">
-            <ul class="space-y-1">
-                <li>
-                    <a href="{{ path('web_trainings_list') }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory is null ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if selectedCategory is null %}aria-current="page"{% endif %}>
-                        Toutes les formations
-                    </a>
-                </li>
-                {% for category in categories %}
-                    <li>
-                        <a href="{{ path('web_trainings_list', {categorie: category.slug}) }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory and selectedCategory.id == category.id ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if selectedCategory and selectedCategory.id == category.id %}aria-current="page"{% endif %}>
-                            {{ category.name }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+            {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
         </nav>
     </div>
-    <div class="mt-6 border-l-2 border-primary bg-card px-5 py-4">
+    <div class="hidden mt-6 border-l-2 border-primary bg-card px-5 py-4 lg:block">
         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Se former</p>
         <p class="mt-2 text-sm leading-6 text-card-foreground">Des parcours et des rendez-vous conçus pour accompagner la pratique professionnelle.</p>
     </div>

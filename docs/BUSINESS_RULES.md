@@ -239,6 +239,19 @@ supprime ses leçons ; une leçon ou un module ayant une progression est protég
 contre la suppression. Une COURSE publiée reste éditable structurellement sans
 versioning.
 
+### LRN-VID-002 — Mux VOD des leçons COURSE
+
+Une leçon COURSE peut référencer YouTube ou un Playback ID Mux. Pour Mux,
+l’éditeur demande un Playback ID (pas une URL ni un Asset ID) ; cette saisie est
+validée localement sans appel à l’API Mux. À chaque affichage membre, le serveur
+ne signe le jeton qu’après l’autorisation du COURSE et de l’Enrollment actif.
+Le jeton expire selon `MUX_PLAYBACK_TOKEN_TTL` (défaut technique : quatre
+heures, réglable de cinq minutes à vingt-quatre heures) et peut inclure
+`MUX_PLAYBACK_RESTRICTION_ID` s’il est configuré.
+L’absence ou l’invalidité de la configuration ne rend jamais la vidéo publique
+et affiche un état temporairement indisponible. Les jetons et clés privées ne
+sont pas persistés. Cette règle ne concerne ni les LIVE ni les replays.
+
 ### LRN-005 — Training LIVE
 
 `LIVE` reste un type autonome de `Training`, distinct de `ContentContext\Event`
@@ -247,12 +260,18 @@ et sans module ni leçon. Ses informations sont portées par un unique
 optionnel. Les dates doivent respecter `startsAt < endsAt`.
 
 Les modes `ONLINE`, `IN_PERSON` et `HYBRID` exigent respectivement un lien
-HTTPS ou une référence YouTube valide, un lieu, ou les deux. Une référence
-YouTube normalisée peut donc remplacer le `joinUrl` pour une session en ligne,
-mais les deux peuvent coexister pour proposer un accès secondaire. Le serveur
-valide l’URL ; aucun fournisseur externe n’est appelé et Learning ne prétend
-pas empêcher le partage d’un lien
-externe par un membre autorisé.
+HTTPS ou une source LIVE externe, un lieu, ou les deux. Une source vidéo est
+représentée par `ExternalVideoSource(provider, externalId)` ; elle est distincte
+du `joinUrl`, qui peut coexister avec elle. Le Backoffice n’accepte pour
+l’instant que des références YouTube HTTPS. Le serveur normalise ces références
+hors Domain. Aucun fournisseur externe n’est appelé et Learning ne prétend pas
+empêcher le partage d’un lien externe par un membre autorisé.
+
+Le player d’un LIVE est temporel : aucun player avant `startsAt`, `liveSource`
+pendant la session, puis `replaySource` après `endsAt` si présent ; le flux live
+n’est pas réutilisé comme replay. Sans replay, l’espace membre indique
+« Replay indisponible ». MUX et CLOUDFLARE_STREAM ne sont pas encore intégrés au
+playback.
 
 La publication d’un LIVE exige des détails valides, mais pas de modules ni de
 leçons. COURSE conserve ses règles de readiness existantes. Le type est choisi
@@ -518,7 +537,7 @@ Les décisions suivantes restent explicitement ouvertes :
 - le statut de livraison est `PENDING`, puis `SENT` ou `FAILED` ; un échec d’envoi ne supprime jamais le message archivé ;
 - le destinataire est configuré séparément via `CONTACT_RECIPIENT_EMAIL` et l’adresse de l’utilisateur est utilisée uniquement comme `Reply-To` après validation Symfony ;
 - le formulaire est protégé par CSRF, honeypot et limitation de cinq soumissions par adresse IP sur quinze minutes ;
-- les coordonnées institutionnelles affichées sont facultatives et proviennent des réglages configurés ; les valeurs absentes sont masquées ;
+- les coordonnées institutionnelles affichées proviennent des réglages `contact_*` ; le bootstrap système initialise ces réglages avec les informations publiques du site officiel du Barreau uniquement lorsqu’ils sont absents, sans écraser une valeur administrée ; les valeurs absentes restent masquées ;
 - une reprise de livraison est autorisée uniquement pour un message `FAILED` ; elle passe temporairement par `PENDING`, puis devient `SENT` ou reste `FAILED` ;
 - la reprise est réclamée sous verrou pessimiste afin qu’une concurrence applicative ne lance pas deux tentatives pour le même message ; le fournisseur SMTP ne garantit toutefois pas l’exactly-once si l’acceptation est suivie d’une perte de réponse ;
 - aucune politique de rétention automatique n’est appliquée tant qu’elle n’a pas été définie pour la production.

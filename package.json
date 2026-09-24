@@ -39,6 +39,7 @@
     "build": "encore production --progress"
   },
   "dependencies": {
+    "@mux/mux-player": "^3.13.4",
     "@tiptap/core": "^2.27.3",
     "@tiptap/extension-link": "^2.27.3",
     "@tiptap/extension-placeholder": "^2.27.3",

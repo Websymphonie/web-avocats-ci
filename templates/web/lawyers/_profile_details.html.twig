@@ -1,0 +1,43 @@
+{% set hasProfileDetails = lawyer.specializationSummary or lawyer.biography or lawyer.cabinetName or lawyer.professionalPhone or lawyer.professionalEmail %}
+
+<div class="mt-8 grid gap-8 {{ (lawyer.professionalPhone or lawyer.professionalEmail) ? 'lg:grid-cols-[minmax(0,1fr)_19rem]' : '' }}">
+    <article class="min-w-0 space-y-8">
+        {% if lawyer.specializationSummary %}
+            <section class="border-b border-border pb-7" aria-labelledby="lawyer-specialties-title">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Domaines d’intervention</p>
+                <h2 id="lawyer-specialties-title" class="mt-3 text-xl font-semibold tracking-[-0.03em] text-foreground">{{ lawyer.specializationSummary }}</h2>
+            </section>
+        {% endif %}
+        {% if lawyer.biography %}
+            <section aria-labelledby="lawyer-biography-title">
+                <h2 id="lawyer-biography-title" class="text-2xl font-semibold tracking-[-0.035em] text-foreground">Présentation</h2>
+                <p class="mt-4 whitespace-pre-line break-words text-base leading-7 text-muted-foreground">{{ lawyer.biography }}</p>
+            </section>
+        {% endif %}
+        {% if lawyer.cabinetName %}
+            <section class="border-t border-border pt-7" aria-labelledby="lawyer-cabinet-title">
+                <h2 id="lawyer-cabinet-title" class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Cabinet</h2>
+                {% if lawyer.publicCabinetUuid %}
+                    <a href="{{ path('web_cabinet_directory_profile', {uuid: lawyer.publicCabinetUuid}) }}" class="mt-3 inline-flex flex-wrap items-center gap-2 text-lg font-semibold text-foreground underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{{ lawyer.cabinetName }}<twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" /></a>
+                    {% if lawyer.publicCabinetCity %}<p class="mt-1 text-sm text-muted-foreground">{{ lawyer.publicCabinetCity }}</p>{% endif %}
+                {% else %}
+                    <p class="mt-3 text-lg font-semibold text-foreground">{{ lawyer.cabinetName }}</p>
+                {% endif %}
+            </section>
+        {% endif %}
+        {% if not hasProfileDetails %}
+            <p class="text-sm leading-6 text-muted-foreground">Aucune information professionnelle complémentaire n’est publiée pour ce profil.</p>
+        {% endif %}
+    </article>
+
+    {% if lawyer.professionalPhone or lawyer.professionalEmail %}
+        <aside class="h-fit rounded-xl border border-border bg-card p-5 sm:p-6" aria-labelledby="lawyer-contact-title">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Contact professionnel</p>
+            <h2 id="lawyer-contact-title" class="mt-2 text-xl font-semibold text-card-foreground">Coordonnées</h2>
+            <dl class="mt-5 space-y-4 text-sm">
+                {% if lawyer.professionalEmail %}<div><dt class="text-muted-foreground">Email professionnel</dt><dd class="mt-1 break-all font-medium text-card-foreground"><a class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="mailto:{{ lawyer.professionalEmail }}">{{ lawyer.professionalEmail }}</a></dd></div>{% endif %}
+                {% if lawyer.professionalPhone %}<div><dt class="text-muted-foreground">Téléphone professionnel</dt><dd class="mt-1 break-words font-medium text-card-foreground">{% if professionalPhoneHref %}<a class="underline decoration-border underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" href="{{ professionalPhoneHref }}">{{ lawyer.professionalPhone }}</a>{% else %}{{ lawyer.professionalPhone }}{% endif %}</dd></div>{% endif %}
+            </dl>
+        </aside>
+    {% endif %}
+</div>

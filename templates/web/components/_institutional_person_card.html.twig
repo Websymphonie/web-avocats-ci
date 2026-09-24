@@ -1,0 +1,23 @@
+<article class="flex min-w-0 items-start gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 sm:p-6">
+    {% if portraitUrl|default(null) %}
+        <img src="{{ portraitUrl }}" alt="{{ portraitAlt|default('Portrait de ' ~ title) }}" class="size-16 shrink-0 rounded-full border border-border object-cover sm:size-[4.5rem]" loading="lazy">
+    {% else %}
+        <span class="inline-flex size-16 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-lg font-semibold uppercase text-primary sm:size-[4.5rem]" aria-hidden="true">{{ fallbackInitial|default(title|first) }}</span>
+    {% endif %}
+    <div class="min-w-0 flex-1 pt-1">
+        <h3 class="break-words text-lg font-semibold leading-snug tracking-[-0.02em] text-card-foreground">{{ title }}</h3>
+        {% if subtitle|default(null) %}<p class="mt-2 break-words text-sm text-muted-foreground">{{ subtitle }}</p>{% endif %}
+        {% if meta|default(null) %}
+            <p class="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                {% if metaIcon|default(null) %}<twig:ux:icon name="{{ metaIcon }}" class="size-4 shrink-0 text-primary" aria-hidden="true"/>{% endif %}
+                {{ meta }}
+            </p>
+        {% endif %}
+        {% if actionHref|default(null) %}
+            <a href="{{ actionHref }}" {% if actionDialog|default(false) %}aria-haspopup="dialog" data-action="click->lawyer-profile-modal#open"{% endif %} class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                {{ actionLabel|default('Consulter') }}
+                <twig:ux:icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" />
+            </a>
+        {% endif %}
+    </div>
+</article>

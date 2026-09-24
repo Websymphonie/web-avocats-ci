@@ -10,6 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Websymphonie\ContentContext\Application\Usecase\Command\Page\UpdatePageCommand;
 use Websymphonie\ContentContext\Application\Usecase\Query\Page\GetPageQuery;
+use Websymphonie\ContentContext\Application\Usecase\Query\Page\GetPagePersonGroupsQuery;
+use Websymphonie\ContentContext\Application\Model\PagePersonEntryInput;
+use Websymphonie\ContentContext\Application\Model\PagePersonGroupInput;
 use Websymphonie\ContentContext\Presenter\Form\Page\PageFormType;
 use Websymphonie\IdentityContext\Domain\Enum\RoleGroupEnum;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
@@ -29,6 +32,24 @@ final class UpdatePageController extends AbstractController
     {
         $page = $this->handleQuery(new GetPageQuery($id));
         $command = new UpdatePageCommand($page->id, $page->title, $page->slug, $page->content, group: $page->group, sortOrder: $page->sortOrder);
+        foreach ($this->handleQuery(new GetPagePersonGroupsQuery($page->id)) as $personGroup) {
+            $groupInput = new PagePersonGroupInput();
+            $groupInput->key = $personGroup->key;
+            $groupInput->title = $personGroup->title;
+            $groupInput->sortOrder = $personGroup->sortOrder;
+            foreach ($personGroup->entries as $personEntry) {
+                $entryInput = new PagePersonEntryInput();
+                $entryInput->key = $personEntry->key;
+                $entryInput->displayName = $personEntry->displayName;
+                $entryInput->roleLabel = $personEntry->roleLabel;
+                $entryInput->periodLabel = $personEntry->periodLabel;
+                $entryInput->portraitMediaId = $personEntry->portraitMediaId;
+                $entryInput->linkUrl = $personEntry->linkUrl;
+                $entryInput->sortOrder = $personEntry->sortOrder;
+                $groupInput->entries[] = $entryInput;
+            }
+            $command->personGroups[] = $groupInput;
+        }
         $form = $this->createForm(PageFormType::class, $command);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -41,6 +62,14 @@ final class UpdatePageController extends AbstractController
             }
         }
         $coverUrls = $page->coverMediaId !== null ? $this->mediaUrls->resolveMany([$page->coverMediaId]) : [];
-        return $this->render('content/admin/page/edit.html.twig', ['page' => $page, 'form' => $form->createView(), 'coverUrl' => $coverUrls[$page->coverMediaId] ?? null]);
+        $personMediaIds = [];
+        foreach ($command->personGroups as $personGroup) {
+            foreach ($personGroup->entries as $personEntry) {
+                if ($personEntry->portraitMediaId !== null) {
+                    $personMediaIds[] = $personEntry->portraitMediaId;
+                }
+            }
+        }
+        return $this->render('content/admin/page/edit.html.twig', ['page' => $page, 'form' => $form->createView(), 'coverUrl' => $coverUrls[$page->coverMediaId] ?? null, 'personPortraitUrls' => $personMediaIds === [] ? [] : $this->mediaUrls->resolveMany(array_values(array_unique($personMediaIds)))]);
     }
 }

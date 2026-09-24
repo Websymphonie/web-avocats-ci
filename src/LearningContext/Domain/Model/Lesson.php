@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Websymphonie\LearningContext\Domain\Model;
 
 use DateTimeImmutable;
-use Websymphonie\LearningContext\Domain\Enum\LearningVideoProvider;
-use Websymphonie\LearningContext\Domain\Exception\InvalidLessonVideoException;
-
 final class Lesson
 {
     public function __construct(
@@ -20,36 +17,15 @@ final class Lesson
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
         public string $content = '',
-        public ?LearningVideoProvider $videoProvider = null,
-        public ?string $videoUrl = null,
-        public ?string $externalVideoId = null,
+        public ?ExternalVideoSource $videoSource = null,
     ) {}
 
-    public function update(string $title, ?string $summary, string $content = '', ?string $videoUrl = null): void
+    public function update(string $title, ?string $summary, string $content = '', ?ExternalVideoSource $videoSource = null): void
     {
         $this->title = trim($title);
         $this->summary = $summary !== null && trim($summary) !== '' ? trim($summary) : null;
         $this->content = $content;
-        $this->setVideo($videoUrl);
-    }
-
-    public function setVideo(?string $videoUrl): void
-    {
-        $videoUrl = $videoUrl !== null && trim($videoUrl) !== '' ? trim($videoUrl) : null;
-        if ($videoUrl === null) {
-            $this->videoProvider = null;
-            $this->videoUrl = null;
-            $this->externalVideoId = null;
-            return;
-        }
-
-        $externalVideoId = self::youtubeIdFromUrl($videoUrl);
-        if ($externalVideoId === null) {
-            throw new InvalidLessonVideoException('Utilisez une URL YouTube de type watch, youtu.be ou embed.');
-        }
-        $this->videoProvider = LearningVideoProvider::YOUTUBE;
-        $this->videoUrl = $videoUrl;
-        $this->externalVideoId = $externalVideoId;
+        $this->videoSource = $videoSource;
     }
 
     public function isReadyForPublication(int $resourceCount): bool
@@ -64,19 +40,7 @@ final class Lesson
 
     public function hasVideo(): bool
     {
-        return $this->externalVideoId !== null;
-    }
-
-    public function videoEmbedUrl(): ?string
-    {
-        return $this->externalVideoId !== null
-            ? 'https://www.youtube-nocookie.com/embed/' . rawurlencode($this->externalVideoId)
-            : null;
-    }
-
-    public static function youtubeIdFromUrl(string $url): ?string
-    {
-        return YouTubeReference::fromUrl($url)?->externalId;
+        return $this->videoSource !== null;
     }
 
     public static function hasMeaningfulContent(string $html): bool

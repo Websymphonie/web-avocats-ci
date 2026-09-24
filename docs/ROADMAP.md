@@ -86,7 +86,7 @@ CNT-PROFESSION-001 — Devenir avocat          DRAFT / EDITORIAL VALIDATION REQU
 CNT-LEGAL-001 — Migration Vie privée & Mentions légales IMPLEMENTED — Pages LEGAL existantes publiées et contenu source migré ; anciennes URL WordPress à évaluer dans une passe SEO distincte
 CNT-008 — Pages institutionnelles BAR        IMPLEMENTED — routes canoniques `/le-barreau/{slug}`
 CNT-BAR-002 — Migration Présentation & Historique IMPLEMENTED — contenus de démonstration publiés avec couverture historique locale
-CNT-BAR-003 — Migration Bâtonnier & Conseil actuels IMPLEMENTED — 1 titulaire courant, 19 membres ordonnés, portraits locaux et Pages BAR publiées
+CNT-BAR-003 — Données historiques structurées + cartes institutionnelles COMPLETE — anciens Bâtonniers structurés, 19 membres Conseil réutilisés, cartes partagées
 CNT-009 — Donnée structurée du Bâtonnier      IMPLEMENTED — historique Content + bloc public sur `le-batonnier`
 CNT-010 — Conseil de l’Ordre structuré         IMPLEMENTED — historique Content + bloc public sur `conseil-de-l-ordre`
 CNT-CARPA-001 — Préparer Page institutionnelle CARPA COMPLETE — ticket préparatoire historique ; état final séparé sous `PageGroup::CARPA` et `/carpa`
@@ -138,10 +138,13 @@ PAY-002A — certification Sandbox et hardening         PENDING — recette exte
 **Statut : `COMPLETE`**
 
 Le `LIVE` est un `Training` autonome avec `LiveTrainingDetails`, programmation
-et contrôle d’accès serveur. Le `joinUrl` HTTPS est administré dans Avocat CI ;
-une référence YouTube facultative peut être intégrée dans l’espace membre via
-`youtube-nocookie`, sans appel à l’API YouTube. Aucun fournisseur externe ne
-devient l’autorité des droits d’accès.
+et contrôle d’accès serveur. `joinUrl` reste distinct des sources de diffusion
+et de replay provider-neutral. YouTube est rendu dans l’espace membre via
+`youtube-nocookie`, sans appel à l’API ; l’iframe de diffusion n’apparaît que
+pendant la session, puis le replay explicite après sa fin. Mux signé est
+désormais utilisé uniquement pour le VOD des leçons COURSE (LRN-VID-002) ; Mux
+Live/replay et Cloudflare Stream ne disposent pas d’adapter de lecture. Aucun
+fournisseur externe ne devient l’autorité des droits d’accès.
 
 ### PHASE 6 — Progression, quiz et certificats
 
@@ -196,7 +199,7 @@ Content Backoffice foundation                     DONE
 Content Frontoffice                              COMPLETE — Actualités, Événements, Vidéos, Pages publiques, recherche et téléchargements documentaires publics livrés ; Devenir avocat reste en DRAFT éditorial
 LRN-001  Training COURSE                           DONE — Backoffice, catalogue public `/formations` et consommation membre protégée
 LRN-002  Structure COURSE                          DONE — modules/leçons Backoffice
-LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube et ressources privées Backoffice
+LRN-003  Contenu pédagogique des leçons             DONE — éditeur, YouTube/Mux signé et ressources privées Backoffice
 LRN-004  Enrollment et contrôle d’accès              DONE — inscription gratuite, attribution/révocation et téléchargement membre protégé
 LRN-004A Catégories et tags des formations           DONE — taxonomies Learning, associations et filtres Backoffice
 LRN-005  LIVE                                        DONE — détails de session, publication type-aware et accès membre sécurisé
@@ -204,6 +207,8 @@ LRN-REV-001A Learning Backoffice foundation           COMPLETE — hardening des
 LRN-006  Progression apprenant                        DONE — progression COURSE, endpoints membre et synthèse Backoffice
 LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centralisée sur Enrollment, accès et Payment
 LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube protégé, sans API YouTube
+LRN-VID-001 Modèle vidéo provider-neutral               DONE — sources LIVE/replay séparées et providers explicites
+LRN-VID-002 Mux Signed VOD Playback                     DONE — COURSE membre autorisée, jeton court serveur, sans API Mux
 MEM-FUND-001 Ressources du Fonds de Solidarité membre  DONE — documents LAWYER classés par tag et téléchargement contrôlé
 FO-004   Catalogue public des formations               DONE — liste, filtres, détails COURSE/LIVE et confidentialité LIVE
 FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations/Pages publiées
@@ -219,6 +224,7 @@ DATA-DIR-005 Import local idempotent de l’annuaire       DATASET READY / NOT D
 DATA-DIR-006 Import des portraits historiques              DATASET READY WITH SOURCE GAPS / NOT DEPLOYED — 579 récupérés, 24 sources en 404, 2 sans URL ; sources locales (~120 Mio), association testée sur MySQL isolé
 FO-DIR-001 Annuaire public Avocats                  DONE — recherche nom/cabinet/localité, liste paginée et liens vers fiches publiques
 FO-DIR-002 Fiches publiques Avocat & Cabinet        COMPLETE — UUID publics, éligibilité DIR-001, coordonnées professionnelles et membres publiables
+FO-DIR-004 Profil avocat en modale depuis l’annuaire COMPLETE — chargement à la demande, fiche `/avocats/{uuid}` conservée comme URL canonique et fallback
 PAY-001  PaymentContext + workflow Fake                DONE — offres, snapshots, idempotence et accès Learning
 PAY-003  Fulfillment Payment → Learning                DONE — CONFIRMED/PENDING, retry et commande de réconciliation
 NOT-REV-001 Notification/Event audit                   DONE — pipeline synchrone et risques documentés

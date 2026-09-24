@@ -7,8 +7,11 @@ namespace Websymphonie\WebContext\Presenter\Controller\Lawyer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
+use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicCabinetDirectoryQuery;
 use Websymphonie\LawyerContext\Application\Usecase\Query\GetPublicLawyerDirectoryQuery;
 use Websymphonie\LawyerContext\Domain\Model\LawyerDirectoryResult;
+use Websymphonie\LawyerContext\Domain\Model\PublicCabinetDirectoryEntry;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
 use Websymphonie\SharedContext\Presenter\AbstractController;
 
@@ -24,6 +27,9 @@ final class GetPublicLawyerDirectoryController extends AbstractController
     {
         $name = $this->queryText($request, 'name');
         $cabinet = $this->queryText($request, 'cabinet');
+        if (Uuid::isValid($cabinet)) {
+            $cabinet = Uuid::fromString($cabinet)->toRfc4122();
+        }
         $location = $this->queryText($request, 'location');
 
         /** @var LawyerDirectoryResult $directory */
@@ -40,8 +46,20 @@ final class GetPublicLawyerDirectoryController extends AbstractController
             $directory->items,
         ))));
 
+        /** @var list<PublicCabinetDirectoryEntry> $cabinetOptions */
+        $cabinetOptions = $this->handleQuery(new GetPublicCabinetDirectoryQuery());
+        $selectedCabinet = null;
+        foreach ($cabinetOptions as $cabinetOption) {
+            if ($cabinetOption->publicUuid === $cabinet) {
+                $selectedCabinet = $cabinetOption;
+                break;
+            }
+        }
+
         return $this->render('web/lawyers/index.html.twig', [
             'directory' => $directory,
+            'cabinetOptions' => $cabinetOptions,
+            'selectedCabinet' => $selectedCabinet,
             'mediaUrls' => $this->mediaUrls->resolveMany($portraitIds),
             'filters' => ['name' => $name, 'cabinet' => $cabinet, 'location' => $location],
             'hasFilters' => $name !== '' || $cabinet !== '' || $location !== '',

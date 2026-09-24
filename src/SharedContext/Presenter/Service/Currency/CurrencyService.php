@@ -22,9 +22,13 @@ readonly class CurrencyService implements CurrencyServiceInterface
     {
     }
 
-    public function formatCurrency(int $amount): string
+    public function formatCurrency(int $amount, ?string $currencyCode = null): string
     {
-        $currency = $this->currency();
+        $currencyCode = $currencyCode !== null ? strtoupper(trim($currencyCode)) : null;
+        $currency = $currencyCode !== null
+            ? $this->repository->findActiveByCode($currencyCode)
+            : $this->currency();
+
         $decimalPlaces = max(0, $currency->decimalPlace ?? 0);
 
         $formattedAmount = number_format(
@@ -36,9 +40,9 @@ readonly class CurrencyService implements CurrencyServiceInterface
 
         $leftSymbol = trim($currency->leftSymbol ?? '');
         $rightSymbol = trim($currency->rightSymbol ?? '');
-        $currencyCode = trim($currency->currencyCode ?? CurrencyEnum::DEVISE->value);
+        $resolvedCurrencyCode = trim($currency->currencyCode ?? $currencyCode ?? CurrencyEnum::DEVISE->value);
 
-        if ($currencyCode === CurrencyEnum::DEVISE->value) {
+        if ($resolvedCurrencyCode === CurrencyEnum::DEVISE->value) {
             $leftSymbol = strtoupper($leftSymbol) === CurrencyEnum::DEVISE->value ? '' : $leftSymbol;
             $rightSymbol = $rightSymbol === '' || strtoupper($rightSymbol) === CurrencyEnum::DEVISE->value ? CurrencyEnum::DEVISE_SYMBOL->value : $rightSymbol;
         }
@@ -46,7 +50,7 @@ readonly class CurrencyService implements CurrencyServiceInterface
         return match (true) {
             $leftSymbol !== '' => sprintf('%s %s', $leftSymbol, $formattedAmount),
             $rightSymbol !== '' => sprintf('%s %s', $formattedAmount, $rightSymbol),
-            default => sprintf('%s %s', $formattedAmount, $currencyCode),
+            default => sprintf('%s %s', $formattedAmount, $resolvedCurrencyCode),
         };
     }
 

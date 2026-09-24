@@ -1,0 +1,25 @@
+{% if mobile %}
+    <details class="group mb-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm lg:hidden">
+        <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+            <span class="flex min-w-0 items-center gap-3">
+                <twig:ux:icon name="lucide:briefcase-business" class="size-5 shrink-0 text-primary" aria-hidden="true"/>
+                <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-card-foreground">Choisir un cabinet</span>
+                    <span class="block truncate text-xs text-muted-foreground">{{ selectedCabinet ? selectedCabinet.name : 'Tous les avocats' }}</span>
+                </span>
+            </span>
+            <twig:ux:icon name="lucide:chevron-down" class="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true"/>
+        </summary>
+        <div class="border-t border-border p-4">
+            {% include 'web/lawyers/_cabinet_options.html.twig' with {searchId: 'directory-cabinet-search-mobile', filters: filters, cabinetOptions: cabinetOptions} only %}
+        </div>
+    </details>
+{% else %}
+    <section class="sticky top-24 hidden rounded-2xl border border-border bg-card p-5 shadow-sm lg:block" aria-labelledby="directory-cabinet-title">
+        <div class="flex items-center gap-3 border-b border-border pb-4">
+            <twig:ux:icon name="lucide:briefcase-business" class="size-5 text-primary" aria-hidden="true"/>
+            <h2 id="directory-cabinet-title" class="text-lg font-semibold tracking-[-0.02em] text-card-foreground">Cabinets</h2>
+        </div>
+        {% include 'web/lawyers/_cabinet_options.html.twig' with {searchId: 'directory-cabinet-search-desktop', filters: filters, cabinetOptions: cabinetOptions} only %}
+    </section>
+{% endif %}

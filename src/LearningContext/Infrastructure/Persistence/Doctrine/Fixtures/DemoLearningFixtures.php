@@ -10,8 +10,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
-use Websymphonie\LearningContext\Domain\Enum\LearningVideoProvider;
-use Websymphonie\LearningContext\Domain\Enum\LiveStreamProvider;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingStatus;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
@@ -124,8 +123,10 @@ final class DemoLearningFixtures extends Fixture implements FixtureGroupInterfac
                 ->setDeliveryMode($mode)
                 ->setLocation($mode === LiveDeliveryMode::ONLINE ? null : 'Lieu fictif de démonstration — Abidjan')
                 ->setJoinUrl($mode === LiveDeliveryMode::IN_PERSON ? null : 'https://example.test/learning/live/' . $ordinal)
-                ->setStreamProvider($ordinal === 1 ? LiveStreamProvider::YOUTUBE : null)
-                ->setExternalStreamId($ordinal === 1 ? self::DEMO_YOUTUBE_VIDEO_ID : null);
+                ->setStreamProvider($ordinal === 1 ? VideoProvider::YOUTUBE : null)
+                ->setExternalStreamId($ordinal === 1 ? self::DEMO_YOUTUBE_VIDEO_ID : null)
+                ->setReplayProvider(null)
+                ->setReplayExternalId(null);
             $manager->persist($details);
         }
     }
@@ -166,10 +167,12 @@ final class DemoLearningFixtures extends Fixture implements FixtureGroupInterfac
                         ->setTitle(sprintf('Leçon %d — mise en pratique', $lessonPosition))
                         ->setSummary('Leçon de démonstration avec contenu riche.')
                         ->setContent(sprintf('<h2>Objectif de la leçon</h2><p>Cette leçon fictive accompagne le module %d et sert à vérifier la lecture du contenu pédagogique.</p><ul><li>Notion clé à retenir.</li><li>Exemple d’application en cabinet.</li></ul>', $modulePosition))
+                        ->setVideoProvider(null)
+                        ->setExternalVideoId(null)
                         ->setPosition($lessonPosition);
                     if ($trainingIndex === 1 && $modulePosition === 1 && $lessonPosition === 1) {
                         $lesson
-                            ->setVideoProvider(LearningVideoProvider::YOUTUBE->value)
+                            ->setVideoProvider(VideoProvider::YOUTUBE->value)
                             ->setVideoUrl('https://www.youtube.com/watch?v=' . self::DEMO_YOUTUBE_VIDEO_ID)
                             ->setExternalVideoId(self::DEMO_YOUTUBE_VIDEO_ID);
                     }

@@ -31,9 +31,9 @@ class CurrencyExtension extends AbstractExtension
         ];
     }
 
-    public function getPrice(int $amount): string
+    public function getPrice(int $amount, ?string $currencyCode = null): string
     {
-        return $this->currencyService->formatCurrency($amount);
+        return $this->currencyService->formatCurrency($amount, $currencyCode);
     }
 
     public function formatCurrencyLabel(?string $currency): string

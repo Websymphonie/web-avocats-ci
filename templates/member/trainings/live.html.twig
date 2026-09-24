@@ -7,7 +7,8 @@
     {% set isUpcoming = session.startsAt > now %}
     {% set isPast = session.endsAt <= now %}
     {% set isOngoing = not isUpcoming and not isPast %}
-    {% set hasReplay = replayEmbedUrl is not null %}
+    {% set hasReplay = isPast and (hasReplaySource or replayEmbedUrl is not null) %}
+    {% set hasMuxPlayback = muxPlaybackId and muxPlaybackToken %}
     {% set statusLabel = hasReplay ? 'Replay disponible' : (isPast ? 'Session terminée' : (isUpcoming ? 'À venir' : 'En direct')) %}
     {% set statusClasses = isPast
         ? (hasReplay ? 'border-primary/25 bg-primary/10 text-primary' : 'border-border bg-muted text-muted-foreground')
@@ -41,21 +42,25 @@
                         <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{{ session.categoryName }}</p>
                     {% endif %}
                     <h1 class="mt-2 text-2xl font-semibold tracking-tight text-card-foreground sm:text-3xl">{{ session.title }}</h1>
-                    {% if liveEmbedUrl %}
+                    {% if liveEmbedUrl or (isOngoing and hasMuxPlayback) %}
                         <div class="mt-6" aria-labelledby="live-player-title">
                             <h2 id="live-player-title" class="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
                                 <span class="size-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
                                 En direct
                             </h2>
                             <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-                            <iframe
-                                class="size-full"
-                                src="{{ liveEmbedUrl }}"
-                                title="Diffusion en direct — {{ session.title }}"
-                                loading="lazy"
-                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen
-                            ></iframe>
+                                {% if liveEmbedUrl %}
+                                    <iframe
+                                        class="size-full"
+                                        src="{{ liveEmbedUrl }}"
+                                        title="Diffusion en direct — {{ session.title }}"
+                                        loading="lazy"
+                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                    ></iframe>
+                                {% else %}
+                                    <mux-player class="block size-full" playback-id="{{ muxPlaybackId|e('html_attr') }}" playback-token="{{ muxPlaybackToken|e('html_attr') }}" title="Diffusion en direct — {{ session.title|e('html_attr') }}" controls playsinline data-controller="mux-player"></mux-player>
+                                {% endif %}
                             </div>
                         </div>
                     {% elseif isUpcoming %}
@@ -63,13 +68,19 @@
                             <h2 class="text-sm font-semibold text-card-foreground">La session débutera le {{ session.startsAt|format_datetime(pattern='d MMMM Y à HH:mm', locale='fr_FR') }}</h2>
                             <p class="mt-1 text-sm leading-5 text-muted-foreground">L’accès à la diffusion et au lien de connexion sera proposé à l’ouverture de la session.</p>
                         </div>
-                    {% elseif isPast and replayEmbedUrl %}
+                    {% elseif isPast and (replayEmbedUrl or hasMuxPlayback) %}
                         <div class="mt-6" aria-labelledby="replay-player-title">
                             <h2 id="replay-player-title" class="mb-3 text-sm font-semibold text-primary">Replay</h2>
                             <div class="aspect-video overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-                                <iframe class="size-full" src="{{ replayEmbedUrl }}" title="Replay — {{ session.title }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                {% if replayEmbedUrl %}
+                                    <iframe class="size-full" src="{{ replayEmbedUrl }}" title="Replay — {{ session.title }}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                {% else %}
+                                    <mux-player class="block size-full" playback-id="{{ muxPlaybackId|e('html_attr') }}" playback-token="{{ muxPlaybackToken|e('html_attr') }}" title="Replay — {{ session.title|e('html_attr') }}" controls playsinline data-controller="mux-player"></mux-player>
+                                {% endif %}
                             </div>
                         </div>
+                    {% elseif videoUnavailable %}
+                        <div class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-4 text-sm text-muted-foreground" role="status">Cette vidéo est temporairement indisponible.</div>
                     {% elseif isPast %}
                         <div class="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-4" role="status">
                             <h2 class="text-sm font-semibold text-card-foreground">Session terminée</h2>

@@ -33,9 +33,26 @@ final class YouTubeSourceParser
         return $this->parse($reference, false);
     }
 
-    public function parseLiveReference(?string $url): ?ExternalVideoSource
+    public function parseLiveReference(?string $reference, VideoProvider $provider = VideoProvider::YOUTUBE): ?ExternalVideoSource
     {
-        return $this->parse($url, true);
+        $reference = $reference !== null ? trim($reference) : null;
+        if ($reference === null || $reference === '') {
+            return null;
+        }
+
+        if ($provider === VideoProvider::MUX) {
+            if (preg_match('/^[A-Za-z0-9_-]{16,64}$/', $reference) !== 1) {
+                throw new InvalidLiveTrainingDetailsException('Saisissez un Playback ID Mux valide, pas une URL ni un Asset ID.');
+            }
+
+            return new ExternalVideoSource(VideoProvider::MUX, $reference);
+        }
+
+        if ($provider !== VideoProvider::YOUTUBE) {
+            throw new InvalidLiveTrainingDetailsException('Ce fournisseur vidéo n’est pas disponible pour les sessions Live.');
+        }
+
+        return $this->parse($reference, true);
     }
 
     private function parse(?string $url, bool $live): ?ExternalVideoSource

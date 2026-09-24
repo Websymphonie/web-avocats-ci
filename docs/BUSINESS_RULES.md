@@ -250,7 +250,8 @@ heures, réglable de cinq minutes à vingt-quatre heures) et peut inclure
 `MUX_PLAYBACK_RESTRICTION_ID` s’il est configuré.
 L’absence ou l’invalidité de la configuration ne rend jamais la vidéo publique
 et affiche un état temporairement indisponible. Les jetons et clés privées ne
-sont pas persistés. Cette règle ne concerne ni les LIVE ni les replays.
+sont pas persistés. Les sources de LIVE et de replay suivent désormais les
+règles distinctes de `LRN-VID-003`.
 
 ### LRN-005 — Training LIVE
 
@@ -262,16 +263,41 @@ optionnel. Les dates doivent respecter `startsAt < endsAt`.
 Les modes `ONLINE`, `IN_PERSON` et `HYBRID` exigent respectivement un lien
 HTTPS ou une source LIVE externe, un lieu, ou les deux. Une source vidéo est
 représentée par `ExternalVideoSource(provider, externalId)` ; elle est distincte
-du `joinUrl`, qui peut coexister avec elle. Le Backoffice n’accepte pour
-l’instant que des références YouTube HTTPS. Le serveur normalise ces références
-hors Domain. Aucun fournisseur externe n’est appelé et Learning ne prétend pas
-empêcher le partage d’un lien externe par un membre autorisé.
+du `joinUrl`, qui peut coexister avec elle. Le Backoffice accepte YouTube
+(référence HTTPS) et Mux (Playback ID uniquement) pour la source du direct et
+du replay. Le parsing est effectué hors Domain, sans appel API Mux. La
+configuration Mux reste manuelle côté fournisseur et ne comprend ni Stream Key
+ni Asset ID dans Avocat CI. Learning ne prétend pas empêcher le partage d’une
+source par un membre autorisé.
 
 Le player d’un LIVE est temporel : aucun player avant `startsAt`, `liveSource`
 pendant la session, puis `replaySource` après `endsAt` si présent ; le flux live
 n’est pas réutilisé comme replay. Sans replay, l’espace membre indique
-« Replay indisponible ». MUX et CLOUDFLARE_STREAM ne sont pas encore intégrés au
-playback.
+« Replay indisponible ». Pour une source Mux, un JWT signed playback est généré
+uniquement après `TrainingAccessPolicy` et uniquement pour la source active dans
+la fenêtre temporelle : `liveSource` pendant la session, `replaySource` après
+`endsAt`. Avant `startsAt` et après `endsAt` sans replay, aucun jeton n’est
+généré. YouTube et Mux peuvent être combinés indépendamment pour le direct et le
+replay. En cas de configuration Mux absente ou invalide, l’espace membre affiche
+un état d’indisponibilité neutre. `CLOUDFLARE_STREAM` reste hors du playback.
+
+### LRN-VID-003 — Mux signed playback LIVE et replay
+
+L’opérateur crée et gère les diffusions côté Mux, puis renseigne dans le
+Backoffice uniquement le Playback ID (jamais un Asset ID, Live Stream ID ou
+Stream Key). `liveSource` et `replaySource` sont indépendantes et peuvent avoir
+des fournisseurs différents parmi YouTube et Mux. Le signataire RS256,
+`MUX_SIGNING_KEY_ID`, `MUX_SIGNING_PRIVATE_KEY`, `MUX_PLAYBACK_TOKEN_TTL` et la
+restriction optionnelle existante sont réutilisés sans stockage de JWT ni appel
+à l’API Mux.
+
+La route membre évalue d’abord l’accès Learning, puis l’état temporel, puis
+sélectionne la source correspondante. Le direct Mux est signé seulement lorsque
+`startsAt <= now < endsAt`; le replay Mux seulement lorsque `now >= endsAt` et
+qu’un `replaySource` Mux est configuré. Toute réponse membre contenant un token
+est `private, no-store`. Les fiches publiques n’exposent ni Playback ID Mux ni
+token. Les règles existantes de rôle, publication et Enrollment actif ne sont
+pas modifiées.
 
 La publication d’un LIVE exige des détails valides, mais pas de modules ni de
 leçons. COURSE conserve ses règles de readiness existantes. Le type est choisi

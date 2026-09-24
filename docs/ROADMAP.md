@@ -133,7 +133,7 @@ PAY-003 — fulfillment Payment → Learning              DONE — état durable
 PAY-002A — certification Sandbox et hardening         PENDING — recette externe requise
 ```
 
-### PHASE 5 — Learning LIVE et YouTube
+### PHASE 5 — Learning LIVE, YouTube et Mux signed playback
 
 **Statut : `COMPLETE`**
 
@@ -141,10 +141,11 @@ Le `LIVE` est un `Training` autonome avec `LiveTrainingDetails`, programmation
 et contrôle d’accès serveur. `joinUrl` reste distinct des sources de diffusion
 et de replay provider-neutral. YouTube est rendu dans l’espace membre via
 `youtube-nocookie`, sans appel à l’API ; l’iframe de diffusion n’apparaît que
-pendant la session, puis le replay explicite après sa fin. Mux signé est
-désormais utilisé uniquement pour le VOD des leçons COURSE (LRN-VID-002) ; Mux
-Live/replay et Cloudflare Stream ne disposent pas d’adapter de lecture. Aucun
-fournisseur externe ne devient l’autorité des droits d’accès.
+pendant la session, puis le replay explicite après sa fin. Mux signed playback
+est utilisé pour les leçons COURSE et les sources LIVE/replay, après contrôle
+d’accès et sélection temporelle ; la gestion du provider reste manuelle. Aucun
+fournisseur externe ne devient l’autorité des droits d’accès. Cloudflare Stream
+n’a pas d’adapter de lecture.
 
 ### PHASE 6 — Progression, quiz et certificats
 
@@ -209,6 +210,7 @@ LRN-006A Éligibilité apprenante ROLE_AVOCAT             DONE — policy centra
 LRN-007  YouTube Live dans l’espace avocat             DONE — player YouTube protégé, sans API YouTube
 LRN-VID-001 Modèle vidéo provider-neutral               DONE — sources LIVE/replay séparées et providers explicites
 LRN-VID-002 Mux Signed VOD Playback                     DONE — COURSE membre autorisée, jeton court serveur, sans API Mux
+LRN-VID-003 Mux signed playback LIVE/replay                DONE — sources temporelles indépendantes, signataire partagé, administration manuelle
 MEM-FUND-001 Ressources du Fonds de Solidarité membre  DONE — documents LAWYER classés par tag et téléchargement contrôlé
 FO-004   Catalogue public des formations               DONE — liste, filtres, détails COURSE/LIVE et confidentialité LIVE
 FO-005   Recherche globale Frontoffice                  DONE — modal accessible, autocomplete public et résultats Actualités/Événements/Formations/Pages publiées

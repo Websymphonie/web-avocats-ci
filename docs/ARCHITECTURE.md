@@ -493,7 +493,7 @@ Le contenu d’une `Lesson` est nettoyé par le service Tiptap/sanitizer partag�
 Les sources vidéo sont provider-neutral dans le Domain :
 `ExternalVideoSource(provider, externalId)`, porté par `Lesson.videoSource`,
 `LiveTrainingDetails.liveSource` ou `LiveTrainingDetails.replaySource`. Le
-parsing des références YouTube HTTPS et des Playback ID Mux de leçon est
+parsing des références YouTube HTTPS et des Playback ID Mux de leçon/LIVE est
 effectué dans Application ; le Presenter produit l’URL
 `youtube-nocookie.com/embed` uniquement pour `VideoProvider::YOUTUBE`. Pour une
 leçon COURSE Mux, l’Infrastructure signe à la demande un JWT RS256 côté serveur.
@@ -517,7 +517,9 @@ Les secrets résident dans `.env.local` ou le gestionnaire de secrets du
 déploiement, jamais dans Git. L’opérateur charge la vidéo depuis le dashboard
 Mux avec une politique `signed`, puis copie le Playback ID dans le formulaire
 de leçon (pas l’Asset ID). Le formulaire n’appelle pas l’API pour vérifier la
-référence. Mux Live/replay et Cloudflare Stream ne sont pas inclus.
+référence. LRN-VID-003 réutilise le même signataire côté LIVE, sans gestion des
+Live Streams, upload, webhook, Stream Key ou API Mux. Cloudflare Stream reste
+sans adapter de lecture.
 
 Pour un LIVE, `joinUrl` demeure une destination HTTPS distincte des sources
 vidéo. Le lecteur membre affiche `liveSource` uniquement pendant la session
@@ -607,8 +609,14 @@ les LIVE.
 L’accès au lien externe passe par la query applicative
 `GetAccessibleLiveJoinDetailsQuery` et `TrainingAccessPolicy`, puis par
 `GET /espace/learning/trainings/{uuid}/join`. Le client ne fournit jamais la
-destination de redirection. Les APIs Zoom, Teams, Google Meet et YouTube,
-l’attendance, le calendrier et le replay restent hors scope.
+destination de redirection. La lecture vidéo membre réutilise le contrôle
+d’accès Learning et choisit `liveSource` pendant la session ou `replaySource`
+après sa fin. YouTube utilise `youtube-nocookie.com` ; Mux génère un token signé
+à la demande avec le signataire partagé COURSE, puis passe le lecteur Web Mux.
+Aucun token n’est généré avant `startsAt` ou après `endsAt` sans replay Mux.
+Toute réponse contenant un token est `private, no-store`. Les providers du
+direct et du replay peuvent différer. Les APIs Zoom, Teams, Google Meet,
+l’attendance et le calendrier restent hors scope.
 
 Le formulaire HTML sérialise les modes avec leurs valeurs métier
 `ONLINE`/`IN_PERSON`/`HYBRID`; le contrôleur et le domaine restent l’autorité de

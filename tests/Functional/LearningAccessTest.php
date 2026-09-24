@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Websymphonie\Tests\Functional;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -15,6 +16,8 @@ use Websymphonie\AdminContext\Infrastructure\Persistence\Doctrine\Entity\Reglage
 use Websymphonie\IdentityContext\Infrastructure\Persistence\Doctrine\Entity\Users\User;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\CourseModule\CourseModuleEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Lesson\LessonEntity;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
+use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\LiveTrainingDetails\LiveTrainingDetailsEntity;
 use Websymphonie\LearningContext\Infrastructure\Persistence\Doctrine\Entity\Training\TrainingEntity;
 use Websymphonie\SharedContext\Infrastructure\Framework\Symfony\Kernel;
 
@@ -159,6 +162,47 @@ final class LearningAccessTest extends WebTestCase
             ['ONLINE', 'IN_PERSON', 'HYBRID'],
             $client->getCrawler()->filter('#training_form_deliveryMode option')->extract(['value']),
         );
+    }
+
+    public function testLiveFormPersistsIndependentMuxAndYouTubeSources(): void
+    {
+        $client = $this->authenticatedClient(['ROLE_ADMIN']);
+        $client->request('GET', '/admin/learning/trainings/new/live', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+
+        $crawler = $client->getCrawler();
+        self::assertSame(['YOUTUBE', 'MUX'], $crawler->filter('select[name$="[liveVideoProvider]"] option')->extract(['value']));
+        self::assertSame(['YOUTUBE', 'MUX'], $crawler->filter('select[name$="[replayVideoProvider]"] option')->extract(['value']));
+        $form = $crawler->selectButton('Enregistrer le brouillon')->form();
+        $startsAt = new DateTimeImmutable('+1 day');
+        $form['training_form[title]'] = 'Live provider mixte';
+        $form['training_form[summary]'] = 'Résumé de test';
+        $form['training_form[description]'] = '<p>Description de test</p>';
+        $form['training_form[startsAt]'] = $startsAt->format('Y-m-d\\TH:i');
+        $form['training_form[endsAt]'] = $startsAt->modify('+1 hour')->format('Y-m-d\\TH:i');
+        $form['training_form[deliveryMode]'] = 'ONLINE';
+        $form['training_form[liveVideoProvider]'] = 'MUX';
+        $form['training_form[liveVideoReference]'] = 'MuxLivePlaybackId012345';
+        $form['training_form[replayVideoProvider]'] = 'YOUTUBE';
+        $form['training_form[replayVideoReference]'] = 'https://youtu.be/M7lc1UVf-VE';
+        $client->submit($form);
+
+        self::assertResponseRedirects('/admin/learning/trainings');
+        $training = $this->entityManager()->getRepository(TrainingEntity::class)->findOneBy(['title' => 'Live provider mixte']);
+        self::assertInstanceOf(TrainingEntity::class, $training);
+        $details = $this->entityManager()->getRepository(LiveTrainingDetailsEntity::class)->findOneBy(['trainingId' => $training->getId()]);
+        self::assertInstanceOf(LiveTrainingDetailsEntity::class, $details);
+        self::assertSame(VideoProvider::MUX, $details->getStreamProvider());
+        self::assertSame('MuxLivePlaybackId012345', $details->getExternalStreamId());
+        self::assertSame(VideoProvider::YOUTUBE, $details->getReplayProvider());
+        self::assertSame('M7lc1UVf-VE', $details->getReplayExternalId());
+
+        $client->request('GET', '/admin/learning/trainings/' . $training->getId() . '/edit', server: ['HTTPS' => 'on']);
+        self::assertResponseIsSuccessful();
+        self::assertSame('MUX', $client->getCrawler()->filter('select[name$="[liveVideoProvider]"] option[selected]')->attr('value'));
+        self::assertSame('MuxLivePlaybackId012345', $client->getCrawler()->filter('input[name$="[liveVideoReference]"]')->attr('value'));
+        self::assertSame('YOUTUBE', $client->getCrawler()->filter('select[name$="[replayVideoProvider]"] option[selected]')->attr('value'));
+        self::assertSame('https://www.youtube.com/watch?v=M7lc1UVf-VE', $client->getCrawler()->filter('input[name$="[replayVideoReference]"]')->attr('value'));
     }
 
     public function testAdminCourseStructureRouteIsProtectedByTheTrainingLookup(): void

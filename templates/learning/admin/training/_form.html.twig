@@ -51,17 +51,29 @@
             {{ form_widget(form.joinUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
             {{ form_errors(form.joinUrl) }}
         </div>
+    </div>
+    <div class="grid gap-5 md:grid-cols-2">
         <div class="space-y-2">
-            {{ form_label(form.liveVideoReferenceUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}
-            {{ form_widget(form.liveVideoReferenceUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
-            {{ form_errors(form.liveVideoReferenceUrl) }}
-            {% if form.liveVideoReferenceUrl.vars.help %}<p class="text-xs text-muted-foreground">{{ form.liveVideoReferenceUrl.vars.help }}</p>{% endif %}
+            {{ form_label(form.liveVideoProvider, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.liveVideoProvider, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.liveVideoProvider) }}
         </div>
         <div class="space-y-2">
-            {{ form_label(form.replayVideoReferenceUrl, null, {label_attr: {class: 'text-sm font-medium'}}) }}
-            {{ form_widget(form.replayVideoReferenceUrl, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
-            {{ form_errors(form.replayVideoReferenceUrl) }}
-            {% if form.replayVideoReferenceUrl.vars.help %}<p class="text-xs text-muted-foreground">{{ form.replayVideoReferenceUrl.vars.help }}</p>{% endif %}
+            {{ form_label(form.liveVideoReference, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.liveVideoReference, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.liveVideoReference) }}
+            {% if form.liveVideoReference.vars.help %}<p class="text-xs text-muted-foreground">{{ form.liveVideoReference.vars.help }}</p>{% endif %}
+        </div>
+        <div class="space-y-2">
+            {{ form_label(form.replayVideoProvider, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.replayVideoProvider, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.replayVideoProvider) }}
+        </div>
+        <div class="space-y-2">
+            {{ form_label(form.replayVideoReference, null, {label_attr: {class: 'text-sm font-medium'}}) }}
+            {{ form_widget(form.replayVideoReference, {attr: {class: 'flex h-11 w-full rounded-lg border border-input bg-background px-3 text-sm'}}) }}
+            {{ form_errors(form.replayVideoReference) }}
+            {% if form.replayVideoReference.vars.help %}<p class="text-xs text-muted-foreground">{{ form.replayVideoReference.vars.help }}</p>{% endif %}
         </div>
     </div>
 </fieldset>

@@ -52,8 +52,8 @@ final readonly class UpdateTrainingHandler implements CommandHandler
         $training->replaceClassification($categoryIds, $tagIds);
 
         if ($training->type === TrainingType::LIVE) {
-            $liveSource = $this->videoParser->parseLiveReference($command->liveVideoReferenceUrl);
-            $replaySource = $this->videoParser->parseLiveReference($command->replayVideoReferenceUrl);
+            $liveSource = $this->videoParser->parseLiveReference($command->liveVideoReference, $command->liveVideoProvider);
+            $replaySource = $this->videoParser->parseLiveReference($command->replayVideoReference, $command->replayVideoProvider);
             $details = $training->liveDetails ?? new LiveTrainingDetails(
                 id: 0,
                 uuid: '',

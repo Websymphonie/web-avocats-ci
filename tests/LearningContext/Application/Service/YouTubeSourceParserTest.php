@@ -75,4 +75,27 @@ final class YouTubeSourceParserTest extends TestCase
 
         $this->parser->parseLiveReference('http://youtu.be/M7lc1UVf-VE');
     }
+
+    public function testParsesMuxPlaybackIdForLiveAndReplay(): void
+    {
+        $source = $this->parser->parseLiveReference('AbCdEf0123456789_-', VideoProvider::MUX);
+
+        self::assertNotNull($source);
+        self::assertSame(VideoProvider::MUX, $source->provider);
+        self::assertSame('AbCdEf0123456789_-', $source->externalId);
+    }
+
+    public function testRejectsMuxUrlForLiveAndReplay(): void
+    {
+        $this->expectException(InvalidLiveTrainingDetailsException::class);
+
+        $this->parser->parseLiveReference('https://stream.mux.com/AbCdEf0123456789_.m3u8', VideoProvider::MUX);
+    }
+
+    public function testRejectsUnsupportedProviderForLiveAndReplay(): void
+    {
+        $this->expectException(InvalidLiveTrainingDetailsException::class);
+
+        $this->parser->parseLiveReference('cloudflare-asset-id', VideoProvider::CLOUDFLARE_STREAM);
+    }
 }

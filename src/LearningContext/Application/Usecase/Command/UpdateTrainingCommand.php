@@ -10,6 +10,7 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 
 final class UpdateTrainingCommand
 {
@@ -32,7 +33,9 @@ final class UpdateTrainingCommand
         public LiveDeliveryMode $deliveryMode = LiveDeliveryMode::ONLINE,
         public ?string $location = null,
         public ?string $joinUrl = null,
-        public ?string $liveVideoReferenceUrl = null,
-        public ?string $replayVideoReferenceUrl = null,
+        public VideoProvider $liveVideoProvider = VideoProvider::YOUTUBE,
+        public ?string $liveVideoReference = null,
+        public VideoProvider $replayVideoProvider = VideoProvider::YOUTUBE,
+        public ?string $replayVideoReference = null,
     ) {}
 }

@@ -21,6 +21,7 @@ use Websymphonie\LearningContext\Domain\Enum\TrainingAccessType;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
 use Websymphonie\LearningContext\Domain\Enum\TrainingVisibility;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 use Websymphonie\LearningContext\Domain\Repository\TrainingCategoryRepositoryInterface;
 use Websymphonie\LearningContext\Domain\Repository\TrainingTagRepositoryInterface;
 
@@ -98,8 +99,20 @@ final class TrainingFormType extends AbstractType
                 ])
                 ->add('location', TextType::class, ['label' => 'Lieu', 'required' => false, 'attr' => ['placeholder' => 'Adresse ou localisation']])
                 ->add('joinUrl', TextType::class, ['label' => 'Lien de connexion', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL HTTPS valide.')]])
-                ->add('liveVideoReferenceUrl', TextType::class, ['label' => 'Référence du direct (YouTube)', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL YouTube HTTPS valide.')], 'help' => 'Référence YouTube du direct. Les autres fournisseurs ne sont pas encore disponibles dans le Backoffice.'])
-                ->add('replayVideoReferenceUrl', TextType::class, ['label' => 'Référence du replay (YouTube)', 'required' => false, 'attr' => ['type' => 'url', 'placeholder' => 'https://www.youtube.com/watch?v=…'], 'constraints' => [new Url(protocols: ['https'], requireTld: false, message: 'Utilisez une URL YouTube HTTPS valide.')], 'help' => 'Facultatif. Le replay est distinct du direct et ne sera affiché qu’après la fin de la session.']);
+                ->add('liveVideoProvider', ChoiceType::class, [
+                    'label' => 'Fournisseur du direct',
+                    'choices' => self::videoProviderChoices(),
+                    'choice_translation_domain' => false,
+                    'choice_value' => static fn (?VideoProvider $provider): ?string => $provider?->value,
+                ])
+                ->add('liveVideoReference', TextType::class, ['label' => 'Source du direct', 'required' => false, 'attr' => ['placeholder' => 'URL YouTube ou Playback ID Mux'], 'help' => 'Pour Mux, utiliser le Playback ID configuré avec une politique signed.'])
+                ->add('replayVideoProvider', ChoiceType::class, [
+                    'label' => 'Fournisseur du replay',
+                    'choices' => self::videoProviderChoices(),
+                    'choice_translation_domain' => false,
+                    'choice_value' => static fn (?VideoProvider $provider): ?string => $provider?->value,
+                ])
+                ->add('replayVideoReference', TextType::class, ['label' => 'Source du replay', 'required' => false, 'attr' => ['placeholder' => 'URL YouTube ou Playback ID Mux'], 'help' => 'Facultatif. Utilisé uniquement après la fin de la session. Pour Mux, utiliser le Playback ID configuré avec une politique signed.']);
         }
 
         if ($options['data'] instanceof UpdateTrainingCommand) {
@@ -131,5 +144,11 @@ final class TrainingFormType extends AbstractType
     private static function deliveryModeChoices(): array
     {
         return ['En ligne' => LiveDeliveryMode::ONLINE, 'Présentiel' => LiveDeliveryMode::IN_PERSON, 'Hybride' => LiveDeliveryMode::HYBRID];
+    }
+
+    /** @return array<string, VideoProvider> */
+    private static function videoProviderChoices(): array
+    {
+        return ['YouTube' => VideoProvider::YOUTUBE, 'Mux' => VideoProvider::MUX];
     }
 }

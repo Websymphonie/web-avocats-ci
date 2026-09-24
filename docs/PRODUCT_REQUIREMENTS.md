@@ -131,8 +131,9 @@ propriétaire.
 | LRN-006 | suivre la progression | `IMPLEMENTED` — progression COURSE, endpoints membre sécurisés et résumé Backoffice |
 | LRN-006A | réserver l’éligibilité apprenante aux avocats actifs | `IMPLEMENTED` — policy Learning réutilisée par Enrollment, accès et Payment |
 | LRN-007 | intégrer YouTube Live dans l’espace avocat sans lui déléguer l’autorisation | `IMPLEMENTED` — embed YouTube Live membre, sans API YouTube |
-| LRN-VID-001 | neutraliser le modèle vidéo Learning et distinguer diffusion/replay | `IMPLEMENTED` — sources provider-neutral, YouTube actif ; playback MUX/Cloudflare hors scope |
-| LRN-VID-002 | lire les vidéos Mux VOD signées dans les leçons COURSE membres | `IMPLEMENTED` — Mux Player Web et jeton serveur après autorisation ; Mux Live et Cloudflare restent hors scope |
+| LRN-VID-001 | neutraliser le modèle vidéo Learning et distinguer diffusion/replay | `IMPLEMENTED` — sources provider-neutral ; YouTube et Mux selon LRN-VID-002/003, Cloudflare hors scope |
+| LRN-VID-002 | lire les vidéos Mux VOD signées dans les leçons COURSE membres | `IMPLEMENTED` — Mux Player Web et jeton serveur après autorisation ; scope COURSE |
+| LRN-VID-003 | lire les sources Mux signées des directs LIVE et replays | `IMPLEMENTED` — mêmes credentials et signataire, après autorisation et sélection temporelle ; gestion Mux manuelle |
 | LRN-008 | gérer quiz et certificats | `PLANNED` |
 
 Les règles de durée d’accès, de certificat, de score, de replay et de

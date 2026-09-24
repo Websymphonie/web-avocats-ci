@@ -16,6 +16,7 @@ use Websymphonie\LearningContext\Application\Usecase\Query\GetCourseStructureQue
 use Websymphonie\LearningContext\Application\Usecase\Query\GetTrainingDetailsQuery;
 use Websymphonie\LearningContext\Domain\Enum\LiveDeliveryMode;
 use Websymphonie\LearningContext\Domain\Enum\TrainingType;
+use Websymphonie\LearningContext\Domain\Enum\VideoProvider;
 use Websymphonie\LearningContext\Presenter\Form\Training\TrainingFormType;
 use Websymphonie\LearningContext\Presenter\Service\YouTubeVideoPresenter;
 use Websymphonie\MediaContext\Application\Service\MediaPublicUrlResolverInterface;
@@ -58,8 +59,14 @@ final class UpdateTrainingController extends AbstractController
             deliveryMode: $training->liveDetails !== null ? $training->liveDetails->deliveryMode : LiveDeliveryMode::ONLINE,
             location: $training->liveDetails?->location,
             joinUrl: $training->liveDetails?->joinUrl,
-            liveVideoReferenceUrl: $this->videoPresenter->referenceUrl($training->liveDetails?->liveSource),
-            replayVideoReferenceUrl: $this->videoPresenter->referenceUrl($training->liveDetails?->replaySource),
+            liveVideoProvider: $training->liveDetails !== null && $training->liveDetails->liveSource !== null
+                ? $training->liveDetails->liveSource->provider
+                : VideoProvider::YOUTUBE,
+            liveVideoReference: $this->videoPresenter->referenceForForm($training->liveDetails?->liveSource),
+            replayVideoProvider: $training->liveDetails !== null && $training->liveDetails->replaySource !== null
+                ? $training->liveDetails->replaySource->provider
+                : VideoProvider::YOUTUBE,
+            replayVideoReference: $this->videoPresenter->referenceForForm($training->liveDetails?->replaySource),
         );
         $form = $this->createForm(TrainingFormType::class, $command);
         $form->handleRequest($request);

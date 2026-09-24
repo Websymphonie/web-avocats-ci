@@ -42,8 +42,8 @@ final readonly class CreateTrainingHandler implements CommandHandler
             $media = $command->cover !== null ? $this->mediaUpload->upload($command->cover, 'training/covers') : null;
             $liveDetails = null;
             if ($command->type === TrainingType::LIVE) {
-                $liveSource = $this->videoParser->parseLiveReference($command->liveVideoReferenceUrl);
-                $replaySource = $this->videoParser->parseLiveReference($command->replayVideoReferenceUrl);
+                $liveSource = $this->videoParser->parseLiveReference($command->liveVideoReference, $command->liveVideoProvider);
+                $replaySource = $this->videoParser->parseLiveReference($command->replayVideoReference, $command->replayVideoProvider);
                 $liveDetails = new LiveTrainingDetails(
                     id: 0,
                     uuid: '',

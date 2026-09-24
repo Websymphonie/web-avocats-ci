@@ -86,9 +86,10 @@
   forms use the existing autocomplete/multi-select foundation with chips, keyboard removal and restored selections.
   Category and tag filters remain combinable with the existing Training filters.
 - Learning LIVE reuses the Training register with a distinct Cours/Live creation choice and a `Lives` filtered shortcut.
-  Its form exposes Session Live dates, mode, conditional location/join fields and HTTPS validation feedback; the detail
-  view shows Session Live and Inscriptions instead of the COURSE programme. The member join action remains protected
-  by publication and active Enrollment checks.
+  Its form exposes Session Live dates, mode, conditional location/join fields, and independent YouTube/Mux provider
+  references for direct and replay (YouTube HTTPS URL or Mux Playback ID). The detail view shows Session Live and
+  Inscriptions instead of the COURSE programme. Member video playback remains protected by publication, active
+  Enrollment and the LIVE time window; signed Mux tokens are never returned by public Training pages.
 - External document downloads use `/documents/{uuid}/download`, are backend-controlled and only serve `PUBLISHED`
   documents. Backoffice uses `/admin/content/documents/{id}/download`.
 - Directory profiles display and search by the professional `displayName`, never the linked account name. A profile

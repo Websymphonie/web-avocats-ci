@@ -50,10 +50,10 @@ final class PublicPagesTest extends WebTestCase
         $client = $this->clientWithSchema();
         $this->createPageDataset();
 
-        $client->request('GET', '/informations/conditions-generales-utilisation', server: ['HTTPS' => 'on']);
+        $client->request('GET', '/informations/page-publique-avec-couverture', server: ['HTTPS' => 'on']);
 
         self::assertResponseStatusCodeSame(Response::HTTP_OK);
-        self::assertSelectorTextContains('h1', 'Conditions générales d’utilisation');
+        self::assertSelectorTextContains('h1', 'Page publique avec couverture');
         self::assertStringContainsString('Contenu public de la page.', (string) $client->getResponse()->getContent());
         self::assertStringContainsString('/uploads/content/covers/public-page.jpg', (string) $client->getResponse()->getContent());
         self::assertStringNotContainsString('<script>', $client->getCrawler()->filter('.rich-content')->html());
@@ -542,7 +542,7 @@ final class PublicPagesTest extends WebTestCase
         $client->request('GET', '/informations/mentions-legales', server: ['HTTPS' => 'on']);
         $content = (string) $client->getResponse()->getContent();
 
-        self::assertStringContainsString('/informations/conditions-generales-utilisation', $content);
+        self::assertStringNotContainsString('/informations/conditions-generales-utilisation', $content);
         self::assertStringContainsString('/informations/politique-confidentialite', $content);
         self::assertStringContainsString('/informations/mentions-legales', $content);
         self::assertStringContainsString('/assistance-violences-domestiques', $content);
@@ -562,13 +562,12 @@ final class PublicPagesTest extends WebTestCase
         self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"]');
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Mentions légales');
         self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Vie privée');
-        self::assertSelectorTextContains('aside[aria-label="Navigation : Informations légales"]', 'Conditions générales d’utilisation');
+        self::assertSelectorTextNotContains('aside[aria-label="Navigation : Informations légales"]', 'Conditions générales d’utilisation');
         self::assertSelectorExists('aside[aria-label="Navigation : Informations légales"] a[aria-current="page"]');
         self::assertSame([
             'Mentions légales',
             'Aide juridique',
             'Vie privée',
-            'Conditions générales d’utilisation',
         ], $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"] a')->each(static fn ($node): string => trim($node->text())));
         self::assertStringNotContainsString('/informations/politique-cookies', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
         self::assertStringNotContainsString('/informations/politique-suppression-compte', $client->getCrawler()->filter('aside[aria-label="Navigation : Informations légales"]')->html());
@@ -628,7 +627,7 @@ final class PublicPagesTest extends WebTestCase
         $entityManager->persist($cover);
         $entityManager->flush();
 
-        $publishedWithCover = $this->page('Conditions générales d’utilisation', 'conditions-generales-utilisation', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId(), PageGroup::LEGAL, 30);
+        $publishedWithCover = $this->page('Page publique avec couverture', 'page-publique-avec-couverture', PageStatus::PUBLISHED, new DateTimeImmutable('-2 days'), $cover->getId());
         $confidentiality = $this->page('Vie privée', 'politique-confidentialite', PageStatus::PUBLISHED, new DateTimeImmutable('-1 day'), null, PageGroup::LEGAL, 20)
             ->setContent('<h2>1. Données traitées &amp; Finalités</h2><h3>1.1. Données de connexion</h3><p>Nous conservons les informations du journal de serveur Web.</p><p>Vous pouvez demander la portabilité de vos données.</p><p><a href="mailto:info@ordredesavocats.ci">info@ordredesavocats.ci</a></p>');
         $legalNotice = $this->page('Mentions légales', 'mentions-legales', PageStatus::PUBLISHED, new DateTimeImmutable('-3 days'), null, PageGroup::LEGAL, 10)

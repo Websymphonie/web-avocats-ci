@@ -822,10 +822,12 @@ avoir défini `APP_STORAGE_DIR` :
 APP_STORAGE_DIR=/shared/storage ./scripts/provision-public-storage.sh
 ```
 
-Le script crée les répertoires publics Content, Galleries, Training et
+Le script crée les répertoires publics Content, Galleries, Training, Images et
 Institution, les emplacements privés Documents/Learning, les alias LiipImagine
-`public/uploads/{content,training,galleries}` sous la racine persistante et
-l’alias HTTP `public/uploads/institution`. Les liens sont calculés à l’exécution
+`public/uploads/{content,training,galleries,images}` sous la racine persistante
+et les alias HTTP correspondants, dont `public/uploads/institution`. Images
+correspond au mapping Vich encore utilisé par l’administration des images
+système. Les liens sont calculés à l’exécution
 depuis `APP_STORAGE_DIR` ; aucun chemin propre à une machine n’est versionné.
 Un chemin préexistant qui n’est pas un lien symbolique n’est jamais écrasé : le
 provisioning échoue explicitement afin de préserver les anciens uploads.
@@ -838,8 +840,8 @@ public/uploads -> $APP_STORAGE_DIR/public
 
 Lorsque `public/uploads` contient encore les anciens uploads Vich/Admin, ne pas
 le remplacer sans migration : utiliser des alias ou liens spécialisés pour
-`/uploads/galleries`, `/uploads/content/covers` et `/uploads/institution`, puis
-planifier la migration.
+`/uploads/galleries`, `/uploads/content/covers`, `/uploads/images` et
+`/uploads/institution`, puis planifier la migration.
 Les documents privés ne doivent avoir aucun alias HTTP direct.
 
 LiipImagine lit les originaux depuis `$APP_STORAGE_DIR/public`. Comme les

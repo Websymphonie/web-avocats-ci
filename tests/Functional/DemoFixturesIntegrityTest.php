@@ -174,7 +174,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(16, $entityManager->getRepository(NewsEntity::class)->count(['status' => NewsStatus::PUBLISHED]));
         self::assertSame(10, $entityManager->getRepository(EventEntity::class)->count(['status' => EventStatus::PUBLISHED]));
         self::assertSame(9, $entityManager->getRepository(TrainingEntity::class)->count(['status' => TrainingStatus::PUBLISHED]));
-        self::assertSame(12, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
+        self::assertSame(11, $entityManager->getRepository(PageEntity::class)->count(['status' => PageStatus::PUBLISHED]));
         self::assertSame(4, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::LEGAL]));
         self::assertSame(1, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::ACCOUNT]));
         self::assertSame(5, $entityManager->getRepository(PageEntity::class)->count(['editorialGroup' => PageGroup::BAR]));
@@ -290,7 +290,10 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertSame(10, $carpaPage->getSortOrder());
         self::assertSame(10, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'mentions-legales'])->getSortOrder());
         self::assertSame(20, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'politique-confidentialite'])->getSortOrder());
-        self::assertSame(30, $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation'])->getSortOrder());
+        $draftTerms = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation', 'editorialGroup' => PageGroup::LEGAL]);
+        self::assertInstanceOf(PageEntity::class, $draftTerms);
+        self::assertSame(PageStatus::DRAFT, $draftTerms->getStatus());
+        self::assertNull($draftTerms->getPublishedAt());
 
         foreach ($entityManager->getRepository(NewsEntity::class)->findAll() as $news) {
             self::assertTrue($news->getCategories()->count() > 0);
@@ -325,7 +328,7 @@ final class DemoFixturesIntegrityTest extends WebTestCase
         self::assertDirectoryExists(self::$storageDirectory . '/public/institution/lawyers');
         self::assertFileExists(self::$storageDirectory . '/public/content/covers/' . $entityManager->getRepository(MediaEntity::class)->find($history->getCoverMediaId())->getStorageName());
         self::assertCount(16, $entityManager->getRepository(NewsEntity::class)->findBy(['status' => NewsStatus::PUBLISHED]));
-        self::assertCount(2, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
+        self::assertCount(3, $entityManager->getRepository(PageEntity::class)->findBy(['status' => PageStatus::DRAFT]));
 
         $fundDocuments = $entityManager->getRepository(DocumentPublicationEntity::class)->findBy(['accessLevel' => DocumentAccessLevel::LAWYER, 'status' => DocumentStatus::PUBLISHED]);
         self::assertCount(3, $fundDocuments);

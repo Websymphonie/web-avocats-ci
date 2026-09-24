@@ -14,6 +14,7 @@ mkdir -p \
     "$public_dir/content/covers" \
     "$public_dir/galleries" \
     "$public_dir/training/covers" \
+    "$public_dir/images" \
     "$public_dir/institution/portraits" \
     "$public_dir/institution/lawyers" \
     "$public_dir/uploads" \
@@ -40,9 +41,11 @@ ensure_link() {
 ensure_link "$public_dir/content" "$public_dir/uploads/content"
 ensure_link "$public_dir/training" "$public_dir/uploads/training"
 ensure_link "$public_dir/galleries" "$public_dir/uploads/galleries"
+ensure_link "$public_dir/images" "$public_dir/uploads/images"
 ensure_link "$public_dir/content" "$project_dir/public/uploads/content"
 ensure_link "$public_dir/training" "$project_dir/public/uploads/training"
 ensure_link "$public_dir/galleries" "$project_dir/public/uploads/galleries"
+ensure_link "$public_dir/images" "$project_dir/public/uploads/images"
 ensure_link "$public_dir/institution" "$project_dir/public/uploads/institution"
 
 echo "Stockage public provisionné sous $storage_dir"

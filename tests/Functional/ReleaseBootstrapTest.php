@@ -101,6 +101,13 @@ final class ReleaseBootstrapTest extends WebTestCase
             'documentConflicts' => [],
         ], $institutionalBootstrap->bootstrap());
 
+        $client->request('GET', '/', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorExists('link[rel="icon"][href="/assets/favicon.ico"]');
+        $client->request('GET', '/auth/login', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_OK);
+        self::assertSelectorExists('img[src="/assets/logo.png"]');
+
         self::assertSame(1, $entityManager->getRepository(PagePersonGroupEntity::class)->count([]));
         self::assertSame(26, $entityManager->getRepository(PagePersonEntryEntity::class)->count([]));
         $historyPage = $entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'historique', 'editorialGroup' => PageGroup::BAR]);
@@ -129,6 +136,7 @@ final class ReleaseBootstrapTest extends WebTestCase
         $entityManager->clear();
 
         self::assertSame(11, $entityManager->getRepository(PageEntity::class)->count([]));
+        self::assertNull($entityManager->getRepository(PageEntity::class)->findOneBy(['slug' => 'conditions-generales-utilisation']));
         self::assertSame(1, $entityManager->getRepository(BatonnierMandateEntity::class)->count([]));
         self::assertSame(19, $entityManager->getRepository(CouncilMemberEntity::class)->count([]));
         self::assertSame(0, $entityManager->getRepository(User::class)->count([]));
@@ -173,6 +181,7 @@ final class ReleaseBootstrapTest extends WebTestCase
             '/lbc-ft-fp',
             '/informations/mentions-legales',
             '/informations/politique-confidentialite',
+            '/formations',
             '/assistance-violences-domestiques',
             '/contact',
             '/avocats',
@@ -180,6 +189,9 @@ final class ReleaseBootstrapTest extends WebTestCase
             $client->request('GET', $path, server: ['HTTPS' => 'on']);
             self::assertResponseStatusCodeSame(Response::HTTP_OK, $path);
         }
+
+        $client->request('GET', '/informations/conditions-generales-utilisation', server: ['HTTPS' => 'on']);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND, 'CGU de démonstration non publiée');
 
         $client->request('GET', '/contact', server: ['HTTPS' => 'on']);
         self::assertResponseStatusCodeSame(Response::HTTP_OK);

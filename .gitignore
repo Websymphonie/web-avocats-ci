@@ -22,6 +22,8 @@
 /public/assets/
 !/public/assets/
 /public/assets/*
+!/public/assets/logo.png
+!/public/assets/favicon.ico
 !/public/assets/images/
 /public/assets/images/*
 !/public/assets/images/barreau-anciens-batonniers.png

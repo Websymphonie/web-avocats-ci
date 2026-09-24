@@ -181,7 +181,7 @@ final class DemoContentFixtures extends Fixture implements FixtureGroupInterface
     {
         $institutionalContents = InstitutionalPageContent::load($this->sanitizer);
         $pages = array_merge(InstitutionalPageContent::definitions(), [
-            ['title' => 'Conditions générales d’utilisation', 'slug' => 'conditions-generales-utilisation', 'status' => PageStatus::PUBLISHED, 'group' => PageGroup::LEGAL, 'sortOrder' => 30, 'hasCover' => true],
+            ['title' => 'Conditions générales d’utilisation', 'slug' => 'conditions-generales-utilisation', 'status' => PageStatus::DRAFT, 'group' => PageGroup::LEGAL, 'sortOrder' => 30, 'hasCover' => true],
             ['title' => 'Politique de suppression de compte', 'slug' => 'politique-suppression-compte', 'status' => PageStatus::PUBLISHED, 'group' => PageGroup::ACCOUNT, 'sortOrder' => 10, 'hasCover' => true],
             ['title' => 'Politique de cookies', 'slug' => 'politique-cookies', 'status' => PageStatus::DRAFT, 'group' => PageGroup::LEGAL, 'sortOrder' => 40, 'hasCover' => true],
         ]);

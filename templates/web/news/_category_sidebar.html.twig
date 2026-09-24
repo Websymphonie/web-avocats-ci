@@ -2,8 +2,14 @@
     <div class="border border-border bg-card p-6 shadow-sm">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Explorer</p>
         <h2 class="mt-2 text-xl font-semibold tracking-[-0.025em] text-card-foreground">Catégories</h2>
-        <nav class="mt-5" aria-label="Filtrer les actualités par catégorie">
-            <ul class="divide-y divide-border border-y border-border">
+        <div data-controller="list-filter">
+            {% include 'web/components/_filterable_list_search.html.twig' with {
+                searchId: 'news-category-search',
+                placeholder: 'Filtrer les catégories',
+                clearLabel: 'Effacer le filtre des catégories'
+            } only %}
+            <nav class="mt-3" aria-label="Filtrer les actualités par catégorie">
+            <ul class="max-h-[28rem] divide-y divide-border overflow-y-auto overscroll-contain border-y border-border pr-1">
                 <li>
                     <a href="{{ path('web_news_list') }}" class="group flex items-center justify-between gap-3 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory is null ? 'font-semibold text-primary' : 'text-muted-foreground hover:text-foreground' }}" {% if selectedCategory is null %}aria-current="page"{% endif %}>
                         <span>Toutes les actualités</span>
@@ -11,7 +17,7 @@
                     </a>
                 </li>
                 {% for category in categories %}
-                    <li>
+                    <li data-list-filter-target="item" data-list-filter-name="{{ category.name }}">
                         <a href="{{ path('web_news_list', {categorie: category.slug}) }}" class="group flex items-center justify-between gap-3 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory and selectedCategory.id == category.id ? 'font-semibold text-primary' : 'text-muted-foreground hover:text-foreground' }}" {% if selectedCategory and selectedCategory.id == category.id %}aria-current="page"{% endif %}>
                             <span>{{ category.name }}</span>
                             <twig:ux:icon name="lucide:chevron-right" class="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true"/>
@@ -19,7 +25,9 @@
                     </li>
                 {% endfor %}
             </ul>
-        </nav>
+                <p hidden data-list-filter-target="empty" class="hidden px-3 py-4 text-sm text-muted-foreground">Aucune catégorie ne correspond à cette recherche.</p>
+            </nav>
+        </div>
     </div>
 
     <div class="mt-6 border-l-2 border-primary bg-card px-5 py-5 shadow-sm">

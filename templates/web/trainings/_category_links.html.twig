@@ -1,4 +1,4 @@
-<ul class="space-y-1">
+<ul class="max-h-[28rem] space-y-1 overflow-y-auto overscroll-contain pr-1">
     <li>
         <a href="{{ path('web_trainings_list', categoryFilters) }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ selectedCategory is null ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if selectedCategory is null %}aria-current="page"{% endif %}>
             Toutes les formations
@@ -6,10 +6,11 @@
     </li>
     {% for category in categories %}
         {% set isActive = selectedCategory and selectedCategory.id == category.id %}
-        <li>
+        <li data-list-filter-target="item" data-list-filter-name="{{ category.name }}">
             <a href="{{ path('web_trainings_list', categoryFilters|merge({categorie: category.slug})) }}" class="flex items-center border-l-2 px-3 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-transparent text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground' }}" {% if isActive %}aria-current="page"{% endif %}>
                 {{ category.name }}
             </a>
         </li>
     {% endfor %}
 </ul>
+<p hidden data-list-filter-target="empty" class="hidden px-3 py-4 text-sm text-muted-foreground">Aucune catégorie ne correspond à cette recherche.</p>

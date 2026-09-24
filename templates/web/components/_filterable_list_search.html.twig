@@ -1,0 +1,17 @@
+{# Shared local search control used by filterable sidebar lists. #}
+{% set placeholder = placeholder|default('Filtrer la liste') %}
+{% set label = label|default(placeholder) %}
+{% set clearLabel = clearLabel|default('Effacer le filtre') %}
+{% set spacing = spacing|default('mt-4') %}
+
+<div class="{{ spacing }} relative">
+    <label for="{{ searchId }}" class="sr-only">{{ label }}</label>
+    <input id="{{ searchId }}" type="text" value="" autocomplete="off" placeholder="{{ placeholder }}"
+           data-list-filter-target="search" data-action="input->list-filter#filter"
+           class="h-10 w-full rounded-lg border border-input bg-background px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+    <button type="button" hidden data-list-filter-target="clear"
+            data-action="click->list-filter#clear" aria-label="{{ clearLabel }}"
+            class="absolute right-1 top-1 hidden size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true"/>
+    </button>
+</div>

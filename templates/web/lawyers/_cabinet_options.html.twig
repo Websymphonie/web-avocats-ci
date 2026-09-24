@@ -2,18 +2,12 @@
 {% if filters.name %}{% set allParams = allParams|merge({name: filters.name}) %}{% endif %}
 {% if filters.location %}{% set allParams = allParams|merge({location: filters.location}) %}{% endif %}
 
-<div data-controller="cabinet-directory-filter">
-    <div class="relative mt-4">
-        <label for="{{ searchId }}" class="sr-only">Rechercher un cabinet</label>
-        <input id="{{ searchId }}" type="text" value="" autocomplete="off" placeholder="Rechercher un cabinet"
-               data-cabinet-directory-filter-target="search" data-action="input->cabinet-directory-filter#filter"
-               class="h-10 w-full rounded-lg border border-input bg-background px-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <button type="button" hidden data-cabinet-directory-filter-target="clear"
-                data-action="click->cabinet-directory-filter#clear" aria-label="Effacer la recherche de cabinet"
-                class="absolute right-1 top-1 hidden size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true"/>
-        </button>
-    </div>
+<div data-controller="list-filter">
+    {% include 'web/components/_filterable_list_search.html.twig' with {
+        searchId: searchId,
+        placeholder: 'Rechercher un cabinet',
+        clearLabel: 'Effacer la recherche de cabinet'
+    } only %}
 
     <nav class="mt-3" aria-label="Filtrer par cabinet">
         <ul class="max-h-[28rem] space-y-1 overflow-y-auto overscroll-contain pr-1">
@@ -27,7 +21,7 @@
             {% for cabinet in cabinetOptions %}
                 {% set isActive = filters.cabinet == cabinet.publicUuid %}
                 {% set cabinetParams = allParams|merge({cabinet: cabinet.publicUuid}) %}
-                <li data-cabinet-directory-filter-target="item" data-cabinet-name="{{ cabinet.name }}">
+                <li data-list-filter-target="item" data-list-filter-name="{{ cabinet.name }}">
                     <a href="{{ path('web_lawyer_directory_list', cabinetParams) }}"
                        {% if isActive %}aria-current="page"{% endif %}
                        class="flex min-h-10 items-center justify-between gap-2 rounded-lg border-l-2 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {{ isActive ? 'border-primary bg-primary/5 font-semibold text-primary' : 'border-transparent text-foreground hover:bg-muted' }}">
@@ -37,6 +31,6 @@
                 </li>
             {% endfor %}
         </ul>
-        <p hidden data-cabinet-directory-filter-target="empty" class="hidden px-3 py-4 text-sm text-muted-foreground">Aucun cabinet ne correspond à cette recherche.</p>
+        <p hidden data-list-filter-target="empty" class="hidden px-3 py-4 text-sm text-muted-foreground">Aucun cabinet ne correspond à cette recherche.</p>
     </nav>
 </div>

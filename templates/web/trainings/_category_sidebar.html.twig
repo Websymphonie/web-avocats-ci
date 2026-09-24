@@ -12,7 +12,17 @@
         </div>
         <div id="training-category-options-mobile" data-accordion-target="content" aria-hidden="true" class="hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out">
             <div class="min-h-0 overflow-hidden border-x border-b border-border bg-card px-3 py-2">
-                {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
+                <div data-controller="list-filter">
+                    {% include 'web/components/_filterable_list_search.html.twig' with {
+                        searchId: 'training-category-search-mobile',
+                        placeholder: 'Filtrer les catégories',
+                        clearLabel: 'Effacer le filtre des catégories',
+                        spacing: 'mt-1 mb-3'
+                    } only %}
+                    <nav aria-label="Catégories de formations">
+                        {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -20,9 +30,16 @@
     <div class="hidden border border-border bg-card p-6 shadow-sm lg:block">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Explorer</p>
         <h2 class="mt-2 text-xl font-semibold tracking-[-0.03em] text-card-foreground">Catégories</h2>
-        <nav class="mt-5" aria-label="Catégories de formations">
-            {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
-        </nav>
+        <div data-controller="list-filter">
+            {% include 'web/components/_filterable_list_search.html.twig' with {
+                searchId: 'training-category-search-desktop',
+                placeholder: 'Filtrer les catégories',
+                clearLabel: 'Effacer le filtre des catégories'
+            } only %}
+            <nav class="mt-3" aria-label="Catégories de formations">
+                {% include 'web/trainings/_category_links.html.twig' with {categories: categories, selectedCategory: selectedCategory, categoryFilters: categoryFilters} only %}
+            </nav>
+        </div>
     </div>
     <div class="hidden mt-6 border-l-2 border-primary bg-card px-5 py-4 lg:block">
         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Se former</p>
